@@ -62,18 +62,20 @@ a { color: #0a2540; }
   letter-spacing: -0.03em;
 }
 .logo img {
-  height: 75px;
-  width: auto;
-  max-width: none;
-  max-height: 75px;
-  object-fit: contain;
+  height: 150px !important;
+  width: auto !important;
+  max-width: none !important;
+  max-height: 150px !important;
+  object-fit: contain !important;
 }
 .header .logo img,
-.site-header .logo img {
-  height: 75px !important;
+.site-header .logo img,
+header .logo img {
+  height: 150px !important;
   width: auto !important;
-  max-height: 75px !important;
-  object-fit: contain;
+  max-width: none !important;
+  max-height: 150px !important;
+  object-fit: contain !important;
 }
 .logo small {
   display: none;
@@ -258,11 +260,13 @@ p, li { font-size: 16px; color: #3d5160; }
 @media (max-width: 768px) {
   .header .logo img,
   .site-header .logo img,
+  header .logo img,
   .logo img {
-    height: 60px !important;
-    max-height: 60px !important;
+    height: 100px !important;
+    max-height: 100px !important;
     width: auto !important;
-    object-fit: contain;
+    max-width: none !important;
+    object-fit: contain !important;
   }
 }
 @media (max-width: 900px) {
