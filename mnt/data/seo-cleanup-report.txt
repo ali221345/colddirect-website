@@ -1,0 +1,207 @@
+COLD DIRECT SEO CLEANUP REPORT
+Date: 5 Sep 2026
+Live crawl: https://www.colddirect.co.uk
+Method: GET each URL (no follow). Google site: queries + live sitemap.
+
+================================================================
+SITEMAP (live GET /sitemap.xml)
+================================================================
+Live sitemap.xml returned HTTP 200 at crawl time (an earlier fetch in this session returned 500).
+URLs in the current static sitemap:
+
+https://www.colddirect.co.uk/
+https://www.colddirect.co.uk/about-us.html
+https://www.colddirect.co.uk/contact.html
+https://www.colddirect.co.uk/commercial-fridge-repair-north-london.html
+https://www.colddirect.co.uk/commercial-freezer-repair-north-london.html
+https://www.colddirect.co.uk/cold-room-repair-north-london.html
+https://www.colddirect.co.uk/freezer-room-repair-north-london.html
+https://www.colddirect.co.uk/display-cabinet-repair-north-london.html
+https://www.colddirect.co.uk/cellar-cooler-repair-london.html
+https://www.colddirect.co.uk/bottle-cooler-repair-london.html
+https://www.colddirect.co.uk/wine-cooler-repair-london.html
+https://www.colddirect.co.uk/polar-fridge-repair-london.html
+https://www.colddirect.co.uk/adexa-fridge-repair-london.html
+https://www.colddirect.co.uk/empire-fridge-repair-london.html
+https://www.colddirect.co.uk/ice-machine-repair-london.html
+https://www.colddirect.co.uk/ice-cream-machine-repair-london.html
+https://www.colddirect.co.uk/hoshizaki-ice-machine-repair-london.html
+https://www.colddirect.co.uk/subzero-fridge-repair-london.html
+https://www.colddirect.co.uk/subzero-freezer-repair-london.html
+https://www.colddirect.co.uk/williams-freezer-repair-london.html
+https://www.colddirect.co.uk/fridge-repair-london.html
+https://www.colddirect.co.uk/freezer-repair-london.html
+
+================================================================
+GOOGLE site:colddirect.co.uk (indexed / historically listed)
+================================================================
+Google's site: operator from this environment returned mixed results. Indexed or previously listed URLs found via search snippets:
+
+https://www.colddirect.co.uk/
+https://www.colddirect.co.uk/about-us
+https://www.colddirect.co.uk/fridge-repairs-london
+https://www.colddirect.co.uk/freezer-repairs-london
+https://www.colddirect.co.uk/cold-room-repairs-london
+https://www.colddirect.co.uk/display-fridge-repairs-london
+https://www.colddirect.co.uk/chiller-repairs-london
+https://www.colddirect.co.uk/air-conditioning-repairs-london
+https://www.colddirect.co.uk/ice-machine-repairs-london
+https://www.colddirect.co.uk/wine-cooler-repairs-london
+https://www.colddirect.co.uk/refrigeration-brands-repairs-london
+https://www.colddirect.co.uk/gastroline-repairs-london
+https://www.colddirect.co.uk/prodis-repairs-london
+https://www.colddirect.co.uk/zanussi-repairs-london
+https://www.colddirect.co.uk/foster-fridge-repair-london
+https://www.colddirect.co.uk/william-fridge-repair-london
+https://www.colddirect.co.uk/liebherr-repairs-london
+https://www.colddirect.co.uk/polar-repairs-london
+https://www.colddirect.co.uk/smeg-repairs-london
+https://www.colddirect.co.uk/koldbox-repairs-london
+https://www.colddirect.co.uk/atosa-repairs-london
+https://www.colddirect.co.uk/blog/cold-room-troubleshooting
+https://www.colddirect.co.uk/blog/smeg-fridge-freezer-control-panel
+
+Many of those still show old titles with the typo "maintance" in the SERP. Those HTML files are gone from the new static site (they 404). Redirects below recover that equity.
+
+================================================================
+LIST A — 404 / errors that used to rank (DO NOT DELETE; 301)
+================================================================
+All of the following returned HTTP 404 on 5 Sep 2026 live GET.
+(No 500s on this pass except an earlier isolated 500 on sitemap.xml, which later returned 200.)
+
+PATH                                          STATUS  301 TARGET
+/cold-room-repairs-london                     404     /cold-room-repair-north-london.html
+/walk-in-cold-room-repair-london              404     /cold-room-repair-north-london.html
+/commercial-cold-room-repair-london.html      404     /cold-room-repair-north-london.html
+/fridge-repairs-london                        404     /fridge-repair-london.html
+/freezer-repairs-london                       404     /freezer-repair-london.html
+/display-fridge-repairs-london                404     /display-cabinet-repair-north-london.html
+/chiller-repairs-london                       404     /commercial-fridge-repair-north-london.html
+/ice-machine-repairs-london                   404     /ice-machine-repair-london.html
+/wine-cooler-repairs-london                   404     /wine-cooler-repair-london.html
+/bottle-cooler-repairs-london                 404     /bottle-cooler-repair-london.html
+/air-conditioning-repairs-london              404     /  (homepage; not a refrigeration money page)
+/about-us                                     404     /about-us.html
+/contact                                      404     /contact.html
+/contact-us                                   404     /contact.html
+/blog/cold-room-troubleshooting               404     /cold-room-repair-north-london.html
+/blog/smeg-fridge-freezer-control-panel       404     /fridge-repair-london.html
+
+Control URL /this-page-does-not-exist-xyz also 404 (good; no longer a soft 404 homepage).
+
+================================================================
+LIST B — Thin / doorway brand pages (301 away; no local files to delete)
+================================================================
+These were duplicate-template brand URLs on the old Angular site. Live GET = 404.
+There is no matching file in the current static root to delete.
+
+PATH                                          STATUS  301 TARGET
+/refrigeration-brands-repairs-london          404     /commercial-fridge-repair-north-london.html
+/gastroline-repairs-london                    404     /commercial-fridge-repair-north-london.html
+/gastroline-fridge-repairs-london             404     /commercial-fridge-repair-north-london.html
+/prodis-repairs-london                        404     /commercial-fridge-repair-north-london.html
+/prodis-fridge-repairs-london                 404     /commercial-fridge-repair-north-london.html
+/zanussi-repairs-london                       404     /commercial-fridge-repair-north-london.html
+/zanussi-fridge-repairs-london                404     /commercial-fridge-repair-north-london.html
+/foster-fridge-repair-london                  404     /commercial-fridge-repair-north-london.html
+/liebherr-repairs-london                      404     /commercial-fridge-repair-north-london.html
+/smeg-repairs-london                          404     /fridge-repair-london.html
+/koldbox-repairs-london                       404     /commercial-fridge-repair-north-london.html
+/atosa-repairs-london                         404     /commercial-fridge-repair-north-london.html
+/mafirol-repairs-london                       404     /display-cabinet-repair-north-london.html
+/graupel-repairs-london                       (assumed old)  /commercial-fridge-repair-north-london.html
+/inomak-repairs-london                        (assumed old)  /commercial-fridge-repair-north-london.html
+/lynkso-repairs-london                        (assumed old)  /commercial-fridge-repair-north-london.html
+/garm-repairs-london                          (assumed old)  /commercial-fridge-repair-north-london.html
+/william-fridge-repair-london                 404     /williams-freezer-repair-london.html
+/william-repairs-london                       404     /williams-freezer-repair-london.html
+/polar-repairs-london                         404     /polar-fridge-repair-london.html
+/hoshizaki-repairs-london                     404     /hoshizaki-ice-machine-repair-london.html
+
+KEEP (not List B): polar-fridge-repair-london.html, adexa, empire, hoshizaki ice machine, Sub-Zero fridge/freezer, Williams freezer. Those are unique static pages, not the old doorway templates.
+
+================================================================
+LIST C — Good money / keep pages (HTTP 200)
+================================================================
+PATH                                          STATUS
+/                                             200  Commercial refrigeration hub
+/commercial-fridge-repair-north-london.html   200
+/commercial-freezer-repair-north-london.html  200
+/cold-room-repair-north-london.html           200  walk-in / cold room
+/freezer-room-repair-north-london.html        200
+/bottle-cooler-repair-london.html             200
+/cellar-cooler-repair-london.html             200
+/display-cabinet-repair-north-london.html     200
+/wine-cooler-repair-london.html               200
+/ice-machine-repair-london.html               200
+/ice-cream-machine-repair-london.html         200
+/fridge-repair-london.html                    200
+/freezer-repair-london.html                   200
+/about-us.html                                200
+/contact.html                                 200
+/polar-fridge-repair-london.html              200
+/adexa-fridge-repair-london.html              200
+/empire-fridge-repair-london.html             200
+/hoshizaki-ice-machine-repair-london.html     200
+/subzero-fridge-repair-london.html            200
+/subzero-freezer-repair-london.html           200
+/williams-freezer-repair-london.html          200
+
+================================================================
+TITLE / META FIXES APPLIED ON KEEP PAGES
+================================================================
+- No local file contained the typo "maintance" (that lived on the old 404 URLs).
+- Commercial page titles set to: Commercial [Service] London | 24/7 Emergency | Cold Direct
+- Meta descriptions include 24/7, North London, and 020 8202 5997 as requested.
+
+NAP note: Header/footer still show Mobile 07983 759320, Freephone 0800 112 3427, London Office 0203 952 4822. Meta now also cites 020 8202 5997 per this brief. Confirm that number is still in use before the next upload, or Google will see mixed NAP.
+
+================================================================
+HTACCESS
+================================================================
+Upload .htaccess to public_html (Apache/cPanel). Rules are in the site root .htaccess file.
+
+If the host is still IIS, convert these to web.config <rewrite> rules; .htaccess will be ignored.
+
+================================================================
+HTACCESS REDIRECT BLOCK (copy)
+================================================================
+RewriteEngine On
+RewriteBase /
+RewriteRule ^cold-room-repairs-london/?$ /cold-room-repair-north-london.html [R=301,L]
+RewriteRule ^commercial-cold-room-repair-london\.html$ /cold-room-repair-north-london.html [R=301,L]
+RewriteRule ^walk-in-cold-room-repair-london/?$ /cold-room-repair-north-london.html [R=301,L]
+RewriteRule ^fridge-repairs-london/?$ /fridge-repair-london.html [R=301,L]
+RewriteRule ^freezer-repairs-london/?$ /freezer-repair-london.html [R=301,L]
+RewriteRule ^display-fridge-repairs-london/?$ /display-cabinet-repair-north-london.html [R=301,L]
+RewriteRule ^chiller-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^ice-machine-repairs-london/?$ /ice-machine-repair-london.html [R=301,L]
+RewriteRule ^wine-cooler-repairs-london/?$ /wine-cooler-repair-london.html [R=301,L]
+RewriteRule ^bottle-cooler-repairs-london/?$ /bottle-cooler-repair-london.html [R=301,L]
+RewriteRule ^air-conditioning-repairs-london/?$ / [R=301,L]
+RewriteRule ^about-us/?$ /about-us.html [R=301,L]
+RewriteRule ^contact/?$ /contact.html [R=301,L]
+RewriteRule ^contact-us/?$ /contact.html [R=301,L]
+RewriteRule ^blog/cold-room-troubleshooting/?$ /cold-room-repair-north-london.html [R=301,L]
+RewriteRule ^blog/smeg-fridge-freezer-control-panel/?$ /fridge-repair-london.html [R=301,L]
+RewriteRule ^refrigeration-brands-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^gastroline-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^gastroline-fridge-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^prodis-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^prodis-fridge-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^zanussi-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^zanussi-fridge-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^foster-fridge-repair-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^liebherr-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^smeg-repairs-london/?$ /fridge-repair-london.html [R=301,L]
+RewriteRule ^koldbox-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^atosa-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^mafirol-repairs-london/?$ /display-cabinet-repair-north-london.html [R=301,L]
+RewriteRule ^graupel-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^inomak-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^lynkso-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^garm-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^william-fridge-repair-london/?$ /williams-freezer-repair-london.html [R=301,L]
+RewriteRule ^william-repairs-london/?$ /williams-freezer-repair-london.html [R=301,L]
+RewriteRule ^polar-repairs-london/?$ /polar-fridge-repair-london.html [R=301,L]
+RewriteRule ^hoshizaki-repairs-london/?$ /hoshizaki-ice-machine-repair-london.html [R=301,L]
