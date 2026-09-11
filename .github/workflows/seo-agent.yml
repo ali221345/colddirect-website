@@ -1,0 +1,51 @@
+name: Daily SEO Agent
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  seo-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install agent dependencies
+        run: pip install -r agent/requirements.txt
+
+      - name: Run SEO Agent
+        run: python agent/run.py
+
+      - name: Commit sitemap and robots if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add colddirect-public-html/sitemap.xml colddirect-public-html/robots.txt
+          if git diff --staged --quiet; then
+            echo "No sitemap/robots changes"
+          else
+            git commit -m "chore: daily SEO agent sitemap"
+            git push
+          fi
+
+      - name: FTP deploy to WHUK Plesk
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./colddirect-public-html/
+          server-dir: /httpdocs/
+          timeout: 60000
