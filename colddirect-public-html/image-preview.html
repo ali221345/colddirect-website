@@ -28,8 +28,8 @@
 <body>
   <div class="wrap">
     <h1>Image approval preview</h1>
-    <p>Internal review only. No brand page will be changed until you reply <strong>ok upload</strong>.</p>
-    <div class="note">These 8 rows are waiting for approval. Proposed photos already exist on the server for preview only. They will not be attached to the live brand pages until you approve.</div>
+    <p>Internal review. Empire + bottle cooler are <strong>live</strong>. Polar, Sub-Zero, Williams, Adexa, wine cooler and North London fridge still wait for <strong>ok upload</strong>.</p>
+    <div class="note">Live files sit in <code>/httpdocs/images/</code> (this repo: <code>colddirect-public-html/images/</code>). There is no Next.js <code>public/images</code> and no <code>npm run build</code> on this site. IIS already sends <code>Cache-Control: no-store</code>. No Cloudflare in front of www.colddirect.co.uk.</div>
 
     <article class="card" id="polar">
       <h2>1. Polar</h2>
@@ -100,35 +100,35 @@
     </article>
 
     <article class="card" id="empire">
-      <h2>5. Empire</h2>
-      <p class="meta">Page: <a href="https://www.colddirect.co.uk/empire-fridge-repair-london">https://www.colddirect.co.uk/empire-fridge-repair-london</a></p>
+      <h2>5. Empire — LIVE</h2>
+      <p class="meta">Pages: <a href="https://www.colddirect.co.uk/empire-fridge-repair">/empire-fridge-repair</a> · <a href="https://www.colddirect.co.uk/empire-fridge-repair-london">/empire-fridge-repair-london</a></p>
       <div class="cols">
         <div class="col">
-          <h3>Current (wrong / fallback)</h3>
-          <img class="wrong" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&amp;fit=crop&amp;w=1200" alt="Current Empire page fallback">
-          <p class="path">Missing <code>images/brands/empire.jpg</code> → Unsplash kitchen stock</p>
+          <h3>Old (removed)</h3>
+          <img class="wrong" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&amp;fit=crop&amp;w=1200" alt="Old Empire Unsplash fallback">
+          <p class="path">Was Unsplash kitchen stock</p>
         </div>
         <div class="col">
-          <h3>Proposed new image</h3>
-          <img class="ok" src="/images/empire-fridge-repair.webp" alt="Proposed Empire commercial upright fridge">
-          <p class="path">Proposed file: <code>/images/empire-fridge-repair.webp</code></p>
+          <h3>Now live on the page</h3>
+          <img class="ok" src="/images/empire-fridge.webp?v=20260911b" alt="Live Empire commercial fridge +3C studio shot">
+          <p class="path">Live file: <code>/images/empire-fridge.webp</code> (also brands + homepage copies)</p>
         </div>
       </div>
     </article>
 
     <article class="card" id="bottle-cooler">
-      <h2>6. Bottle cooler</h2>
-      <p class="meta">Page: <a href="https://www.colddirect.co.uk/bottle-cooler-repair-london">https://www.colddirect.co.uk/bottle-cooler-repair-london</a></p>
+      <h2>6. Bottle cooler — LIVE</h2>
+      <p class="meta">Pages: <a href="https://www.colddirect.co.uk/bottle-cooler-repair">/bottle-cooler-repair</a> · <a href="https://www.colddirect.co.uk/bottle-cooler-repair-london">/bottle-cooler-repair-london</a></p>
       <div class="cols">
         <div class="col">
-          <h3>Current (wrong)</h3>
-          <img class="wrong" src="/images/display-cabinets.jpg" alt="Current bottle cooler page image — display cabinets">
-          <p class="path">Now using <code>/images/display-cabinets.jpg</code> (shop display cabinets, not a bottle cooler)</p>
+          <h3>Old (removed)</h3>
+          <img class="wrong" src="/images/display-cabinets.jpg" alt="Old bottle cooler page image — display cabinets">
+          <p class="path">Was <code>/images/display-cabinets.jpg</code></p>
         </div>
         <div class="col">
-          <h3>Proposed new image</h3>
-          <img class="ok" src="/images/bottle-cooler-repair.webp" alt="Proposed double-door commercial bottle cooler">
-          <p class="path">Proposed file: <code>/images/bottle-cooler-repair.webp</code></p>
+          <h3>Now live on the page</h3>
+          <img class="ok" src="/images/bottle-cooler.webp?v=20260911b" alt="Live double-door bottle cooler +4C water and soft drinks">
+          <p class="path">Live file: <code>/images/bottle-cooler.webp</code> (also bottle-fridge, drinks-fridge, homepage copies)</p>
         </div>
       </div>
     </article>
@@ -192,7 +192,7 @@
       <tr><td>Commercial freezer</td><td>/commercial-freezer-repair-london</td><td>commercial-freezer-repair.webp</td></tr>
       <tr><td>Chiller</td><td>/chiller-repair-london</td><td>chiller-repair.webp</td></tr>
     </table>
-    <p>Reply with which of the 8 you approve, or <strong>ok upload</strong> for all eight. Nothing else will be swapped until then.</p>
+    <p>Empire + bottle cooler are live. Reply <strong>ok upload</strong> for Polar, Sub-Zero, Williams, Adexa, wine cooler and North London fridge. Nothing else will be swapped until then.</p>
   </div>
 </body>
 </html>
