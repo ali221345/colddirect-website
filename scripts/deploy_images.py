@@ -287,6 +287,8 @@ def ftp_upload(files: list[tuple[Path, str]]) -> list[str]:
 
 def write_report(rows: list[str], ftp_log: list[str], html_notes: list[str]) -> None:
     report = ROOT / "ALL-IMAGES-FIXED.md"
+    html_lines = [f"- {n}" for n in html_notes] or ["- (no HTML notes)"]
+    ftp_lines = [f"- {n}" for n in ftp_log]
     block = [
         "",
         f"## image-deploy-agent run (`scripts/deploy_images.py`) cache `{CACHE}`",
@@ -294,10 +296,10 @@ def write_report(rows: list[str], ftp_log: list[str], html_notes: list[str]) -> 
         *rows,
         "",
         "### HTML",
-        *[f"- {n}" for n in html_notes] or ["- (no HTML notes)"],
+        *html_lines,
         "",
         "### FTP",
-        *[f"- {n}" for n in ftp_log],
+        *ftp_lines,
         "",
     ]
     prev = report.read_text(encoding="utf-8") if report.exists() else "# ALL-IMAGES-FIXED\n"
