@@ -1,0 +1,7 @@
+.vscode/sftp.json
+.env
+.env.local
+.env.*.local
+__pycache__/
+*.pyc
+scripts/__pycache__/
