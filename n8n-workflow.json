@@ -1,0 +1,220 @@
+{
+  "name": "ColdDirect Full Auto Agent",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "pinData": {},
+  "tags": [],
+  "nodes": [
+    {
+      "id": "cron-9am-london",
+      "name": "Cron 9am London",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyDay",
+              "hour": 9,
+              "minute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "read-agent-data",
+      "name": "Read Agent Data",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "parameters": {
+        "filePath": "./agent-data.json",
+        "dataPropertyName": "data"
+      }
+    },
+    {
+      "id": "pick-next-area",
+      "name": "Pick Next Area",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "parameters": {
+        "functionCode": "const item = items[0];\nlet raw = item.json.data || item.json;\nif (item.binary && item.binary.data) {\n  raw = Buffer.from(item.binary.data.data, 'base64').toString('utf8');\n}\nconst db = typeof raw === 'string' ? JSON.parse(raw) : raw;\nconst done = new Set(db.done || []);\nlet pick = null;\nfor (const service of db.services) {\n  for (const area of db.areas) {\n    for (const brand of db.brands) {\n      const filename = `${service}-${area}.asp`;\n      if (!done.has(filename)) {\n        pick = { area, brand, service, filename, agentData: db };\n        break;\n      }\n    }\n    if (pick) break;\n  }\n  if (pick) break;\n}\nif (!pick) {\n  return [{ json: { skip: true, message: 'All area/brand/service combinations are in done' } }];\n}\nconst areaTitle = pick.area.replace(/-/g, ' ').replace(/\\b\\w/g, c => c.toUpperCase());\nconst serviceTitle = pick.service.replace(/-/g, ' ').replace(/\\b\\w/g, c => c.toUpperCase());\npick.areaTitle = areaTitle;\npick.serviceTitle = serviceTitle;\npick.title = `${serviceTitle} ${areaTitle} - 24/7 Emergency | ColdDirect`;\nreturn [{ json: pick }];"
+      }
+    },
+    {
+      "id": "gemini-seo",
+      "name": "Gemini SEO",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{$env.GEMINI_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ contents: [{ parts: [{ text: `Write one SEO title and one focus keyword for commercial fridge repair in ${$json.areaTitle}. Brand: ${$json.brand}. Service: ${$json.serviceTitle}. Business: ColdDirect. Phone: 07983 759320. Return JSON only: {\\\"title\\\":\\\"\\\",\\\"keyword\\\":\\\"\\\"}` }] }] }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "claude-writer",
+      "name": "Claude Writer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 4000, messages: [{ role: 'user', content: `You are Fable writer. Write a 900 word Classic ASP HTML page for ColdDirect commercial refrigeration. Phone 07983 759320. Area: ${$('Pick Next Area').item.json.areaTitle}. Brand: ${$('Pick Next Area').item.json.brand}. Service: ${$('Pick Next Area').item.json.serviceTitle}. Filename: ${$('Pick Next Area').item.json.filename}. Use templates/page-template.asp placeholders: {TITLE} {AREA} {BRAND} {SERVICE_KEYWORD} {PHONE=07983 759320} {STORY_800_WORDS} {FAQ_JSON}. Return the FULL filled HTML only, no markdown.` }] }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "extract-html",
+      "name": "Extract HTML",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "parameters": {
+        "functionCode": "const prev = items[0].json;\nconst pick = $node['Pick Next Area'].json;\nlet html = '';\nif (prev.content && prev.content[0] && prev.content[0].text) html = prev.content[0].text;\nelse if (prev.candidates && prev.candidates[0]) html = prev.candidates[0].content.parts[0].text;\nhtml = String(html || '').replace(/^```[a-z]*\\n?/i, '').replace(/```$/,'');\nif (!html) throw new Error('Claude returned empty HTML');\nreturn [{ json: { ...pick, html, filename: pick.filename } }];"
+      }
+    },
+    {
+      "id": "create-page-via-agent",
+      "name": "Create Page via Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://colddirect.co.uk/cold-agent-v3.asp?a=create&f={{$json.filename}}&k=CD2026-SECURE",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "html",
+              "value": "={{$json.html}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "update-done-list",
+      "name": "Update Done List",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1780, 300],
+      "parameters": {
+        "functionCode": "const pick = $node['Pick Next Area'].json;\nconst created = items[0].json;\nconst db = JSON.parse(JSON.stringify(pick.agentData));\nif (!Array.isArray(db.done)) db.done = [];\nif (!db.done.includes(pick.filename)) db.done.push(pick.filename);\nreturn [{ json: { filename: pick.filename, created: created.data || created, agentData: db, html: pick.html } }];"
+      }
+    },
+    {
+      "id": "write-agent-data",
+      "name": "Write Agent Data",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [2000, 300],
+      "parameters": {
+        "fileName": "./agent-data.json",
+        "dataPropertyName": "data"
+      }
+    },
+    {
+      "id": "prepare-write",
+      "name": "Prepare Write",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1890, 180],
+      "parameters": {
+        "functionCode": "const db = items[0].json.agentData;\nreturn [{ json: items[0].json, binary: { data: { data: Buffer.from(JSON.stringify(db, null, 2), 'utf8').toString('base64'), mimeType: 'application/json', fileName: 'agent-data.json' } } }];"
+      }
+    },
+    {
+      "id": "whatsapp-notify",
+      "name": "WhatsApp Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.WHATSAPP_WEBHOOK_URL}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: `Page created: https://colddirect.co.uk/${$json.filename}` }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Cron 9am London": {
+      "main": [[{ "node": "Read Agent Data", "type": "main", "index": 0 }]]
+    },
+    "Read Agent Data": {
+      "main": [[{ "node": "Pick Next Area", "type": "main", "index": 0 }]]
+    },
+    "Pick Next Area": {
+      "main": [[{ "node": "Gemini SEO", "type": "main", "index": 0 }]]
+    },
+    "Gemini SEO": {
+      "main": [[{ "node": "Claude Writer", "type": "main", "index": 0 }]]
+    },
+    "Claude Writer": {
+      "main": [[{ "node": "Extract HTML", "type": "main", "index": 0 }]]
+    },
+    "Extract HTML": {
+      "main": [[{ "node": "Create Page via Agent", "type": "main", "index": 0 }]]
+    },
+    "Create Page via Agent": {
+      "main": [[{ "node": "Update Done List", "type": "main", "index": 0 }]]
+    },
+    "Update Done List": {
+      "main": [[{ "node": "Prepare Write", "type": "main", "index": 0 }]]
+    },
+    "Prepare Write": {
+      "main": [[{ "node": "Write Agent Data", "type": "main", "index": 0 }]]
+    },
+    "Write Agent Data": {
+      "main": [[{ "node": "WhatsApp Notify", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+﻿{
+  "areas": ["tottenham","edmonton","enfield","walthamstow","wood-green","palmers-green","barnet","finchley","haringey","islington","camden","hackney","chingford","southgate","winchmore-hill","muswell-hill","hornsey","stoke-newington","dalston","upper-edmonton","lower-edmonton","freezywater","bullsmore","palmers-green","winchmore-hill","oakwood","cockfosters","new-southgate","ar nosegrove","bounds-green","bowes-park"],
+  "brands": ["Williams","Foster","True","Hoshizaki","Gram","Polar","Liebherr","Snomaster"],
+  "services": ["commercial-fridge-repair","commercial-freezer-repair","commercial-fridge-freezer-repair","walk-in-fridge-repair","walk-in-freezer-repair","commercial-cold-room-repair"],
+  "done": ["commercial-freezer-repair-tottenham.asp"]
+}

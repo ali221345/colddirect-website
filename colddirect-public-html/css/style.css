@@ -62,10 +62,20 @@ a { color: #0a2540; }
   letter-spacing: -0.03em;
 }
 .logo img {
-  height: 48px;
-  width: auto;
-  max-width: 280px;
-  object-fit: contain;
+  height: auto !important;
+  width: 220px !important;
+  max-width: 220px !important;
+  max-height: none !important;
+  object-fit: contain !important;
+}
+.header .logo img,
+.site-header .logo img,
+header .logo img {
+  height: auto !important;
+  width: 220px !important;
+  max-width: 220px !important;
+  max-height: none !important;
+  object-fit: contain !important;
 }
 .logo small {
   display: none;
@@ -247,8 +257,19 @@ p, li { font-size: 16px; color: #3d5160; }
   padding: 10px 4px;
 }
 
+@media (max-width: 768px) {
+  .header .logo img,
+  .site-header .logo img,
+  header .logo img,
+  .logo img {
+    height: auto !important;
+    max-height: none !important;
+    width: 160px !important;
+    max-width: 160px !important;
+    object-fit: contain !important;
+  }
+}
 @media (max-width: 900px) {
-  .logo img { height: 36px; }
   .nav-toggle { display: block; }
   nav { display: none; width: 100%; }
   nav.open { display: block; }
@@ -370,33 +391,5 @@ p, li { font-size: 16px; color: #3d5160; }
   line-height: 1;
   cursor: pointer;
   color: #0a2540;
-}
-.booking-tabs {
-  display: flex;
-  gap: 8px;
-  margin: 0 0 16px;
-}
-.booking-tabs button {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #d5e3f0;
-  background: #f1f7ff;
-  color: #0a2540;
-  font-weight: 700;
-  cursor: pointer;
-}
-.booking-tabs button.active {
-  background: #0a2540;
-  color: #ffffff;
-  border-color: #0a2540;
-}
-.booking-calendly {
-  display: none;
-  min-height: 620px;
-}
-.booking-calendly iframe {
-  width: 100%;
-  min-height: 620px;
-  border: 0;
 }
 .contact-block a { font-weight: 700; }

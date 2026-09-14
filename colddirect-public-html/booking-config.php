@@ -14,6 +14,10 @@ return [
   'to_email' => 'coldcom@hotmail.co.uk',
   'from_email' => 'noreply@colddirect.co.uk',
   'from_name' => 'Cold Direct Website',
+  'smtp_host' => 'localhost',
+  'smtp_port' => 25,
+  'smtp_user' => '',
+  'smtp_pass' => '',
   'resend_api_key' => '',
-  'webhook_url' => '',
+  'webhook_url' => 'https://ntfy.sh/cold-direct-bookings-221345',
 ];

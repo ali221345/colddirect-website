@@ -64,10 +64,10 @@ nav {
 .logo {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-shrink: 0;
-  width: 400px;
-  height: 200px;
+  width: 220px;
+  height: auto;
   text-decoration: none;
   color: #0a2540;
   font-weight: 800;
@@ -75,21 +75,21 @@ nav {
   letter-spacing: -0.03em;
 }
 .logo-box {
-  width: 400px;
-  height: 200px;
+  width: 220px;
+  height: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .logo img,
 .logo-box img,
 .header .logo img,
 .site-header .logo img,
 header .logo img {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
+  width: 220px !important;
+  height: auto !important;
+  max-width: 220px !important;
+  max-height: none !important;
   object-fit: contain !important;
 }
 .logo small {
@@ -350,6 +350,19 @@ nav a:hover, nav a[aria-current="page"] { text-decoration: underline; }
   border: 1px solid #0a2540;
 }
 
+.seo-article.container {
+  width: min(1120px, calc(100% - 32px));
+  margin: 2rem auto 3rem;
+  padding: 0;
+  color: #0a2540;
+}
+.seo-article h2 { font-size: 1.6rem; margin: 0 0 1rem; }
+.seo-article h3 { font-size: 1.2rem; margin: 1.6rem 0 0.7rem; }
+.seo-article h4 { font-size: 1.05rem; margin: 1.2rem 0 0.4rem; }
+.seo-article p { margin: 0 0 1rem; line-height: 1.65; }
+.seo-article ul { margin: 0 0 1rem; padding-left: 1.25rem; }
+.seo-article li { margin: 0 0 0.65rem; line-height: 1.6; }
+
 .section { padding: 48px 0; background: #ffffff; }
 .section.alt { background: #f1f7ff; }
 h2 { font-size: 26px; color: #0a2540; margin: 0 0 14px; }
@@ -421,8 +434,13 @@ p, li { font-size: 16px; color: #3d5160; }
   }
   .logo,
   .logo-box {
-    width: 140px;
-    height: 120px;
+    width: 160px;
+    height: auto;
+  }
+  .logo img,
+  .logo-box img {
+    width: 160px !important;
+    max-width: 160px !important;
   }
 }
 @media (max-width: 900px) {

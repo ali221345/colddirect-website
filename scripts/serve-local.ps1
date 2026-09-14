@@ -6,7 +6,7 @@ $listener.Start()
 Write-Output "serving $root on $prefix"
 $mimes = @{
   ".html"="text/html; charset=utf-8"; ".css"="text/css"; ".js"="application/javascript"
-  ".png"="image/png"; ".jpg"="image/jpeg"; ".jpeg"="image/jpeg"; ".ico"="image/x-icon"
+  ".png"="image/png"; ".jpg"="image/jpeg"; ".jpeg"="image/jpeg"; ".ico"="image/x-icon"; ".webp"="image/webp"
   ".xml"="application/xml"; ".svg"="image/svg+xml"; ".woff2"="font/woff2"
 }
 while ($listener.IsListening) {
@@ -14,6 +14,10 @@ while ($listener.IsListening) {
   $rel = [Uri]::UnescapeDataString($ctx.Request.Url.AbsolutePath.TrimStart("/"))
   if ([string]::IsNullOrWhiteSpace($rel)) { $rel = "index.html" }
   $path = [IO.Path]::GetFullPath((Join-Path $root $rel))
+  if (-not (Test-Path $path -PathType Leaf)) {
+    if (Test-Path ($path + ".html") -PathType Leaf) { $path = $path + ".html" }
+    elseif (Test-Path (Join-Path $path "index.html") -PathType Leaf) { $path = Join-Path $path "index.html" }
+  }
   if (-not $path.StartsWith($root, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $path -PathType Leaf)) {
     $ctx.Response.StatusCode = 404
     $buf = [Text.Encoding]::UTF8.GetBytes("Not found")

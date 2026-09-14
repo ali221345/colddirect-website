@@ -1,0 +1,12 @@
+GOOGLE SEARCH CONSOLE — Request Indexing (2 URLs per day max)
+
+1. Go to Search Console > URL Inspection
+2. Paste each URL from INDEX-LIST.txt
+3. Click Request Indexing
+4. Do 2 per day max
+
+Today (2026-09-13):
+- https://www.colddirect.co.uk/commercial-fridge-repair-north-london.html
+- https://www.colddirect.co.uk/commercial-fridge-repair-london.html
+
+Do not submit more than these two today.

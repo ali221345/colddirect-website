@@ -40,14 +40,14 @@ $areas = @(
     meta="24/7 commercial refrigeration repair in Islington. Upper Street, Angel and Clerkenwell. Call 0203 952 4822."
     kicker="Commercial refrigeration engineers Islington - 24/7 emergency"
     h1="Commercial Refrigeration Repair in Islington"
-    lead="Cold rooms, prep fridges and cellar plant for Upper Street, Angel, Clerkenwell and Holloway. Call 0203 952 4822."
+    lead="Cold rooms, prep fridges and cellar plant for Upper Street, Angel, Clerkenwell and Highbury. Call 0203 952 4822."
     postcodes="N1, N7 and EC1 on the Clerkenwell boundary"
-    places="Angel, Upper Street, Clerkenwell, Holloway, Highbury, Canonbury, Barnsbury and King's Cross edge sites"
+    places="Angel, Upper Street, Clerkenwell, Highbury, Canonbury, Barnsbury and King's Cross edge sites"
     nearby="Camden, City of London, Hackney and Haringey"
     unique=@"
       <h2>Commercial refrigeration along Upper Street and Angel</h2>
       <p>Islington packs more restaurant, pub and cafe refrigeration into a short stretch of N1 than most London boroughs. Upper Street, Exmouth Market and the lanes around Angel run long hours. When a walk-in climbs during Saturday brunch, the pass stops. Cold Direct covers Islington from our North London radius and books the engineer on the phone.</p>
-      <p>Typical faults are dirty condensers in basement plant rooms, failed evaporator fans on Williams and Foster uprights, leaking door heaters on walk-ins, and cellar coolers that cannot keep up after a barrel delivery. Clerkenwell hotel kitchens often have remote packs on roofs. Holloway Road takeaways run older Polar and Blizzard under-counters. We tell you honestly if a repair is cheaper than a replacement.</p>
+      <p>Typical faults are dirty condensers in basement plant rooms, failed evaporator fans on Williams and Foster uprights, leaking door heaters on walk-ins, and cellar coolers that cannot keep up after a barrel delivery. Clerkenwell hotel kitchens often have remote packs on roofs. Highbury takeaways run older Polar and Blizzard under-counters. We tell you honestly if a repair is cheaper than a replacement.</p>
 "@ }
   @{ slug="westminster"; name="Westminster"; title="Commercial Refrigeration Repair Westminster | 24/7 | Cold Direct"
     meta="24/7 commercial refrigeration repair in Westminster, Soho, Covent Garden and Victoria. Call 0203 952 4822."
@@ -283,14 +283,14 @@ function Get-SharedBody($a) {
       <p>Most commercial faults we see in $n are the same handful: dirty condensers, failed evaporator fans, leaking door furniture, iced evaporators, weak compressors, and controllers that have lost their set point after a power dip. We diagnose on site, quote the repair before we start, and carry common Williams, Foster, Polar, Blizzard, Gram and Hoshizaki parts so first-visit fixes stay high. If a part has to be ordered, we tell you the lead time before you commit. If food is already at risk we say so before a long repair and talk through a temporary hold or a hired cabinet.</p>
       <h2>How a call-out in $n works</h2>
       <p>You call 07983 759320, 0800 112 3427 or 0203 952 4822. You speak to someone who books refrigeration work every day. Give the site name, the postcode in $pc, the make if you can see the data plate, the last safe temperature reading, and whether the fans are still turning. We will tell you whether we can attend today. Typical attendance in inner North and central London is 60 to 90 minutes. Sites south of the river or on the westbound A40 take longer. We will not invent a miracle time. We will give you a booked slot. Use the mobile after hours, the freephone from a landline on the pass, and the London office for planned PPM.</p>
-      <p>On arrival we test air on and off the coil, check gaskets with a paper test, look at how stock is stacked against the evaporator, and inspect the condenser. Then we quote. Then we fix. We will not leave a room electrically unsafe. We will not ask staff to chip ice with a metal bar. Night work is standard for hospitality in $n. Put all three numbers on the duty manager board with a link to <a href="https://www.colddirect.co.uk/contact.html">https://www.colddirect.co.uk/contact</a> for email, Calendly and written cabinet lists.</p>
+      <p>On arrival we test air on and off the coil, check gaskets with a paper test, look at how stock is stacked against the evaporator, and inspect the condenser. Then we quote. Then we fix. We will not leave a room electrically unsafe. We will not ask staff to chip ice with a metal bar. Night work is standard for hospitality in $n. Put all three numbers on the duty manager board with a link to <a href="https://www.colddirect.co.uk/contact.html">https://www.colddirect.co.uk/contact</a> for email and written cabinet lists.</p>
       <h2>Keywords this $n page is built to win</h2>
       <p>Research on the live results for Cold Direct and commercial refrigeration London shows the brand already appears, but the commercial intent queries are won by dedicated area URLs: commercial refrigeration repair $n, commercial fridge repair $n, commercial refrigeration engineer $n, emergency cold room repair $n, cellar cooler repair $n, and 24/7 catering refrigeration $n. Directory pages and thin homepage mentions do not beat those URLs. This page uses British English, names $pl, and keeps every call-to-action on colddirect.co.uk.</p>
       <p>Internal links stay on this domain: <a href="index.html">homepage</a>, <a href="https://www.colddirect.co.uk/contact.html">contact</a>, <a href="commercial-fridge-repair-north-london.html">commercial fridge repair</a>, <a href="commercial-freezer-repair-north-london.html">commercial freezer repair</a>, and the cold room and cellar pages. Nearby cover includes $nb. North London 25 mile radius still applies. Multi-site operators can book more than one address on the same night if the diary allows. If the chiller room is holding but the freezer is in alarm, say which room first.</p>
       <h2>Brands and areas in $n</h2>
       <p>Williams, Foster, True, Hoshizaki, Polar, Blizzard, Gram, Lec, Snomaster, Tefcold and mixed pack systems. Ice machines include Hoshizaki and Scotsman. Send a photo of the data sticker if you want a parts check before travel. Areas covered: $pl. Postcodes $pc. Nearby $nb.</p>
       <p>Cold Direct remains commercial only. Restaurants, pubs, bars, cafes, hotels, shops, canteens and production kitchens in $n are in scope. Domestic households are not. That focus is how we keep vans stocked for trade parts instead of washing-machine belts. If you searched for Cold Direct and commercial refrigeration London, you want the firm that already owns the domain and the phone numbers, not a directory listing on someone else's site. Send a WhatsApp photo of the model plate if you want a parts check before the van leaves.</p>
-      <img src="images/cold-room.jpg" alt="Commercial walk-in cold room repaired by Cold Direct in $n" style="margin:20px 0;width:100%;height:280px;object-fit:cover">
+      <img src="images/cold-room.webp" alt="Commercial walk-in cold room repaired by Cold Direct in $n" style="margin:20px 0;width:100%;height:280px;object-fit:cover">
       <h2>Other London commercial refrigeration pages</h2>
       <p>$links</p>
 "@
@@ -355,7 +355,7 @@ body{background:#ffffff;color:#0a2540}
 .btn,.btn-light,.btn-dark,.sticky-cta a{background:#0a2540 !important;color:#ffffff !important}
 .topbar,.cta-band,.site-footer,.sticky-cta{background:#f1f7ff !important;color:#0a2540 !important}
 </style>
-  <link rel="stylesheet" href="css/styles.css?v=booking1">
+  <link rel="stylesheet" href="css/styles.css?v=navwrap1">
   <script type="application/ld+json">
 $schema
   </script>
@@ -373,7 +373,7 @@ $schema
   </div>
   <header class="site-header">
     <div class="wrap">
-      <a class="logo" href="/"><img src="images/cold-direct-logo.png?v=1" alt="Cold Direct" width="180" height="48" fetchpriority="high"></a>
+      <a class="logo" href="/"><div class="logo-box"><img src="images/cold_direct_badge_logo.webp" alt="Cold Direct - Commercial Refrigeration Engineers - 24/7 Emergency Repair" width="400" height="400" fetchpriority="high"></div></a>
       <button class="nav-toggle" type="button">Menu</button>
       <nav>
         <ul>
@@ -388,6 +388,9 @@ $schema
           <li><a href="cellar-cooler-repair-london.html">Cellar cooler</a></li>
           <li><a href="bottle-cooler-repair-london.html">Bottle cooler</a></li>
           <li><a href="wine-cooler-repair-london.html">Wine cooler</a></li>
+          <li><a href="commercial-appliances-repair-london.html">Commercial appliances</a></li>
+          <li><a href="catering-repair-london.html">Catering repair</a></li>
+          <li><a href="appliances-repair-london.html">Appliances repair</a></li>
         </ul>
       </nav>
     </div>

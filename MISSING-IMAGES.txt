@@ -1,0 +1,22 @@
+# MISSING-IMAGES.txt
+
+2026-09-13
+
+/images/commercial-fridge-repair-london.webp
+- Status: FILE EXISTS (not missing)
+- Used in: commercial-fridge-repair-london.html, commercial-fridge-repair-north-london.html
+- Spec: webp, 800px width, <150KB, white background, professional
+- On disk (colddirect-public-html/images and images/): ~310.5 KB — OVER 150KB
+- Width/height: not verified as 800x600; HTML attributes set to width="800" height="600"
+- White background: not verified (existing site photo)
+- Placeholder path if a compressed 800px <150KB version is produced later: /images/commercial-fridge-repair-london.webp
+
+Smaller existing webp (does not use the specified filename):
+- /images/commercial-fridge-repair.webp — ~31.5 KB (meets size; not the specified path)
+
+2026-09-13 Deep Image Auditor
+/images/true-fridge-repair-london.webp
+- Status: MISSING
+- Needed by: colddirect-public-html/true-fridge-repair-london.html
+- HTML now points at this placeholder path (was wrongly using polar-fridge-repair.webp)
+- Spec: webp, 800px, <150KB, white background, True commercial fridge

@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" href="images/cold-direct-icon.png">
-  <link rel="apple-touch-icon" href="images/cold-direct-icon.png">
-  <title>Commercial Cold Room Repair | London | Cold Direct</title>
-  <meta name="description" content="24/7 commercial cold room, walk-in freezer and commercial fridge freezer repair in London. Call 07983 759320. Trade only.">
+  <link rel="icon" href="/favicon.ico">
+  
+  <link rel="apple-touch-icon" href="/images/logo/favicon-512.png">
+  <title>Commercial Refrigeration Repair North London | Cold Direct - 24/7 Enfield</title>
+  <meta name="description" content="24/7 emergency commercial refrigeration repair North London. Fridge, freezer and cold room. 27 Felixstowe Road, Enfield N9 0DX. Call 020 3952 4822.">
   <link rel="canonical" href="https://www.colddirect.co.uk/">
   <style id="light-theme">
 body{background:#ffffff;color:#0a2540}
@@ -22,113 +22,68 @@ body{background:#ffffff;color:#0a2540}
   <link rel="stylesheet" href="css/styles.css?v=navwrap2">
   <link rel="stylesheet" href="/assets/slider.css">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "LocalBusiness",
-        "name": "Cold Direct",
-        "image": "https://www.colddirect.co.uk/images/cold_direct_badge_logo.webp",
-        "url": "https://www.colddirect.co.uk/",
-        "telephone": "+447983759320",
-        "areaServed": ["London", "Greater London"],
-        "openingHours": "Mo-Su 00:00-23:59",
-        "openingHoursSpecification": {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-          "opens": "00:00",
-          "closes": "23:59"
-        }
-      },
-      {
-        "@type": "Service",
-        "name": "Commercial refrigeration repair London",
-        "serviceType": "Commercial refrigeration repair",
-        "provider": { "@type": "LocalBusiness", "name": "Cold Direct" },
-        "areaServed": ["London", "Greater London"],
-        "hoursAvailable": "Mo-Su 00:00-23:59"
-      }
-    ]
-  }
+{
+  "@context": "https://schema.org",
+  "@type": "HVACBusiness",
+  "@id": "https://www.colddirect.co.uk/#business",
+  "name": "Cold Direct - Commercial Refrigeration Repair",
+  "url": "https://www.colddirect.co.uk/",
+  "image": "https://www.colddirect.co.uk/images/logo/colddirect-main.webp",
+  "telephone": ["+442039524822", "+448001123427", "+447983759320"],
+  "priceRange": "££",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "27 Felixstowe Road",
+    "addressLocality": "Enfield",
+    "addressRegion": "Greater London",
+    "postalCode": "N9 0DX",
+    "addressCountry": "GB"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "51.6478",
+    "longitude": "-0.0701"
+  },
+  "areaServed": [
+    {"@type": "City", "name": "Enfield"}, {"@type": "City", "name": "Barnet"},
+    {"@type": "City", "name": "Finchley"}, {"@type": "City", "name": "Wood Green"},
+    {"@type": "City", "name": "Tottenham"}, {"@type": "City", "name": "Camden"},
+    {"@type": "City", "name": "Islington"}, {"@type": "City", "name": "Haringey"},
+    {"@type": "City", "name": "Walthamstow"}, {"@type": "City", "name": "Edmonton"}
+  ],
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "38"
+  },
+  "description": "24/7 Emergency Commercial Refrigeration Repair North London - Fridge, Freezer, Cold Room. 2-4 hour response. Commercial only."
+}
   </script>
 </head>
 <body>
-  <div class="topbar">
-    <div class="wrap">
-      <span>24/7 Emergency - Commercial refrigeration only</span>
-      <div class="phones">
-        <a href="tel:+447983759320"><span>Mobile</span> 07983 759320</a>
-        <a href="tel:08001123427"><span>Freephone</span> 0800 112 3427</a>
-        <a href="tel:+442039524822"><span>London Office</span> 0203 952 4822</a>
-      </div>
-    </div>
-  </div>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="logo" href="/">
-        <div class="logo-box">
-          <img src="images/cold_direct_badge_logo.webp" alt="Cold Direct - Commercial Refrigeration Engineers - 24/7 Emergency Repair" width="400" height="400" fetchpriority="high">
-        </div>
-      </a>
-      <button class="nav-toggle" type="button">Menu</button>
-      <nav>
-        <ul>
-          <li><a href="/" aria-current="page">Home</a></li>
-    <li><a href="/about-us">About</a></li>
-    <li><a href="/contact">Contact</a></li>
-          <li><a href="/commercial-fridge-repair-london">Commercial fridge</a></li>
-          <li><a href="/commercial-freezer-repair-london">Commercial freezer</a></li>
-          <li><a href="/cold-room-repair-north-london">Cold room</a></li>
-          <li><a href="/freezer-room-repair-north-london">Freezer room</a></li>
-          <li><a href="/display-cabinet-repair-north-london">Display cabinet</a></li>
-          <li><a href="/cellar-cooler-repair-london">Cellar cooler</a></li>
-          <li><a href="/bottle-cooler-repair-london">Bottle cooler</a></li>
-          <li><a href="/wine-cooler-repair-london">Wine cooler</a></li>
-    <li class="has-sub"><a href="/polar-fridge-repair-london">Brands</a>
-      <ul class="sub">
-        <li><a href="/polar-fridge-repair-london">Polar fridge</a></li>
-        <li><a href="/adexa-fridge-repair-london">Adexa fridge</a></li>
-        <li><a href="/empire-fridge-repair-london">Empire fridge</a></li>
-        <li><a href="/hoshizaki-ice-machine-repair-london">Hoshizaki ice machine</a></li>
-        <li><a href="/subzero-fridge-repair-london">Sub-Zero fridge</a></li>
-        <li><a href="/subzero-freezer-repair-london">Sub-Zero freezer</a></li>
-        <li><a href="/williams-freezer-repair-london">Williams freezer</a></li>
-      </ul>
-    </li>
-    <li class="has-sub"><a href="/ice-machine-repair-london">Repairs</a>
-      <ul class="sub">
-        <li><a href="/ice-machine-repair-london">Ice machine</a></li>
-        <li><a href="/ice-cream-machine-repair-london">Ice cream machine</a></li>
-        <li><a href="/fridge-repair-london">Fridge repair</a></li>
-        <li><a href="/freezer-repair-london">Freezer repair</a></li>
-        <li><a href="/commercial-appliances-repair-london">Commercial appliances repair London</a></li>
-        <li><a href="/catering-repair-london">Catering repair London</a></li>
-        <li><a href="/appliances-repair-london">Appliances repair London</a></li>
-      </ul>
-    </li>
-    <li><a href="/commercial-appliances-repair-london">Commercial appliances</a></li>
-    <li><a href="/catering-repair-london">Catering repair</a></li>
-    <li><a href="/appliances-repair-london">Appliances repair</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <!--#include virtual="/includes/header-nav.inc" -->
 
   <div class="home-slider" id="home-slider">
-    <div class="slide on" style="background-image:url('/images/homepage-hero-chiller.webp')"></div>
-    <div class="slide" style="background-image:url('/images/commercial-fridge-north-london.webp')"></div>
-    <div class="slide" style="background-image:url('/images/commercial-freezer-repair-london.webp')"></div>
-    <div class="slide" style="background-image:url('/images/empire-fridge.webp')"></div>
-    <div class="slide" style="background-image:url('/images/bottle-cooler.webp')"></div>
-    <div class="slide" style="background-image:url('/images/polar-fridge.webp')"></div>
-    <div class="slide" style="background-image:url('/images/sub-zero-fridge.webp')"></div>
-    <div class="slide" style="background-image:url('/images/williams-fridge.webp')"></div>
-    <div class="slide" style="background-image:url('/images/adexa-fridge.webp')"></div>
-    <div class="slide" style="background-image:url('/images/wine-cooler.webp')"></div>
+    <div class="slide on" style="background-image:url('/images/chiller-repair-london.webp')" role="img" aria-label="Chiller repair North London - rooftop air-cooled chiller"></div>
+    <div class="slide" style="background-image:url('/images/commercial-fridge-north-london.webp')" role="img" aria-label="Commercial fridge repair Enfield - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/commercial-freezer-repair-london.webp')" role="img" aria-label="Commercial freezer repair North London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/empire-fridge-repair-london.webp')" role="img" aria-label="Empire fridge repair London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/bottle-cooler.webp')" role="img" aria-label="Bottle cooler repair North London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/polar-fridge-repair-london.webp')" role="img" aria-label="Polar fridge repair Enfield - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/subzero-fridge-repair-london.webp')" role="img" aria-label="Sub-Zero fridge repair North London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/williams-fridge-repair-london.webp')" role="img" aria-label="Williams fridge repair London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/adexa-fridge-repair-london.webp')" role="img" aria-label="Adexa fridge repair North London - Cold Direct"></div>
+    <div class="slide" style="background-image:url('/images/wine-cooler.webp')" role="img" aria-label="Wine cooler repair North London - Cold Direct"></div>
     <div class="hero-copy">
       <div class="wrap">
         <p class="kicker">North London · commercial only · 24/7</p>
-        <h1>Commercial Refrigeration Repair North London &amp; London</h1>
+        <h1>Commercial Refrigeration Repair North London</h1>
         <p class="lead">When a restaurant fridge, pub cellar or shop cold room fails, you lose stock and trade. Cold Direct is a commercial-only repair team. Need emergency <a href="/commercial-freezer-repair-london">commercial freezer repair London</a> or <a href="/commercial-fridge-repair-london">commercial fridge repair London</a>? We book the engineer on the phone.</p>
         <div class="cta-row">
           <a class="btn btn-dark" href="tel:+442039524822">020 3952 4822</a>
@@ -152,8 +107,8 @@ body{background:#ffffff;color:#0a2540}
       <p>A warm walk-in at 10pm on a Saturday is an emergency, not a Monday job. We run 24/7 emergency commercial refrigeration repair so chefs, duty managers and night porters can get a number that answers. You speak to someone who books refrigeration work every day. You get a time, not a ticket number.</p>
       <p>Most commercial faults we see are the same handful: dirty condensers, failed evaporator fans, leaking door furniture, iced evaporators, weak compressors, and controllers that have lost their set point. We diagnose on site, quote the repair before we start, and carry common Williams, Foster, Polar, Blizzard and Gram parts so first-visit fixes stay high. If a part has to be ordered, we tell you the lead time before you commit.</p>
       <div class="photo-row">
-        <img src="images/display-cabinets.jpg" alt="Commercial glass display refrigerators in a shop">
-        <img src="images/pub-cellar.jpg" alt="Pub cellar cooling equipment and beer kegs">
+        <img src="images/display-cabinets.webp" alt="Commercial glass display refrigerators in a shop">
+        <img src="images/pub-cellar.webp" alt="Pub cellar cooling equipment and beer kegs">
       </div>
     </div>
   </section>
@@ -175,25 +130,25 @@ body{background:#ffffff;color:#0a2540}
           <a class="more" href="/commercial-freezer-repair-london">commercial freezer repair London</a>
         </article>
         <article class="card">
-          <img src="/images/homepage/cold-room.webp" alt="Walk-in cold room at +3C with refrigeration technician">
+          <img src="/images/cold-room-north-london-thumb.webp" alt="Cold room repair North London - walk-in chill room">
           <h3>Cold room repair</h3>
           <p>Walk-in chillers for restaurants, butchers and catering production.</p>
           <a class="more" href="/cold-room-repair-north-london">Cold room repair →</a>
         </article>
         <article class="card">
-          <img src="/images/homepage/freezer-room.webp" alt="Walk-in freezer room at -20C with two refrigeration engineers">
+          <img src="/images/freezer-room-north-london-thumb.webp" alt="Freezer room repair North London - walk-in freezer">
           <h3>Freezer room repair</h3>
           <p>Walk-in freezer rooms for wholesale, ice cream and frozen storage.</p>
           <a class="more" href="/freezer-room-repair-north-london">Freezer room repair →</a>
         </article>
         <article class="card">
-          <img src="images/display-cabinets.jpg" alt="Display cabinet">
+          <img src="images/display-cabinets.webp" alt="Display cabinet">
           <h3>Display cabinet repair</h3>
           <p>Serve-over, multideck and glass-door merchandisers.</p>
           <a class="more" href="/display-cabinet-repair-north-london">Display cabinet repair →</a>
         </article>
         <article class="card">
-          <img src="images/pub-cellar.jpg" alt="Cellar cooler">
+          <img src="images/pub-cellar.webp" alt="Cellar cooler">
           <h3>Cellar cooler repair</h3>
           <p>Pub and bar cellar cooling so beer and kegs stay in spec.</p>
           <a class="more" href="/cellar-cooler-repair-london">Cellar cooler repair →</a>
@@ -209,6 +164,24 @@ body{background:#ffffff;color:#0a2540}
           <h3>Wine cooler repair</h3>
           <p>Commercial wine cabinets for restaurants, hotels and off-licences.</p>
           <a class="more" href="/wine-cooler-repair-london">Wine cooler repair →</a>
+        </article>
+        <article class="card">
+          <img src="/images/chiller-repair-north-london-thumb.webp" alt="Chiller repair North London - air-cooled rooftop chiller">
+          <h3>Chiller repair London</h3>
+          <p>Air-cooled, water and process chillers for restaurants and bars. Commercial only.</p>
+          <a class="more" href="/chiller-repair-london.html">Chiller repair London →</a>
+        </article>
+        <article class="card">
+          <img src="/images/dairy-cabinet-repair.webp" alt="Supermarket dairy cabinet repair London">
+          <h3>Supermarket fridge repair</h3>
+          <p>Multideck, island freezers and dairy cabinets. Early morning trade callouts.</p>
+          <a class="more" href="/supermarket-fridge-repair-london.html">Supermarket fridge repair London →</a>
+        </article>
+        <article class="card">
+          <img src="/images/catering-repair.webp" alt="Commercial kitchen air conditioning repair London">
+          <h3>Air conditioning repair London</h3>
+          <p>Commercial AC for restaurants, takeaways and shops. Split and VRF. Not domestic.</p>
+          <a class="more" href="/air-conditioning-repair-london.html">Air conditioning repair London →</a>
         </article>
       </div>
     </div>
@@ -255,7 +228,7 @@ body{background:#ffffff;color:#0a2540}
         <li>All London (25 mile radius)</li>
       </ul>
       <h2>London Cold Chain repair pages</h2>
-      <p>Twenty dedicated London pages for crawlers and local search. Each borough page has unique Cold Chain copy, LocalBusiness schema and a path to book.</p>
+      <p>Dedicated London pages for fast local response. Each borough page has unique Cold Chain copy, LocalBusiness schema and a path to book.</p>
       <ul class="areas">
         <li><a href="/commercial-refrigeration-repair-camden">Camden</a></li>
         <li><a href="/commercial-refrigeration-repair-islington">Islington</a></li>
@@ -313,6 +286,9 @@ body{background:#ffffff;color:#0a2540}
 <li><a href="commercial-fridge-repair-london.asp">Commercial Fridge Repair London</a></li>
 <li><a href="walk-in-fridge-repair-london.asp">Walk-in Fridge Repair London</a></li>
 <li><a href="ice-machine-repair-london.asp">Ice Machine Repair London</a></li>
+<li><a href="/chiller-repair-london.html">Chiller Repair London</a></li>
+<li><a href="/supermarket-fridge-repair-london.html">Supermarket Fridge Repair London</a></li>
+<li><a href="/air-conditioning-repair-london.html">Air Conditioning Repair London</a></li>
 <li>View all 24 commercial services in <a href="sitemap.xml">sitemap</a></li>
 </ul>
 </section>
@@ -320,8 +296,14 @@ body{background:#ffffff;color:#0a2540}
     <div class="wrap">
       <div class="grid">
         <div>
-          <h3>Cold Direct</h3>
-          <p>North London Commercial Refrigeration Engineers. Commercial equipment only. 24/7 emergency call-out across a 25 mile radius.</p>
+          <h3>Cold Direct - Commercial Refrigeration Engineers</h3>
+          <p class="nap-block">
+            27 Felixstowe Road, Enfield, London N9 0DX<br>
+            Tel: <a href="tel:+442039524822">020 3952 4822</a> / <a href="tel:08001123427">0800 112 3427</a><br>
+            Mob: <a href="tel:+447983759320">07983 759320</a><br>
+            24/7 Emergency - 25 mile radius North London<br>
+            Moved from Holloway Road - Same Business, Same Reviews
+          </p>
         </div>
         <div>
           <h3>Call</h3>
@@ -340,7 +322,7 @@ body{background:#ffffff;color:#0a2540}
             <a href="/cellar-cooler-repair-london">Cellar cooler</a>
           </p>
           <p>
-            <a href="/freezer-repair-london.html">Freezer Repair London</a> | <a href="/fridge-repair-london.html">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london.html">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london.html">Cold Room Repair</a>
+            <a href="/freezer-repair-london.html">Freezer Repair London</a> | <a href="/fridge-repair-london.html">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london.html">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london.html">Cold Room Repair</a> | <a href="/chiller-repair-london.html">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london.html">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london.html">Air Conditioning Repair London</a>
           </p>
         </div>
       </div>
@@ -353,7 +335,7 @@ body{background:#ffffff;color:#0a2540}
     <a href="tel:+442039524822">0203 952 4822</a>
   </div>
   <script src="js/main.js"></script>
-  <script src="/js/booking.js?v=20260910a"></script>
+  <script src="/assets/booking.js?v=20260912c"></script>
   <script src="/assets/slider.js"></script>
 </body>
 </html>

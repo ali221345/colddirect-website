@@ -99,6 +99,34 @@ function cd_http_get($url)
   return false;
 }
 
+function cd_brand_token($filename)
+{
+  $name = strtolower(basename(str_replace('\\', '/', $filename)));
+  $brands = array('williams', 'foster', 'true', 'gram', 'polar', 'blizzard', 'adexa', 'empire', 'hoshizaki', 'sub-zero', 'subzero');
+  usort($brands, function ($a, $b) {
+    return strlen($b) - strlen($a);
+  });
+  foreach ($brands as $b) {
+    if (strpos($name, $b) !== false) {
+      if ($b === 'subzero' || $b === 'sub-zero') {
+        return 'sub-zero';
+      }
+      return $b;
+    }
+  }
+  return '';
+}
+
+function cd_brands_compatible($destName, $srcPath)
+{
+  $d = cd_brand_token($destName);
+  $s = cd_brand_token($srcPath);
+  if ($d === '' || $s === '') {
+    return true;
+  }
+  return $d === $s;
+}
+
 function cd_restore_image($name, $dest, $restoreDir, $imagesDir, $aliases, $githubBase, $logFile, $time)
 {
   $sources = array();
@@ -116,6 +144,14 @@ function cd_restore_image($name, $dest, $restoreDir, $imagesDir, $aliases, $gith
     if (!is_file($src) || filesize($src) < 1000) {
       continue;
     }
+    if (!cd_brands_compatible($name, $src)) {
+      file_put_contents(
+        $logFile,
+        "[$time] SKIP_BRAND_MISMATCH will not copy " . basename($src) . " onto $name\n",
+        FILE_APPEND
+      );
+      continue;
+    }
     if (@copy($src, $dest)) {
       @chmod($dest, 0644);
       file_put_contents(
@@ -125,6 +161,12 @@ function cd_restore_image($name, $dest, $restoreDir, $imagesDir, $aliases, $gith
       );
       return true;
     }
+  }
+
+  if (!cd_brands_compatible($name, $githubBase . $name)) {
+    file_put_contents($logFile, "[$time] SKIP_BRAND_MISMATCH GitHub URL for $name\n", FILE_APPEND);
+    file_put_contents($logFile, "[$time] RESTORE_FAILED $name\n", FILE_APPEND);
+    return false;
   }
 
   $remote = cd_http_get($githubBase . rawurlencode($name));

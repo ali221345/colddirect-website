@@ -1,0 +1,57 @@
+OLD-IMAGES-BACKUP.txt
+Created: 2026-09-13
+Purpose: Inventory of heavy JPEGs BEFORE delete. This is a list only (files were not copied off-disk).
+Do not restore these into production if WebP replacements exist.
+
+=== DELETE CANDIDATES (webp exists; HTML/PHP/CSS/JS/INC/ASP refs = 0) ===
+
+/images/display-cabinets.jpg
+  bytes: 2574752 (2,514.4 KB)
+  webp:  /images/display-cabinets.webp (63432 bytes)
+  also:  /colddirect-public-html/images/display-cabinets.jpg (same bytes)
+
+/images/pub-cellar.jpg
+  bytes: 2460303 (2,402.6 KB)
+  webp:  /images/pub-cellar.webp (41648 bytes)
+  also:  /colddirect-public-html/images/pub-cellar.jpg (same bytes)
+
+/images/commercial-freezer.jpg
+  bytes: 2225119 (2,173.0 KB)
+  webp:  /images/commercial-freezer-repair-london.webp (18436 bytes)
+  also:  /colddirect-public-html/images/commercial-freezer.jpg (same bytes)
+
+=== OTHER JPG >500KB IN /images/ (NOT DELETED) ===
+
+/images/cold-room.webp
+  bytes: 2467559 (2,409.7 KB)
+  reason kept: still referenced by many HTML pages; no cold-room.webp
+
+=== OTHER JPG IN /images/ UNDER 500KB (NOT DELETED) ===
+
+/images/commercial-freezer-repair-north-london-engineer-original.jpg  361083
+/images/cold_direct_badge_logo.jpg  279864
+/images/commercial-freezer-repair-north-london-engineer.jpg  109545
+/images/brands/*.jpg  (fallbacks — keep)
+
+=== VERIFY BEFORE DELETE ===
+
+Grep in *.html, *.php, *.css, *.js, *.inc, *.asp:
+  display-cabinets.jpg  -> 0
+  pub-cellar.jpg        -> 0
+  commercial-freezer.jpg -> 0
+
+Markdown/agent reports may still name the old files. Those are not live page src.
+
+=== SHA256 BEFORE DELETE ===
+
+images\display-cabinets.jpg  bytes=2574752  sha256=0FE7A62F603FBEA3542870D8FB8722FE5CAEECDF04BF4EAB4643DC8CA1FB1B29
+images\pub-cellar.jpg  bytes=2460303  sha256=E0C65CB717EFCA6B21248461718414230C879324B0925AC83F2B4592CCE7611F
+images\commercial-freezer.jpg  bytes=2225119  sha256=6980B3ACBB23304AA6685E53D4F30A7A34AD73CD6A23FA03126B8C9A3A5FC07B
+colddirect-public-html\images\display-cabinets.jpg  bytes=2574752  sha256=0FE7A62F603FBEA3542870D8FB8722FE5CAEECDF04BF4EAB4643DC8CA1FB1B29
+colddirect-public-html\images\pub-cellar.jpg  bytes=2460303  sha256=E0C65CB717EFCA6B21248461718414230C879324B0925AC83F2B4592CCE7611F
+colddirect-public-html\images\commercial-freezer.jpg  bytes=2225119  sha256=6980B3ACBB23304AA6685E53D4F30A7A34AD73CD6A23FA03126B8C9A3A5FC07B
+
+=== cold-room.jpg SHA256 BEFORE DELETE (2026-09-13 cold-room webp pass) ===
+
+images\cold-room.jpg  bytes=2467559  sha256=34F1691DB05A11927C0EDD12CBBE2D9D086AAA99877B09BDD192576D84134690
+colddirect-public-html\images\cold-room.jpg  bytes=2467559  sha256=34F1691DB05A11927C0EDD12CBBE2D9D086AAA99877B09BDD192576D84134690

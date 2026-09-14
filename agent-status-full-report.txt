@@ -1,0 +1,168 @@
+# Cold Direct - Site Status Report - 14 Sep 2026 14:22 BST
+
+Live site: https://www.colddirect.co.uk/
+Checker: https://www.colddirect.co.uk/agent-status.html
+Git: branch main, 1 commit ahead of origin/main, large uncommitted working tree (slider, brand pages, images not in last 10 commits).
+
+## کارهای انجام شده (آخرین 48 ساعت)
+
+Deployed live (13–14 Sep 2026), mostly uncommitted:
+
+- Homepage slider expanded 4 → 8 slides (track 800%, slide 12.5%, 3500ms, lazy images).
+- New slider WebPs uploaded; display-cabinet-fresh-london.webp not re-uploaded (40,954 bytes, older Last-Modified).
+- Undercounter fridge page: kegs/cellar photo replaced with undercounter-fridge-repair-london-HD.webp (25,712 bytes).
+- Williams fridge page: wrong Jade studio hero <img> removed (file kept on server).
+- True fridge page: wrong Polar-looking hero <img> removed (file kept on server).
+- agent-status.html added (HEAD checks for 8 slider assets + undercounter).
+
+Last 10 git commits (older than this live work):
+
+1. 22b86f2 Add Plesk FTP deploy script with gitignored .env credentials
+2. 6939fc9 Replace chiller hero with industrial rooftop chiller London WebP (400px max height)
+3. cce2cf6 Add 301 redirects for short URLs with optional trailing slash
+4. 495bb2b Fix deploy_images.py SyntaxError on html_notes unpack.
+5. 0729d98 Merge branch 'main' of https://github.com/ali221345/colddirect-website
+6. 5fbf31d Add image deploy agent and swap AC/supermarket heroes to compressed WebP.
+7. 8b41223 chore: daily SEO agent sitemap
+8. baa153f Fix: Plesk homepage slider via assets/slider.js and /images/
+9. 3f286e8 Add homepage photo slider and full service grid
+10. 5da68ab feat: hourly image restore and 15-minute keepalive warmup
+
+git diff --stat HEAD~5: 206 files changed, 5590 insertions, 8501 deletions (includes SEO/page/CSS/slider/booking work in the working tree vs that range).
+
+## وضعیت عکس‌ها
+
+- undercounter: LIVE 200, 25,712 bytes, Last-Modified Sun, 13 Sep 2026 22:43:53 GMT. Hero src=/images/undercounter-fridge-repair-london-HD.webp (stainless 3-door prep-top fridge). kegs count on this page: 0. pub-cellar count: 0.
+- williams: no content hero image. Only site logo /images/logo/colddirect-main.webp. williams-fridge-repair-london.webp file was not deleted from /images/.
+- true: no content hero image. Only site logo. true-fridge-repair-london.webp file was not deleted from /images/.
+- slider (8 images): all 8 return 200:
+
+  1. frozen-freezer-icing-london.webp — 200, 39,696 — 13 Sep 2026 21:26:30 GMT
+  2. walk-in-chiller-room-3C-london.webp — 200, 21,116 — 13 Sep 2026 21:27:00 GMT
+  3. display-cabinet-fresh-london.webp — 200, 40,954 — 13 Sep 2026 20:47:29 GMT (older than other slider files; not re-uploaded in 8-slide deploy)
+  4. cellar-cooling-kegs-london.webp — 200, 39,556 — 13 Sep 2026 21:27:30 GMT
+  5. air-conditioning-repair-london-rooftop-HD.webp — 200, 47,814 — 13 Sep 2026 21:46:37 GMT
+  6. ice-cream-machine-repair-HD.webp — 200, 47,966 — 13 Sep 2026 21:47:07 GMT
+  7. chiller-repair-london-rooftop-HD.webp — 200, 42,392 — 13 Sep 2026 21:47:38 GMT
+  8. freezer-room-icing-NEW-HD.webp — 200, 25,620 — 13 Sep 2026 21:48:08 GMT
+
+Homepage live: 8 class="slide" blocks. H1 still "Commercial Refrigeration Repair North London".
+
+## وضعیت صفحات
+
+- undercounter-fridge-repair-london.html: H1 ok (Undercounter Fridge Repair in London). Hero image = undercounter-fridge-repair-london-HD.webp. kegs count = 0.
+- williams-fridge-repair-london.html: H1 ok (Williams Fridge Repair in London). Hero product image removed. Visual: H1 + 3 phone buttons, then text.
+- true-fridge-repair-london.html: H1 ok (True Fridge Repair in London). Hero product image removed. Visual: H1 + 3 phone buttons, then text.
+
+Live img src unique counts:
+
+undercounter:
+  1 src="/images/logo/colddirect-main.webp"
+  1 src="/images/undercounter-fridge-repair-london-HD.webp"
+
+williams:
+  1 src="/images/logo/colddirect-main.webp"
+
+true:
+  1 src="/images/logo/colddirect-main.webp"
+
+## Agent Status
+
+Source of https://www.colddirect.co.uk/agent-status.html (200, 3409 bytes). JS HEAD-checks 9 image/page pairs (8 slider + undercounter). Rendered ticks are client-side.
+
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slider agent status</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #0a2540; }
+    table { border-collapse: collapse; width: 100%; max-width: 1100px; }
+    th, td { border: 1px solid #d5e3f0; padding: 8px 10px; text-align: left; font-size: 14px; }
+    th { background: #f1f7ff; }
+    .ok { color: #0a7a2f; font-weight: 700; }
+    .bad { color: #b00020; font-weight: 700; }
+    h1 { font-size: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Homepage slider health check</h1>
+  <p id="summary">Checking slider and undercounter assets…</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Image</th><th>Image status</th><th>Bytes</th><th>Last-Modified</th><th>Page</th><th>Page status</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+  var items = [
+    { img: "/images/frozen-freezer-icing-london.webp", page: "/commercial-freezer-repair-london.html" },
+    { img: "/images/walk-in-chiller-room-3C-london.webp", page: "/walk-in-fridge-repair-london.html" },
+    { img: "/images/display-cabinet-fresh-london.webp", page: "/display-cabinet-repair-london.html" },
+    { img: "/images/cellar-cooling-kegs-london.webp", page: "/cellar-cooler-repair-london.html" },
+    { img: "/images/air-conditioning-repair-london-rooftop-HD.webp", page: "/air-conditioning-repair-london.html" },
+    { img: "/images/ice-cream-machine-repair-HD.webp", page: "/ice-cream-machine-repair-london.html" },
+    { img: "/images/chiller-repair-london-rooftop-HD.webp", page: "/chiller-repair-london.html" },
+    { img: "/images/freezer-room-icing-NEW-HD.webp", page: "/freezer-room-repair-london.html" },
+    { img: "/images/undercounter-fridge-repair-london-HD.webp", page: "/undercounter-fridge-repair-london.html" }
+  ];
+  function mark(ok) { return ok ? '<span class="ok">✅</span>' : '<span class="bad">❌</span>'; }
+  function head(url) {
+    return fetch(url, { method: "HEAD", cache: "no-store" }).then(function (r) {
+      return {
+        status: r.status,
+        bytes: r.headers.get("content-length") || "",
+        modified: r.headers.get("last-modified") || ""
+      };
+    }).catch(function () {
+      return { status: 0, bytes: "", modified: "" };
+    });
+  }
+  Promise.all(items.map(function (item) {
+    return Promise.all([head(item.img), head(item.page)]).then(function (pair) {
+      return { item: item, img: pair[0], page: pair[1] };
+    });
+  })).then(function (rows) {
+    var tbody = document.getElementById("rows");
+    var imgOk = 0, pageOk = 0;
+    rows.forEach(function (row, i) {
+      if (row.img.status === 200) imgOk++;
+      if (row.page.status === 200) pageOk++;
+      tbody.innerHTML += "<tr><td>" + (i + 1) + "</td><td>" + row.item.img + "</td><td>" +
+        mark(row.img.status === 200) + " " + row.img.status + "</td><td>" + row.img.bytes +
+        "</td><td>" + row.img.modified + "</td><td>" + row.item.page + "</td><td>" +
+        mark(row.page.status === 200) + " " + row.page.status + "</td></tr>";
+    });
+    document.getElementById("summary").textContent = "Images " + imgOk + "/" + rows.length + " · Pages " + pageOk + "/" + rows.length;
+  });
+  </script>
+</body>
+</html>
+
+## مشکلات باقی‌مانده
+
+- Homepage still references images/pub-cellar.webp twice (relative, no leading slash). HEAD https://www.colddirect.co.uk/images/pub-cellar.webp = 404. Not used on undercounter page anymore, but still on homepage (and possibly other pages).
+- Homepage also has 2x images/display-cabinets.webp (relative). Not checked in this pass.
+- /images/pub-cellar.webp missing on server (404). cellar-cooling-kegs-london.webp still 200 for cellar + slider.
+- Williams/True still have old WebP files on disk (intentional; HTML refs removed). Those files can still be wrong-brand if linked elsewhere (image-preview.html still shows Williams Jade shot).
+- Git: last 48h live slider/undercounter/brand-hero work is not committed. Working tree is dirty; branch is ahead 1.
+- Plesk FTP LIST/MDTM at report time failed: 530 User cannot log in. File dates below are from HTTP Last-Modified, not ls -lt.
+
+## Curl Results
+
+HEAD https://www.colddirect.co.uk/images/undercounter-fridge-repair-london-HD.webp
+  200  Content-Length: 25712  Last-Modified: Sun, 13 Sep 2026 22:43:53 GMT
+
+HEAD https://www.colddirect.co.uk/images/cellar-cooling-kegs-london.webp
+  200  Content-Length: 39556  Last-Modified: Sun, 13 Sep 2026 21:27:30 GMT
+
+HEAD https://www.colddirect.co.uk/images/pub-cellar.webp
+  404 Not Found
+
+Slider HEADs: all 200 (sizes/dates in وضعیت عکس‌ها).
+
+Page img src counts: see وضعیت صفحات.
+
+Plesk ls -lt: not available this run (FTP 530). Use Last-Modified above instead.

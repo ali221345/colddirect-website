@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slider agent status</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #0a2540; }
+    table { border-collapse: collapse; width: 100%; max-width: 1100px; }
+    th, td { border: 1px solid #d5e3f0; padding: 8px 10px; text-align: left; font-size: 14px; }
+    th { background: #f1f7ff; }
+    .ok { color: #0a7a2f; font-weight: 700; }
+    .bad { color: #b00020; font-weight: 700; }
+    h1 { font-size: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Homepage slider health check</h1>
+  <p id="summary">Checking slider and undercounter assets…</p>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Image</th><th>Image status</th><th>Bytes</th><th>Last-Modified</th><th>Page</th><th>Page status</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+  var items = [
+    { img: "/images/frozen-freezer-icing-london.webp", page: "/commercial-freezer-repair-london.html" },
+    { img: "/images/walk-in-chiller-room-3C-london.webp", page: "/walk-in-fridge-repair-london.html" },
+    { img: "/images/display-cabinet-fresh-london.webp", page: "/display-cabinet-repair-london.html" },
+    { img: "/images/cellar-cooling-kegs-london.webp", page: "/cellar-cooler-repair-london.html" },
+    { img: "/images/air-conditioning-repair-london-rooftop-HD.webp", page: "/air-conditioning-repair-london.html" },
+    { img: "/images/ice-cream-machine-repair-HD.webp", page: "/ice-cream-machine-repair-london.html" },
+    { img: "/images/chiller-repair-london-rooftop-HD.webp", page: "/chiller-repair-london.html" },
+    { img: "/images/freezer-room-icing-NEW-HD.webp", page: "/freezer-room-repair-london.html" },
+    { img: "/images/undercounter-fridge-repair-london-HD.webp", page: "/undercounter-fridge-repair-london.html" }
+  ];
+  function mark(ok) { return ok ? '<span class="ok">✅</span>' : '<span class="bad">❌</span>'; }
+  function head(url) {
+    return fetch(url, { method: "HEAD", cache: "no-store" }).then(function (r) {
+      return {
+        status: r.status,
+        bytes: r.headers.get("content-length") || "",
+        modified: r.headers.get("last-modified") || ""
+      };
+    }).catch(function () {
+      return { status: 0, bytes: "", modified: "" };
+    });
+  }
+  Promise.all(items.map(function (item) {
+    return Promise.all([head(item.img), head(item.page)]).then(function (pair) {
+      return { item: item, img: pair[0], page: pair[1] };
+    });
+  })).then(function (rows) {
+    var tbody = document.getElementById("rows");
+    var imgOk = 0, pageOk = 0;
+    rows.forEach(function (row, i) {
+      if (row.img.status === 200) imgOk++;
+      if (row.page.status === 200) pageOk++;
+      tbody.innerHTML += "<tr><td>" + (i + 1) + "</td><td>" + row.item.img + "</td><td>" +
+        mark(row.img.status === 200) + " " + row.img.status + "</td><td>" + row.img.bytes +
+        "</td><td>" + row.img.modified + "</td><td>" + row.item.page + "</td><td>" +
+        mark(row.page.status === 200) + " " + row.page.status + "</td></tr>";
+    });
+    document.getElementById("summary").textContent = "Images " + imgOk + "/" + rows.length + " · Pages " + pageOk + "/" + rows.length;
+  });
+  </script>
+</body>
+</html>

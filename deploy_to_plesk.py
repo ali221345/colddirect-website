@@ -1,211 +1,189 @@
 #!/usr/bin/env python3
-"""Upload selected Cold Direct files to Plesk httpdocs over FTP/FTPS."""
+"""Plesk deploy: explicit FTPS on port 21 only (never 990)."""
 from __future__ import annotations
 
 import os
+import ssl
 import sys
+from ftplib import FTP, FTP_TLS, error_perm
 from pathlib import Path
 
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent
+TIMEOUT = 60
+FILES = [
+    (ROOT / "index.html", "index.html"),
+    (ROOT / "index.php", "index.php"),
+    (ROOT / "includes" / "header-nav.inc", "includes/header-nav.inc"),
+]
 
 
-def load_config() -> dict[str, str]:
+def load_env() -> dict[str, str]:
     load_dotenv(ROOT / ".env")
+    load_dotenv()
     cfg = {
-        "host": os.environ.get("PLESK_FTP_HOST", "").strip(),
-        "user": os.environ.get("PLESK_FTP_USER", "").strip(),
-        "password": os.environ.get("PLESK_FTP_PASS", "").strip(),
-        "base": os.environ.get("PLESK_FTP_PATH", "/httpdocs").strip() or "/httpdocs",
+        "host": os.getenv("PLESK_FTP_HOST", "").strip(),
+        "port": os.getenv("PLESK_FTP_PORT", "21").strip() or "21",
+        "user": os.getenv("PLESK_FTP_USER", "").strip(),
+        "password": os.getenv("PLESK_FTP_PASS", "").strip().strip('"').strip("'"),
+        "path": os.getenv("PLESK_FTP_PATH", "/httpdocs").strip() or "/httpdocs",
     }
     missing = [k for k in ("host", "user", "password") if not cfg[k]]
     if missing:
-        print("Missing in .env:", ", ".join(f"PLESK_FTP_{m.upper() if m != 'password' else 'PASS'}" for m in missing))
-        print("Copy .env.example to .env and fill Plesk FTP Access values.")
+        print("Missing in .env:", ", ".join(missing))
         sys.exit(1)
-    if not cfg["base"].startswith("/"):
-        cfg["base"] = "/" + cfg["base"]
+    try:
+        cfg["port_n"] = str(int(cfg["port"]))
+    except ValueError:
+        print("PLESK_FTP_PORT must be an integer")
+        sys.exit(1)
     return cfg
 
 
-def pick_local(*candidates: Path) -> Path | None:
-    for path in candidates:
-        if path.is_file():
-            return path
-    return None
+def user_variants(user: str) -> list[str]:
+    return [user]
 
 
-def remote_join(base: str, *parts: str) -> str:
-    bits = [base.strip("/")] + [p.strip("/").replace("\\", "/") for p in parts if p]
-    return "/" + "/".join(bits)
+class ExplicitFTP_TLS(FTP_TLS):
+    """Explicit FTPS on port 21; reuse TLS session for the data channel (IIS/Plesk)."""
 
+    def ntransfercmd(self, cmd, rest=None):
+        conn, size = FTP.ntransfercmd(self, cmd, rest)
+        if self._prot_p:
+            conn = self.context.wrap_socket(
+                conn,
+                server_hostname=self.host if self.host and not self.host[0].isdigit() else None,
+                session=self.sock.session,
+            )
+        return conn, size
 
-def _ssl_ctx(insecure: bool):
-    import ssl
-
-    ctx = ssl.create_default_context()
-    if insecure:
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-    return ctx
-
-
-def connect(host: str, user: str, password: str):
-    import ftplib
-
-    timeout = 12
-
-    def fail_login(exc: Exception) -> None:
-        print("Connect failed:", exc)
-        print("530 login: update PLESK_FTP_USER / PLESK_FTP_PASS in .env from Plesk FTP Access.")
-        sys.exit(1)
-
-    def try_ftps(insecure: bool):
-        label = "FTPS (cert not verified)" if insecure else "FTPS"
-        ftp = ftplib.FTP_TLS(context=_ssl_ctx(insecure), timeout=timeout)
-        try:
-            ftp.connect(host, 21)
-            ftp.auth()
-            ftp.login(user, password)
-            ftp.prot_p()
-            ftp.set_pasv(True)
-            ftp.encoding = "utf-8"
-            print(f"Connected {label} {host} as {user}")
-            return ftp
-        except ftplib.error_perm as exc:
+    def storbinary(self, cmd, fp, blocksize=8192, callback=None, rest=None):
+        self.voidcmd("TYPE I")
+        with self.transfercmd(cmd, rest) as conn:
+            while True:
+                buf = fp.read(blocksize)
+                if not buf:
+                    break
+                conn.sendall(buf)
+                if callback:
+                    callback(buf)
             try:
-                ftp.close()
-            except Exception:
+                conn.unwrap()
+            except (TimeoutError, OSError, ssl.SSLError):
                 pass
-            fail_login(exc)
-        except Exception as exc:
-            try:
-                ftp.close()
-            except Exception:
-                pass
-            print(f"{label} skipped: {exc}")
-            return None
-
-    ftp = try_ftps(True) or try_ftps(False)
-    if ftp:
-        return ftp
-
-    ftp = ftplib.FTP(timeout=timeout)
-    try:
-        ftp.connect(host, 21)
-        ftp.login(user, password)
-        ftp.set_pasv(True)
-        ftp.encoding = "utf-8"
-        print(f"Connected FTP {host} as {user}")
-        return ftp
-    except Exception as exc:
-        try:
-            ftp.close()
-        except Exception:
-            pass
-        fail_login(exc)
+        return self.voidresp()
 
 
-def ensure_dir(ftp, remote_dir: str) -> None:
-    import ftplib
+def try_ftps(host: str, port: int, user: str, password: str):
+    ctx = ssl._create_unverified_context()
+    ftp = ExplicitFTP_TLS(context=ctx)
+    ftp.connect(host, port, timeout=TIMEOUT)
+    welcome = ftp.getwelcome()
+    ftp.login(user, password)
+    ftp.prot_p()
+    ftp.set_pasv(True)
+    return ftp, welcome
 
-    ftp.cwd("/")
-    for part in remote_dir.strip("/").split("/"):
-        try:
-            ftp.cwd(part)
-        except ftplib.error_perm:
-            ftp.mkd(part)
-            ftp.cwd(part)
+
+def try_ftp(host: str, port: int, user: str, password: str):
+    ftp = FTP()
+    ftp.connect(host, port, timeout=TIMEOUT)
+    welcome = ftp.getwelcome()
+    ftp.login(user, password)
+    ftp.set_pasv(True)
+    return ftp, welcome
 
 
-def remote_size(ftp, remote_path: str) -> int | None:
-    import ftplib
+def diagnose(cfg: dict[str, str]):
+    port = int(cfg["port_n"])
+    password = cfg["password"]
+    hosts = []
+    for host in (cfg["host"], "ftp.colddirect.co.uk"):
+        if host and host not in hosts:
+            hosts.append(host)
 
-    try:
-        return ftp.size(remote_path)
-    except (ftplib.error_perm, ftplib.error_temp, OSError):
-        try:
-            name = remote_path.rsplit("/", 1)[-1]
-            parent = remote_path.rsplit("/", 1)[0] or "/"
-            ftp.cwd(parent)
-            for entry in ftp.nlst():
-                if entry == name or entry.endswith("/" + name):
-                    try:
-                        return ftp.size(name)
-                    except (ftplib.error_perm, ftplib.error_temp, OSError):
-                        return 0
-        except (ftplib.error_perm, ftplib.error_temp, OSError):
-            return None
+    print("ENV: host=%s port=%s user=%s pass=set(%d chars) path=%s" % (
+        cfg["host"], cfg["port_n"], cfg["user"], len(password), cfg["path"],
+    ))
+    print("Diagnose explicit FTPS then plain FTP on port %s (no 990)" % port)
+
+    for host in hosts:
+        host_dead = False
+        for user in user_variants(cfg["user"]):
+            if host_dead:
+                break
+            for mode, fn in (("FTPS", try_ftps), ("FTP", try_ftp)):
+                label = f"{mode} {host}:{port} user={user}"
+                try:
+                    ftp, welcome = fn(host, port, user, password)
+                    print("OK", label)
+                    print("welcome:", welcome.splitlines()[0] if welcome else "")
+                    print("connected")
+                    return ftp
+                except error_perm as exc:
+                    print("FAIL", label, "->", exc)
+                except (TimeoutError, OSError) as exc:
+                    print("NET", label, "->", exc)
+                    continue
+                except ssl.SSLError as exc:
+                    print("SSL", label, "->", exc)
     return None
 
 
 def upload(ftp, local: Path, remote: str) -> None:
-    ensure_dir(ftp, remote.rsplit("/", 1)[0])
+    remote = remote.replace("\\", "/")
+    parent, name = os.path.split(remote)
+    if parent:
+        ftp.cwd(parent)
     with local.open("rb") as fh:
-        ftp.storbinary("STOR " + remote.rsplit("/", 1)[-1], fh)
+        ftp.storbinary("STOR " + name, fh)
+    if parent:
+        ftp.cwd("..")
+    print("uploaded", remote)
 
 
-def jobs(base: str) -> list[tuple[Path, str, bool]]:
-    """(local, remote, only_if_changed)."""
-    html = pick_local(
-        ROOT / "colddirect-public-html" / "chiller-repair-london.html",
-        ROOT / "chiller-repair-london.html",
-    )
-    webp = pick_local(
-        ROOT / "colddirect-public-html" / "images" / "chiller-repair-london.webp",
-        ROOT / "images" / "chiller-repair-london.webp",
-    )
-    webconfig = pick_local(
-        ROOT / "colddirect-public-html" / "web.config",
-        ROOT / "web.config",
-    )
-    out: list[tuple[Path, str, bool]] = []
-    if webp:
-        out.append((webp, remote_join(base, "images", webp.name), False))
-    if html:
-        out.append((html, remote_join(base, html.name), False))
-    if webconfig:
-        out.append((webconfig, remote_join(base, "web.config"), True))
-    return out
+def list_dir(ftp, path: str) -> None:
+    print("Remote check", path)
+    for name in ("index.html", "index.php"):
+        try:
+            print("MDTM", name, ftp.sendcmd("MDTM " + name))
+        except Exception as exc:
+            print("MDTM", name, exc)
+        try:
+            print("SIZE", name, ftp.size(name))
+        except Exception as exc:
+            print("SIZE", name, exc)
 
 
 def main() -> int:
-    cfg = load_config()
-    planned = jobs(cfg["base"])
-    if not planned:
-        print("No local files to deploy.")
+    cfg = load_env()
+    print("Files before upload:")
+    present: list[tuple[Path, str]] = []
+    for local, remote in FILES:
+        if local.is_file():
+            print(f"  {local.name} -> {remote} ({local.stat().st_size} bytes)")
+            present.append((local, remote))
+        else:
+            print("MISSING", local)
+
+    ftp = diagnose(cfg)
+    if ftp is None:
+        print("No login succeeded. Password was not changed. Check Plesk FTP Access / Additional FTP accounts.")
         return 1
 
-    print("Local vs remote")
-    ftp = connect(cfg["host"], cfg["user"], cfg["password"])
-    uploaded = 0
-    skipped = 0
     try:
-        for local, remote, only_if_changed in planned:
-            local_size = local.stat().st_size
-            rsize = remote_size(ftp, remote)
-            remote_label = "MISSING" if rsize is None else f"{rsize} bytes"
-            changed = rsize is None or rsize != local_size
-            action = "UPLOAD" if (changed or not only_if_changed) else "skip"
-            if only_if_changed and not changed:
-                action = "skip (unchanged)"
-            print(f"  {local.relative_to(ROOT)}")
-            print(f"    -> {remote}")
-            print(f"    local {local_size} bytes | remote {remote_label} | {action}")
-            if action.startswith("skip"):
-                skipped += 1
-                continue
+        ftp.cwd(cfg["path"])
+        print("cwd", cfg["path"])
+        for local, remote in present:
             upload(ftp, local, remote)
-            uploaded += 1
-            print("    uploaded")
+        list_dir(ftp, cfg["path"])
     finally:
         try:
             ftp.quit()
         except Exception:
             ftp.close()
-
-    print(f"Done. uploaded={uploaded} skipped={skipped}")
+    print("Done.")
     return 0
 
 

@@ -1,0 +1,12 @@
+{
+  "commercial-fridge-repair-north-london.html": [
+    "commercial-fridge-repair-london.html",
+    "commercial-freezer-repair-north-london.html",
+    "foster-fridge-repair-london.html"
+  ],
+  "commercial-fridge-repair-london.html": [
+    "commercial-fridge-repair-north-london.html",
+    "cold-room-repair-london.html",
+    "williams-fridge-repair-london.html"
+  ]
+}

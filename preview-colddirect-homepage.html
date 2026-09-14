@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PREVIEW ONLY — Cold Direct homepage concept (not live)</title>
+  <style>
+    :root {
+      --navy: #0a2540;
+      --ice: #e8f1fa;
+      --paper: #f7fafc;
+      --white: #ffffff;
+      --amber: #d97706;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Georgia, "Times New Roman", serif; color: var(--navy); background: var(--paper); }
+    a { color: inherit; }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .preview-flag {
+      background: #7f1d1d; color: #fff; text-align: center; padding: 8px 12px;
+      font-family: "Segoe UI", sans-serif; font-size: 13px; font-weight: 700;
+    }
+    .topbar {
+      background: var(--navy); color: #fff; font-family: "Segoe UI", sans-serif; font-size: 13px;
+    }
+    .topbar .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 0; }
+    .topbar a { color: #fff; font-weight: 700; text-decoration: none; }
+    header {
+      background: #fff; border-bottom: 3px solid var(--navy);
+      font-family: "Segoe UI", sans-serif;
+    }
+    header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 0; }
+    header img { height: 72px; width: auto; object-fit: contain; }
+    nav a { text-decoration: none; font-weight: 700; font-size: 14px; margin-left: 16px; }
+    .slider { position: relative; height: min(72vh, 620px); overflow: hidden; background: #000; }
+    .slide {
+      position: absolute; inset: 0; opacity: 0; transition: opacity .7s ease;
+      background-size: cover; background-position: center;
+    }
+    .slide.on { opacity: 1; }
+    .slide::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(10,37,64,.82) 0%, rgba(10,37,64,.35) 58%, rgba(10,37,64,.15) 100%);
+    }
+    .hero-copy {
+      position: relative; z-index: 2; height: 100%;
+      display: flex; align-items: center;
+    }
+    .hero-copy .wrap { color: #fff; }
+    .kicker { font-family: "Segoe UI", sans-serif; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; font-weight: 700; color: #fbbf24; margin: 0 0 10px; }
+    h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.1; margin: 0 0 14px; max-width: 14ch; }
+    .lead { font-family: "Segoe UI", sans-serif; font-size: 18px; max-width: 38ch; margin: 0 0 22px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; }
+    .cta a {
+      font-family: "Segoe UI", sans-serif; font-weight: 800; text-decoration: none;
+      background: #fff; color: var(--navy); padding: 12px 14px;
+    }
+    .cta a.amber { background: var(--amber); color: #fff; }
+    .dots { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 3; display: flex; justify-content: center; gap: 6px; }
+    .dots button { width: 10px; height: 10px; border: 0; border-radius: 50%; background: rgba(255,255,255,.45); cursor: pointer; }
+    .dots button.on { background: #fff; }
+    .arrow {
+      position: absolute; top: 50%; z-index: 3; transform: translateY(-50%);
+      background: rgba(10,37,64,.7); color: #fff; border: 0; width: 42px; height: 42px; cursor: pointer; font-size: 22px;
+    }
+    .arrow.prev { left: 12px; } .arrow.next { right: 12px; }
+    section { padding: 56px 0; }
+    section.alt { background: #fff; }
+    h2 { font-size: 30px; margin: 0 0 8px; }
+    .sub { font-family: "Segoe UI", sans-serif; color: #3d5160; margin: 0 0 28px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .card { background: #fff; border: 1px solid #d5e3f0; text-decoration: none; display: block; }
+    .card img { width: 100%; height: 140px; object-fit: cover; display: block; }
+    .card span { display: block; padding: 12px 14px; font-family: "Segoe UI", sans-serif; font-weight: 800; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-family: "Segoe UI", sans-serif; }
+    .steps article { background: var(--ice); padding: 18px; }
+    .steps strong { display: block; margin-bottom: 6px; }
+    .areas { columns: 4; gap: 20px; font-family: "Segoe UI", sans-serif; }
+    .areas a { display: block; padding: 3px 0; font-weight: 700; text-decoration: none; }
+    footer { background: var(--navy); color: #fff; padding: 36px 0; font-family: "Segoe UI", sans-serif; }
+    footer a { color: #fff; }
+    @media (max-width: 800px) {
+      .steps, .areas { columns: 1; grid-template-columns: 1fr; }
+      header nav { display: none; }
+      h1 { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-flag">PREVIEW ONLY — this file is not the live homepage. Do not upload until you say «اوکی اپلود کن».</div>
+  <!--#include virtual="/includes/header-nav.inc" -->
+
+  <div class="slider" id="slider">
+    <div class="slide on" style="background-image:url('images/cold-room.webp')"></div>
+    <div class="slide" style="background-image:url('images/display-cabinets.webp')"></div>
+    <div class="slide" style="background-image:url('/images/commercial-freezer-repair-london.webp')"></div>
+    <div class="slide" style="background-image:url('images/pub-cellar.webp')"></div>
+    <div class="slide" style="background-image:url('images/walk-in-cold-room-repair.webp')"></div>
+    <div class="slide" style="background-image:url('images/walk-in-freezer-repair.webp')"></div>
+    <div class="slide" style="background-image:url('images/bottle-cooler-repair.webp')"></div>
+    <div class="slide" style="background-image:url('images/ice-machine-repair.webp')"></div>
+    <div class="slide" style="background-image:url('images/cellar-cooler-repair.webp')"></div>
+    <div class="slide" style="background-image:url('images/commercial-fridge-repair.webp')"></div>
+    <div class="hero-copy">
+      <div class="wrap">
+        <p class="kicker">North London · commercial only · 24/7</p>
+        <h1>When the walk-in climbs, we book the van on the phone.</h1>
+        <p class="lead">Cold rooms, freezer rooms, cellar coolers, displays and ice machines. No domestic house calls. Typical inner-London attendance 60–90 minutes.</p>
+        <div class="cta">
+          <a class="amber" href="tel:+447983759320">Mobile 07983 759320</a>
+          <a href="tel:08001123427">Freephone 0800 112 3427</a>
+          <a href="tel:+442039524822">Office 0203 952 4822</a>
+        </div>
+      </div>
+    </div>
+    <button class="arrow prev" type="button" aria-label="Previous">‹</button>
+    <button class="arrow next" type="button" aria-label="Next">›</button>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Every plant we repair</h2>
+      <p class="sub">Each card is a real Cold Direct page — not a WordPress text column.</p>
+      <div class="grid">
+        <a class="card" href="commercial-fridge-repair-north-london.html"><img src="images/commercial-fridge-repair.webp" alt=""><span>Commercial fridge</span></a>
+        <a class="card" href="commercial-freezer-repair-north-london.html"><img src="images/commercial-freezer-repair.webp" alt=""><span>Commercial freezer</span></a>
+        <a class="card" href="cold-room-repair-north-london.html"><img src="images/cold-room-repair.webp" alt=""><span>Cold room</span></a>
+        <a class="card" href="freezer-room-repair-north-london.html"><img src="images/freezer-room-repair.webp" alt=""><span>Freezer room</span></a>
+        <a class="card" href="display-cabinet-repair-north-london.html"><img src="images/display-cabinets.webp" alt=""><span>Display cabinet</span></a>
+        <a class="card" href="cellar-cooler-repair-london.html"><img src="images/pub-cellar.webp" alt=""><span>Cellar cooler</span></a>
+        <a class="card" href="bottle-cooler-repair-london.html"><img src="images/bottle-cooler-repair.webp" alt=""><span>Bottle cooler</span></a>
+        <a class="card" href="wine-cooler-repair-london.html"><img src="images/wine-cooler-repair.webp" alt=""><span>Wine cooler</span></a>
+        <a class="card" href="ice-machine-repair-london.html"><img src="images/ice-machine-repair.webp" alt=""><span>Ice machine</span></a>
+        <a class="card" href="ice-cream-machine-repair-london.html"><img src="images/ice-cream-machine-repair.webp" alt=""><span>Ice cream machine</span></a>
+        <a class="card" href="fridge-repair-london.html"><img src="images/fridge-repair.webp" alt=""><span>Fridge repair</span></a>
+        <a class="card" href="freezer-repair-london.html"><img src="images/freezer-repair.webp" alt=""><span>Freezer repair</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <h2>How a call-out works</h2>
+      <p class="sub">No ticket number. You speak to someone who books refrigeration every day.</p>
+      <div class="steps">
+        <article><strong>1. Call any number</strong>Site, make, last safe temperature, are the fans still turning.</article>
+        <article><strong>2. We give a slot</strong>Typical 60–90 minutes in inner North and central London. We will not invent a miracle time.</article>
+        <article><strong>3. Quote, then fix</strong>Diagnose on site. Common Williams, Foster, Polar, Blizzard and Hoshizaki parts on the van.</article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>London Cold Chain pages</h2>
+      <p class="sub">Twenty borough URLs Easy Cooler does not have. Already live on this domain.</p>
+      <div class="areas">
+        <a href="commercial-refrigeration-repair-camden.html">Camden</a>
+        <a href="commercial-refrigeration-repair-islington.html">Islington</a>
+        <a href="commercial-refrigeration-repair-westminster.html">Westminster</a>
+        <a href="commercial-refrigeration-repair-city-of-london.html">City of London</a>
+        <a href="commercial-refrigeration-repair-hackney.html">Hackney</a>
+        <a href="commercial-refrigeration-repair-haringey.html">Haringey</a>
+        <a href="commercial-refrigeration-repair-kensington.html">Kensington</a>
+        <a href="commercial-refrigeration-repair-chelsea.html">Chelsea</a>
+        <a href="commercial-refrigeration-repair-hammersmith.html">Hammersmith</a>
+        <a href="commercial-refrigeration-repair-southwark.html">Southwark</a>
+        <a href="commercial-refrigeration-repair-lambeth.html">Lambeth</a>
+        <a href="commercial-refrigeration-repair-wandsworth.html">Wandsworth</a>
+        <a href="commercial-refrigeration-repair-tower-hamlets.html">Tower Hamlets</a>
+        <a href="commercial-refrigeration-repair-greenwich.html">Greenwich</a>
+        <a href="commercial-refrigeration-repair-brent.html">Brent</a>
+        <a href="commercial-refrigeration-repair-ealing.html">Ealing</a>
+        <a href="commercial-refrigeration-repair-richmond.html">Richmond</a>
+        <a href="commercial-refrigeration-repair-croydon.html">Croydon</a>
+        <a href="commercial-refrigeration-repair-newham.html">Newham</a>
+        <a href="commercial-refrigeration-repair-hounslow.html">Hounslow</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>Cold Direct · commercial equipment only · 24/7 · Enfield base · 25 mile radius.</p>
+      <p>This preview is not published. Live site stays as it is until you approve upload.</p>
+    </div>
+  </footer>
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const dots = document.getElementById("dots");
+    let i = 0;
+    slides.forEach((_, n) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      if (n === 0) b.className = "on";
+      b.onclick = () => go(n);
+      dots.appendChild(b);
+    });
+    function go(n) {
+      slides[i].classList.remove("on");
+      dots.children[i].classList.remove("on");
+      i = (n + slides.length) % slides.length;
+      slides[i].classList.add("on");
+      dots.children[i].classList.add("on");
+    }
+    document.querySelector(".next").onclick = () => go(i + 1);
+    document.querySelector(".prev").onclick = () => go(i - 1);
+    setInterval(() => go(i + 1), 4500);
+  </script>
+</body>
+</html>
