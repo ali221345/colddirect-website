@@ -1,0 +1,24 @@
+{
+  "name": "colddirect-website",
+  "version": "1.0.0",
+  "description": "Static HTML for [colddirect.co.uk](https://www.colddirect.co.uk), deployed to Plesk `httpdocs`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ali221345/colddirect-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ali221345/colddirect-website/issues"
+  },
+  "homepage": "https://github.com/ali221345/colddirect-website#readme",
+  "dependencies": {
+    "googleapis": "^181.0.0"
+  }
+}
