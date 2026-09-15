@@ -1,0 +1,37 @@
+name: ColdDirect Daily SEO
+on:
+  schedule:
+    - cron: '0 5 * * *'  # 6am London
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install deps
+        run: npm install googleapis
+      - name: Install python for FTP
+        run: python3 -c "import ftplib"
+      - name: Run daily SEO update
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+          GSC_SITE_URL: https://www.colddirect.co.uk/
+          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
+          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
+          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
+          COLD_FTP_PATH: /httpdocs
+        run: node scripts/daily-seo-update.js
+      - name: Commit reports
+        run: |
+          git config user.name "seo-bot"
+          git config user.email "bot@colddirect.co.uk"
+          git add seo-audit/ || true
+          git add colddirect-public-html/web.config || true
+          git add colddirect-public-html/blog/ || true
+          git diff --staged --quiet || git commit -m "daily seo $(date +%Y-%m-%d)"
+          git push || true
