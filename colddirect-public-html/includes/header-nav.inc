@@ -34,12 +34,14 @@
               <a href="/ice-cream-machine-repair-london.html">Ice Cream Machine Repair</a>
               <a href="/blast-chiller-repair-london.html">Blast Chiller Repair</a>
               <a href="/blast-freezer-repair-london.html">Blast Freezer Repair</a>
+              <a href="/blast-freezing.html">Blast Freezing</a>
               <a href="/commercial-chest-freezer-repair-london.html">Chest Freezer Repair</a>
               <a href="/supermarket-freezer-repair-london.html">Supermarket Freezer Repair</a>
             </div>
             <div class="mega-col">
               <p class="mega-title">Cold Rooms &amp; Walk-ins</p>
               <a href="/cold-room-repair-london.html">Cold Room Repair</a>
+              <a href="/cold-storage.html">Cold Storage</a>
               <a href="/freezer-room-repair-london.html">Freezer Room Repair</a>
               <a href="/walk-in-fridge-repair-london.html">Walk-in Fridge Repair</a>
               <a href="/walk-in-freezer-repair-london.html">Walk-in Freezer Repair</a>
