@@ -41,8 +41,8 @@ Err.Clear
 Dim mail
 Set mail = Server.CreateObject("CDO.Message")
 If Err.Number = 0 Then
-  mail.From = "noreply@colddirect.co.uk"
-  mail.To = "coldcom@hotmail.co.uk"
+  mail.From = "info@colddirect.co.uk"
+  mail.To = "info@colddirect.co.uk"
   mail.Subject = "New Booking: " & appliancetype & " - " & Request.Form("name")
   mail.TextBody = fullMsg
   mail.Configuration.Fields.Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2

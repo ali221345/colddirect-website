@@ -247,11 +247,15 @@ nav a:hover, nav a[aria-current="page"] { text-decoration: underline; }
   background-position: center;
 }
 .home-slider .slide.on { opacity: 1; }
+.home-slider > .slide {
+  filter: brightness(1.2) contrast(1.05);
+}
 .home-slider .slide::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(10,37,64,.82) 0%, rgba(10,37,64,.4) 58%, rgba(10,37,64,.18) 100%);
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,37,64,.25) 0%, rgba(10,37,64,.15) 58%, rgba(10,37,64,.08) 100%);
 }
 .home-slider .hero-copy {
   position: relative;

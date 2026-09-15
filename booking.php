@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $configFile = __DIR__ . '/booking-config.php';
 $config = is_file($configFile) ? require $configFile : [];
-$to = $config['to_email'] ?? 'coldcom@hotmail.co.uk';
-$fromEmail = $config['from_email'] ?? 'noreply@colddirect.co.uk';
+$to = $config['to_email'] ?? 'info@colddirect.co.uk';
+$fromEmail = $config['from_email'] ?? 'info@colddirect.co.uk';
 $fromName = $config['from_name'] ?? 'Cold Direct Website';
 $resendKey = trim((string) ($config['resend_api_key'] ?? ''));
 $webhook = trim((string) ($config['webhook_url'] ?? ''));

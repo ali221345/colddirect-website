@@ -20,7 +20,7 @@ body{background:#ffffff;color:#0a2540}
 .topbar a,.cta-band a,.cta-band h2,.cta-band p,.site-footer a,.site-footer h3,.legal{color:#0a2540 !important}
 </style>
   <link rel="stylesheet" href="css/styles.css?v=navwrap2">
-  <link rel="stylesheet" href="/assets/slider.css">
+  <link rel="stylesheet" href="/assets/slider.css?v=sliderbright1">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -310,7 +310,7 @@ body{background:#ffffff;color:#0a2540}
           <p>
             <a href="tel:+447983759320">Mobile 07983 759320</a><br>
             <a href="tel:08001123427">Freephone 0800 112 3427</a><br>
-            <a href="tel:+442039524822">London Office 0203 952 4822</a><br><a href="mailto:coldcom@hotmail.co.uk">coldcom@hotmail.co.uk</a>
+            <a href="tel:+442039524822">London Office 0203 952 4822</a><br><a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a>
           </p>
         </div>
         <div>
