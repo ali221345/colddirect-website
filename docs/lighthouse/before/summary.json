@@ -1,0 +1,62 @@
+[
+  {
+    "id": "home",
+    "url": "http://127.0.0.1:8765/",
+    "performance": 99,
+    "accessibility": 98,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcp": "2.1 s",
+    "cls": "0",
+    "tbt": "0 ms",
+    "fcp": "1.2 s"
+  },
+  {
+    "id": "commercial-fridge-london",
+    "url": "http://127.0.0.1:8765/commercial-fridge-repair-london.html",
+    "performance": 100,
+    "accessibility": 98,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcp": "1.9 s",
+    "cls": "0",
+    "tbt": "0 ms",
+    "fcp": "1.1 s"
+  },
+  {
+    "id": "foster",
+    "url": "http://127.0.0.1:8765/foster-fridge-repair-london.html",
+    "performance": 100,
+    "accessibility": 98,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcp": "1.5 s",
+    "cls": "0",
+    "tbt": "0 ms",
+    "fcp": "0.9 s"
+  },
+  {
+    "id": "true",
+    "url": "http://127.0.0.1:8765/true-fridge-repair-london.html",
+    "performance": 100,
+    "accessibility": 98,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcp": "1.1 s",
+    "cls": "0",
+    "tbt": "0 ms",
+    "fcp": "0.9 s"
+  },
+  {
+    "id": "liebherr",
+    "url": "http://127.0.0.1:8765/liebherr-fridge-repair-london.html",
+    "performance": 100,
+    "accessibility": 97,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcp": "0.9 s",
+    "cls": "0",
+    "tbt": "0 ms",
+    "fcp": "0.9 s"
+  }
+]

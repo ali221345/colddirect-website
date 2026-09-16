@@ -58,7 +58,7 @@
 | P2-2 | PPM page if offered | Blocked |
 | P2-3 | Content engine | See content-roadmap.md |
 | P2-4 | Selective area pages | Careful — coverage page now honest |
-| P2-5 | Lighthouse top 10 | Planned |
+| P2-5 | Lighthouse top 10 | **DONE** money URLs (home + commercial fridge + Foster/True/Liebherr) |
 | P2-6 | Soften unverified “500+ businesses” badges sitewide | Planned (human confirm stats first) |
 
 ---

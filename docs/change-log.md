@@ -68,6 +68,29 @@ Started: 2026-09-16
 
 ---
 
+## 2026-09-16 — P1 Lighthouse pass (money URLs)
+
+- **Change:** Mobile Lighthouse on mapped money URLs; safe perf fixes only (hero `preload` + `fetchpriority=high` + `loading=eager`, width/height on homepage images, `defer` on main/booking/slider JS). No design changes, no new npm deps, no `next/image` (static HTML).
+- **URL mapping:** Requested `/commercial-refrigeration-repair/{london|foster|true|liebherr}/` do not exist on this site. Measured: `/`, `/commercial-fridge-repair-london.html`, `/foster-fridge-repair-london.html`, `/true-fridge-repair-london.html`, `/liebherr-fridge-repair-london.html`.
+- **Fonts:** No self-hosted/Google webfonts in CSS — font preload N/A; preloaded logo + LCP hero images instead.
+- **Method:** Local `python -m http.server` on `colddirect-public-html` (SSI includes not expanded). Scores are local lab, not production CDN.
+- **Before → After (Performance / LCP):**
+
+| Page | Before Perf | Before LCP | After Perf | After LCP |
+|------|------------:|-----------:|-----------:|----------:|
+| Home `/` | 99 | 2.1s | 99 | 2.0s |
+| Commercial fridge | 100 | 1.9s | 99 | 2.0s |
+| Foster | 100 | 1.5s | 100 | 1.5s |
+| True | 100 | 1.1s | 100 | 1.8s |
+| Liebherr | 100 | 0.9s | 100 | 1.7s |
+
+- **Note:** True/Liebherr LCP ms rose because LCP shifted from text to the intended hero image after `eager`/`fetchpriority` (correct element). CLS stayed 0; a11y Liebherr 97→98. Summaries: `docs/lighthouse/before/summary.json`, `docs/lighthouse/after/summary.json`.
+- **Files:** money HTML pages above; `tools/run-lighthouse-money.js`; docs.
+- **Testing:** Lighthouse mobile form-factor via `npx lighthouse` (not added as package dependency).
+- **Git:** `P1: lighthouse pass money URLs`
+
+---
+
 ## Notes for human review
 
 - **Not pushed to `main`.** Approve before merge/deploy to Plesk.
