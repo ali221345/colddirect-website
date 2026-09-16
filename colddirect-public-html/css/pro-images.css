@@ -31,6 +31,13 @@ img.pro-image:hover{
   border-radius:16px;
   margin:24px 0 32px;
 }
+.pro-image-wrapper{
+  margin:18px 0 0;
+  max-width:900px;
+}
+.pro-image-wrapper .pro-image{
+  max-width:100%;
+}
 .pro-image-wrap::after{
   content:"";
   position:absolute;
