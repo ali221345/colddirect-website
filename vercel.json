@@ -366,8 +366,13 @@
       "permanent": true
     },
     {
+      "source": "/liebherr-fridge-repair-london",
+      "destination": "/brands",
+      "permanent": true
+    },
+    {
       "source": "/liebherr-fridge-repair-london.html",
-      "destination": "/liebherr-fridge-repair-london",
+      "destination": "/brands",
       "permanent": true
     },
     {
