@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /agent-status.html
+Disallow: /image-preview.html
+Disallow: /agent-status-full-report.txt
 
 User-agent: Googlebot
 Allow: /
