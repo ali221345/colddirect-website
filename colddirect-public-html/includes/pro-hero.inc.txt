@@ -1,0 +1,12 @@
+<div class="pro-hero">
+  <div class="pro-hero__image-wrap">
+    <picture>
+      <source srcset="/images/pro/default-hero.webp" type="image/webp">
+      <img src="/images/pro/default-hero.jpg" alt="Commercial refrigeration repair London" class="pro-hero__img" width="1200" height="675" loading="eager">
+    </picture>
+    <div class="pro-hero__overlay"></div>
+  </div>
+  <div class="pro-hero__content">
+    <span class="pro-hero__badge">ColdDirect • 24/7 London</span>
+  </div>
+</div>

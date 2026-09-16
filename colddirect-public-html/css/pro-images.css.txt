@@ -1,0 +1,7 @@
+.pro-hero{position:relative;width:100%;height:520px;overflow:hidden;background:#0a1a2a;border-radius:16px;margin-bottom:32px}
+.pro-hero__image-wrap{position:absolute;inset:0}
+.pro-hero__img{width:100%;height:100%;object-fit:cover;filter:brightness(.85)}
+.pro-hero__overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,20,40,.85) 0%,rgba(0,20,40,.1) 100%)}
+.pro-hero__content{position:relative;z-index:2;max-width:720px;padding:60px;color:#fff}
+.pro-hero__badge{display:inline-block;background:#00c2ff;color:#001a2a;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;margin-bottom:16px}
+@media(max-width:768px){.pro-hero{height:380px;border-radius:0}.pro-hero__content{padding:24px}}
