@@ -71,6 +71,43 @@ img.pro-image:hover{
   gap:18px;
   margin:0 0 20px;
 }
+.brand-hero-img,
+img.brand-hero-img{
+  max-width:560px !important;
+  margin:12px auto 16px !important;
+}
+.hero-image-wrapper{
+  margin:18px 0 0;
+  max-width:720px;
+}
+.hero-image-wrapper .pro-image{
+  max-width:100%;
+}
+.image-caption{
+  margin:8px 0 0;
+  font-size:14px;
+  color:#4a6278;
+}
+.brand-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.brand-grid a{
+  display:block;
+  color:#0a2540;
+  text-decoration:none;
+  font-weight:700;
+  text-align:center;
+}
+.brand-grid img{
+  width:100%;
+  max-width:100%;
+  margin:0 0 8px;
+}
 .pro-trust-badge{
   margin:0;
   font-size:15px;
@@ -92,6 +129,7 @@ img.pro-image:hover{
   .pro-trust-section{padding:36px 0 28px}
   .pro-trust-section h2{font-size:22px}
   .pro-image-grid{grid-template-columns:1fr;gap:14px}
+  .brand-grid{grid-template-columns:1fr 1fr;gap:12px}
 }
 
 .home-slider .pro-image,
