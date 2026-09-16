@@ -64,33 +64,33 @@
             </div>
             <div class="mega-col">
               <p class="mega-title">Brands &amp; Coverage</p>
-              <a href="/brands.html">Brands</a>
-              <a href="/williams-fridge-repair-london.html">Williams</a>
-              <a href="/foster-fridge-repair-london.html">Foster</a>
-              <a href="/polar-fridge-repair-london.html">Polar</a>
-              <a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a>
-              <a href="/true-fridge-repair-london.html">True</a>
-              <a href="/gram-fridge-repair-london.html">Gram</a>
-              <a href="/brands.html">All Brands</a>
+              <a href="/brands">Brands</a>
+              <a href="/williams-fridge-repair-london">Williams</a>
+              <a href="/foster-fridge-repair-london">Foster</a>
+              <a href="/polar-fridge-repair-london">Polar</a>
+              <a href="/hoshizaki-ice-machine-repair-london">Hoshizaki</a>
+              <a href="/true-fridge-repair-london">True</a>
+              <a href="/gram-fridge-repair-london">Gram</a>
+              <a href="/brands">All Brands</a>
               <a href="/coverage.html">Coverage</a>
             </div>
           </div>
         </li>
         <li><a href="/coverage.html">COVERAGE</a></li>
         <li class="has-dropdown">
-          <a href="/brands.html">BRANDS ▾</a>
+          <a href="/brands">BRANDS ▾</a>
           <ul class="dropdown">
-            <li><a href="/williams-fridge-repair-london.html">Williams</a></li>
-            <li><a href="/foster-fridge-repair-london.html">Foster</a></li>
-            <li><a href="/polar-fridge-repair-london.html">Polar</a></li>
-            <li><a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a></li>
-            <li><a href="/true-fridge-repair-london.html">True</a></li>
-            <li><a href="/gram-fridge-repair-london.html">Gram</a></li>
-            <li><a href="/liebherr-fridge-repair-london.html">Liebherr</a></li>
-            <li><a href="/adexa-fridge-repair-london.html">Adexa</a></li>
-            <li><a href="/empire-fridge-repair-london.html">Empire</a></li>
-            <li><a href="/subzero-fridge-repair-london.html">Sub-Zero</a></li>
-            <li><a href="/brands.html">All brands</a></li>
+            <li><a href="/williams-fridge-repair-london">Williams</a></li>
+            <li><a href="/foster-fridge-repair-london">Foster</a></li>
+            <li><a href="/polar-fridge-repair-london">Polar</a></li>
+            <li><a href="/hoshizaki-ice-machine-repair-london">Hoshizaki</a></li>
+            <li><a href="/true-fridge-repair-london">True</a></li>
+            <li><a href="/gram-fridge-repair-london">Gram</a></li>
+            <li><a href="/liebherr-fridge-repair-london">Liebherr</a></li>
+            <li><a href="/adexa-fridge-repair-london">Adexa</a></li>
+            <li><a href="/empire-fridge-repair-london">Empire</a></li>
+            <li><a href="/subzero-fridge-repair-london">Sub-Zero</a></li>
+            <li><a href="/brands">All brands</a></li>
           </ul>
         </li>
         <li><a href="/blog/">NEWS</a></li>

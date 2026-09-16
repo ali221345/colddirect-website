@@ -321,6 +321,11 @@
       "permanent": true
     },
     {
+      "source": "/foster-fridge-repair-london.html",
+      "destination": "/foster-fridge-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/freezer-repair-london.html",
       "destination": "/freezer-repair-london",
       "permanent": true
@@ -341,6 +346,11 @@
       "permanent": true
     },
     {
+      "source": "/gram-fridge-repair-london.html",
+      "destination": "/gram-fridge-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/hoshizaki-ice-machine-repair-london.html",
       "destination": "/hoshizaki-ice-machine-repair-london",
       "permanent": true
@@ -353,6 +363,11 @@
     {
       "source": "/ice-machine-repair-london.html",
       "destination": "/ice-machine-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/liebherr-fridge-repair-london.html",
+      "destination": "/liebherr-fridge-repair-london",
       "permanent": true
     },
     {
@@ -416,6 +431,11 @@
       "permanent": true
     },
     {
+      "source": "/true-fridge-repair-london.html",
+      "destination": "/true-fridge-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/undercounter-fridge-repair-london.html",
       "destination": "/undercounter-fridge-repair-london",
       "permanent": true
@@ -423,6 +443,11 @@
     {
       "source": "/williams-freezer-repair-london.html",
       "destination": "/williams-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/williams-fridge-repair-london.html",
+      "destination": "/williams-fridge-repair-london",
       "permanent": true
     },
     {
