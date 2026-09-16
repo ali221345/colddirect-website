@@ -1,0 +1,173 @@
+.pro-hero{position:relative;width:100%;height:520px;overflow:hidden;background:#0a1a2a;border-radius:16px;margin-bottom:32px}
+.pro-hero__image-wrap{position:absolute;inset:0}
+.pro-hero__img{width:100%;height:100%;object-fit:cover;filter:brightness(.85)}
+.pro-hero__overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,20,40,.85) 0%,rgba(0,20,40,.1) 100%)}
+.pro-hero__content{position:relative;z-index:2;max-width:720px;padding:60px;color:#fff}
+.pro-hero__badge{display:inline-block;background:#00c2ff;color:#001a2a;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;margin-bottom:16px}
+
+.pro-image,
+img.pro-image{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:auto;
+  object-fit:cover;
+  aspect-ratio:16/9;
+  border-radius:16px;
+  background:#0a1a2a;
+  box-shadow:0 18px 50px rgba(4,18,32,.22),0 2px 0 rgba(255,255,255,.06) inset;
+  border:1px solid rgba(10,37,64,.12);
+  transition:transform .35s ease,box-shadow .35s ease,filter .35s ease;
+}
+.pro-image:hover,
+img.pro-image:hover{
+  transform:translateY(-3px);
+  box-shadow:0 24px 60px rgba(4,18,32,.28);
+  filter:saturate(1.05) contrast(1.03);
+}
+.pro-image-wrap{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  margin:24px 0 32px;
+}
+.pro-image-wrapper{
+  margin:18px 0 0;
+  max-width:900px;
+}
+.pro-image-wrapper .pro-image{
+  max-width:100%;
+}
+.pro-image-wrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:16px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.pro-image-caption{
+  margin:10px 0 0;
+  font-size:13px;
+  letter-spacing:.02em;
+  color:#4a6278;
+}
+
+.pro-trust-section{
+  background:linear-gradient(180deg,#f4f8fc 0%,#ffffff 100%);
+  padding:56px 0 48px;
+  margin:0;
+  border-top:1px solid rgba(10,37,64,.08);
+}
+.pro-trust-section .container,
+.pro-trust-section .wrap{
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 20px;
+}
+.pro-trust-section h2{
+  margin:0 0 24px;
+  font-size:28px;
+  line-height:1.25;
+  color:#0a2540;
+  letter-spacing:-.02em;
+}
+.pro-image-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  margin:0 0 20px;
+}
+.brand-hero-img,
+img.brand-hero-img{
+  max-width:560px !important;
+  margin:12px auto 16px !important;
+}
+.hero-image-wrapper{
+  margin:18px 0 0;
+  max-width:720px;
+}
+.hero-image-wrapper .pro-image{
+  max-width:100%;
+}
+.pro-image-tall-wrapper{
+  max-width:600px;
+  margin:20px auto 0;
+}
+.pro-image-tall,
+img.pro-image-tall{
+  width:100%;
+  height:auto;
+  aspect-ratio:auto;
+  max-width:100%;
+  border-radius:8px;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);
+}
+.pro-image-grid .pro-image-tall{
+  max-height:420px;
+  object-fit:cover;
+  object-position:center top;
+}
+.image-caption{
+  margin:8px 0 0;
+  font-size:14px;
+  color:#4a6278;
+}
+.brand-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.brand-grid a{
+  display:block;
+  color:#0a2540;
+  text-decoration:none;
+  font-weight:700;
+  text-align:center;
+}
+.brand-grid img{
+  width:100%;
+  max-width:100%;
+  margin:0 0 8px;
+}
+.pro-trust-badge{
+  margin:0;
+  font-size:15px;
+  font-weight:600;
+  color:#0a2540;
+  background:#e8f6ff;
+  border:1px solid rgba(0,194,255,.35);
+  border-radius:999px;
+  display:inline-block;
+  padding:10px 16px;
+}
+
+@media(max-width:768px){
+  .pro-hero{height:380px;border-radius:0}
+  .pro-hero__content{padding:24px}
+  .pro-image,
+  img.pro-image{border-radius:12px}
+  .pro-image-wrap{border-radius:12px;margin:16px 0 24px}
+  .pro-trust-section{padding:36px 0 28px}
+  .pro-trust-section h2{font-size:22px}
+  .pro-image-grid{grid-template-columns:1fr;gap:14px}
+  .brand-grid{grid-template-columns:1fr 1fr;gap:12px}
+}
+
+.home-slider .pro-image,
+.home-slider img.pro-image{
+  aspect-ratio:auto;
+  border-radius:0;
+  box-shadow:none;
+  border:0;
+  transform:none;
+}
+.home-slider .pro-image:hover,
+.home-slider img.pro-image:hover{
+  transform:none;
+  filter:none;
+  box-shadow:none;
+}

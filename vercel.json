@@ -3,5 +3,12 @@
   "framework": null,
   "buildCommand": "npm run build",
   "installCommand": "true",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/brands.html",
+      "destination": "/brands",
+      "permanent": true
+    }
+  ]
 }
