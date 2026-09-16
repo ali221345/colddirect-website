@@ -9,6 +9,11 @@
       "source": "/brands.html",
       "destination": "/brands",
       "permanent": true
+    },
+    {
+      "source": "/chiller-repair-london.html",
+      "destination": "/chiller-repair-london",
+      "permanent": true
     }
   ]
 }
