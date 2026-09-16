@@ -8,7 +8,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const ROOTS = ["colddirect-public-html", "."];
+const ROOTS = ["."];
 const EXTS = new Set([".html", ".php", ".tsx", ".asp"]);
 const TEMPLATE = "in London from Cold Direct";
 const ORG_TYPES = new Set([
@@ -24,7 +24,15 @@ const ORG_TYPES = new Set([
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ent.name === "node_modules" || ent.name === ".git" || ent.name === "templates") continue;
+    if (
+      ent.name === "node_modules" ||
+      ent.name === ".git" ||
+      ent.name === "templates" ||
+      ent.name === "colddirect-public-html" ||
+      ent.name === "_restore"
+    ) {
+      continue;
+    }
     const p = path.join(dir, ent.name);
     if (ent.isDirectory()) walk(p, out);
     else if (EXTS.has(path.extname(ent.name).toLowerCase())) out.push(p);

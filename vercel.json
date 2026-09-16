@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "true",
+  "buildCommand": "npm run build",
   "installCommand": "true",
-  "outputDirectory": "colddirect-public-html"
+  "outputDirectory": "."
 }

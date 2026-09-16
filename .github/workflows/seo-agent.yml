@@ -46,6 +46,22 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
-          local-dir: ./colddirect-public-html/
+          local-dir: ./
           server-dir: /httpdocs/
           timeout: 60000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/colddirect-public-html/**
+            **/images/_restore/**
+            **/.cursor/**
+            **/.github/**
+            **/docs/**
+            **/agent/**
+            **/tools/**
+            **/scripts/**
+            **/plesk-hero-upload/**
+            **/plesk-upload/**
+            **/_wa_src/**
+            **/.vercel/**
