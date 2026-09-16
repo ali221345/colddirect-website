@@ -44,7 +44,7 @@ Started: 2026-09-16
 - **Evidence:** Kept Cold / Be Cool / Xpress / Bear / CRL / Fast Fix / Thermachill / FixMyFridge / London Refrigeration / A&E CoolTech + supplier IA patterns; live HEAD shows IIS (Apache htaccess inactive).
 - **Files:** docs/*; hubs; `liebherr-fridge-repair-london.html`; `web.config` rewrite map; sitemap; header-nav; index; near-dup HTML canonicals; `.htaccess`.
 - **Testing:** Word counts hubs ≥239; sitemap lacks near-dups; nav links Liebherr page; homepage CTA present; root `web.config` restored after accidental overwrite (not committed).
-- **Git:** see commits on `ai/cold-direct-growth-continue`
+- **Git:** `426b4c5` docs · `17082b2` near-dups · `1888994` Liebherr · `85ee957` hubs/homepage CTA
 
 ---
 
