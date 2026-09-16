@@ -4,7 +4,7 @@
     <span><a href="tel:+442039524822">0203 952 4822</a></span>
     <span><a href="tel:+447983759320">07983 759320</a></span>
     <span><a href="tel:08001123427">Freephone 0800 112 3427</a></span>
-    <span><a href="mailto:coldcom@hotmail.co.uk">coldcom@hotmail.co.uk</a></span>
+    <span><a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a></span>
     <span>Mon-Sat: 8 AM - 11 PM - 24/7 Emergency</span>
   </div>
 </div>
@@ -34,12 +34,14 @@
               <a href="/ice-cream-machine-repair-london.html">Ice Cream Machine Repair</a>
               <a href="/blast-chiller-repair-london.html">Blast Chiller Repair</a>
               <a href="/blast-freezer-repair-london.html">Blast Freezer Repair</a>
+              <a href="/blast-freezing.html">Blast Freezing</a>
               <a href="/commercial-chest-freezer-repair-london.html">Chest Freezer Repair</a>
               <a href="/supermarket-freezer-repair-london.html">Supermarket Freezer Repair</a>
             </div>
             <div class="mega-col">
               <p class="mega-title">Cold Rooms &amp; Walk-ins</p>
               <a href="/cold-room-repair-london.html">Cold Room Repair</a>
+              <a href="/cold-storage.html">Cold Storage</a>
               <a href="/freezer-room-repair-london.html">Freezer Room Repair</a>
               <a href="/walk-in-fridge-repair-london.html">Walk-in Fridge Repair</a>
               <a href="/walk-in-freezer-repair-london.html">Walk-in Freezer Repair</a>

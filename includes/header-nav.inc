@@ -4,7 +4,7 @@
     <span><a href="tel:+442039524822">0203 952 4822</a></span>
     <span><a href="tel:+447983759320">07983 759320</a></span>
     <span><a href="tel:08001123427">Freephone 0800 112 3427</a></span>
-    <span><a href="mailto:coldcom@hotmail.co.uk">coldcom@hotmail.co.uk</a></span>
+    <span><a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a></span>
     <span>Mon-Sat: 8 AM - 11 PM - 24/7 Emergency</span>
   </div>
 </div>

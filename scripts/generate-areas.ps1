@@ -60,7 +60,7 @@ $areas = @(
     unique=@"
       <h2>West End commercial refrigeration that cannot wait until Monday</h2>
       <p>Westminster hospitality runs from breakfast in Marylebone to 2am in Soho. A failed walk-in behind a Covent Garden restaurant is a trading emergency. Access in W1 and WC2 is the job as much as the fault: Congestion Charge, loading bays, basement hatches and night restrictions. Tell us the nearest cross street and whether we need a night slot.</p>
-      <p>Soho and Chinatown kitchens stack cabinets in rooms with almost no ventilation. Hotel groups around Victoria often need a written attendance note. Email the Hotmail account on <a href="https://www.colddirect.co.uk/contact.html">the contact page</a>. We still refuse domestic houses above the shop.</p>
+      <p>Soho and Chinatown kitchens stack cabinets in rooms with almost no ventilation. Hotel groups around Victoria often need a written attendance note. Email info@colddirect.co.uk via <a href="https://www.colddirect.co.uk/contact.html">the contact page</a>. We still refuse domestic houses above the shop.</p>
 "@ }
   @{ slug="city-of-london"; name="City of London"; title="Commercial Refrigeration Repair City of London | Cold Direct"
     meta="24/7 commercial refrigeration repair in the City of London. Office canteens, hotels and restaurants. Call 0203 952 4822."
@@ -305,7 +305,7 @@ function Get-Schema($a, $file) {
   "image": "https://www.colddirect.co.uk/images/cold-direct-logo.png",
   "url": "https://www.colddirect.co.uk/$file",
   "telephone": "+442039524822",
-  "email": "coldcom@hotmail.co.uk",
+  "email": "info@colddirect.co.uk",
   "priceRange": "GBP",
   "address": {
     "@type": "PostalAddress",
@@ -437,7 +437,7 @@ $body
             <a href="tel:+447983759320">Mobile 07983 759320</a><br>
             <a href="tel:08001123427">Freephone 0800 112 3427</a><br>
             <a href="tel:+442039524822">London Office 0203 952 4822</a><br>
-            <a href="mailto:coldcom@hotmail.co.uk">coldcom@hotmail.co.uk</a>
+            <a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a>
           </p>
         </div>
         <div>

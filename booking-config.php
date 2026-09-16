@@ -1,8 +1,7 @@
 <?php
 /**
  * Booking mail + optional mobile webhook.
- * Email goes to Hotmail so Outlook on your phone can push instantly
- * if notifications are on for coldcom@hotmail.co.uk.
+ * Email goes to info@colddirect.co.uk so notifications can push on phone.
  *
  * Optional webhook (free): create a topic at https://ntfy.sh then paste:
  *   'webhook_url' => 'https://ntfy.sh/your-private-topic-name',
@@ -11,8 +10,8 @@
  * Optional Resend (free tier): paste API key from https://resend.com
  */
 return [
-  'to_email' => 'coldcom@hotmail.co.uk',
-  'from_email' => 'noreply@colddirect.co.uk',
+  'to_email' => 'info@colddirect.co.uk',
+  'from_email' => 'info@colddirect.co.uk',
   'from_name' => 'Cold Direct Website',
   'smtp_host' => 'localhost',
   'smtp_port' => 25,
