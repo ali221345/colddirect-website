@@ -93,3 +93,18 @@ img.pro-image:hover{
   .pro-trust-section h2{font-size:22px}
   .pro-image-grid{grid-template-columns:1fr;gap:14px}
 }
+
+.home-slider .pro-image,
+.home-slider img.pro-image{
+  aspect-ratio:auto;
+  border-radius:0;
+  box-shadow:none;
+  border:0;
+  transform:none;
+}
+.home-slider .pro-image:hover,
+.home-slider img.pro-image:hover{
+  transform:none;
+  filter:none;
+  box-shadow:none;
+}
