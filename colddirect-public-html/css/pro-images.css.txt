@@ -46,10 +46,50 @@ img.pro-image:hover{
   color:#4a6278;
 }
 
+.pro-trust-section{
+  background:linear-gradient(180deg,#f4f8fc 0%,#ffffff 100%);
+  padding:56px 0 48px;
+  margin:0;
+  border-top:1px solid rgba(10,37,64,.08);
+}
+.pro-trust-section .container,
+.pro-trust-section .wrap{
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 20px;
+}
+.pro-trust-section h2{
+  margin:0 0 24px;
+  font-size:28px;
+  line-height:1.25;
+  color:#0a2540;
+  letter-spacing:-.02em;
+}
+.pro-image-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  margin:0 0 20px;
+}
+.pro-trust-badge{
+  margin:0;
+  font-size:15px;
+  font-weight:600;
+  color:#0a2540;
+  background:#e8f6ff;
+  border:1px solid rgba(0,194,255,.35);
+  border-radius:999px;
+  display:inline-block;
+  padding:10px 16px;
+}
+
 @media(max-width:768px){
   .pro-hero{height:380px;border-radius:0}
   .pro-hero__content{padding:24px}
   .pro-image,
   img.pro-image{border-radius:12px}
   .pro-image-wrap{border-radius:12px;margin:16px 0 24px}
+  .pro-trust-section{padding:36px 0 28px}
+  .pro-trust-section h2{font-size:22px}
+  .pro-image-grid{grid-template-columns:1fr;gap:14px}
 }
