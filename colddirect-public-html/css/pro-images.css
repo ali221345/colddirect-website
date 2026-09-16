@@ -83,6 +83,24 @@ img.brand-hero-img{
 .hero-image-wrapper .pro-image{
   max-width:100%;
 }
+.pro-image-tall-wrapper{
+  max-width:600px;
+  margin:20px auto 0;
+}
+.pro-image-tall,
+img.pro-image-tall{
+  width:100%;
+  height:auto;
+  aspect-ratio:auto;
+  max-width:100%;
+  border-radius:8px;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);
+}
+.pro-image-grid .pro-image-tall{
+  max-height:420px;
+  object-fit:cover;
+  object-position:center top;
+}
 .image-caption{
   margin:8px 0 0;
   font-size:14px;
