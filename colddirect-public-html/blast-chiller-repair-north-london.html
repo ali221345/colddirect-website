@@ -25,12 +25,12 @@ body{background:#ffffff;color:#0a2540}
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "LocalBusiness",
-        "name": "Cold Direct",
+        "@type": "ApplianceRepair",
+        "name": "Cold Direct", "priceRange": "££",
         "image": "https://www.colddirect.co.uk/images/logo/colddirect-main.webp",
         "url": "https://www.colddirect.co.uk/",
         "telephone": "+447983759320",
-        "areaServed": ["London", "Greater London"],
+        "areaServed":[{"@type":"AdministrativeArea","name":"North London"},{"@type":"GeoCircle","geoMidpoint":{"@type":"GeoCoordinates","latitude":"51.6478","longitude":"-0.0701"},"geoRadius":"40233"},{"@type":"City","name":"London"}],
         "openingHours": "Mo-Su 00:00-23:59",
         "openingHoursSpecification": {
           "@type": "OpeningHoursSpecification",
@@ -43,7 +43,7 @@ body{background:#ffffff;color:#0a2540}
         "@type": "Service",
         "name": "Blast chiller repair North London",
         "serviceType": "Commercial blast chiller repair",
-        "provider": { "@type": "LocalBusiness", "name": "Cold Direct" },
+        "provider": {"@type":"ApplianceRepair","@id":"https://www.colddirect.co.uk/#business","name":"Cold Direct","priceRange":"££"},
         "areaServed": ["London", "Greater London"],
         "hoursAvailable": "Mo-Su 00:00-23:59"
       },

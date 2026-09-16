@@ -40,8 +40,8 @@
 | P1-1 | Canonical policy sitewide | Partial — near-dups done; full site still mixed `.html` / bare |
 | P1-2 | Thicken hubs | **DONE** this batch |
 | P1-3 | Collapse near-dup slugs | **DONE** — IIS rewrite map + canonical/noindex + sitemap |
-| P1-4 | Unique titles/metas (kill template) | Planned (~70 pages) |
-| P1-5 | Schema on hubs | **DONE** CollectionPage / FAQPage / WebPage on hubs |
+| P1-4 | Unique titles/metas (kill template) | **DONE** — 61 pages + 0 template leftovers |
+| P1-5 | Schema on hubs + unify org type | **DONE** — ApplianceRepair sitewide (212); hubs already had Collection/FAQ |
 | P1-6 | Liebherr nav + page | **DONE** |
 | P1-7 | Homepage above-fold tel CTA | **DONE** |
 | P1-8 | F-Gas/Refcom numbers | Blocked — needs human data |
@@ -67,6 +67,6 @@
 
 1. Docs research depth  
 2. P0 htaccess safety + P1 near-dups + Liebherr + hubs + homepage CTA  
-3. Next: meta template batch, remaining schema unify, Lighthouse  
+3. Next: Lighthouse top money URLs; soften 500+ badge after human confirm; F-Gas/guarantee when data arrives  
 
 **Do not push to `main` / Plesk until human approval.**

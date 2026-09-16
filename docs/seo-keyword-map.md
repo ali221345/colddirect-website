@@ -34,6 +34,30 @@ Status legend: `live` = page exists · `fix` = needs copy/meta · `new` = propos
 | commercial fridge vs domestic | Informational | guide | new | P2 | roadmap |
 | F-Gas commercial fridge repair | Trust / commercial | about + service FAQs | fix | P1 | needs registration facts |
 
+## Meta template rewrite (2026-09-16 P1)
+
+Killed sitewide `"… in London from Cold Direct…"` title/description template.
+
+**Pattern now:** `[Brand] Commercial [Type] Repair in London | Same-Day Callout - Cold Direct` (shortened to `| Cold Direct` when >70 chars).
+
+| Scope | Count / status |
+|-------|----------------|
+| Pages rewritten | 61 money/service pages (+ 2 utility phrase cleanups) |
+| Remaining template phrase | **0** |
+| Example brand | `Foster Commercial Fridge Repair London \| Cold Direct` |
+| Example service | `Commercial Fridge Repair London \| Same-Day Callout - Cold Direct` |
+| Full list | `docs/_meta-schema-batch.json` → `changed_meta` |
+
+## Schema unify (2026-09-16 P1)
+
+| Before | After |
+|--------|-------|
+| LocalBusiness (~210) + HVACBusiness (2) | **ApplianceRepair only (212)** for org/provider nodes |
+| Thin stubs (tel + London list) | Rich block: tel trio, priceRange ££, NAP, North London + 25 mile GeoCircle, openingHours 24/7 |
+| Conflicting Store type | None |
+
+Service + FAQPage nodes unchanged (not org types).
+
 ## Cannibalisation watchlist
 
 | Pair | Action |

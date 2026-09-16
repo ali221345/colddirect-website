@@ -1,0 +1,1185 @@
+{
+  "changed_meta_count": 61,
+  "changed_schema_count": 101,
+  "remaining_template_non_utility": [],
+  "schema_type_counts": {
+    "ApplianceRepair": 212
+  },
+  "changed_meta": [
+    {
+      "file": "about-us.html",
+      "title": "About Cold Direct | Commercial Refrigeration Engineers London",
+      "description": "Cold Direct commercial refrigeration engineers serving North London and a 25 mile radius. Trade kitchens only. Call 07983 759320."
+    },
+    {
+      "file": "adexa-fridge-repair-london.html",
+      "title": "Adexa Commercial Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Adexa commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "air-conditioning-repair-london.html",
+      "title": "Air Conditioning Repair London | Same-Day Callout - Cold Direct",
+      "description": "Air Conditioning repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "appliances-repair-london.html",
+      "title": "Commercial Appliances Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial Appliances repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "blast-chiller-repair-london.html",
+      "title": "Blast Chiller Repair London | Same-Day Callout - Cold Direct",
+      "description": "Blast Chiller repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "blast-freezer-repair-london.html",
+      "title": "Blast Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Blast Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "bottle-cooler-repair-london.html",
+      "title": "Bottle Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Bottle Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "bottle-cooler-repair.html",
+      "title": "Bottle Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Bottle Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "bottle-fridge-repair.html",
+      "title": "Bottle Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Bottle Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "cabinet-fridge-repair-london.html",
+      "title": "Cabinet Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Cabinet Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "catering-repair-london.html",
+      "title": "Catering Equipment Repair London | Same-Day Callout - Cold Direct",
+      "description": "Catering Equipment repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "cellar-cooler-repair-london.html",
+      "title": "Cellar Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Cellar Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "chiller-repair-london.html",
+      "title": "Chiller Repair London | Same-Day Callout - Cold Direct",
+      "description": "Chiller repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "cold-room-repair-london.html",
+      "title": "Cold Room Repair London | Same-Day Callout - Cold Direct",
+      "description": "Cold Room repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-appliances-repair-london.html",
+      "title": "Commercial Appliances Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial Appliances repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-blast-chiller-repair-london.html",
+      "title": "Blast Chiller Repair London | Same-Day Callout - Cold Direct",
+      "description": "Blast Chiller repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-blast-freezer-repair-london.html",
+      "title": "Blast Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Blast Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-bottle-cooler-repair.html",
+      "title": "Bottle Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Bottle Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-chest-freezer-repair-london.html",
+      "title": "Chest Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Chest Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-dishwasher-repair-london.html",
+      "title": "Commercial Dishwasher Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial Dishwasher repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-display-cabinet-repair-london.html",
+      "title": "Display Cabinet Repair London | Same-Day Callout - Cold Direct",
+      "description": "Display Cabinet repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-freezer-repair-london.html",
+      "title": "Commercial Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-fridge-repair-london.html",
+      "title": "Commercial Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "commercial-ice-machine-repair-london.html",
+      "title": "Ice Machine Repair London | Same-Day Callout - Cold Direct",
+      "description": "Ice Machine repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "contact.html",
+      "title": "Contact Cold Direct | Commercial Refrigeration Repair London",
+      "description": "Book commercial refrigeration repair in London. Call 07983 759320, freephone 0800 112 3427 or 0203 952 4822. Trade only. Enfield N9 0DX."
+    },
+    {
+      "file": "dairy-cabinet-repair-london.html",
+      "title": "Dairy Cabinet Repair London | Same-Day Callout - Cold Direct",
+      "description": "Dairy Cabinet repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "display-cabinet-repair-london.html",
+      "title": "Display Cabinet Repair London | Same-Day Callout - Cold Direct",
+      "description": "Display Cabinet repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "display-cooler-repair-london.html",
+      "title": "Display Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Display Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "display-fridge-repair-london.html",
+      "title": "Display Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Display Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "display-fridge-repair.html",
+      "title": "Display Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Display Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "drinks-fridge-repair.html",
+      "title": "Drinks Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Commercial drinks fridge repair in London. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "empire-fridge-repair-london.html",
+      "title": "Empire Commercial Fridge Repair London | Cold Direct",
+      "description": "Empire commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "empire-fridge-repair.html",
+      "title": "Empire Commercial Fridge Repair London | Cold Direct",
+      "description": "Empire commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "foster-fridge-repair-london.html",
+      "title": "Foster Commercial Fridge Repair London | Cold Direct",
+      "description": "Foster commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "freezer-repair-london.html",
+      "title": "Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "freezer-room-repair-london.html",
+      "title": "Freezer Room Repair London | Same-Day Callout - Cold Direct",
+      "description": "Freezer Room repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "fridge-repair-london.html",
+      "title": "Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "fridge-room-repair.html",
+      "title": "Fridge Room Repair London | Same-Day Callout - Cold Direct",
+      "description": "Fridge room and walk-in chiller repair in London. Trade only. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "gram-fridge-repair-london.html",
+      "title": "Gram Commercial Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Gram commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "hoshizaki-ice-machine-repair-london.html",
+      "title": "Hoshizaki Commercial Ice Machine Repair London | Cold Direct",
+      "description": "Hoshizaki commercial ice machine repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "ice-machine-repair-london.html",
+      "title": "Ice Machine Repair London | Same-Day Callout - Cold Direct",
+      "description": "Ice Machine repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "multideck-fridge-repair-london.html",
+      "title": "Multideck Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Multideck Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "multideck-repair-london.html",
+      "title": "Multideck Repair London | Same-Day Callout - Cold Direct",
+      "description": "Multideck repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "open-front-display-repair-london.html",
+      "title": "Open Front Display Repair London | Same-Day Callout - Cold Direct",
+      "description": "Open Front Display repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "polar-fridge-repair-london.html",
+      "title": "Polar Commercial Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Polar commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "prep-fridge-repair-london.html",
+      "title": "Prep Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Prep Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "subzero-freezer-repair-london.html",
+      "title": "Sub-Zero Commercial Freezer Repair London | Cold Direct",
+      "description": "Sub-Zero commercial freezer repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "subzero-fridge-repair-london.html",
+      "title": "Sub-Zero Commercial Fridge Repair London | Cold Direct",
+      "description": "Sub-Zero commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "supermarket-freezer-repair-london.html",
+      "title": "Supermarket Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Supermarket Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "supermarket-fridge-repair-london.html",
+      "title": "Supermarket Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Supermarket Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "true-fridge-repair-london.html",
+      "title": "True Commercial Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "True commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "undercounter-fridge-repair-london.html",
+      "title": "Undercounter Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Undercounter Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "walk-in-chiller-repair.html",
+      "title": "Walk-in Chiller Repair London | Same-Day Callout - Cold Direct",
+      "description": "Walk-in chiller repair in London for restaurants and catering. Trade only. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "walk-in-cold-room-repair-london.html",
+      "title": "Walk-in Cold Room Repair London | Same-Day Callout - Cold Direct",
+      "description": "Walk-in Cold Room repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "walk-in-freezer-repair-london.html",
+      "title": "Walk-in Freezer Repair London | Same-Day Callout - Cold Direct",
+      "description": "Walk-in Freezer repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "walk-in-freezer-room-repair-london.html",
+      "title": "Walk-in Freezer Room Repair London | Same-Day Callout - Cold Direct",
+      "description": "Walk-in Freezer Room repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "walk-in-fridge-repair-london.html",
+      "title": "Walk-in Fridge Repair London | Same-Day Callout - Cold Direct",
+      "description": "Walk-in Fridge repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "williams-freezer-repair-london.html",
+      "title": "Williams Commercial Freezer Repair London | Cold Direct",
+      "description": "Williams commercial freezer repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "williams-fridge-repair-london.html",
+      "title": "Williams Commercial Fridge Repair London | Cold Direct",
+      "description": "Williams commercial fridge repair in London. Same-day emergency callout for trade kitchens. North London & 25 miles. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "wine-cooler-repair-london.html",
+      "title": "Wine Cooler Repair London | Same-Day Callout - Cold Direct",
+      "description": "Wine Cooler repair in London for restaurants, pubs, hotels and shops. Trade only. Same-day callout. Cold Direct. Call 07983 759320."
+    },
+    {
+      "file": "write-a-review.html",
+      "title": "Write a Review | Cold Direct Commercial Refrigeration London",
+      "description": "Leave a review for Cold Direct commercial refrigeration repair in North London. Trade callouts across a 25 mile radius."
+    }
+  ],
+  "changed_schema": [
+    {
+      "file": "adexa-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "air-conditioning-repair-london.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "appliances-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "blast-chiller-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "blast-chiller-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "blast-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "blast-freezing.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1"
+      ]
+    },
+    {
+      "file": "bottle-cooler-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "bottle-cooler-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "bottle-fridge-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cabinet-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "catering-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cellar-cooler-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "chiller-repair-london.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "chiller-repair-north-london.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-barnet.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-edgware.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-enfield.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-finchley.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-harrow.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-palmers-green.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-southgate.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-tottenham.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-wembley.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-room-repair-wood-green.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "cold-storage.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1"
+      ]
+    },
+    {
+      "file": "commercial-appliances-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-blast-chiller-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-blast-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-bottle-cooler-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-chest-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-freezer-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-freezer-repair-tottenham.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-fridge-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-ice-machine-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-brent.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-camden.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-chelsea.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-city-of-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-croydon.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-ealing.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-greenwich.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-hackney.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-hammersmith.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-haringey.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-hounslow.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-islington.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-kensington.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-lambeth.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-newham.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-richmond.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-southwark.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-tower-hamlets.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-wandsworth.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "commercial-refrigeration-repair-westminster.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x2",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "contact.html",
+      "notes": [
+        "HVACBusiness\u2192ApplianceRepair"
+      ]
+    },
+    {
+      "file": "coverage.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "dairy-cabinet-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "display-cabinet-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "display-cooler-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "display-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "display-fridge-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "drinks-fridge-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "empire-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "empire-fridge-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "foster-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "freezer-room-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "fridge-room-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "gram-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "hoshizaki-ice-machine-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "ice-cream-machine-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "ice-machine-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "ice-machine-repair-north-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "index.html",
+      "notes": [
+        "homepage HVACBusiness\u2192rich ApplianceRepair"
+      ]
+    },
+    {
+      "file": "liebherr-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "multideck-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "multideck-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "open-front-display-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "polar-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "prep-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "services.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "subzero-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "subzero-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "supermarket-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "supermarket-fridge-repair-london.html",
+      "notes": [
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "true-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "undercounter-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "walk-in-chiller-repair.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "walk-in-cold-room-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "walk-in-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "walk-in-freezer-room-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "walk-in-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "williams-freezer-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "williams-fridge-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "thin LocalBusiness\u2192rich ApplianceRepair x1",
+        "enriched ApplianceRepair fields"
+      ]
+    },
+    {
+      "file": "wine-cooler-repair-london.html",
+      "notes": [
+        "provider stubs enriched x1",
+        "LocalBusiness\u2192ApplianceRepair remaining x1",
+        "enriched ApplianceRepair fields",
+        "enriched ApplianceRepair fields"
+      ]
+    }
+  ]
+}

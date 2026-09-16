@@ -48,6 +48,17 @@ Started: 2026-09-16
 
 ---
 
+## 2026-09-16 — P1 meta templates + ApplianceRepair schema
+
+- **Change:** Rewrote 61 `"in London from Cold Direct"` title/description templates to repair-intent metas; unified org schema to `ApplianceRepair` (212 nodes); enriched thin stubs with NAP, priceRange, North London + 25 mile `GeoCircle`, 24/7 openingHours; cleared template phrase on utility pages.
+- **Why:** Template metas dilute SERP CTR; mixed LocalBusiness/HVACBusiness confuses entity signals vs repair competitors.
+- **Evidence:** Pre-batch audit found 63 template hits and LocalBusiness 210 + HVACBusiness 2; post-batch 0 templates and ApplianceRepair-only org types. JSON-LD parse check: 0 invalid scripts.
+- **Files:** `colddirect-public-html/*.html` (61+ meta, ~101 schema touches); `tools/fix_meta_schema_p1.py`; `docs/_meta-schema-batch.json`; `docs/seo-keyword-map.md`; `docs/upgrade-plan.md`; `docs/change-log.md`
+- **Testing:** Python audit/verify — 0 leftover template; 0 LocalBusiness/HVACBusiness/Store; all LD+JSON parse; spot-checked Foster/Gram/Williams/Hoshizaki/index/commercial-fridge.
+- **Git:** `P1: repair-intent meta templates + unified LocalBusiness schema`
+
+---
+
 ## Notes for human review
 
 - **Not pushed to `main`.** Approve before merge/deploy to Plesk.
