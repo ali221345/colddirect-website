@@ -77,26 +77,84 @@
 | Equipment list | Walk-ins, ice, bottle cabinets, bar refrigeration |
 | Opportunity for CD | Equipment-type taxonomy already strong on ColdDirect — keep expanding unique copy |
 
-### 2.7 Other repair / hybrid SERP players (lighter pass)
+### 2.7 Commercial Refrigeration London — https://commercialrefrigerationlondon.co.uk/
 
-- Commercial Fridge Repairs London aggregators / directory pages (thin — avoid matching thin SEO)
-- Local FM / building services firms bundling AC + refrigeration
-- Manufacturer authorisation pages (Foster / Williams partners) — ColdDirect should only claim authorised status if true
+| Area | Observation |
+|------|-------------|
+| Coverage | All 32 boroughs messaging |
+| Trust | F-Gas Cat 1 + REFCOM emphasised |
+| Services | Install + PPM + emergency + cold room builds |
+| Advantage | Explicit 4-hour priority SLA product |
+| Opportunity for CD | Productise emergency vs PPM only if offered; keep honest 2–4hr language |
+
+### 2.8 Fast Fix Refrigeration — https://fastfixrefrigeration.co.uk/
+
+| Area | Observation |
+|------|-------------|
+| Mix | Refrigeration + AC under one brand |
+| Trust | REFCOM / F-Gas / insured |
+| Hours | 24/7 / 365 claim |
+| Opportunity for CD | AC page now indexable — keep commercial-only disclaimer strong |
+
+### 2.9 Thermachill — https://thermachill.co.uk/services/refrigeration
+
+| Area | Observation |
+|------|-------------|
+| Positioning | Design/install + repair; named trade clients |
+| Trust | REFCOM / F-Gas; manufacturer partnerships |
+| Opportunity for CD | Do **not** invent client logos; deepen Enfield NAP + borough proof instead |
+
+### 2.10 Fix My Fridge (commercial) — https://www.fixmyfridge.co.uk/
+
+| Area | Observation |
+|------|-------------|
+| Pricing | Publishes weekday call-out guidance |
+| Guarantee | 6-month work guarantee on diagnosed fault |
+| Stats | First-time-fix % and job counts published |
+| Opportunity for CD | Only publish call-out bands / guarantee if human-approved |
+
+### 2.11 London Refrigeration & AC — https://www.londonrefrigeration.co.uk/
+
+| Area | Observation |
+|------|-------------|
+| Model | Supply + install + repair hybrid |
+| Brands | Blizzard, Vestfrost, Hoshizaki, Williams, Foster, Gram |
+| Hours | Mon–Fri daytime — weaker emergency story than ColdDirect |
+| Opportunity for CD | Lean into 24/7 / night porter / weekend trade urgency as differentiator |
+
+### 2.12 A&E CoolTech — https://aecooltech.co.uk/refrigeration/
+
+| Area | Observation |
+|------|-------------|
+| Coverage | London & Essex (M25) |
+| Trust | REFCOM / F-Gas |
+| FAQ | Clear install/service/repair FAQ block |
+| Opportunity for CD | Expand `faqs.html` with quote-before-work + commercial-only answers |
+
+### 2.13 Other repair / hybrid SERP players (lighter pass)
+
+- ACL / Salix / ChillCore-style FM hybrids bundling plant + refrigeration
+- Directory / aggregator “fridge repair London” pages (thin — do not match)
+- Manufacturer authorisation pages — claim authorised status **only** if true
+- Kept Cold Foster-partner badge is a high-trust pattern ColdDirect must not fake
 
 ---
 
 ## 3. Equipment suppliers (different market — patterns only)
 
-Analysed for IA/UX patterns, **not** for cloning:
+Analysed for IA/UX patterns, **not** for cloning (15+ sites sampled across repair + supply):
 
 | Site | Pattern useful for ColdDirect |
 |------|-------------------------------|
-| Fridgesmart / Fridge Freezer Direct / Corr Chilled / Barcare / Adexa | Clear category hierarchy, filters, specs tables |
-| Same group | Strong breadcrumb + related products |
+| Fridgesmart | Deep category tree (multideck, bottle cooler, serve-over) |
+| Corr Chilled | Subcategory clarity + lease messaging (ignore finance for CD) |
+| Barcare / Adexa shop | Spec tables, related products |
+| Foster Fridge (dealer) | Brand-first landing pages |
+| EasyEquipment / Prodis / Koolmax | Filter + price UX — **out of scope** for repair site |
 
-**Do not implement:** product grids, prices, stock, finance, lease-to-buy, SKU schema Product offers — unless ColdDirect starts selling equipment with real inventory.
+**Do not implement:** product grids, prices, stock, finance, lease-to-buy, SKU Product Offer schema — unless ColdDirect sells real inventory.
 
-**May adapt:** breadcrumb consistency, FAQ near CTAs, “related services” blocks (already partially present).
+**May adapt:** breadcrumb consistency, FAQ near CTAs, “related services” blocks, brand landing pages (Liebherr gap closed in continue branch).
 
 ---
 

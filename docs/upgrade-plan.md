@@ -1,61 +1,35 @@
 # ColdDirect Upgrade Plan
 
 **Date:** 2026-09-16  
-**Branch:** `ai/cold-direct-growth-upgrade`  
-**Stack:** Static HTML + SSI (`header-nav.inc`, `footer-services.inc`) + PHP helpers; deploy Plesk `httpdocs` via FTP. Repo also mirrors files at root. Live site ≈ `colddirect-public-html/`.
+**Branch:** `ai/cold-direct-growth-continue` (worktree; `ai/cold-direct-growth-upgrade` locked in another worktree)  
+**Stack:** Static HTML + SSI (`header-nav.inc`, `footer-services.inc`) + PHP helpers; deploy Plesk `httpdocs` via FTP. Live ≈ IIS + `colddirect-public-html/`.
 
 **Business constraint:** Repair service — do **not** build product catalogue / filters / Product Offer schema with invented prices.
 
 ---
 
-## Audit snapshot
+## Audit snapshot (updated)
 
 | Metric | Value |
 |--------|------:|
-| HTML files | ~115 |
-| Sitemap locs | 115 (includes utilities — bad) |
-| noindex pages | 4 (2 utility + **2 promoted services**) |
-| Missing schema | ~15 hubs/utility |
-| Canonical `.html` / bare | ~19 / ~94 |
-| Thin meta template | ~70 pages |
+| HTML files | ~116 (+ Liebherr) |
+| Sitemap | Near-dup non-London URLs removed; Liebherr added |
+| noindex money pages | Fixed earlier (AC + supermarket) |
+| Thin hubs | Thickened (services/brands/coverage/faqs) |
+| Liebherr nav | Fixed → dedicated page |
+| Apache `.htaccess` | Contained dangerous brand 301s — **not active on IIS live**; corrected in repo |
 
 ---
 
 ## P0 — Critical
 
-### P0-1 Unblock or stop promoting AC + supermarket fridge
-- **Problem:** `air-conditioning-repair-london.html` and `supermarket-fridge-repair-london.html` have `noindex,nofollow` but appear in nav + homepage.
-- **Evidence:** Grep robots meta; `includes/header-nav.inc`; homepage cards.
-- **Solution:** Remove noindex → `index,follow` (preferred if pages are quality). Keep in sitemap.
-- **Impact:** High — restores indexability for money keywords.
-- **Risk:** Low if content is commercial-only and unique.
-- **Files:** those two HTML files.
-- **Status:** **DONE** (this branch batch).
-- **Verify:** Live meta robots; GSC URL inspection later.
-
-### P0-2 Sitemap hygiene
-- **Problem:** Sitemap lists `agent-status.html`, `image-preview.html`, `about.html`, `news.html`, `/index.html`.
-- **Solution:** Remove utilities/stubs; keep `/` not `/index.html`.
-- **Impact:** Cleaner crawl budget / fewer soft-404 signals.
-- **Risk:** Low.
-- **Files:** `colddirect-public-html/sitemap.xml` (+ root mirror if used).
-- **Status:** **DONE** (this branch batch).
-- **Verify:** sitemap parse; locs absent.
-
-### P0-3 Robots disallow utilities
-- **Problem:** Utility pages crawlable despite noindex.
-- **Solution:** `Disallow: /agent-status.html` and `/image-preview.html`.
-- **Impact:** Low–medium hygiene.
-- **Risk:** Low.
-- **Files:** `robots.txt`.
-- **Status:** **DONE** (this branch batch).
-
-### P0-4 Booking endpoint
-- **Problem:** JS posts to `/booking.asp`; `/booking.php` 404 on live.
-- **Evidence:** Live HEAD: booking.asp → 400 (endpoint present), booking.php → 404.
-- **Solution:** Keep `.asp` unless migrating deliberately; document.
-- **Status:** **Verified OK** — no code change this batch.
-- **Verify:** Submit test form in staging when human available.
+| ID | Task | Status |
+|----|------|--------|
+| P0-1 | Unblock AC + supermarket fridge noindex | **DONE** |
+| P0-2 | Sitemap hygiene (utilities) | **DONE** |
+| P0-3 | Robots disallow utilities | **DONE** |
+| P0-4 | Booking endpoint | Verified OK (booking.asp) |
+| P0-5 | Stop Apache `.htaccess` from 301ing Foster / commercial-fridge-london money pages | **DONE** (repo; live is IIS) |
 
 ---
 
@@ -63,16 +37,16 @@
 
 | ID | Task | Status |
 |----|------|--------|
-| P1-1 | Canonical policy sitewide (prefer one format) | Planned |
-| P1-2 | Thicken `services.html`, `brands.html`, `coverage.html`, `faqs.html` | Planned (brands WIP uncommitted — coordinate) |
-| P1-3 | Collapse near-dup slugs (empire/bottle/display non-london) | Planned |
-| P1-4 | Unique titles/metas — kill “{X} in London from Cold Direct…” template | Planned (scripted batch) |
-| P1-5 | Schema on hubs; unify LocalBusiness vs HVACBusiness | Planned |
-| P1-6 | Fix Liebherr nav (page or honest link) | Planned |
-| P1-7 | Homepage above-fold primary tel CTA beside H1 | Planned |
-| P1-8 | Publish F-Gas/Refcom **only with human numbers** | Blocked — needs data |
-| P1-9 | Repair guarantee policy copy | Blocked — needs policy |
-| P1-10 | Finish brand pro-image WIP (already in working tree) | In progress (human/agent WIP — do not clobber) |
+| P1-1 | Canonical policy sitewide | Partial — near-dups done; full site still mixed `.html` / bare |
+| P1-2 | Thicken hubs | **DONE** this batch |
+| P1-3 | Collapse near-dup slugs | **DONE** — IIS rewrite map + canonical/noindex + sitemap |
+| P1-4 | Unique titles/metas (kill template) | Planned (~70 pages) |
+| P1-5 | Schema on hubs | **DONE** CollectionPage / FAQPage / WebPage on hubs |
+| P1-6 | Liebherr nav + page | **DONE** |
+| P1-7 | Homepage above-fold tel CTA | **DONE** |
+| P1-8 | F-Gas/Refcom numbers | Blocked — needs human data |
+| P1-9 | Repair guarantee policy | Blocked — needs policy |
+| P1-10 | Brand pro-image WIP | Stashed on `cursor/ded04436` — do not clobber |
 
 ---
 
@@ -80,19 +54,19 @@
 
 | ID | Task | Status |
 |----|------|--------|
-| P2-1 | Business-type landing sections (restaurant / pub / shop) | Roadmap |
-| P2-2 | PPM / servicing page if offered | Blocked |
-| P2-3 | Buying guides / troubleshooting content engine | See content-roadmap.md |
-| P2-4 | Selective area pages only with unique proof | Careful |
-| P2-5 | Lighthouse pass on top 10 URLs | Planned |
+| P2-1 | Business-type landing sections | Roadmap |
+| P2-2 | PPM page if offered | Blocked |
+| P2-3 | Content engine | See content-roadmap.md |
+| P2-4 | Selective area pages | Careful — coverage page now honest |
+| P2-5 | Lighthouse top 10 | Planned |
+| P2-6 | Soften unverified “500+ businesses” badges sitewide | Planned (human confirm stats first) |
 
 ---
 
-## Implementation order (this sprint)
+## Implementation order
 
-1. Docs (research, keyword map, plan, roadmap, changelog)  
-2. P0-1 noindex remove  
-3. P0-2 + P0-3 sitemap + robots  
-4. Stop — human review before main merge / Plesk deploy  
+1. Docs research depth  
+2. P0 htaccess safety + P1 near-dups + Liebherr + hubs + homepage CTA  
+3. Next: meta template batch, remaining schema unify, Lighthouse  
 
-**Do not push this branch to `main` until human approval.**
+**Do not push to `main` / Plesk until human approval.**

@@ -1,6 +1,6 @@
 # ColdDirect Change Log
 
-Branch: `ai/cold-direct-growth-upgrade`  
+Branch: `ai/cold-direct-growth-continue` (continues work from `ai/cold-direct-growth-upgrade`)  
 Started: 2026-09-16
 
 ---
@@ -37,8 +37,20 @@ Started: 2026-09-16
 
 ---
 
+## 2026-09-16 — Research deepen + P1 growth batch
+
+- **Change:** Expanded competitor set (15+ repair/supply sites); thickened hubs; Liebherr page; near-dup 301s; homepage CTA; fixed dangerous Apache brand redirects in repo `.htaccess`.
+- **Why:** Competitors win on trust clarity + hub depth + brand IA; ColdDirect had thin hubs and a Liebherr nav dead-end.
+- **Evidence:** Kept Cold / Be Cool / Xpress / Bear / CRL / Fast Fix / Thermachill / FixMyFridge / London Refrigeration / A&E CoolTech + supplier IA patterns; live HEAD shows IIS (Apache htaccess inactive).
+- **Files:** docs/*; hubs; `liebherr-fridge-repair-london.html`; `web.config` rewrite map; sitemap; header-nav; index; near-dup HTML canonicals; `.htaccess`.
+- **Testing:** Word counts hubs ≥239; sitemap lacks near-dups; nav links Liebherr page; homepage CTA present; root `web.config` restored after accidental overwrite (not committed).
+- **Git:** see commits on `ai/cold-direct-growth-continue`
+
+---
+
 ## Notes for human review
 
 - **Not pushed to `main`.** Approve before merge/deploy to Plesk.
-- Uncommitted brand-image WIP on this branch was **left untouched** to avoid clobbering in-progress work.
-- F-Gas registration / repair guarantee copy **not** invented — awaiting your facts.
+- Brand-image WIP stashed as `stash@{0}` on prior branch — restore when ready (`git stash pop` carefully).
+- F-Gas registration / repair guarantee / “500+ businesses” claims **not** invented — awaiting your facts.
+- Deploy `colddirect-public-html/web.config` carefully — rewrite map now 301s near-dup non-London URLs.

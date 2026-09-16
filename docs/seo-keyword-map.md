@@ -20,7 +20,7 @@ Status legend: `live` = page exists · `fix` = needs copy/meta · `new` = propos
 | Foster fridge repair London | Brand | foster-fridge-repair-london.html | existing | P1 | live |
 | Williams fridge / freezer repair London | Brand | williams-*-london.html | existing | P1 | live |
 | True / Gram / Polar / Adexa / Empire / Hoshizaki / Sub-Zero | Brand | matching *-london.html | existing | P1 | live / images WIP |
-| Liebherr fridge repair London | Brand | brands.html only today | **new** liebherr page OR remove nav claim | P1 | gap |
+| Liebherr fridge repair London | Brand | liebherr-fridge-repair-london.html | **new → live** | P1 | **DONE** — page + nav + sitemap |
 | ice cream machine repair London | Transactional | ice-cream-machine-repair-london.html | existing | P1 | live |
 | ice machine / Hoshizaki repair | Transactional | ice-machine + hoshizaki pages | existing | P1 | live |
 | wine cooler repair London | Transactional | wine-cooler-repair-london.html | existing | P1 | live |
@@ -38,9 +38,10 @@ Status legend: `live` = page exists · `fix` = needs copy/meta · `new` = propos
 
 | Pair | Action |
 |------|--------|
-| empire-fridge-repair.html ↔ empire-fridge-repair-london.html | Canonical/301 → london |
-| bottle-cooler-repair.html ↔ bottle-cooler-repair-london.html | Canonical/301 → london |
-| display-fridge-repair.html ↔ display-fridge-repair-london.html | Canonical/301 → london |
+| empire-fridge-repair.html ↔ empire-fridge-repair-london.html | **DONE** — IIS map 301 + canonical/noindex + removed from sitemap |
+| bottle-cooler-repair.html ↔ bottle-cooler-repair-london.html | **DONE** — same |
+| bottle-fridge-repair / commercial-bottle-cooler-repair | **DONE** → bottle-cooler-repair-london |
+| display-fridge-repair.html ↔ display-fridge-repair-london.html | **DONE** — same |
 | index.html ↔ / | Prefer `/` in sitemap |
 | about.html ↔ about-us.html | Stub → about-us; drop stub from sitemap |
 
