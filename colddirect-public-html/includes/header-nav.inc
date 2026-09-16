@@ -86,7 +86,7 @@
             <li><a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a></li>
             <li><a href="/true-fridge-repair-london.html">True</a></li>
             <li><a href="/gram-fridge-repair-london.html">Gram</a></li>
-            <li><a href="/brands.html">Liebherr</a></li>
+            <li><a href="/liebherr-fridge-repair-london.html">Liebherr</a></li>
             <li><a href="/adexa-fridge-repair-london.html">Adexa</a></li>
             <li><a href="/empire-fridge-repair-london.html">Empire</a></li>
             <li><a href="/subzero-fridge-repair-london.html">Sub-Zero</a></li>

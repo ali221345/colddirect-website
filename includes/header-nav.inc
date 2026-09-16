@@ -34,12 +34,14 @@
               <a href="/ice-cream-machine-repair-london.html">Ice Cream Machine Repair</a>
               <a href="/blast-chiller-repair-london.html">Blast Chiller Repair</a>
               <a href="/blast-freezer-repair-london.html">Blast Freezer Repair</a>
+              <a href="/blast-freezing.html">Blast Freezing</a>
               <a href="/commercial-chest-freezer-repair-london.html">Chest Freezer Repair</a>
               <a href="/supermarket-freezer-repair-london.html">Supermarket Freezer Repair</a>
             </div>
             <div class="mega-col">
               <p class="mega-title">Cold Rooms &amp; Walk-ins</p>
               <a href="/cold-room-repair-london.html">Cold Room Repair</a>
+              <a href="/cold-storage.html">Cold Storage</a>
               <a href="/freezer-room-repair-london.html">Freezer Room Repair</a>
               <a href="/walk-in-fridge-repair-london.html">Walk-in Fridge Repair</a>
               <a href="/walk-in-freezer-repair-london.html">Walk-in Freezer Repair</a>
@@ -84,7 +86,7 @@
             <li><a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a></li>
             <li><a href="/true-fridge-repair-london.html">True</a></li>
             <li><a href="/gram-fridge-repair-london.html">Gram</a></li>
-            <li><a href="/brands.html">Liebherr</a></li>
+            <li><a href="/liebherr-fridge-repair-london.html">Liebherr</a></li>
             <li><a href="/adexa-fridge-repair-london.html">Adexa</a></li>
             <li><a href="/empire-fridge-repair-london.html">Empire</a></li>
             <li><a href="/subzero-fridge-repair-london.html">Sub-Zero</a></li>
