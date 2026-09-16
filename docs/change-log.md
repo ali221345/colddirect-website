@@ -59,6 +59,15 @@ Started: 2026-09-16
 
 ---
 
+## 2026-09-16 — Verification: zero templates + LD+JSON build
+
+- **Change:** Cleared 7 remaining `"in London from Cold Direct"` hits (3 blog metas + 4 root body mirrors); fixed scaffold `templates/page-template.asp` JSON; added `npm run build` → `tools/validate-ldjson.js`.
+- **Why:** Verification grep was not yet 0; package.json had no build for LD+JSON checks.
+- **Testing:** `rg` file count = 0; `npm run build` → VALIDATION OK (0 parse errors, 0 duplicate org definitions per page).
+- **Git:** follow-up commit on `ai/cold-direct-growth-continue`
+
+---
+
 ## Notes for human review
 
 - **Not pushed to `main`.** Approve before merge/deploy to Plesk.
