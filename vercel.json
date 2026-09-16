@@ -6,13 +6,433 @@
   "outputDirectory": ".",
   "redirects": [
     {
+      "source": "/about-us.html",
+      "destination": "/about-us",
+      "permanent": true
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/adexa-fridge-repair-london.html",
+      "destination": "/adexa-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/agent-status.html",
+      "destination": "/agent-status",
+      "permanent": true
+    },
+    {
+      "source": "/air-conditioning-repair-london.html",
+      "destination": "/air-conditioning-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/appliances-repair-london.html",
+      "destination": "/appliances-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/blast-chiller-repair-london.html",
+      "destination": "/blast-chiller-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/blast-chiller-repair-north-london.html",
+      "destination": "/blast-chiller-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/blast-freezer-repair-london.html",
+      "destination": "/blast-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/bottle-cooler-repair-london.html",
+      "destination": "/bottle-cooler-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/brands.html",
       "destination": "/brands",
       "permanent": true
     },
     {
+      "source": "/catering-repair-london.html",
+      "destination": "/catering-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/cellar-cooler-repair-london.html",
+      "destination": "/cellar-cooler-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/chiller-repair-london.html",
       "destination": "/chiller-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/chiller-repair-north-london.html",
+      "destination": "/chiller-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-barnet.html",
+      "destination": "/cold-room-repair-barnet",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-edgware.html",
+      "destination": "/cold-room-repair-edgware",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-enfield.html",
+      "destination": "/cold-room-repair-enfield",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-finchley.html",
+      "destination": "/cold-room-repair-finchley",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-harrow.html",
+      "destination": "/cold-room-repair-harrow",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-london.html",
+      "destination": "/cold-room-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-north-london.html",
+      "destination": "/cold-room-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-palmers-green.html",
+      "destination": "/cold-room-repair-palmers-green",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-southgate.html",
+      "destination": "/cold-room-repair-southgate",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-tottenham.html",
+      "destination": "/cold-room-repair-tottenham",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-wembley.html",
+      "destination": "/cold-room-repair-wembley",
+      "permanent": true
+    },
+    {
+      "source": "/cold-room-repair-wood-green.html",
+      "destination": "/cold-room-repair-wood-green",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-appliances-repair-london.html",
+      "destination": "/commercial-appliances-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-blast-chiller-repair-london.html",
+      "destination": "/commercial-blast-chiller-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-blast-freezer-repair-london.html",
+      "destination": "/commercial-blast-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-chest-freezer-repair-london.html",
+      "destination": "/commercial-chest-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-dishwasher-repair-london.html",
+      "destination": "/commercial-dishwasher-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-display-cabinet-repair-london.html",
+      "destination": "/commercial-display-cabinet-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-freezer-repair-london.html",
+      "destination": "/commercial-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-freezer-repair-north-london.html",
+      "destination": "/commercial-freezer-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-fridge-repair-london.html",
+      "destination": "/commercial-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-fridge-repair-north-london.html",
+      "destination": "/commercial-fridge-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-brent.html",
+      "destination": "/commercial-refrigeration-repair-brent",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-camden.html",
+      "destination": "/commercial-refrigeration-repair-camden",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-chelsea.html",
+      "destination": "/commercial-refrigeration-repair-chelsea",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-city-of-london.html",
+      "destination": "/commercial-refrigeration-repair-city-of-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-croydon.html",
+      "destination": "/commercial-refrigeration-repair-croydon",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-ealing.html",
+      "destination": "/commercial-refrigeration-repair-ealing",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-greenwich.html",
+      "destination": "/commercial-refrigeration-repair-greenwich",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-hackney.html",
+      "destination": "/commercial-refrigeration-repair-hackney",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-hammersmith.html",
+      "destination": "/commercial-refrigeration-repair-hammersmith",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-haringey.html",
+      "destination": "/commercial-refrigeration-repair-haringey",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-hounslow.html",
+      "destination": "/commercial-refrigeration-repair-hounslow",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-islington.html",
+      "destination": "/commercial-refrigeration-repair-islington",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-kensington.html",
+      "destination": "/commercial-refrigeration-repair-kensington",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-lambeth.html",
+      "destination": "/commercial-refrigeration-repair-lambeth",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-newham.html",
+      "destination": "/commercial-refrigeration-repair-newham",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-richmond.html",
+      "destination": "/commercial-refrigeration-repair-richmond",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-southwark.html",
+      "destination": "/commercial-refrigeration-repair-southwark",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-tower-hamlets.html",
+      "destination": "/commercial-refrigeration-repair-tower-hamlets",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-wandsworth.html",
+      "destination": "/commercial-refrigeration-repair-wandsworth",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-refrigeration-repair-westminster.html",
+      "destination": "/commercial-refrigeration-repair-westminster",
+      "permanent": true
+    },
+    {
+      "source": "/contact.html",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/coverage.html",
+      "destination": "/coverage",
+      "permanent": true
+    },
+    {
+      "source": "/display-cabinet-repair-london.html",
+      "destination": "/display-cabinet-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/display-cabinet-repair-north-london.html",
+      "destination": "/display-cabinet-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/empire-fridge-repair-london.html",
+      "destination": "/empire-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/faqs.html",
+      "destination": "/faqs",
+      "permanent": true
+    },
+    {
+      "source": "/freezer-repair-london.html",
+      "destination": "/freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/freezer-room-repair-london.html",
+      "destination": "/freezer-room-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/freezer-room-repair-north-london.html",
+      "destination": "/freezer-room-repair-north-london",
+      "permanent": true
+    },
+    {
+      "source": "/fridge-repair-london.html",
+      "destination": "/fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/hoshizaki-ice-machine-repair-london.html",
+      "destination": "/hoshizaki-ice-machine-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/ice-cream-machine-repair-london.html",
+      "destination": "/ice-cream-machine-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/ice-machine-repair-london.html",
+      "destination": "/ice-machine-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/multideck-fridge-repair-london.html",
+      "destination": "/multideck-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/multideck-repair-london.html",
+      "destination": "/multideck-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/news.html",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/open-front-display-repair-london.html",
+      "destination": "/open-front-display-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/polar-fridge-repair-london.html",
+      "destination": "/polar-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/prep-fridge-repair-london.html",
+      "destination": "/prep-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/preview-colddirect-homepage.html",
+      "destination": "/preview-colddirect-homepage",
+      "permanent": true
+    },
+    {
+      "source": "/services.html",
+      "destination": "/services",
+      "permanent": true
+    },
+    {
+      "source": "/subzero-freezer-repair-london.html",
+      "destination": "/subzero-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/subzero-fridge-repair-london.html",
+      "destination": "/subzero-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/supermarket-freezer-repair-london.html",
+      "destination": "/supermarket-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/supermarket-fridge-repair-london.html",
+      "destination": "/supermarket-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/undercounter-fridge-repair-london.html",
+      "destination": "/undercounter-fridge-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/williams-freezer-repair-london.html",
+      "destination": "/williams-freezer-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/wine-cooler-repair-london.html",
+      "destination": "/wine-cooler-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/write-a-review.html",
+      "destination": "/write-a-review",
       "permanent": true
     }
   ]
