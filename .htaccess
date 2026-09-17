@@ -17,9 +17,10 @@ RewriteRule ^services/?$ / [R=301,L]
 # Live blog (do not 301 these). Unknown old slugs still go home.
 RewriteRule ^blog/?$ /blog/index.html [L]
 RewriteRule ^blog/index\.html$ - [L]
+RewriteRule ^blog/[a-z0-9-]+\.html$ - [L]
 RewriteRule ^blog/commercial-freezer-ice-buildup-causes/?$ /blog/commercial-freezer-ice-buildup-causes/index.html [L]
 RewriteRule ^blog/cold-room-temperature-fluctuation/?$ /blog/cold-room-temperature-fluctuation/index.html [L]
-RewriteRule ^blog/commercial-fridge-repair-cost-london/?$ /blog/commercial-fridge-repair-cost-london/index.html [L]
+RewriteRule ^blog/commercial-fridge-repair-cost-london/?$ /blog/commercial-fridge-repair-cost-london.html [R=301,L]
 RewriteRule ^blog/?(.*)$ / [R=301,L]
 
 # --- Old ranking service URLs ---
