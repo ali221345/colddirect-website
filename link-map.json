@@ -18,5 +18,15 @@
     "commercial-chest-freezer-repair-london.html",
     "blast-chiller-repair-london.html",
     "freezer-room-repair-london.html"
+  ],
+  "supermarket-freezer-repair-london.html": [
+    "williams-freezer-repair-london.html",
+    "commercial-chest-freezer-repair-london.html",
+    "supermarket-fridge-repair-london.html"
+  ],
+  "williams-freezer-repair-london.html": [
+    "supermarket-freezer-repair-london.html",
+    "williams-fridge-repair-london.html",
+    "commercial-freezer-repair-london.html"
   ]
 }
