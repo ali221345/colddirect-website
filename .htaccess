@@ -88,7 +88,7 @@ RewriteRule ^garm-repairs-london/?$ /commercial-fridge-repair-north-london.html 
 RewriteRule ^mafirol-repairs-london/?$ /display-cabinet-repair-north-london.html [R=301,L]
 RewriteRule ^graupel-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
 RewriteRule ^lynkso-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
-RewriteRule ^refrigeration-brands-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+RewriteRule ^refrigeration-brands-repairs?-london(\.asp)?$ /refrigeration-brands-repair-london.html [R=301,L]
 RewriteRule ^polar-repairs-london/?$ /polar-fridge-repair-london.html [R=301,L]
 RewriteRule ^empire-repairs-london/?$ /empire-fridge-repair-london.html [R=301,L]
 RewriteRule ^hoshizaki-repairs-london/?$ /hoshizaki-ice-machine-repair-london.html [R=301,L]
