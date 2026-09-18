@@ -8,5 +8,7 @@
 | 2026-09-16 | blast-freezer-repair-london.html | 506 words, hasSeo=false -> 1006 words, seo-article added (~500w unique block, keyword x3) |
 | 2026-09-17 | supermarket-freezer-repair-london.html | 579 words, hasSeo=false -> 1105 words, seo-article added (~519w unique block, keyword x3) |
 | 2026-09-17 | williams-freezer-repair-london.html | 688 words, hasSeo=false -> 1214 words, seo-article added (~520w unique block, keyword x3) |
+| 2026-09-18 | subzero-freezer-repair-london.html | 689 words, hasSeo=false -> 1212 words, seo-article added (~512w unique block, keyword x3) |
+| 2026-09-18 | commercial-freezer-repair-north-london.html | 890 words, hasSeo=false -> 1416 words, seo-article added (~518w unique block, keyword x3) |
 
-Notes: 2026-09-17 max 2 service pages (commercial fridge already OK; freezer pages next). Folder index.html copies kept in sync. Header, hero, CTA and footer otherwise unchanged.
+Notes: 2026-09-18 max 2 service pages (commercial fridge already OK; freezer pages next). Folder index.html copies kept in sync. Header, hero, CTA and footer otherwise unchanged. Next freezer page: commercial-freezer-repair-london.html, then freezer-room-repair-north-london.html.
