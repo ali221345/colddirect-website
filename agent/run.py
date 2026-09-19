@@ -9,7 +9,7 @@ from scripts.sitemap import generate_sitemap
 from scripts.robots import check_robots
 from scripts.seo_score import score_page
 
-SITE = AGENT_DIR.parent / "colddirect-public-html"
+SITE = AGENT_DIR.parent
 
 
 def score_all_html(site_folder):
