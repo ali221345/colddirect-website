@@ -38,5 +38,15 @@
     "subzero-freezer-repair-london.html",
     "commercial-freezer-repair-london.html",
     "freezer-room-repair-north-london.html"
+  ],
+  "commercial-freezer-repair-london.html": [
+    "freezer-room-repair-north-london.html",
+    "commercial-freezer-repair-north-london.html",
+    "williams-freezer-repair-london.html"
+  ],
+  "freezer-room-repair-north-london.html": [
+    "commercial-freezer-repair-london.html",
+    "commercial-freezer-repair-north-london.html",
+    "walk-in-freezer-repair-london.html"
   ]
 }
