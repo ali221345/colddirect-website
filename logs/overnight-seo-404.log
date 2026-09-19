@@ -138,3 +138,17 @@ Copied existing pages from colddirect-public-html/ (FTP-excluded) to root .html 
   display-cooler-repair-london
   ice-machine-repair-north-london
 Blog cost: synced folder index.html to 2026 article; web.config no longer 301s slash <-> .html (loop).
+
+## POST-DEPLOY RECHECK 2026-09-19T01:11:33.990903+00:00
+FTP deploy 35411816902 success. Rechecked 11 URLs. remaining_fail=0
+OK	200	200	https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
+OK	200	200	https://www.colddirect.co.uk/fridge-room-repair/
+OK	200	200	https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/
+OK	200	200	https://www.colddirect.co.uk/walk-in-chiller-repair/
+OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/
+OK	200	200	https://www.colddirect.co.uk/commercial-ice-machine-repair-london/
+OK	200	200	https://www.colddirect.co.uk/drinks-fridge-repair/
+OK	200	200	https://www.colddirect.co.uk/display-cooler-repair-london/
+OK	200	200	https://www.colddirect.co.uk/ice-machine-repair-north-london/
+OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-london/
+OK	200	200	https://www.colddirect.co.uk/freezer-room-repair-north-london/
