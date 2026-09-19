@@ -4,7 +4,7 @@
   "description": "Static HTML for [colddirect.co.uk](https://www.colddirect.co.uk), deployed to Plesk `httpdocs`.",
   "main": "index.js",
   "scripts": {
-    "build": "node tools/validate-ldjson.js",
+    "build": "next build"
     "validate:ldjson": "node tools/validate-ldjson.js",
     "test": "node tools/validate-ldjson.js"
   },
