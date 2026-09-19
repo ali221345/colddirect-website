@@ -1,0 +1,80 @@
+{
+  "lastHomepageH1Change": "2026-09-14",
+  "h1Locks": {
+    "commercial-fridge-repair-london.html": "2026-09-28",
+    "commercial-freezer-repair-london.html": "2026-09-28",
+    "fridge-repair-london.html": "2026-09-28",
+    "freezer-repair-london.html": "2026-09-28"
+  },
+  "titleRewrites": {},
+  "queryHistory": {
+    "fridge repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 13.9,
+        "clicks": 10,
+        "impressions": 30,
+        "ctr": 0.3333333333333333
+      }
+    ],
+    "freezer repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 14.166666666666666,
+        "clicks": 3,
+        "impressions": 12,
+        "ctr": 0.25
+      }
+    ],
+    "commercial fridge repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 15.15,
+        "clicks": 14,
+        "impressions": 40,
+        "ctr": 0.35
+      }
+    ],
+    "cold room repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 5.38,
+        "clicks": 29,
+        "impressions": 50,
+        "ctr": 0.58
+      }
+    ],
+    "chiller repair near me": [
+      {
+        "date": "2026-09-19",
+        "position": 28,
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0
+      }
+    ],
+    "commercial freezer repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      }
+    ],
+    "ice machine repair london": [
+      {
+        "date": "2026-09-19",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      }
+    ]
+  },
+  "pageDaily": {},
+  "linksAdded": {
+    "mid-fridge repair london|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-19",
+    "mid-freezer repair london|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-19"
+  }
+}

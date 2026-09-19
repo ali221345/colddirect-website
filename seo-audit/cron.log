@@ -1,0 +1,9 @@
+[2026-09-19T17:48:49.369Z] START daily-seo-update 2026-09-19
+[2026-09-19T17:48:49.372Z] GSC window 2026-09-12 .. 2026-09-18
+[2026-09-19T17:48:50.482Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-09-19T17:48:51.714Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-09-19T17:49:07.823Z] SITEMAP http=200 locs=118
+[2026-09-19T17:49:07.961Z] SITEMAP_GSC [{"type":"web","submitted":"108","indexed":"0"}]
+[2026-09-19T17:49:09.721Z] FTP_OK UPLOADED blog/why-commercial-fridge-not-cold-enough.html
+[2026-09-19T17:49:09.723Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-19.md
+[2026-09-19T17:49:09.723Z] DONE changes=2 alerts=0
