@@ -48,5 +48,15 @@
     "commercial-freezer-repair-london.html",
     "commercial-freezer-repair-north-london.html",
     "walk-in-freezer-repair-london.html"
+  ],
+  "supermarket-fridge-repair-london.html": [
+    "commercial-dishwasher-repair-london.html",
+    "multideck-fridge-repair-london.html",
+    "supermarket-freezer-repair-london.html"
+  ],
+  "commercial-dishwasher-repair-london.html": [
+    "supermarket-fridge-repair-london.html",
+    "catering-repair-london.html",
+    "commercial-fridge-repair-london.html"
   ]
 }

@@ -1,0 +1,12 @@
+source,note
+UNAVAILABLE,"No GSC credentials in this agent. Used seo-audit/daily-report-2026-09-19.md (2026-09-12..2026-09-18) plus live IIS robots crawl 2026-09-20."
+date,type,query_or_page,clicks,impressions,ctr,position,class,winner_url
+2026-09-19,query,cold room repair london,29,50,0.5800,5.38,WINNER,/cold-room-repair-london/
+2026-09-19,query,commercial fridge repair london,14,40,0.3500,15.15,OPPORTUNITY,/commercial-fridge-repair-london/
+2026-09-19,query,fridge repair london,10,30,0.3333,13.90,LEAK,/fridge-repair-london/
+2026-09-19,query,freezer repair london,3,12,0.2500,14.17,WATCH,/freezer-repair-london/
+2026-09-19,query,chiller repair near me,0,1,0.0000,28.00,WATCH,/chiller-repair-london/
+2026-09-19,query,commercial freezer repair london,0,0,0.0000,0.00,WATCH,/commercial-freezer-repair-london/
+2026-09-19,query,ice machine repair london,0,0,0.0000,0.00,WATCH,/ice-machine-repair-london/
+2026-09-20,live-robots,/supermarket-fridge-repair-london/,0,0,0,99,NOINDEX_TRAP,/supermarket-fridge-repair-london/
+2026-09-20,repo-robots,/air-conditioning-repair-london/,0,0,0,99,NOINDEX_TRAP_REPO_DRIFT,/air-conditioning-repair-london/

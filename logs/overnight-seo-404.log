@@ -1,154 +1,131 @@
-# overnight-seo-404.log 2026-09-19T01:07:18.527696+00:00
+# overnight-seo-404.log 2026-09-20T01:03:10+00:00
 sitemap: https://www.colddirect.co.uk/sitemap.xml
 urls: 109
-failures: 9
-status	desktop	mobile	url
-OK	200	200	https://www.colddirect.co.uk/
-FAIL	301	301	https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
-OK	200	200	https://www.colddirect.co.uk/refrigeration-brands-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-storage/
-OK	200	200	https://www.colddirect.co.uk/blast-freezing/
-FAIL	404	404	https://www.colddirect.co.uk/fridge-room-repair/
-OK	200	200	https://www.colddirect.co.uk/freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-chest-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/freezer-room-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-enfield/
-OK	200	200	https://www.colddirect.co.uk/williams-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/services/
-OK	200	200	https://www.colddirect.co.uk/walk-in-cold-room-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-dishwasher-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-finchley/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-hammersmith/
-OK	200	200	https://www.colddirect.co.uk/display-cabinet-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-richmond/
-OK	200	200	https://www.colddirect.co.uk/brands/
-OK	200	200	https://www.colddirect.co.uk/faqs/
-OK	200	200	https://www.colddirect.co.uk/commercial-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-camden/
-OK	200	200	https://www.colddirect.co.uk/gram-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/dairy-cabinet-repair-london/
-OK	200	200	https://www.colddirect.co.uk/adexa-fridge-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/
-OK	200	200	https://www.colddirect.co.uk/williams-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/contact/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-tower-hamlets/
-OK	200	200	https://www.colddirect.co.uk/commercial-blast-chiller-repair-london/
-OK	200	200	https://www.colddirect.co.uk/chiller-repair-london/
-OK	200	200	https://www.colddirect.co.uk/multideck-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/ice-machine-repair-london/
-OK	200	200	https://www.colddirect.co.uk/prep-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/blast-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/true-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/undercounter-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/bottle-cooler-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-kensington/
-OK	200	200	https://www.colddirect.co.uk/commercial-blast-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-croydon/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-ealing/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-hackney/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-barnet/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-southgate/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-palmers-green/
-OK	200	200	https://www.colddirect.co.uk/walk-in-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/supermarket-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/multideck-repair-london/
-OK	200	200	https://www.colddirect.co.uk/write-a-review/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-wembley/
-OK	200	200	https://www.colddirect.co.uk/freezer-room-repair-london/
-OK	200	200	https://www.colddirect.co.uk/empire-fridge-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/walk-in-chiller-repair/
-FAIL	404	404	https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/
-FAIL	404	404	https://www.colddirect.co.uk/commercial-ice-machine-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-hounslow/
-OK	200	200	https://www.colddirect.co.uk/appliances-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-islington/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-harrow/
-OK	200	200	https://www.colddirect.co.uk/foster-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/polar-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/blast-chiller-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/drinks-fridge-repair/
-OK	200	200	https://www.colddirect.co.uk/commercial-appliances-repair-london/
-OK	200	200	https://www.colddirect.co.uk/about-us/
-OK	200	200	https://www.colddirect.co.uk/commercial-display-cabinet-repair-london/
-OK	200	200	https://www.colddirect.co.uk/chiller-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/supermarket-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-greenwich/
-OK	200	200	https://www.colddirect.co.uk/display-cabinet-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-westminster/
-OK	200	200	https://www.colddirect.co.uk/cabinet-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-haringey/
-OK	200	200	https://www.colddirect.co.uk/wine-cooler-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-chelsea/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-brent/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-lambeth/
-OK	200	200	https://www.colddirect.co.uk/air-conditioning-repair-london/
-OK	200	200	https://www.colddirect.co.uk/hoshizaki-ice-machine-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-southwark/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-edgware/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-city-of-london/
-OK	200	200	https://www.colddirect.co.uk/walk-in-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-newham/
-OK	200	200	https://www.colddirect.co.uk/ice-cream-machine-repair-london/
-OK	200	200	https://www.colddirect.co.uk/open-front-display-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/display-cooler-repair-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-tottenham/
-OK	200	200	https://www.colddirect.co.uk/display-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/cold-room-repair-wood-green/
-OK	200	200	https://www.colddirect.co.uk/commercial-refrigeration-repair-wandsworth/
-OK	200	200	https://www.colddirect.co.uk/subzero-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-fridge-repair-north-london/
-FAIL	404	404	https://www.colddirect.co.uk/ice-machine-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/cellar-cooler-repair-london/
-OK	200	200	https://www.colddirect.co.uk/catering-repair-london/
-OK	200	200	https://www.colddirect.co.uk/subzero-fridge-repair-london/
-OK	200	200	https://www.colddirect.co.uk/coverage/
-OK	200	200	https://www.colddirect.co.uk/blast-chiller-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/blog/why-commercial-freezer-not-freezing/
-OK	200	200	https://www.colddirect.co.uk/blog/
-OK	200	200	https://www.colddirect.co.uk/blog/why-commercial-fridge-not-cold-enough/
-OK	200	200	https://www.colddirect.co.uk/ice-o-matic-fridge-repairs/
+failures: 3
+status | Desktop Status | Mobile Status | Robots tag | URL
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/refrigeration-brands-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-storage/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blast-freezing/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/fridge-room-repair/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-chest-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/freezer-room-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-enfield/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/williams-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/services/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/walk-in-cold-room-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-dishwasher-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-finchley/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-hammersmith/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/display-cabinet-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-richmond/
+OK | 200 | 200 | index, follow | https://www.colddirect.co.uk/brands/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/faqs/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-camden/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/gram-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/dairy-cabinet-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/adexa-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/williams-fridge-repair-london/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/contact/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-tower-hamlets/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-blast-chiller-repair-london/
+OK | 200 | 200 | index, follow | https://www.colddirect.co.uk/chiller-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/multideck-fridge-repair-london/
+OK | 200 | 200 | index, follow | https://www.colddirect.co.uk/ice-machine-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/prep-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blast-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/true-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/undercounter-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/bottle-cooler-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-kensington/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-blast-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-croydon/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-ealing/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-hackney/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-barnet/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-southgate/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-palmers-green/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/walk-in-fridge-repair-london/
+OK | 200 | 200 | noindex, nofollow | https://www.colddirect.co.uk/supermarket-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/multideck-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/write-a-review/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-wembley/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/freezer-room-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/empire-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/walk-in-chiller-repair/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-ice-machine-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-hounslow/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/appliances-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-islington/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-harrow/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/foster-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/polar-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blast-chiller-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/drinks-fridge-repair/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-appliances-repair-london/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/about-us/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-display-cabinet-repair-london/
+OK | 200 | 200 | index, follow | https://www.colddirect.co.uk/chiller-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/supermarket-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-greenwich/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/display-cabinet-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-westminster/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cabinet-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-haringey/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/wine-cooler-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-chelsea/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-brent/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-lambeth/
+OK | 200 | 200 | index, follow | https://www.colddirect.co.uk/air-conditioning-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/hoshizaki-ice-machine-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-southwark/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-edgware/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-city-of-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/walk-in-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-newham/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/ice-cream-machine-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/open-front-display-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/display-cooler-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-tottenham/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/display-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-freezer-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cold-room-repair-wood-green/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-refrigeration-repair-wandsworth/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/subzero-freezer-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/commercial-fridge-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/ice-machine-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/cellar-cooler-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/catering-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/subzero-fridge-repair-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/coverage/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blast-chiller-repair-north-london/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blog/why-commercial-freezer-not-freezing/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blog/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/blog/why-commercial-fridge-not-cold-enough/
+OK | 200 | 200 | NONE | https://www.colddirect.co.uk/ice-o-matic-fridge-repairs/
 
 ## FAILURES
-FAIL	301	301	https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
-FAIL	404	404	https://www.colddirect.co.uk/fridge-room-repair/
-FAIL	404	404	https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/walk-in-chiller-repair/
-FAIL	404	404	https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/
-FAIL	404	404	https://www.colddirect.co.uk/commercial-ice-machine-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/drinks-fridge-repair/
-FAIL	404	404	https://www.colddirect.co.uk/display-cooler-repair-london/
-FAIL	404	404	https://www.colddirect.co.uk/ice-machine-repair-north-london/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/contact/
+FAIL | 301 | 301 | NONE | https://www.colddirect.co.uk/about-us/
 
-NOTE: live site is Microsoft-IIS/PleskWin, not WordPress+nginx. wp rewrite / nginxmng skipped (no WP-CLI/Plesk on this agent, and stack mismatch).
+Loop detail (HEAD, no follow):
+- /about-us/ -> 301 /about-us.html ; /about-us.html -> 301 /about-us/
+- /contact/ -> 301 /contact.html ; /contact.html -> 301 /contact/
+- /blog/commercial-fridge-repair-cost-london/ -> 301 .html ; .html -> 301 /
 
-## 2026-09-19 RESTORE (repo, pending FTP deploy)
-Live stack: Microsoft-IIS / PleskWin. WordPress rewrite + nginxmng NOT run (no WP-CLI, wrong stack).
-Copied existing pages from colddirect-public-html/ (FTP-excluded) to root .html + slug/index.html:
-  fridge-room-repair
-  walk-in-freezer-room-repair-london
-  walk-in-chiller-repair
-  commercial-freezer-repair-tottenham
-  commercial-ice-machine-repair-london
-  drinks-fridge-repair
-  display-cooler-repair-london
-  ice-machine-repair-north-london
-Blog cost: synced folder index.html to 2026 article; web.config no longer 301s slash <-> .html (loop).
+NOTE: live site is Microsoft-IIS/PleskWin, not WordPress+nginx. wp rewrite / nginxmng skipped.
 
-## POST-DEPLOY RECHECK 2026-09-19T01:11:33.990903+00:00
-FTP deploy 35411816902 success. Rechecked 11 URLs. remaining_fail=0
-OK	200	200	https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/
-OK	200	200	https://www.colddirect.co.uk/fridge-room-repair/
-OK	200	200	https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/
-OK	200	200	https://www.colddirect.co.uk/walk-in-chiller-repair/
-OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/
-OK	200	200	https://www.colddirect.co.uk/commercial-ice-machine-repair-london/
-OK	200	200	https://www.colddirect.co.uk/drinks-fridge-repair/
-OK	200	200	https://www.colddirect.co.uk/display-cooler-repair-london/
-OK	200	200	https://www.colddirect.co.uk/ice-machine-repair-north-london/
-OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-london/
-OK	200	200	https://www.colddirect.co.uk/freezer-room-repair-north-london/
+## 2026-09-20 REPO FIX (pending FTP deploy)
+web.config: serve folder index.html first; rewrite about-us / contact / blog-cost slash and .html to folder index.html (stopProcessing).
+NOINDEX: supermarket-fridge-repair-london live noindex,nofollow -> index,follow in .html + folder.
+REPO DRIFT: air-conditioning-repair-london.html + folder noindex -> index,follow (live already index).
