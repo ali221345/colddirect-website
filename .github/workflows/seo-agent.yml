@@ -46,7 +46,7 @@ jobs:
         id: protect
         run: python agent/scripts/protect_fixed_pages.py github-excludes
 
-      - name: FTP deploy via lftp (alternative)
+            - name: FTP deploy via lftp (alternative)
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -57,11 +57,7 @@ jobs:
           lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftps://$FTP_SERVER:21 <<EOF
           set ssl:verify-certificate no
           set ftp:ssl-force yes
-          mirror --reverse --delete --verbose./colddirect-public-html/ /httpdocs/ \
-            --exclude-glob.git* \
-            --exclude-glob.git*/** \
-            --exclude-glob *node_modules* \
-            ${{ steps.protect.outputs.extra_exclude }}
+          mirror --reverse --delete --verbose ./colddirect-public-html/ /httpdocs/ --exclude-glob .git* --exclude-glob .git*/** --exclude-glob *node_modules*
           bye
           EOF
 
