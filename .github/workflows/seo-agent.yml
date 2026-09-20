@@ -41,31 +41,3 @@ jobs:
             git commit -m "chore: daily SEO agent - sitemap + GSC daily report"
             git push
           fi
-
-      - name: Skip stale protected pages
-        id: protect
-        run: python agent/scripts/protect_fixed_pages.py github-excludes
-
-            - name: FTP deploy via lftp (alternative)
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y lftp
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" ftps://$FTP_SERVER:21 <<EOF
-          set ssl:verify-certificate no
-          set ftp:ssl-force yes
-          mirror --reverse --delete --verbose ./colddirect-public-html/ /httpdocs/ --exclude-glob .git* --exclude-glob .git*/** --exclude-glob *node_modules*
-          bye
-          EOF
-
-      - name: Restore protected pages if this deploy reverted them
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          PLESK_FTP_PATH: /httpdocs
-        run: python agent/scripts/protect_fixed_pages.py restore-live
-        continue-on-error: true
