@@ -1,15 +1,40 @@
+# BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+RewriteRule ^index\.php$ - [L]
+
+# Short aliases first (one hop), then generic .html -> slash
+RewriteRule ^ice-cream-machine-repair(\.html)?/?$ /ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^ice-machine-repair(\.html)?/?$ /ice-machine-repair-london/ [R=301,L]
+RewriteRule ^google[0-9a-z]+\.html$ - [L]
+RewriteRule ^index\.html$ - [L]
+RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
+
+RewriteRule ^ice-cream-machine-repairs-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^ice-cream-repair-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^icecream-machine-repair-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
+RedirectMatch 301 ^/ice-cream-machine-repair-london.html$ /ice-cream-machine-repair-london/
+RedirectMatch 301 ^/ice-machine-repair-london.html$ /ice-machine-repair-london/
+RedirectMatch 301 ^/catering-repair-london.html$ /catering-repair-london/
+RedirectMatch 301 ^/freezer-repair-london.html$ /freezer-repair-london/
+RedirectMatch 301 ^/fridge-repair-london.html$ /fridge-repair-london/
 
 # Force HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Pretty URLs: /slug/ and /slug serve slug.html when that file exists (nginx often 404s these).
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^(.+?)/?$ /$1.html [L]
+
+# Ice-O-Matic alias (page also exists as ice-o-matic-fridge-repairs.html)
+RewriteRule ^ice-o-matic-fridge-repairs/?$ /ice-o-matic-fridge-repairs.html [L]
+
 # --- Core / nav ---
 RewriteRule ^about/?$ /about-us.html [R=301,L]
-RewriteRule ^about-us/?$ /about-us.html [R=301,L]
-RewriteRule ^contact/?$ /contact.html [R=301,L]
 RewriteRule ^contact-us/?$ /contact.html [R=301,L]
 RewriteRule ^book-a-repair-page/?$ /contact.html [R=301,L]
 RewriteRule ^services/?$ / [R=301,L]
@@ -21,6 +46,7 @@ RewriteRule ^blog/[a-z0-9-]+\.html$ - [L]
 RewriteRule ^blog/commercial-freezer-ice-buildup-causes/?$ /blog/commercial-freezer-ice-buildup-causes/index.html [L]
 RewriteRule ^blog/cold-room-temperature-fluctuation/?$ /blog/cold-room-temperature-fluctuation/index.html [L]
 RewriteRule ^blog/commercial-fridge-repair-cost-london/?$ /blog/commercial-fridge-repair-cost-london.html [R=301,L]
+RewriteRule ^blog/different-types-of-ice/?$ /blog/different-types-of-ice.html [L]
 RewriteRule ^blog/?(.*)$ / [R=301,L]
 
 # --- Old ranking service URLs ---
@@ -39,20 +65,25 @@ RewriteRule ^commercial-fridge-repairs-london/?$ /commercial-fridge-repair-north
 # Keep commercial-fridge-repair-london.html as its own money page (do not 301 to North London).
 RewriteRule ^commercial-fridge-repairs-london\.html$ /commercial-fridge-repair-london.html [R=301,L]
 RewriteRule ^display-fridge-repairs-london/?$ /display-cabinet-repair-north-london.html [R=301,L]
-RewriteRule ^chiller-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
+# Serve plural chiller URL (canonical on page → /chiller-repair-london/). Do not 301 to fridge.
+RewriteRule ^chiller-repairs-london\.asp$ /chiller-repair-london/ [R=301,L]
+RewriteRule ^catering-repair-london\.asp$ /catering-repair-london/ [R=301,L]
+RewriteRule ^chiller-repairs-london/?$ /chiller-repairs-london.html [L]
 RewriteRule ^ice-machine-repairs-london/?$ /ice-machine-repair-london.html [R=301,L]
 RewriteRule ^wine-cooler-repairs-london/?$ /wine-cooler-repair-london.html [R=301,L]
 RewriteRule ^bottle-cooler-repairs-london/?$ /bottle-cooler-repair-london.html [R=301,L]
 RewriteRule ^cellar-cooler-repairs-london/?$ /cellar-cooler-repair-london.html [R=301,L]
-RewriteRule ^air-conditioning-repairs-london/?$ / [R=301,L]
+# Serve plural AC URL (canonical on page → /air-conditioning-repair-london/). Do not 301 to homepage.
+RewriteRule ^air-conditioning-repairs-london/?$ /air-conditioning-repairs-london.html [L]
 RewriteRule ^air-conditioning-london\.html$ / [R=301,L]
 RewriteRule ^air-conditioning/?$ / [R=301,L]
-RewriteRule ^dishwashers-london/?$ / [R=301,L]
+RewriteRule ^dishwashers-london(/|\.html)?$ /catering-repair-london/ [R=301,L]
+RewriteRule ^commercial-dishwasher-repair-london(/|\.html)?$ /catering-repair-london/ [R=301,L]
 RewriteRule ^commercial-appliance-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
 RewriteRule ^[Ee]mergency-fridge-repair-london\.html$ /fridge-repair-london.html [R=301,L]
 
 # --- Brand / doorway pages indexed by Google ---
-# NOTE (2026-09-16): Live host is IIS — this Apache file is not active on production.
+# NOTE (2026-09-18): Plesk nginx+Apache — also paste conf/vhost_nginx.conf in Additional nginx directives.
 # Do NOT 301 real brand HTML money pages to generic North London hubs.
 RewriteRule ^foster-repairs-london/?$ /foster-fridge-repair-london.html [R=301,L]
 RewriteRule ^atosa-repairs-london/?$ /commercial-fridge-repair-north-london.html [R=301,L]
@@ -94,4 +125,10 @@ RewriteRule ^empire-repairs-london/?$ /empire-fridge-repair-london.html [R=301,L
 RewriteRule ^hoshizaki-repairs-london/?$ /hoshizaki-ice-machine-repair-london.html [R=301,L]
 RewriteRule ^william-fridge-repair-london/?$ /williams-freezer-repair-london.html [R=301,L]
 RewriteRule ^william-repairs-london/?$ /williams-freezer-repair-london.html [R=301,L]
+
+# WordPress / PHP fallback (only if no file or directory)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
 </IfModule>
+# END WordPress

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Search Console analysis — Cold Direct — 19 Sep 2026</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --line: #e3e3e3;
+      --bg: #fff;
+      --fill: #f6f6f4;
+      --ok: #1b7f4a;
+      --ok-bg: #e8f6ee;
+      --warn: #9a6700;
+      --warn-bg: #fff6e0;
+      --info: #185fa5;
+      --info-bg: #eaf2fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 16px/1.5 Georgia, "Times New Roman", serif;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--fill);
+      border-bottom: 1px solid var(--line);
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+    }
+    button {
+      font: inherit;
+      padding: 8px 14px;
+      border: 1px solid var(--text);
+      background: var(--text);
+      color: #fff;
+      cursor: pointer;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 36px 0 12px; }
+    h3 { font-size: 16px; margin: 0 0 10px; }
+    p { margin: 0 0 12px; }
+    .meta { color: var(--muted); font-family: system-ui, sans-serif; font-size: 14px; }
+    .pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 20px; }
+    .pill {
+      font-family: system-ui, sans-serif;
+      font-size: 13px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+    }
+    .pill.ok { background: var(--ok-bg); color: var(--ok); }
+    .pill.warn { background: var(--warn-bg); color: var(--warn); }
+    .pill.info { background: var(--info-bg); color: var(--info); }
+    .callout {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: var(--ok-bg);
+      margin: 0 0 20px;
+    }
+    .callout.warn { background: var(--warn-bg); }
+    .callout h3 { margin-bottom: 4px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .stat {
+      border: 1px solid var(--line);
+      padding: 14px;
+      background: var(--fill);
+    }
+    .stat b {
+      display: block;
+      font-size: 26px;
+      font-family: system-ui, sans-serif;
+      font-weight: 650;
+    }
+    .stat span { font-family: system-ui, sans-serif; font-size: 12px; color: var(--muted); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: system-ui, sans-serif;
+      font-size: 13px;
+      margin: 0 0 12px;
+    }
+    th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    svg.chart { width: 100%; height: auto; background: var(--fill); border: 1px solid var(--line); }
+    footer { margin-top: 40px; color: var(--muted); font-family: system-ui, sans-serif; font-size: 12px; }
+    @media print {
+      .toolbar { display: none; }
+      .wrap { padding: 0; max-width: none; }
+      .callout, .stat, svg.chart { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+    @media (max-width: 720px) {
+      .stats, .cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span>Cold Direct · GSC analysis · 19 Sep 2026</span>
+    <button type="button" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <article class="wrap">
+    <h1>Google Search Console analysis</h1>
+    <p class="meta">
+      Property: <a href="https://www.colddirect.co.uk/">https://www.colddirect.co.uk/</a>
+      · Search type: web<br>
+      Last 28 days: 23 Aug – 19 Sep 2026 vs previous 28 days: 26 Jul – 22 Aug 2026<br>
+      Daily series through 16 Sep 2026 (Search Console typically lags 2–3 days)<br>
+      Source: Google Search Console Search Analytics API · prepared 19 Sep 2026
+    </p>
+    <div class="pills">
+      <span class="pill ok">Clicks up 183%</span>
+      <span class="pill warn">Impressions down 19%</span>
+      <span class="pill info">UK = 92% of clicks</span>
+    </div>
+
+    <div class="callout">
+      <h3>What changed</h3>
+      <p>Organic clicks nearly tripled (185 → 524) while impressions fell. That is a relevance shift: fewer broad, low-intent sightings and more clicks on commercial repair queries, led by “cold room repair london” (100 clicks, position 4.5, 63% CTR).</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>524</b><span>Clicks · last 28 days</span></div>
+      <div class="stat"><b>64,282</b><span>Impressions</span></div>
+      <div class="stat"><b>0.82%</b><span>Average CTR</span></div>
+      <div class="stat"><b>31.5</b><span>Average position</span></div>
+    </div>
+    <p class="meta">Previous 28 days: 185 clicks · 79,666 impressions · 0.23% CTR · position 30.6. Position is slightly worse; CTR is 3.5× higher.</p>
+
+    <h2>Weekly clicks vs impressions</h2>
+    <p class="meta">ISO weeks W26–W37 (22 Jun – 14 Sep). W38 omitted because it is incomplete. Charts start at zero.</p>
+    <div class="cols">
+      <div>
+        <h3>Organic clicks by week</h3>
+        <svg class="chart" viewBox="0 0 560 220" role="img" aria-label="Weekly organic clicks">
+          <text x="16" y="18" font-size="11" fill="#5c5c5c" font-family="system-ui">Clicks</text>
+          <polyline fill="none" stroke="#1b7f4a" stroke-width="2"
+            points="40,92 85,111 130,125 175,141 220,144 265,145 310,139 355,137 400,144 445,142 490,81 535,20"/>
+          <text x="40" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W26</text>
+          <text x="265" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W31</text>
+          <text x="535" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W37</text>
+          <text x="545" y="24" font-size="10" fill="#1b7f4a" font-family="system-ui" text-anchor="end">254</text>
+          <text x="48" y="96" font-size="10" fill="#1b7f4a" font-family="system-ui">130</text>
+        </svg>
+      </div>
+      <div>
+        <h3>Impressions by week</h3>
+        <svg class="chart" viewBox="0 0 560 220" role="img" aria-label="Weekly impressions">
+          <text x="16" y="18" font-size="11" fill="#5c5c5c" font-family="system-ui">Impressions</text>
+          <polyline fill="none" stroke="#185fa5" stroke-width="2"
+            points="40,20 85,78 130,69 175,93 220,87 265,96 310,103 355,92 400,93 445,97 490,99 535,116"/>
+          <text x="40" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W26</text>
+          <text x="265" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W31</text>
+          <text x="535" y="208" font-size="10" fill="#5c5c5c" font-family="system-ui" text-anchor="middle">W37</text>
+          <text x="48" y="34" font-size="10" fill="#185fa5" font-family="system-ui">33.4k</text>
+          <text x="545" y="112" font-size="10" fill="#185fa5" font-family="system-ui" text-anchor="end">16.5k</text>
+        </svg>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Week</th><th class="num">Clicks</th><th class="num">Impressions</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>W26</td><td class="num">130</td><td class="num">33,356</td></tr>
+        <tr><td>W27</td><td class="num">98</td><td class="num">23,214</td></tr>
+        <tr><td>W28</td><td class="num">75</td><td class="num">24,756</td></tr>
+        <tr><td>W29</td><td class="num">48</td><td class="num">20,535</td></tr>
+        <tr><td>W30</td><td class="num">44</td><td class="num">21,571</td></tr>
+        <tr><td>W31</td><td class="num">41</td><td class="num">19,939</td></tr>
+        <tr><td>W32</td><td class="num">51</td><td class="num">18,736</td></tr>
+        <tr><td>W33</td><td class="num">55</td><td class="num">20,706</td></tr>
+        <tr><td>W34</td><td class="num">44</td><td class="num">20,495</td></tr>
+        <tr><td>W35</td><td class="num">47</td><td class="num">19,815</td></tr>
+        <tr><td>W36</td><td class="num">149</td><td class="num">19,398</td></tr>
+        <tr><td>W37</td><td class="num">254</td><td class="num">16,500</td></tr>
+      </tbody>
+    </table>
+    <p>Clicks collapsed through July–August (W29–W35 around 40–55/week), then jumped in W36 (149) and W37 (254). Impressions have been drifting down since late June. The site is winning fewer random impressions and more of the queries that actually get called.</p>
+
+    <h2>Where clicks come from</h2>
+    <div class="cols">
+      <div>
+        <h3>Device (last 28 days)</h3>
+        <table>
+          <thead><tr><th>Device</th><th class="num">Clicks</th><th class="num">Impr.</th><th class="num">CTR</th><th class="num">Pos.</th></tr></thead>
+          <tbody>
+            <tr><td>Mobile</td><td class="num">344</td><td class="num">27,032</td><td class="num">1.27%</td><td class="num">20.5</td></tr>
+            <tr><td>Desktop</td><td class="num">175</td><td class="num">36,754</td><td class="num">0.48%</td><td class="num">39.7</td></tr>
+            <tr><td>Tablet</td><td class="num">5</td><td class="num">496</td><td class="num">1.01%</td><td class="num">19.1</td></tr>
+          </tbody>
+        </table>
+        <p class="meta">Mobile is 66% of clicks. Desktop has more impressions but much weaker position and CTR.</p>
+      </div>
+      <div>
+        <h3>Country</h3>
+        <table>
+          <thead><tr><th>Country</th><th class="num">Clicks</th><th class="num">Impr.</th><th class="num">CTR</th><th class="num">Pos.</th></tr></thead>
+          <tbody>
+            <tr><td>United Kingdom</td><td class="num">483</td><td class="num">39,197</td><td class="num">1.23%</td><td class="num">38.6</td></tr>
+            <tr><td>United States</td><td class="num">19</td><td class="num">11,670</td><td class="num">0.16%</td><td class="num">13.7</td></tr>
+            <tr><td>Philippines</td><td class="num">4</td><td class="num">734</td><td class="num">0.54%</td><td class="num">21.8</td></tr>
+            <tr><td>India</td><td class="num">2</td><td class="num">1,859</td><td class="num">0.11%</td><td class="num">21.8</td></tr>
+            <tr><td>Pakistan</td><td class="num">2</td><td class="num">181</td><td class="num">1.10%</td><td class="num">16.6</td></tr>
+          </tbody>
+        </table>
+        <p class="meta">UK is the business. US and India impressions are mostly informational blog rankings that do not convert to jobs.</p>
+      </div>
+    </div>
+
+    <h2>Queries that pay the bills</h2>
+    <p>Top queries by clicks. Query-level data is sampled: the top 100 queries explain 228 of 524 clicks (44%). The rest is long-tail.</p>
+    <table>
+      <thead>
+        <tr><th>Query</th><th class="num">Clicks</th><th class="num">Impr.</th><th class="num">CTR</th><th class="num">Pos.</th><th>Read</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>cold room repair london</td><td class="num">100</td><td class="num">159</td><td class="num">62.9%</td><td class="num">4.5</td><td>Money term</td></tr>
+        <tr><td>commercial fridge repair london</td><td class="num">23</td><td class="num">118</td><td class="num">19.5%</td><td class="num">12.9</td><td>Push toward top 10</td></tr>
+        <tr><td>cold direct</td><td class="num">16</td><td class="num">40</td><td class="num">40.0%</td><td class="num">2.2</td><td>Brand</td></tr>
+        <tr><td>fridge repair london</td><td class="num">15</td><td class="num">186</td><td class="num">8.1%</td><td class="num">21.4</td><td>Page 3</td></tr>
+        <tr><td>freezer repair london</td><td class="num">11</td><td class="num">96</td><td class="num">11.5%</td><td class="num">29.7</td><td>Page 3</td></tr>
+        <tr><td>commercial freezer repair london</td><td class="num">10</td><td class="num">13</td><td class="num">76.9%</td><td class="num">4.8</td><td>Tiny volume, strong</td></tr>
+        <tr><td>ice machine repair london</td><td class="num">5</td><td class="num">7</td><td class="num">71.4%</td><td class="num">5.7</td><td>Strong, low volume</td></tr>
+        <tr><td>ice cream machine repair near me</td><td class="num">4</td><td class="num">37</td><td class="num">10.8%</td><td class="num">8.0</td><td>Near-me intent</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Pages: converters vs impression sinks</h2>
+    <div class="cols">
+      <div>
+        <h3>Top pages by clicks</h3>
+        <table>
+          <thead><tr><th>Page</th><th class="num">Clicks</th><th class="num">Impr.</th><th class="num">CTR</th><th class="num">Pos.</th></tr></thead>
+          <tbody>
+            <tr><td>/</td><td class="num">180</td><td class="num">4,958</td><td class="num">3.63%</td><td class="num">36.2</td></tr>
+            <tr><td>/cold-room-repairs-london</td><td class="num">90</td><td class="num">1,483</td><td class="num">6.07%</td><td class="num">36.9</td></tr>
+            <tr><td>/polar-repairs-london</td><td class="num">30</td><td class="num">447</td><td class="num">6.71%</td><td class="num">28.3</td></tr>
+            <tr><td>/ice-cream-maker-repairs-london</td><td class="num">29</td><td class="num">630</td><td class="num">4.60%</td><td class="num">11.3</td></tr>
+            <tr><td>/walk-in-freezer-repairs-london</td><td class="num">20</td><td class="num">375</td><td class="num">5.33%</td><td class="num">28.5</td></tr>
+            <tr><td>/ice-machine-repairs-london</td><td class="num">17</td><td class="num">934</td><td class="num">1.82%</td><td class="num">13.0</td></tr>
+            <tr><td>/william-repairs-london</td><td class="num">17</td><td class="num">372</td><td class="num">4.57%</td><td class="num">47.9</td></tr>
+            <tr><td>/foster-repairs-london</td><td class="num">15</td><td class="num">275</td><td class="num">5.45%</td><td class="num">27.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Highest impressions, almost no jobs</h3>
+        <table>
+          <thead><tr><th>Page</th><th class="num">Impr.</th><th class="num">Clicks</th><th class="num">CTR</th></tr></thead>
+          <tbody>
+            <tr><td>/blog/different-types-of-ice</td><td class="num">6,472</td><td class="num">10</td><td class="num">0.15%</td></tr>
+            <tr><td>/refrigeration-brands-repairs-london</td><td class="num">5,347</td><td class="num">8</td><td class="num">0.15%</td></tr>
+            <tr><td>/air-conditioning-repairs-london</td><td class="num">4,469</td><td class="num">1</td><td class="num">0.02%</td></tr>
+            <tr><td>/blog/smeg-fridge-freezer-control-panel</td><td class="num">4,177</td><td class="num">10</td><td class="num">0.24%</td></tr>
+            <tr><td>/chiller-repairs-london</td><td class="num">3,844</td><td class="num">6</td><td class="num">0.16%</td></tr>
+            <tr><td>/blog/types-of-cold-storage</td><td class="num">3,155</td><td class="num">3</td><td class="num">0.10%</td></tr>
+            <tr><td>/blog/quietest-air-conditioner</td><td class="num">2,326</td><td class="num">0</td><td class="num">0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p>Homepage plus the cold-room page produce 270 of 524 clicks (52%). Brand and service pages convert. Informational blog posts and the AC page soak visibility: air-conditioning-repairs-london has 4,469 impressions and 1 click at position 54.</p>
+
+    <h2>Opportunities</h2>
+    <table>
+      <thead>
+        <tr><th>Query</th><th class="num">Pos.</th><th class="num">Impr.</th><th class="num">Clicks</th><th class="num">CTR</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>cold room repair</td><td class="num">11.6</td><td class="num">119</td><td class="num">3</td><td class="num">2.5%</td><td>Title/snippet: add London + emergency; this should click like the city variant</td></tr>
+        <tr><td>commercial fridge repair london</td><td class="num">12.9</td><td class="num">118</td><td class="num">23</td><td class="num">19.5%</td><td>Already converting — links and content to move into top 10</td></tr>
+        <tr><td>wine fridge repair near me</td><td class="num">8.5</td><td class="num">112</td><td class="num">1</td><td class="num">0.9%</td><td>CTR problem, not ranking. Rewrite title/meta for wine cooler repair London</td></tr>
+        <tr><td>fridge repair london</td><td class="num">21.4</td><td class="num">186</td><td class="num">15</td><td class="num">8.1%</td><td>High demand, page 3. Needs a dedicated commercial-vs-domestic angle</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Index and crawl checks</h2>
+    <div class="cols">
+      <div class="callout">
+        <h3>Money pages are indexed</h3>
+        <p>URL Inspection: homepage (crawled 18 Sep), /cold-room-repairs-london (17 Sep), and /blog/different-types-of-ice are Submitted and indexed, robots allowed, fetch successful.</p>
+      </div>
+      <div class="callout warn">
+        <h3>Stale crawl on a high-impression page</h3>
+        <p>/chiller-repairs-london last crawled 5 Aug 2026, 3,844 impressions, 6 clicks, average position 36. Request indexing after the next content pass.</p>
+      </div>
+    </div>
+    <p class="meta">Sitemap https://www.colddirect.co.uk/sitemap.xml was fetched 18 Sep: 108 URLs submitted, 0 errors. The API reports 0 indexed from the sitemap file; that field is often blank even when URL Inspection shows pages indexed. Do not treat it as a deindex event.</p>
+
+    <h2>What to do next</h2>
+    <table>
+      <thead><tr><th>Priority</th><th>Work</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Protect cold-room and commercial fridge/freezer London pages</td><td>These queries already buy the phone. Internal links, unique H1s, FAQ, and NAP consistency.</td></tr>
+        <tr><td>2</td><td>Fix CTR on page-1 queries that do not click</td><td>wine fridge repair near me (pos 8.5, 0.9% CTR) and generic cold room repair (pos 11.6, 2.5% CTR).</td></tr>
+        <tr><td>3</td><td>Stop expecting jobs from ice-type / fridge-brand / quiet-AC blogs</td><td>They drive US/India impressions. Keep them if they help authority; do not expand that cluster for lead gen.</td></tr>
+        <tr><td>4</td><td>Retarget or deprioritise /air-conditioning-repairs-london</td><td>4.5k impressions, 1 click. Either match real AC-repair intent or it is wasting crawl and snippet slots.</td></tr>
+        <tr><td>5</td><td>Mobile-first titles</td><td>66% of clicks are mobile. Desktop average position 39.7 will not carry the business.</td></tr>
+      </tbody>
+    </table>
+
+    <footer>
+      Cold Direct · Google Search Console analysis · not for publication on the live site.
+      Open this file in a browser and use Print / Save as PDF if you need a PDF copy.
+    </footer>
+  </article>
+</body>
+</html>

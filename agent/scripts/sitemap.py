@@ -7,6 +7,8 @@ def generate_sitemap(site_folder):
         for file in files:
             if file.endswith(".html"):
                 path = os.path.join(root, file).replace(site_folder, "").replace("\\", "/")
+                if "commercial-dishwasher-repair-london" in path.replace("\\", "/"):
+                    continue
                 pages.append(f"{base_url}{path}")
     sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for page in pages:

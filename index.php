@@ -169,19 +169,19 @@ body{background:#ffffff;color:#0a2540}
           <img src="/images/chiller-repair-north-london-thumb.webp" alt="Chiller repair North London - air-cooled rooftop chiller">
           <h3>Chiller repair London</h3>
           <p>Air-cooled, water and process chillers for restaurants and bars. Commercial only.</p>
-          <a class="more" href="/chiller-repair-london.html">Chiller repair London →</a>
+          <a class="more" href="/chiller-repair-london/">Chiller repair London →</a>
         </article>
         <article class="card">
           <img src="/images/dairy-cabinet-repair.webp" alt="Supermarket dairy cabinet repair London">
           <h3>Supermarket fridge repair</h3>
           <p>Multideck, island freezers and dairy cabinets. Early morning trade callouts.</p>
-          <a class="more" href="/supermarket-fridge-repair-london.html">Supermarket fridge repair London →</a>
+          <a class="more" href="/supermarket-fridge-repair-london/">Supermarket fridge repair London →</a>
         </article>
         <article class="card">
           <img src="/images/catering-repair.webp" alt="Commercial kitchen air conditioning repair London">
           <h3>Air conditioning repair London</h3>
           <p>Commercial AC for restaurants, takeaways and shops. Split and VRF. Not domestic.</p>
-          <a class="more" href="/air-conditioning-repair-london.html">Air conditioning repair London →</a>
+          <a class="more" href="/air-conditioning-repair-london/">Air conditioning repair London →</a>
         </article>
       </div>
     </div>
@@ -286,9 +286,9 @@ body{background:#ffffff;color:#0a2540}
 <li><a href="commercial-fridge-repair-london.html">Commercial Fridge Repair London</a></li>
 <li><a href="walk-in-fridge-repair-london.html">Walk-in Fridge Repair London</a></li>
 <li><a href="ice-machine-repair-london.html">Ice Machine Repair London</a></li>
-<li><a href="/chiller-repair-london.html">Chiller Repair London</a></li>
-<li><a href="/supermarket-fridge-repair-london.html">Supermarket Fridge Repair London</a></li>
-<li><a href="/air-conditioning-repair-london.html">Air Conditioning Repair London</a></li>
+<li><a href="/chiller-repair-london/">Chiller Repair London</a></li>
+<li><a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a></li>
+<li><a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a></li>
 <li>View all 24 commercial services in <a href="sitemap.xml">sitemap</a></li>
 </ul>
 </section>
@@ -322,7 +322,7 @@ body{background:#ffffff;color:#0a2540}
             <a href="/cellar-cooler-repair-london">Cellar cooler</a>
           </p>
           <p>
-            <a href="/freezer-repair-london.html">Freezer Repair London</a> | <a href="/fridge-repair-london.html">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london.html">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london.html">Cold Room Repair</a> | <a href="/chiller-repair-london.html">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london.html">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london.html">Air Conditioning Repair London</a>
+            <a href="/freezer-repair-london/">Freezer Repair London</a> | <a href="/fridge-repair-london/">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london/">Cold Room Repair</a> | <a href="/chiller-repair-london/">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a>
           </p>
         </div>
       </div>

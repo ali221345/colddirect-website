@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <system.webServer>
+    <defaultDocument enabled="true">
+      <files>
+        <clear />
+        <add value="index.html" />
+        <add value="index.asp" />
+        <add value="index.php" />
+      </files>
+    </defaultDocument>
+    <httpProtocol>
+      <customHeaders>
+        <remove name="Cache-Control" />
+        <remove name="Pragma" />
+        <remove name="Expires" />
+        <add name="Cache-Control" value="no-cache, no-store, must-revalidate" />
+        <add name="Pragma" value="no-cache" />
+        <add name="Expires" value="-1" />
+      </customHeaders>
+    </httpProtocol>
+    <rewrite>
+      <rules>
+        <rule name="HTML extension to trailing slash" stopProcessing="true">
+          <match url="^(.+)\.html$" ignoreCase="true" />
+          <conditions>
+            <add input="{R:1}" pattern="^(index|google[0-9a-z]+)$" negate="true" />
+          </conditions>
+          <action type="Redirect" url="/{R:1}/" redirectType="Permanent" />
+        </rule>
+        <rule name="Ice cream machine short aliases" stopProcessing="true">
+          <match url="^(ice-cream-machine-repair|ice-cream-machine-repairs-london|ice-cream-repair-london|icecream-machine-repair-london)(/|\.html)?$" ignoreCase="true" />
+          <action type="Redirect" url="/ice-cream-machine-repair-london/" redirectType="Permanent" />
+        </rule>
+        <rule name="Blog cost to trailing slash" stopProcessing="true">
+          <match url="^blog/commercial-fridge-repair-cost-london(/|\.asp)?$" ignoreCase="true" />
+          <action type="Redirect" url="/blog/commercial-fridge-repair-cost-london/" redirectType="Permanent" />
+        </rule>
+        <rule name="Refrigeration brands asp and plural to slash" stopProcessing="true">
+          <match url="^refrigeration-brands-repairs?-london(\.asp)?$" ignoreCase="true" />
+          <action type="Redirect" url="/refrigeration-brands-repair-london/" redirectType="Permanent" />
+        </rule>
+        <rule name="Restored HTML money pages asp to slash" stopProcessing="true">
+          <match url="^(cabinet-fridge-repair-london|walk-in-fridge-repair-london|walk-in-freezer-repair-london|dairy-cabinet-repair-london|display-fridge-repair-london|hoshizaki-ice-machine-repair-london|cold-storage|blast-freezing)\.asp$" ignoreCase="true" />
+          <action type="Redirect" url="/{R:1}/" redirectType="Permanent" />
+        </rule>
+        <rule name="Sitemap extensionless" stopProcessing="true">
+          <match url="^sitemap/?$" ignoreCase="true" />
+          <action type="Rewrite" url="sitemap.xml" />
+        </rule>
+        <rule name="AC short redirect" stopProcessing="true">
+          <match url="^air-conditioning-repair/?$" />
+          <action type="Redirect" url="/air-conditioning-repair-london/" redirectType="Permanent" />
+        </rule>
+        <rule name="Supermarket short redirect" stopProcessing="true">
+          <match url="^supermarket-fridge-repair/?$" />
+          <action type="Redirect" url="/supermarket-fridge-repair-london/" redirectType="Permanent" />
+        </rule>
+        <rule name="Brand short plural to full fridge" stopProcessing="false">
+          <match url="^([a-z-]+)-repairs-london$" ignoreCase="true" />
+          <action type="Rewrite" url="{R:1}-repair-london.asp" />
+        </rule>
+        <rule name="Brand repair to fridge-repair" stopProcessing="false">
+          <match url="^([a-z]+)-repair-london$" ignoreCase="true" />
+          <action type="Rewrite" url="{R:1}-fridge-repair-london.asp" />
+        </rule>
+        <rule name="Ice-O-Matic pretty URL" stopProcessing="true">
+          <match url="^ice-o-matic-fridge-repairs/?$" ignoreCase="true" />
+          <action type="Rewrite" url="ice-o-matic-fridge-repairs.html" />
+        </rule>
+        <rule name="HTML pretty URLs" stopProcessing="true">
+          <match url="^(.+?)/?$" ignoreCase="true" />
+          <conditions>
+            <add input="{REQUEST_URI}" pattern="\.(xml|txt|php|js|css|webp|jpg|jpeg|png|gif|ico|svg|woff2?)$" negate="true" ignoreCase="true" />
+            <add input="{APPL_PHYSICAL_PATH}{R:1}.html" matchType="IsFile" />
+          </conditions>
+          <action type="Rewrite" url="/{R:1}.html" />
+        </rule>
+        <rule name="Pass through existing files" stopProcessing="true">
+          <match url=".*" />
+          <conditions>
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" />
+          </conditions>
+          <action type="None" />
+        </rule>
+        <rule name="William Google aliases" stopProcessing="true">
+          <match url="^williams?(-fridge)?-repairs?-london(\.asp)?$" ignoreCase="true" />
+          <action type="Rewrite" url="williams-fridge-repair-london.asp" />
+        </rule>
+        <rule name="Fix repairs plural to repair" stopProcessing="false">
+          <match url="^(.*)-repairs-(.*)$" ignoreCase="true" />
+          <action type="Rewrite" url="{R:1}-repair-{R:2}" />
+        </rule>
+        <rule name="ASP Extensionless Root" stopProcessing="true">
+          <match url="^([a-z0-9-]+)/?$" ignoreCase="true" />
+          <conditions>
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="{R:1}.asp" />
+        </rule>
+        <rule name="ASP Extensionless Subfolder" stopProcessing="true">
+          <match url="^([a-z0-9/-]+?)/?$" ignoreCase="true" />
+          <conditions>
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="{R:1}.asp" />
+        </rule>
+      </rules>
+    </rewrite>
+    <handlers>
+      <remove name="ASPClassic" />
+      <add name="ASPClassic" path="*.asp" verb="GET,HEAD,POST" modules="IsapiModule" scriptProcessor="%windir%\system32\inetsrv\asp.dll" resourceType="File" requireAccess="Script" />
+    </handlers>
+    <security>
+      <requestFiltering>
+        <fileExtensions>
+          <remove fileExtension=".asp" />
+          <add fileExtension=".asp" allowed="true" />
+        </fileExtensions>
+      </requestFiltering>
+    </security>
+    <httpErrors errorMode="Detailed" />
+  </system.webServer>
+</configuration>

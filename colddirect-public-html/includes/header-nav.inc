@@ -11,92 +11,91 @@
 <!-- MAIN HEADER - WHITE -->
 <header class="cd-main-header">
   <div class="cd-header-inner">
-    <a href="/" class="cd-logo" title="ColdDirect - 24/7 Emergency Refrigeration Repair London"><img src="/images/logo/colddirect-main.webp" alt="ColdDirect London - Commercial Fridge Repair" width="310" height="68"></a>
+    <a href="/" class="cd-logo" title="ColdDirect - 24/7 Emergency Refrigeration Repair London"><picture><source type="image/webp" srcset="/images/logo/colddirect-main.webp"><img src="/images/logo/colddirect-main.jpg" alt="ColdDirect London - Commercial Fridge Repair" width="310" height="68"></picture></a>
     <nav class="cd-nav" aria-label="Main">
       <ul>
         <li><a href="/">HOME</a></li>
-        <li><a href="/about-us.html">ABOUT US</a></li>
+        <li><a href="/about-us/">ABOUT US</a></li>
         <li class="has-dropdown has-mega has-mega-menu">
-          <a href="/services.html">SERVICES ▾</a>
+          <a href="/services/">SERVICES ▾</a>
           <div class="dropdown mega-menu">
             <div class="mega-col">
               <p class="mega-title">Commercial Refrigeration</p>
-              <a href="/commercial-fridge-repair-london.html">Commercial Fridge Repair</a>
-              <a href="/commercial-freezer-repair-london.html">Commercial Freezer Repair</a>
-              <a href="/commercial-fridge-repair-north-london.html">Commercial Fridge Repair North London</a>
-              <a href="/chiller-repair-london.html">Chiller Repair London</a>
-              <a href="/supermarket-fridge-repair-london.html">Supermarket Fridge Repair London</a>
-              <a href="/air-conditioning-repair-london.html">Air Conditioning Repair London</a>
-              <a href="/fridge-repair-london.html">Fridge Repair London</a>
-              <a href="/freezer-repair-london.html">Freezer Repair London</a>
-              <a href="/commercial-freezer-repair-north-london.html">Commercial Freezer North London</a>
-              <a href="/ice-machine-repair-london.html">Ice Machine Repair</a>
-              <a href="/ice-cream-machine-repair-london.html">Ice Cream Machine Repair</a>
-              <a href="/blast-chiller-repair-london.html">Blast Chiller Repair</a>
-              <a href="/blast-freezer-repair-london.html">Blast Freezer Repair</a>
-              <a href="/blast-freezing.html">Blast Freezing</a>
-              <a href="/commercial-chest-freezer-repair-london.html">Chest Freezer Repair</a>
-              <a href="/supermarket-freezer-repair-london.html">Supermarket Freezer Repair</a>
+              <a href="/commercial-fridge-repair-london/">Commercial Fridge Repair</a>
+              <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair</a>
+              <a href="/commercial-fridge-repair-north-london/">Commercial Fridge Repair North London</a>
+              <a href="/chiller-repair-london/">Chiller Repair London</a>
+              <a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a>
+              <a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a>
+              <a href="/fridge-repair-london/">Fridge Repair London</a>
+              <a href="/freezer-repair-london/">Freezer Repair London</a>
+              <a href="/commercial-freezer-repair-north-london/">Commercial Freezer North London</a>
+              <a href="/ice-machine-repair-london/">Ice Machine Repair</a>
+              <a href="/ice-cream-machine-repair-london/">Ice Cream Machine Repair</a>
+              <a href="/blast-chiller-repair-london/">Blast Chiller Repair</a>
+              <a href="/blast-freezer-repair-london/">Blast Freezer Repair</a>
+              <a href="/blast-freezing/">Blast Freezing</a>
+              <a href="/commercial-chest-freezer-repair-london/">Chest Freezer Repair</a>
+              <a href="/supermarket-freezer-repair-london/">Supermarket Freezer Repair</a>
             </div>
             <div class="mega-col">
               <p class="mega-title">Cold Rooms &amp; Walk-ins</p>
-              <a href="/cold-room-repair-london.html">Cold Room Repair</a>
-              <a href="/cold-storage.html">Cold Storage</a>
-              <a href="/freezer-room-repair-london.html">Freezer Room Repair</a>
-              <a href="/walk-in-fridge-repair-london.html">Walk-in Fridge Repair</a>
-              <a href="/walk-in-freezer-repair-london.html">Walk-in Freezer Repair</a>
-              <a href="/display-cabinet-repair-london.html">Display Cabinet Repair</a>
-              <a href="/cellar-cooler-repair-london.html">Cellar Cooler Repair</a>
-              <a href="/bottle-cooler-repair-london.html">Bottle Cooler Repair</a>
-              <a href="/wine-cooler-repair-london.html">Wine Cooler Repair</a>
-              <a href="/cold-room-repair-north-london.html">Cold Room North London</a>
-              <a href="/freezer-room-repair-north-london.html">Freezer Room North London</a>
-              <a href="/multideck-fridge-repair-london.html">Multideck Fridge Repair</a>
-              <a href="/prep-fridge-repair-london.html">Prep Fridge Repair</a>
-              <a href="/undercounter-fridge-repair-london.html">Undercounter Fridge Repair</a>
-              <a href="/cabinet-fridge-repair-london.html">Cabinet Fridge Repair</a>
-              <a href="/dairy-cabinet-repair-london.html">Dairy Cabinet Repair</a>
-              <a href="/display-fridge-repair-london.html">Display Fridge Repair</a>
-              <a href="/commercial-appliances-repair-london.html">Commercial Appliances</a>
-              <a href="/catering-repair-london.html">Catering Repair</a>
-              <a href="/appliances-repair-london.html">Appliances Repair</a>
-              <a href="/commercial-dishwasher-repair-london.html">Commercial Dishwasher Repair</a>
+              <a href="/cold-room-repair-london/">Cold Room Repair</a>
+              <a href="/cold-storage/">Cold Storage</a>
+              <a href="/freezer-room-repair-london/">Freezer Room Repair</a>
+              <a href="/walk-in-fridge-repair-london/">Walk-in Fridge Repair</a>
+              <a href="/walk-in-freezer-repair-london/">Walk-in Freezer Repair</a>
+              <a href="/display-cabinet-repair-london/">Display Cabinet Repair</a>
+              <a href="/cellar-cooler-repair-london/">Cellar Cooler Repair</a>
+              <a href="/bottle-cooler-repair-london/">Bottle Cooler Repair</a>
+              <a href="/wine-cooler-repair-london/">Wine Cooler Repair</a>
+              <a href="/cold-room-repair-north-london/">Cold Room North London</a>
+              <a href="/freezer-room-repair-north-london/">Freezer Room North London</a>
+              <a href="/multideck-fridge-repair-london/">Multideck Fridge Repair</a>
+              <a href="/prep-fridge-repair-london/">Prep Fridge Repair</a>
+              <a href="/undercounter-fridge-repair-london/">Undercounter Fridge Repair</a>
+              <a href="/cabinet-fridge-repair-london/">Cabinet Fridge Repair</a>
+              <a href="/dairy-cabinet-repair-london/">Dairy Cabinet Repair</a>
+              <a href="/display-fridge-repair-london/">Display Fridge Repair</a>
+              <a href="/commercial-appliances-repair-london/">Commercial Appliances</a>
+              <a href="/catering-repair-london/">Catering Repair</a>
+              <a href="/appliances-repair-london/">Appliances Repair</a>
             </div>
             <div class="mega-col">
               <p class="mega-title">Brands &amp; Coverage</p>
-              <a href="/brands.html">Brands</a>
-              <a href="/williams-fridge-repair-london.html">Williams</a>
-              <a href="/foster-fridge-repair-london.html">Foster</a>
-              <a href="/polar-fridge-repair-london.html">Polar</a>
-              <a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a>
-              <a href="/true-fridge-repair-london.html">True</a>
-              <a href="/gram-fridge-repair-london.html">Gram</a>
-              <a href="/brands.html">All Brands</a>
-              <a href="/coverage.html">Coverage</a>
+              <a href="/brands/">Brands</a>
+              <a href="/williams-fridge-repair-london/">Williams</a>
+              <a href="/foster-fridge-repair-london/">Foster</a>
+              <a href="/polar-fridge-repair-london/">Polar</a>
+              <a href="/hoshizaki-ice-machine-repair-london/">Hoshizaki</a>
+              <a href="/true-fridge-repair-london/">True</a>
+              <a href="/gram-fridge-repair-london/">Gram</a>
+              <a href="/brands/">All Brands</a>
+              <a href="/coverage/">Coverage</a>
             </div>
           </div>
         </li>
-        <li><a href="/coverage.html">COVERAGE</a></li>
+        <li><a href="/coverage/">COVERAGE</a></li>
         <li class="has-dropdown">
-          <a href="/brands.html">BRANDS ▾</a>
+          <a href="/brands/">BRANDS ▾</a>
           <ul class="dropdown">
-            <li><a href="/williams-fridge-repair-london.html">Williams</a></li>
-            <li><a href="/foster-fridge-repair-london.html">Foster</a></li>
-            <li><a href="/polar-fridge-repair-london.html">Polar</a></li>
-            <li><a href="/hoshizaki-ice-machine-repair-london.html">Hoshizaki</a></li>
-            <li><a href="/true-fridge-repair-london.html">True</a></li>
-            <li><a href="/gram-fridge-repair-london.html">Gram</a></li>
-            <li><a href="/liebherr-fridge-repair-london.html">Liebherr</a></li>
-            <li><a href="/adexa-fridge-repair-london.html">Adexa</a></li>
-            <li><a href="/empire-fridge-repair-london.html">Empire</a></li>
-            <li><a href="/subzero-fridge-repair-london.html">Sub-Zero</a></li>
-            <li><a href="/brands.html">All brands</a></li>
+            <li><a href="/williams-fridge-repair-london/">Williams</a></li>
+            <li><a href="/foster-fridge-repair-london/">Foster</a></li>
+            <li><a href="/polar-fridge-repair-london/">Polar</a></li>
+            <li><a href="/hoshizaki-ice-machine-repair-london/">Hoshizaki</a></li>
+            <li><a href="/true-fridge-repair-london/">True</a></li>
+            <li><a href="/gram-fridge-repair-london/">Gram</a></li>
+            <li><a href="/liebherr-fridge-repair-london/">Liebherr</a></li>
+            <li><a href="/adexa-fridge-repair-london/">Adexa</a></li>
+            <li><a href="/empire-fridge-repair-london/">Empire</a></li>
+            <li><a href="/subzero-fridge-repair-london/">Sub-Zero</a></li>
+            <li><a href="/brands/">All brands</a></li>
           </ul>
         </li>
         <li><a href="/blog/">NEWS</a></li>
-        <li><a href="/faqs.html">FAQS</a></li>
-        <li><a href="/contact.html">CONTACT</a></li>
-        <li><a href="/write-a-review.html">WRITE A REVIEW</a></li>
+        <li><a href="/faqs/">FAQS</a></li>
+        <li><a href="/contact/">CONTACT</a></li>
+        <li><a href="/write-a-review/">WRITE A REVIEW</a></li>
       </ul>
     </nav>
   </div>

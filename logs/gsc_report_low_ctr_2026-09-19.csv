@@ -1,0 +1,15 @@
+section,page,clicks,impressions,ctr,position,window,action
+filter_28d,https://www.colddirect.co.uk/blog/different-types-of-ice,10,6472,0.0015,5.85,2026-08-23_2026-09-19,noindex_follow_rewrite_commercial_ice
+filter_28d,https://www.colddirect.co.uk/air-conditioning-repairs-london,1,4469,0.0002,54,2026-08-23_2026-09-19,canonical_to_air-conditioning-repair-london
+filter_28d,https://www.colddirect.co.uk/chiller-repairs-london,6,3844,0.0016,36,2026-08-23_2026-09-19,canonical_to_chiller-repair-london
+also_28d,https://www.colddirect.co.uk/refrigeration-brands-repairs-london,8,5347,0.0015,,2026-08-23_2026-09-19,already_301_to_singular
+also_28d,https://www.colddirect.co.uk/blog/types-of-cold-storage,3,3155,0.0010,,2026-08-23_2026-09-19,logged_not_in_named_set
+gsc_90d,https://www.colddirect.co.uk/blog/different-types-of-ice,33,21468,0.0015,6.47,2026-06-22_2026-09-19,noindex_follow
+gsc_90d,https://www.colddirect.co.uk/air-conditioning-repairs-london,3,28583,0.0001,51.70,2026-06-22_2026-09-19,canonical
+gsc_90d,https://www.colddirect.co.uk/chiller-repairs-london,10,11693,0.0009,34.74,2026-06-22_2026-09-19,canonical_stale_crawl_2026-08-05
+inspect,https://www.colddirect.co.uk/chiller-repairs-london,6,3844,0.0016,36,last_crawl_2026-08-05T16:51:40Z,submitted_and_indexed
+inspect,https://www.colddirect.co.uk/air-conditioning-repairs-london,1,4469,0.0002,54,last_crawl_2026-08-29T10:28:25Z,submitted_and_indexed
+inspect,https://www.colddirect.co.uk/blog/different-types-of-ice,10,6472,0.0015,5.85,last_crawl_2026-08-31T04:30:57Z,submitted_and_indexed
+live_verify_2026-09-19,https://www.colddirect.co.uk/blog/different-types-of-ice,13,6986,0.0019,5.85,noindex_follow_200,deployed
+live_verify_2026-09-19,https://www.colddirect.co.uk/air-conditioning-repairs-london,1,4587,0.0002,,canonical_to_singular_200,deployed
+live_verify_2026-09-19,https://www.colddirect.co.uk/chiller-repairs-london,8,3942,0.0020,36.2,canonical_to_singular_200,deployed

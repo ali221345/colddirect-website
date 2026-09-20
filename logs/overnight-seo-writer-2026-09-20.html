@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <title>Overnight SEO Writer log — 19–20 Sep 2026</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    body {
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: #1a1a1a;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 20pt; margin: 0 0 8px; }
+    h2 { font-size: 13pt; margin: 22px 0 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { font-size: 11.5pt; margin: 16px 0 6px; }
+    p, li { margin: 0 0 8px; }
+    .meta { color: #444; margin-bottom: 16px; }
+    .meta p { margin: 0 0 4px; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0 14px; font-size: 9.5pt; }
+    th, td { border: 1px solid #bbb; padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #f0f0f0; font-weight: 600; }
+    code { font-family: Consolas, "Courier New", monospace; font-size: 9.5pt; }
+    .note { background: #fff8e6; border: 1px solid #e6d39a; padding: 10px 12px; margin: 12px 0 16px; }
+    ul { padding-left: 18px; }
+    ol { padding-left: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Overnight SEO Writer log</h1>
+  <div class="meta">
+    <p><strong>Night:</strong> 19–20 Sep 2026 (London)</p>
+    <p><strong>Ran:</strong> ~2:08 AM London (commit e199ac8 at 2026-09-20 01:08:57 UTC)</p>
+    <p><strong>Repo:</strong> ali221345/colddirect-website</p>
+    <p><strong>Branch:</strong> cursor/colddirect-seo-strategy-1d50</p>
+    <p><strong>Status:</strong> Ran successfully. Not on main. No matching open pull request found. Not FTP-deployed.</p>
+  </div>
+  <p>Sources: commit e199ac8, logs/overnight-seo-404.log (crawl 2026-09-20T01:03:10Z), FIXED-LOG.md and seo_fixes.md from that commit.</p>
+
+  <div class="note">
+    Writer work is only on <code>cursor/colddirect-seo-strategy-1d50</code>. Live IIS will not pick up robots or 301-loop fixes until merge and FTP. origin/main later received the 6:09 AM London seo-bot sitemap job only.
+  </div>
+
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Service pages written</td><td>2</td></tr>
+      <tr><td>Sitemap URLs crawled</td><td>109</td></tr>
+      <tr><td>Sitemap 301 loops</td><td>3</td></tr>
+      <tr><td>Live noindex traps</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Pages written (2-page cap)</h2>
+  <table>
+    <thead>
+      <tr><th>When (London)</th><th>Page</th><th>Before → after</th><th>Class</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>~2:09 AM</td>
+        <td>supermarket-fridge-repair-london.html</td>
+        <td>708 words, noindex,nofollow → 1250 words, index,follow</td>
+        <td>GSC noindex trap</td>
+      </tr>
+      <tr>
+        <td>~2:09 AM</td>
+        <td>commercial-dishwasher-repair-london.html</td>
+        <td>166 words, no seo-article → 818 words + FAQ/Service schema</td>
+        <td>Weak service page</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Folder index.html copies were kept in sync. Header, hero, CTA and footer otherwise unchanged.</p>
+  <p>Commit message: <code>SEO: Add supermarket fridge repair London - GSC noindex-trap - tags: supermarket fridge, dishwasher - borough London</code></p>
+
+  <h2>Classification used</h2>
+  <table>
+    <thead><tr><th>URL</th><th>Class</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>/cold-room-repair-london/</td><td>Winner</td><td>Left title/H1 alone (29 clicks, pos 5.4)</td></tr>
+      <tr><td>/fridge-repair-london/</td><td>Leak</td><td>Homepage exact-match link only; H1 locked until 28 Sep</td></tr>
+      <tr><td>/commercial-fridge-repair-london/</td><td>Opportunity</td><td>Already expanded — not rewritten</td></tr>
+      <tr><td>/supermarket-fridge-repair-london/</td><td>Noindex trap</td><td>Live IIS had noindex,nofollow — unblocked in repo</td></tr>
+      <tr><td>/air-conditioning-repair-london/</td><td>Repo drift</td><td>Live already index; root + folder were still noindex</td></tr>
+      <tr><td>/commercial-dishwasher-repair-london/</td><td>Weak</td><td>Second page of the night (166 words)</td></tr>
+    </tbody>
+  </table>
+  <p>GSC live API was unavailable in the agent (no gsc-key.json / GSC_CREDENTIALS_JSON). Keyword choice used seo-audit/daily-report-2026-09-19.md (window 12–18 Sep 2026).</p>
+
+  <h2>Live sitemap crawl</h2>
+  <p>109 URLs from https://www.colddirect.co.uk/sitemap.xml. Failures are IIS 301 loops (slash ↔ .html), not missing pages.</p>
+  <table>
+    <thead><tr><th>URL</th><th>Desktop</th><th>Mobile</th><th>Issue</th></tr></thead>
+    <tbody>
+      <tr><td>/blog/commercial-fridge-repair-cost-london/</td><td>301</td><td>301</td><td>Slash → .html → slash (then homepage)</td></tr>
+      <tr><td>/contact/</td><td>301</td><td>301</td><td>Slash → .html → slash</td></tr>
+      <tr><td>/about-us/</td><td>301</td><td>301</td><td>Slash → .html → slash</td></tr>
+    </tbody>
+  </table>
+  <p>Loop detail (HEAD, no follow):</p>
+  <ul>
+    <li>/about-us/ → 301 /about-us.html ; /about-us.html → 301 /about-us/</li>
+    <li>/contact/ → 301 /contact.html ; /contact.html → 301 /contact/</li>
+    <li>/blog/commercial-fridge-repair-cost-london/ → 301 .html ; .html → 301 /</li>
+  </ul>
+  <p>Live site is Microsoft-IIS / PleskWin, not WordPress + nginx.</p>
+
+  <h2>Repo fixes (pending FTP)</h2>
+  <ul>
+    <li>web.config now serves folder index.html first and rewrites about-us, contact, and the blog-cost path (slash and .html) with stopProcessing="true" to break the IIS loop. WordPress/nginx rules were skipped.</li>
+    <li>Money-page robots: supermarket fridge set to index, follow.</li>
+    <li>Air-conditioning root HTML + folder synced to index, follow so a future FTP cannot re-noindex a live page.</li>
+    <li>Homepage gained exact-match anchors: fridge repair london → /fridge-repair-london/, plus supermarket fridge and commercial dishwasher.</li>
+  </ul>
+
+  <h2>Queue after this night</h2>
+  <p>Next weak service pages recorded in the commit notes:</p>
+  <ol>
+    <li>multideck-fridge-repair-london.html</li>
+    <li>undercounter-fridge-repair-london.html</li>
+  </ol>
+
+  <h2>Other jobs (not this writer)</h2>
+  <p>GitHub seo-bot daily seo 2026-09-20 ran at 05:09 UTC (6:09 AM London) on main (15cd0f2). That is a sitemap/report job, not the Overnight SEO Writer.</p>
+  <p>Writer work remains only on cursor/colddirect-seo-strategy-1d50 until merged and FTP-deployed.</p>
+</body>
+</html>

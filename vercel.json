@@ -66,6 +66,11 @@
       "permanent": true
     },
     {
+      "source": "/catering-repair-london.asp",
+      "destination": "/catering-repair-london",
+      "permanent": true
+    },
+    {
       "source": "/cellar-cooler-repair-london.html",
       "destination": "/cellar-cooler-repair-london",
       "permanent": true
@@ -162,7 +167,17 @@
     },
     {
       "source": "/commercial-dishwasher-repair-london.html",
-      "destination": "/commercial-dishwasher-repair-london",
+      "destination": "/catering-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/commercial-dishwasher-repair-london",
+      "destination": "/catering-repair-london",
+      "permanent": true
+    },
+    {
+      "source": "/dishwashers-london",
+      "destination": "/catering-repair-london",
       "permanent": true
     },
     {

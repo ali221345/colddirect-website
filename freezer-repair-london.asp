@@ -1,66 +1,157 @@
-<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Freezer Repair London | Commercial Freezer Repair 24/7 | Cold Direct</title>
-  <link rel="canonical" href="https://www.colddirect.co.uk/freezer-repair-london.asp">
-  <meta name="description" content="Emergency freezer repair London. Commercial freezers for restaurants, shops, pubs. 1hr response, 24/7. Williams, Foster, Polar, True. Call 07983 759320"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}.topbar{background:#0f172a;color:#fff;padding:8px 20px;text-align:center;font-size:14px}.topbar a{color:#facc15;text-decoration:none;font-weight:bold}.header{background:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:99}.logo{font-size:24px;font-weight:900;color:#0f172a}.logo span{color:#087d90}.call-btn{background:#2563eb;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-weight:700}.hero{max-width:1200px;margin:30px auto;padding:0 20px;display:grid;grid-template-columns:1.2fr 0.8fr;gap:30px;align-items:center}.hero-card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 8px 30px rgba(0,0,0,0.08);border-left:6px solid #2563eb}.badge{background:#dbeafe;color:#1e40af;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block;margin-bottom:14px}h1{font-size:32px;line-height:1.2;margin-bottom:12px;color:#0f172a}.sub{color:#64748b;font-size:16px;margin-bottom:20px}.phones{background:#f1f5f9;border-radius:12px;padding:16px;margin:20px 0}.phones a{display:block;font-size:18px;font-weight:800;color:#0f172a;text-decoration:none;margin:6px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.feat{background:#f8fafc;padding:14px;border-radius:10px;font-size:14px}.img-card{border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.12);height:380px}.img-card img{width:100%;height:100%;object-fit:cover}.trust{max-width:1200px;margin:30px auto;padding:0 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.trust div{background:#fff;padding:18px;border-radius:12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.05)}.cta{background:#0f172a;color:#fff;border-radius:16px;padding:30px;text-align:center;margin:30px 20px}.cta a{background:#facc15;color:#0f172a;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:900;display:inline-block;margin-top:14px;font-size:18px}@media(max-width:800px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.trust{grid-template-columns:1fr}} .services-wrap{max-width:1200px;margin:20px auto;padding:0 20px}.service-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}.service-actions a{display:inline-block}.booking-btn{background:#0f172a}.services-wrap h2{font-size:22px;margin-bottom:12px}.services-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.service-card{display:flex;align-items:center;padding:8px 10px;font-size:12px;height:45px;border:1px solid #eee;border-radius:6px;background:#fff;color:#0f172a;text-decoration:none;line-height:1.2;min-width:0}.service-card:hover,.service-card:focus-visible{border-color:#2563eb;background:#eff6ff}.service-seo h2{line-height:1.3;margin-bottom:12px}.service-seo h3{margin:16px 0 6px}@media(max-width:800px){.services-grid{grid-template-columns:repeat(2,1fr)}} .service-seo p{margin:0 0 18px}.service-seo ul{padding-left:24px}.service-seo li{margin:0 0 12px}.bg-gray-50{background:#f9fafb}.py-2{padding-top:.5rem;padding-bottom:.5rem}.px-4{padding-left:1rem;padding-right:1rem}.border-y{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}.text-xs{font-size:.75rem;line-height:1rem}.text-gray-400{color:#9ca3af}.mr-2{margin-right:.5rem}.flex{display:flex}.flex-wrap{flex-wrap:wrap}.gap-2{gap:.5rem}.items-center{align-items:center}.bg-white{background:#fff}.border{border:1px solid #e5e7eb}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.rounded-full{border-radius:9999px}a.hover\:bg-blue-50:hover,.hover\:bg-blue-50:hover{background:#eff6ff}.svc-tagbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;max-height:50px}.svc-tagbar a{text-decoration:none;color:#111;white-space:nowrap}.pillar table{width:100%;border-collapse:collapse;margin:12px 0 20px}.pillar th,.pillar td{border:1px solid #e2e8f0;padding:10px;text-align:left;font-size:15px}.pillar th{background:#f1f5f9}.pillar h2{margin:22px 0 10px}.pillar .faq-item{margin:0 0 16px}</style>
-<script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[
-{"@type":["LocalBusiness","ApplianceRepair"],"@id":"https://www.colddirect.co.uk/freezer-repair-london.asp#business","name":"Cold Direct","url":"https://www.colddirect.co.uk/","image":"https://www.colddirect.co.uk/images/freezer-repair.webp","telephone":"07983759320","priceRange":"\u00a3\u00a3","areaServed":{"@type":"City","name":"London"},"address":{"@type":"PostalAddress","addressLocality":"London","addressRegion":"England","addressCountry":"GB"},"openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"00:00","closes":"23:59"},"description":"Commercial freezer repair London. 24/7 emergency commercial freezer engineer London for restaurants, pubs, takeaways, cafes, shops and hotels. We do not do household repairs."},
-{"@type":"FAQPage","@id":"https://www.colddirect.co.uk/freezer-repair-london.asp#faq","mainEntity":[
-{"@type":"Question","name":"Do you repair domestic freezers?","acceptedAnswer":{"@type":"Answer","text":"No, commercial only for businesses. We do not do household repairs."}},
-{"@type":"Question","name":"How fast can you attend in London?","acceptedAnswer":{"@type":"Answer","text":"60-90 min average, 24/7."}},
-{"@type":"Question","name":"Do you carry parts?","acceptedAnswer":{"@type":"Answer","text":"Yes, compressors, fan motors, thermostats, controllers, gas on van."}},
-{"@type":"Question","name":"What areas?","acceptedAnswer":{"@type":"Answer","text":"All London boroughs."}}
-]}
-]}
-</script>
-</head><body><div class='topbar'>24/7 EMERGENCY LONDON - B2B ONLY - Call <a href='tel:07983759320'>07983 759320</a> | <a href='tel:08001123427'>0800 112 3427</a> | <a href='tel:02039524822'>0203 952 4822</a></div><div class='header'><a class='logo' href='/'><span class="text-black font-black" style="color:#000;font-weight:900;font-size:1.875rem">Cold</span><span class="text-teal-500 font-black" style="color:#00A99D;font-weight:900;font-size:1.875rem">Direct</span></a><a class='call-btn' href='tel:07983759320'>Call Now 07983 759320</a></div><div class='hero'><div class='hero-card'><div class='badge'>LONDON - HERE WHEN YOU NEED US</div><h1>Freezer Repair London</h1><div class="bg-gray-50 py-2 px-4 border-y flex flex-wrap items-center gap-2 svc-tagbar"><span class="text-xs text-gray-400">Services:</span><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-fridge-repair-london.asp">Commercial Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-freezer-repair-london.asp">Commercial Freezer</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="cold-room-repair-london.asp">Cold Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="freezer-room-repair-london.asp">Freezer Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-fridge-repair-london.asp">Walk-in Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-freezer-repair-london.asp">Walk-in Freezer</a></div><div class="flex flex-wrap gap-2" style="margin:8px 0;align-items:center"><a class="call-btn" href="tel:07983759320" style="padding:8px 14px;font-size:13px">07983 759320</a><a class="call-btn booking-btn" href="contact.asp" style="padding:8px 14px;font-size:13px">Request a booking</a></div><p class='sub'>Specialist freezer repair london - Commercial & Catering - Fast Response - All Jobs Come With Warranty - Engineer Provides Price After Diagnosis</p><div class='phones'><a href='tel:07983759320'>📞 07983 759320 (Mobile - 24/7)</a><a href='tel:08001123427'>📞 0800 112 3427 (Freephone)</a><a href='tel:02039524822'>📞 0203 952 4822 (London)</a></div><div class='grid'><div class='feat'><b>⚡ 2-4 Hour</b><br>Emergency Response</div><div class='feat'><b>All Jobs Come With Warranty</b></div><div class='feat'><b>🏢 B2B Only</b><br>Commercial Specialists</div><div class='feat'><b>Engineer Attends, Diagnoses &amp; Provides Price Before Work</b></div></div></div><div class='img-card'><img src="images/freezer-repair.webp" width="800" height="600" alt="freezer repair london - commercial"></div></div><div class="service-seo" style="max-width:900px; margin:20px auto; padding:15px; line-height:1.8;"><h2>Commercial Freezer Repair Across London Business Premises</h2><p>A freezer is often relied upon quietly until a warning light, softening product or unfamiliar sound makes the breakdown impossible to ignore. ColdDirect provides freezer repair London businesses can arrange for commercial frozen storage equipment. This service is intended for business customers rather than household call-outs. Tell us whether the equipment is an upright cabinet, chest freezer or larger installation, because the operating arrangement affects the inspection. Note whether the failure was sudden or developed over several days. Useful observations help establish what needs investigating, but the repair recommendation follows diagnosis rather than a guess based on one alarm or a single temperature reading taken during loading.</p><p>The inspection looks at the systems relevant to the symptoms, including controls, fans, defrosting and the cooling circuit where appropriate. A door that fails to close properly can introduce moisture and cause problems that resemble a mechanical failure. Equally, removing visible frost does not establish why it accumulated. We explain the findings and provide a price for the proposed work before repairs start. The equipment model, component availability and installation access all affect what can be completed. If further investigation is required, discuss its scope with the engineer. Your business can then authorise the next step with a clearer understanding of the fault and the likely work involved.</p><p>For a retailer in Ealing, a catering kitchen in Enfield or a restaurant in Croydon, freezer downtime creates immediate planning decisions. We take urgent telephone enquiries 24/7 and arrange attendance against location and requirements. Call 0203 952 4822 with the cabinet details and contact information for someone who can approve work. Retain temperature and alarm records while following your own process for affected stock; repaired machinery does not retrospectively determine product condition. The service links above provide separate information for walk-in and commercial freezer rooms. Completed jobs include warranty, with coverage and any remaining recommendations explained so the site team can keep an accurate record of the repair outcome.</p><h3>Freezer symptoms and the checks they suggest</h3><ul><li>Frost returning soon after clearing: repeated accumulation calls for assessment of moisture entry and defrost operation, rather than treating each recurrence as an isolated cleaning problem inside the cabinet.</li><li>Compressor starting and stopping repeatedly: the electrical controls and operating conditions need investigating to establish why the equipment cannot settle into its expected pattern under normal use.</li><li>Alarm sounding after doors remain closed: timing information helps the engineer distinguish brief access-related changes from a continuing loss of performance that requires a more detailed mechanical assessment.</li><li>Frozen drainage or internal water marks: a route that cannot carry away defrost water can create ice elsewhere, making the original source less obvious than the final location of the buildup.</li><li>Damaged lid or door fittings: closure problems can allow persistent air entry, especially on equipment used frequently, so hinges, seals and the surrounding opening should be considered together.</li><li>Fans running unevenly or becoming noisy: obstructed airflow and moving component faults can affect recovery. Describe what you hear and where it occurs, leaving guarded components for inspection.</li></ul></div><div class='trust'><div><b>⭐ 500+</b><br>London Businesses</div><div><b>🔧 Same Day</b><br>Fix Rate 92%</div><div><b>📍 All London</b><br>Zones 1-6 Covered</div></div><div class='cta'><h2>LET'S GET IT SORTED 24/7</h2><p>Commercial refrigeration support across London. Call to discuss your fault and arrange an engineer visit.</p><a href='tel:07983759320'>CALL 07983 759320 NOW</a></div><section class="seo-depth pillar" style="max-width:900px;margin:24px auto;padding:0 16px 8px;line-height:1.7">
-<h2>Commercial Freezer Repair London - 24/7 Emergency</h2>
-<p>Cold Direct is the commercial freezer engineer London kitchens call when frozen stock is at risk. This freezer repair London service is for trade cabinets only: we do not do household repairs and we will not attend a domestic freezer in a flat. Emergency freezer repair London is available 24/7 with a typical 60 to 90 minute attendance across the capital. Commercial freezer repair London covers upright storage, chest freezers, blast freezers and under-counter catering units used by restaurants, pubs, takeaways, cafes, shops and hotels. A commercial freezer engineer London diagnoses on site, then gives a clear price before any parts or gas work starts. Restaurants losing ice cream and meat, pubs with frozen chips, takeaways holding bulk protein, cafes with frozen pastry, shops with retail frozen aisles and hotels with banquet stores all need the same outcome: temperature restored before an EHO visit or HACCP breach. We work on Williams, Foster, Polar, True, Blizzard, Gram and Lec plant in restaurants, pubs, takeaways, cafes, shops and hotels across every borough. Call 07983 759320 if your commercial freezer in a restaurant, pub, takeaway, cafe, shop or hotel has stopped holding minus degrees. Same-day commercial freezer repair London is confirmed on the call, not promised blindly in traffic. Keep your probe records; repaired plant does not make dumped stock safe. We do not do household repairs.</p>
-<h2>Common Commercial Freezer Faults We Fix Daily</h2>
-<p>A warm cabinet in a restaurant, pub or takeaway is not a DIY job. Ice, gas and electrics sit behind HACCP logs and possible EHO action if high-risk food is stored warm. We diagnose before we quote.</p>
-<ul>
-<li><strong>Not freezing:</strong> product softening in restaurants, pubs, takeaways, cafes, shops and hotels after a compressor, control or airflow fault.</li>
-<li><strong>Ice build-up:</strong> blocked evaporators and failed defrost that hide the real leak or door problem and raise energy cost.</li>
-<li><strong>Compressor failure:</strong> noisy, short-cycling or seized compressors on trade freezers, quoted after electrical and gas checks.</li>
-<li><strong>Gas leak:</strong> F-Gas leak detection and recharge on commercial systems only, with leak repair before gas is added.</li>
-<li><strong>Door seal:</strong> torn gaskets that pull in kitchen humidity, ice the liner and put HACCP probes out of range.</li>
-<li><strong>Thermostat / controller:</strong> cabinets that never reach set point or freeze solid after a failed probe.</li>
-<li><strong>Fan motor:</strong> evaporator or condenser fans that stop, overheat the pack and trip the plant.</li>
-<li><strong>Blocked condenser:</strong> grease and cardboard around the coil in takeaways and pubs, cleared and tested before parts are swapped.</li>
-</ul>
-<p>Stock loss is the first cost. The second is an EHO inspection if you cannot show HACCP temperatures. We restore the freezer and you keep your own food-safety decisions.</p>
-<h2>Brands We Repair</h2>
-<table>
-<thead><tr><th>Brand</th><th>Commercial freezer work</th></tr></thead>
-<tbody>
-<tr><td>Williams</td><td>Upright and under-counter catering freezers used in restaurants and hotels.</td></tr>
-<tr><td>Foster</td><td>Heavy-duty kitchen freezers for pubs, hotels and production kitchens.</td></tr>
-<tr><td>Polar</td><td>Value catering freezers common in takeaways, cafes and independent shops.</td></tr>
-<tr><td>True</td><td>Display and back-bar frozen cabinets in shops, pubs and restaurants.</td></tr>
-<tr><td>Blizzard</td><td>Stainless trade freezers in cafes, takeaways and smaller restaurants.</td></tr>
-<tr><td>Gram</td><td>Precision catering freezers for hotels and high-volume restaurants.</td></tr>
-<tr><td>Lec</td><td>Commercial Lec cabinets in shops, cafes and light catering stores.</td></tr>
-</tbody>
-</table>
-<h2>Areas Covered - London Wide</h2>
-<p>Freezer repair London covers all boroughs. For area pages and related commercial work see <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair London</a>, <a href="/commercial-fridge-repair-north-london/">North London</a>, <a href="/commercial-fridge-repair-east-london/">East London</a>, <a href="/commercial-fridge-repair-central-london/">Central London</a> and <a href="/commercial-cold-room-repair-london/">Cold Room Repair London</a>. Also see <a href="/fridge-repair-london.asp">Fridge Repair London</a> for chilled catering cabinets. We do not do household repairs anywhere in London.</p>
-<h2>How Much Does Commercial Freezer Repair Cost in London?</h2>
-<p>Prices are given after diagnosis. Typical London commercial ranges (ex VAT, parts extra where stated):</p>
-<table>
-<thead><tr><th>Item</th><th>Typical range</th></tr></thead>
-<tbody>
-<tr><td>Call-out + diagnosis</td><td>£90–£150</td></tr>
-<tr><td>Labour (beyond diagnosis)</td><td>£90–£140 per hour</td></tr>
-<tr><td>Gas leak repair + recharge</td><td>£180–£350</td></tr>
-<tr><td>Fan motor / thermostat / controller</td><td>£120–£280 fitted</td></tr>
-<tr><td>Compressor replacement</td><td>£450–£950 depending on model</td></tr>
-</tbody>
-</table>
-<p>Restaurants, pubs, takeaways, cafes, shops and hotels receive a written price before work. A visit does not force a repair if the cabinet is beyond economic repair.</p>
-<h2>FAQ - Freezer Repair London</h2>
-<div class="faq-item" id="faq"><h3>Do you repair domestic freezers?</h3><p>No, commercial only for businesses. We do not do household repairs.</p></div>
-<div class="faq-item"><h3>How fast can you attend in London?</h3><p>60-90 min average, 24/7.</p></div>
-<div class="faq-item"><h3>Do you carry parts?</h3><p>Yes, compressors, fan motors, thermostats, controllers, gas on van.</p></div>
-<div class="faq-item"><h3>What areas?</h3><p>All London boroughs.</p></div>
-<p>Related: <a href="cold-room-repair-london.asp">Cold Room Repair</a> | <a href="freezer-room-repair-london.asp">Freezer Room Repair</a> | <a href="commercial-fridge-repair-london.asp">Commercial Fridge Repair</a> | <a href="/fridge-repair-london.asp">Fridge Repair London</a></p>
-</section>
-</body></html>
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico">
+  
+  <link rel="apple-touch-icon" href="/images/logo/favicon-512.png">
+  <title>Freezer Repair London | Same-Day 24/7</title>
+  <meta name="description" content="Freezer repair London, same-day 24/7. Trade uprights and chests. 2–4 hour callout before stock thaws. Quote first. Call 07983 759320.">
+  <meta property="og:title" content="Freezer Repair London | Same-Day 24/7">
+  <meta property="og:description" content="Freezer repair London, same-day 24/7. Trade uprights and chests. 2–4 hour callout. Call 07983 759320.">
+  <link rel="canonical" href="https://www.colddirect.co.uk/freezer-repair-london/">
+  <style id="light-theme">body{background:#ffffff;color:#0a2540}.hero:before{display:none!important}.card{background:#ffffff!important}</style>
+  <style id="page-theme">
+    body.theme-freezerrepair .hero{background:#e8edf4!important;color:#0a2540!important}
+    body.theme-freezerrepair .hero h1,body.theme-freezerrepair .hero p,body.theme-freezerrepair .hero .lead,body.theme-freezerrepair .hero .kicker{color:#0a2540!important}
+    body.theme-freezerrepair .btn,body.theme-freezerrepair .btn-light,body.theme-freezerrepair .btn-dark,body.theme-freezerrepair .sticky-cta a{background:#1B263B!important;color:#ffffff!important;border-color:#1B263B}
+    body.theme-freezerrepair .logo{color:#1B263B}
+    body.theme-freezerrepair .cta-band{background:#e8edf4!important;color:#0a2540!important}
+    .seo-article.container{width:min(1120px,calc(100% - 32px));margin:2rem auto 3rem;padding:0;color:#0a2540}
+    .seo-article h2{font-size:1.6rem;margin:0 0 1rem}
+    .seo-article h3{font-size:1.2rem;margin:1.6rem 0 0.7rem}
+    .seo-article h4{font-size:1.05rem;margin:1.2rem 0 0.4rem}
+    .seo-article p{margin:0 0 1rem;line-height:1.65}
+    .seo-article ul{margin:0 0 1rem;padding-left:1.25rem}
+    .seo-article li{margin:0 0 0.65rem;line-height:1.6}
+  </style>
+  <link rel="stylesheet" href="/css/styles.css?v=logo11">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "name": "Cold Direct",
+        "url": "https://www.colddirect.co.uk/",
+        "telephone": "+447983759320",
+        "areaServed": ["London", "Greater London"],
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "00:00",
+          "closes": "23:59"
+        }
+      },
+      {
+        "@type": "Service",
+        "name": "Freezer Repair London",
+        "serviceType": "Same-day commercial freezer repair London",
+        "provider": { "@type": "LocalBusiness", "name": "Cold Direct" },
+        "areaServed": ["London", "Greater London"],
+        "hoursAvailable": "Mo-Su 00:00-23:59"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do you repair domestic fridge in London?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No, commercial only. We repair restaurants, bars and shops. We do not repair domestic fridge-freezers in houses. Call 020 3952 4822 if the plant is trade." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you offer freezer repair London the same day?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes for trade freezers. Freezer repair London is booked 24/7 with a typical 2 to 4 hour emergency slot. Call 07983 759320 before stock thaws." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you work 24/7?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes for trade emergencies across a 25 mile radius from North London." }
+          },
+          {
+            "@type": "Question",
+            "name": "Will you probe temperatures for the EHO?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes on commercial jobs. Product and air readings are written down." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="/css/pro-images.css">
+</head>
+<body class="theme-freezerrepair">
+  <!--#include virtual="/includes/header-nav.inc" -->
+  <section class="hero"><div class="wrap">
+    <p class="kicker">Commercial refrigeration only - 24/7 emergency - 25 mile radius</p>
+    <p style="font-weight:700;margin:0 0 10px;">COMMERCIAL ONLY - We Don't Repair Domestic Fridge/Freezers</p>
+    <h1>Freezer Repair London</h1>
+    <p class="lead">Freezer repair across London and North London. Commercial freezers first, with clear advice on domestic call-outs. 24/7 emergency. 25 mile radius.</p>
+    <div class="cta-row">
+      <a class="btn" href="tel:+447983759320">Mobile 07983 759320</a>
+      <a class="btn" href="tel:08001123427">Freephone 0800 112 3427</a>
+      <a class="btn" href="tel:+442039524822">London Office 0203 952 4822</a>
+    </div>
+  </div></section>
+  <section class="section"><div class="wrap">
+    <!-- <img class="brand-photo" src="/images/commercial-freezer-repair-london.webp" alt="Freezer repair London and commercial freezer repair london on a trade upright"> -->
+    <!-- <img src="/images/freezer-repair-london-premium.jpg" alt="Premium Commercial Freezer Repair London - Double Door -18°C" width="1200" height="800" style="width:100%;height:auto;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" loading="lazy"> -->
+    <img src="/images/freezer-repair-london-foster-real.jpg" alt="Foster Commercial Freezer Repair London - Upright Freezer" width="1200" height="800" style="width:100%;height:auto;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" loading="lazy">
+    <h2>Freezer repair London: same-day before stock thaws</h2>
+    <p>Freezer repair London means a trade upright, chest or frozen merchandiser that must hold minus 18. We book 24/7 emergency slots and aim for two to four hours. Walk-in rooms use <a href="/cold-room-repairs-london">cold room repair london</a> or freezer room pages. Cabinets also sit on <a href="/commercial-freezer-repair-london">commercial freezer repair london</a>.</p>
+    <h2>Freezer repair for London trade sites and homes on our radius</h2>
+    <p>We provide both repair and service / maintenance for commercial freezers. Freezer repair London is the search you make when stock is thawing. Cold Direct packs the van for commercial freezers: Williams uprights, under-counters, freezer rooms and display freezers in restaurants, pubs, takeaways, hotels and shops. The top bar still reads 24/7 Emergency - Commercial refrigeration only. This page also answers domestic freezer searches so you get a yes or a no on the first call, not a wasted wait.</p>
+    <h2>Freezer service London</h2>
+    <p>Freezer service London and working freezer service London mean PPM on cabinets that still hold minus eighteen: defrost, door heaters, condensers and a probe on product. Servicing a Williams upright before July stops the thaw that dumps ice cream. A service contract for shops and kitchens puts those visits on a diary. Household chest servicing is a maybe, not the default. We still repair failed trade freezers 24/7. Planned servicing is how you keep frozen stock without a weekly panic.</p>
+    <p>On a commercial freezer we use a temperature probe on air and product. We write the figures for HACCP and for the EHO. Common faults: iced evaporators, failed defrost, blocked condensers, door heaters down, split gaskets, noisy fans and compressors that short-cycle. Williams, Foster, Polar, True and Sub-Zero trade freezers are all in scope. See Williams and Sub-Zero freezer pages if you already know the brand.</p>
+    <p>If your freezer is a household chest or upright in a house, say so. We will tell you whether we can attend on the 25 mile North London radius or whether you need a domestic engineer. Commercial only is the default. Honesty beats a missed slot on a restaurant job.</p>
+    <p>24/7 emergency freezer repair for trade covers North London and all London inside 25 miles, plus Hertfordshire and Essex towns on that ring: Barnet, Finchley, Wood Green, Tottenham, Edmonton, Walthamstow, Camden, Islington, Hackney, Haringey, City, Westminster, Harrow, Watford, Stratford, Romford, Ilford, Enfield, Southgate, Potters Bar, Borehamwood, Cheshunt and Harlow. Call mobile 07983 759320, freephone 0800 112 3427 or London office 0203 952 4822.</p>
+    <p>Related: <a href="/commercial-freezer-repair-london">commercial freezer repair London</a>, <a href="/williams-freezer-repair-london">Williams freezer repair London</a>, <a href="/subzero-freezer-repair-london">Sub-Zero freezer repair</a>, <a href="/commercial-freezer-repair-north-london">commercial freezer repair North London</a>, <a href="/freezer-room-repair-north-london">freezer room repair</a>, <a href="/fridge-repair-london">fridge repair London</a>, <a href="/ice-cream-machine-repair-london">ice cream machine repair</a>.</p>
+    <p>Navy buttons use #1B263B. The hero is a light navy tint. The body stays white, never black. Quote before we start. Probe before we leave.</p>
+    <p>Freezer repair London mixes commercial and domestic intent the same way fridge repair does. We are a commercial refrigeration company first. Williams, Foster, Polar and Sub-Zero trade freezers, plus freezer rooms, are the work we pack for. 24/7 emergency, 25 mile radius from North London, temperature probe on the food, EHO-ready notes. Household chest freezers are a maybe, not a default. Say which you have on the call. Covered towns include Enfield, Barnet, Finchley, Wood Green, Tottenham, Camden, Islington, Hackney, Haringey, City, Westminster, Harrow, Watford, Stratford, Romford and Ilford. Call 07983 759320, 0800 112 3427 or 0203 952 4822. Brand pages: Williams freezer, Sub-Zero freezer. Walk-in plant: freezer room repair North London. If the freezer is a display well on a shop floor, say so - that is still commercial refrigeration and we treat it as an EHO-critical cabinet, not a garage chest.</p>
+      <h2>FAQ</h2>
+      <div class="faq">
+        <h3>Do you offer freezer repair London the same day?</h3>
+        <p>Yes for trade freezers. Freezer repair London is booked 24/7 with a typical 2 to 4 hour emergency slot. Call 07983 759320 before stock thaws.</p>
+        <h3>Do you repair domestic fridge in London?</h3>
+        <p>No, commercial only. We repair restaurants, bars and shops. We do not repair domestic fridge-freezers in houses. Call 020 3952 4822 if the plant is trade.</p>
+        <h3>Do you repair commercial and domestic freezers?</h3>
+        <p>Commercial freezers are the core service. Domestic enquiries get an honest yes or no on the call.</p>
+        <h3>Do you work 24/7?</h3>
+        <p>Yes for trade emergencies across a 25 mile radius from North London.</p>
+        <h3>Will you probe temperatures for the EHO?</h3>
+        <p>Yes on commercial jobs. Product and air readings are written down.</p>
+        <h3>Should I use the London-wide commercial freezer page?</h3>
+        <p>Yes for trade cabinets. Book <a href="/commercial-freezer-repair-london">commercial freezer repair London</a> if stock is thawing and you need a 2–4 hour emergency slot.</p>
+      </div>
+  </div></section>
+  <section class="cta-band"><div class="wrap"><h2>Book freezer repair</h2><div class="phones"><a href="tel:+447983759320">Mobile 07983 759320</a><a href="tel:08001123427">Freephone 0800 112 3427</a><a href="tel:+442039524822">London Office 0203 952 4822</a></div></div></section>
+  <section class="seo-article container">
+    <h2>Expert Freezer Repair in London - 24/7 Emergency Service</h2>
+    <p>When a commercial freezer packs up in a London kitchen, you lose stock in hours, not days. Restaurants, takeaways and hotels cannot wait for a Monday slot while prawns and ice cream thaw. Cold Direct has spent 15 years on trade plant across the capital. We offer same-day Freezer Repair in London with F-Gas certified engineers who quote before they recover gas. Call us when the cabinet is warm, the room is icing, or the compressor has gone quiet. We cover Greater London trade sites on a 24/7 emergency diary, not a domestic house-call list.</p>
+    <h3>Common Freezer Faults We Fix in London</h3>
+    <p>A warm cabinet is rarely one part. We test the circuit on site before we order anything.</p>
+    <ul>
+      <li><strong>Freezer not freezing / not cold enough.</strong> If the fan still runs but product sits at minus five instead of minus eighteen, we check the thermostat, the controller set point and the gas charge. Low refrigerant after a leak will not hold temperature.</li>
+      <li><strong>Ice build-up and water leaking inside.</strong> A failed defrost heater leaves a solid block on the evaporator. Melt then pools on the floor. Torn door seals let moist kitchen air in, so ice returns the next night. We replace heaters, timers and gaskets rather than chipping ice and leaving.</li>
+      <li><strong>Compressor noisy or not running.</strong> A rattling or silent compressor often means the motor or start gear has failed. We isolate that from a seized fan so you do not pay for the wrong part.</li>
+    </ul>
+    <h3>Commercial Freezer Brands We Repair</h3>
+    <p>We attend Williams, Foster, True and Gram cabinets every week, plus Samsung commercial uprights and undercounters on catering sites. Where the plate still lists a current part, we fit genuine parts, not a guess from a mixed box. If the freezer is a remote pack serving a room, that is still our work.</p>
+    <h3>Why London Businesses Choose Cold Direct for Freezer Repair</h3>
+    <p>Duty managers want a number that answers. We aim for a one-hour response in London when the job is a trade emergency and an engineer is free. Work is quoted at a fixed price before we start. F-Gas handling and Gas Safe practice sit on the job sheet, and we leave a warranty on the parts we fit.</p>
+    <h4>How fast can you repair my freezer in London?</h4>
+    <p>Call the mobile or the London office and we book Freezer Repair in London on the same day where the diary allows. Night and weekend breakdowns go on the 24/7 emergency list. The van carries common fans, driers and gaskets so many cabinets run again on the first visit.</p>
+    <h4>Do you repair walk-in and chest freezers?</h4>
+    <p>Yes on commercial plant. A walk-in that has warmed up is booked as room work; see our <a href="/walk-in-freezer-repair-london/">walk-in freezer repair in London</a> page. Larger rooms and remote packs are covered on <a href="/freezer-room-repair-london/">freezer room repair in London</a>. Chest freezers in a kitchen or shop are in scope when they are trade units. Household chests in a house are not our default diary.</p>
+    <h4>What areas in London do you cover?</h4>
+    <p>Cold Direct freezer repair covers North London and a 25 mile radius through Greater London, including Enfield, Barnet, Camden, Islington, Hackney, Haringey and the City. If your kitchen is on that ring, we attend. Commercial only.</p>
+  </section>
+  <footer class="site-footer"><div class="wrap"><div class="grid"><div><h3>Cold Direct</h3><p>North London Commercial Refrigeration Engineers. 25 mile radius.</p></div><div><h3>Call</h3><p><a href="tel:+447983759320">Mobile 07983 759320</a><br><a href="tel:08001123427">Freephone 0800 112 3427</a><br><a href="tel:+442039524822">London Office 0203 952 4822</a><br><a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a></p></div><div><h3>More</h3><p><a href="/polar-fridge-repair-london">Polar</a><br><a href="/ice-machine-repair-london">Ice machines</a><br><a href="/">Home</a></p></div></div><p class="legal">Commercial Refrigeration Repair North London &amp; London | Enfield, Barnet, Camden, Islington, City, Westminster, Harrow, Watford, All London | 25 Mile Radius</p></div></footer>
+  <div class="sticky-cta"><a href="tel:+447983759320">07983 759320</a><a href="tel:08001123427">0800 112 3427</a><a href="tel:+442039524822">0203 952 4822</a></div>
+  <script src="/js/main.js"></script>
+  <script src="/js/booking.js"></script>
+</body>
+</html>
