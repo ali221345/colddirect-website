@@ -31,7 +31,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p logs
-          # Add GSC reports if they exist
           if [ -f "GSC-DAILY-REPORT.md" ]; then git add GSC-DAILY-REPORT.md; fi
           if [ -f "GSC-DAILY-REPORT.json" ]; then git add GSC-DAILY-REPORT.json; fi
           if ls logs/gsc_daily_* 1> /dev/null 2>&1; then git add logs/gsc_daily_*; fi
