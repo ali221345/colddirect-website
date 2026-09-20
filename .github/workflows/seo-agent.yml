@@ -26,15 +26,20 @@ jobs:
       - name: Run SEO Agent
         run: python agent/run.py
 
-      - name: Commit sitemap and robots if changed
+      - name: Commit GSC Daily Report + sitemap and robots if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p logs
+          # Add GSC reports if they exist
+          if [ -f "GSC-DAILY-REPORT.md" ]; then git add GSC-DAILY-REPORT.md; fi
+          if [ -f "GSC-DAILY-REPORT.json" ]; then git add GSC-DAILY-REPORT.json; fi
+          if ls logs/gsc_daily_* 1> /dev/null 2>&1; then git add logs/gsc_daily_*; fi
           git add colddirect-public-html/sitemap.xml colddirect-public-html/robots.txt
           if git diff --staged --quiet; then
-            echo "No sitemap/robots changes"
+            echo "No changes to commit"
           else
-            git commit -m "chore: daily SEO agent sitemap"
+            git commit -m "chore: daily SEO agent - sitemap + GSC daily report"
             git push
           fi
 
@@ -50,25 +55,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
-          local-dir: ./
+          local-dir:./colddirect-public-html/
           server-dir: /httpdocs/
           timeout: 60000
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/colddirect-public-html/**
-            **/images/_restore/**
-            **/.cursor/**
-            **/.github/**
-            **/docs/**
-            **/agent/**
-            **/tools/**
-            **/scripts/**
-            **/plesk-hero-upload/**
-            **/plesk-upload/**
-            **/_wa_src/**
-            **/.vercel/**
             ${{ steps.protect.outputs.extra_exclude }}
 
       - name: Restore protected pages if this deploy reverted them
