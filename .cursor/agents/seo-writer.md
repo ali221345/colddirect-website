@@ -33,4 +33,7 @@ TASK:
    c) Insert BEFORE </main> or before <footer>
 5. Save files, update weak-list.json (remove fixed ones)
 6. Create FIXED-LOG.md: date | file | before->after
+7. Pin the pages so overnight FTP cannot revert them:
+   py agent/scripts/protect_fixed_pages.py register [file.html] --url https://www.colddirect.co.uk/[slug]/ --reason "SEO Writer fix"
+   Commit protected-pages.json with the HTML copies.
 RUN NOW: Fix first 2 files from weak-list.json (commercial-fridge-repair-north-london.html and commercial-fridge-repair-london.html)

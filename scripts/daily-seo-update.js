@@ -188,6 +188,28 @@ function addBlogLink(relBlog, href, anchor, marker) {
   return true;
 }
 
+function loadProtectedPages() {
+  const p = join(ROOT, "protected-pages.json");
+  if (!existsSync(p)) return [];
+  try {
+    return JSON.parse(readFileSync(p, "utf8")).pages || [];
+  } catch {
+    return [];
+  }
+}
+
+function isProtectedRel(rel) {
+  if (!rel) return false;
+  const n = String(rel).replace(/\\/g, "/").replace(/^colddirect-public-html\//, "");
+  for (const page of loadProtectedPages()) {
+    for (const f of page.files || []) {
+      const ff = String(f).replace(/\\/g, "/").replace(/^colddirect-public-html\//, "");
+      if (ff === n || ff.endsWith("/" + n) || n.endsWith("/" + ff) || ff === n + "/index.html") return true;
+    }
+  }
+  return false;
+}
+
 function ftpUpload(relPaths) {
   const py = `
 import ftplib, os
@@ -464,6 +486,10 @@ async function main() {
     const ok = last7.every((d) => days[d].impressions > 1000 && days[d].ctr < 0.005);
     if (!ok) continue;
     const rel = pageToFile(page);
+    if (isProtectedRel(rel)) {
+      log("SKIP title rewrite protected page " + rel);
+      continue;
+    }
     if (!canRewriteTitle(state, rel, today)) {
       log("SKIP title rewrite cooldown/lock " + rel);
       continue;
@@ -519,7 +545,13 @@ async function main() {
     log("SITEMAP_GSC_FAIL " + e.message);
   }
 
-  const uniqueDeploy = [...new Set(deploy)];
+  const uniqueDeploy = [...new Set(deploy)].filter((rel) => {
+    if (isProtectedRel(rel)) {
+      log("SKIP FTP protected page " + rel);
+      return false;
+    }
+    return true;
+  });
   if (uniqueDeploy.length) {
     ftpUpload(uniqueDeploy);
   }

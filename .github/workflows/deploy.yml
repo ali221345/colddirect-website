@@ -12,6 +12,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Skip stale protected pages
+        id: protect
+        run: python agent/scripts/protect_fixed_pages.py github-excludes
+
       - name: FTP deploy httpdocs
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -40,3 +48,13 @@ jobs:
             **/plesk-upload/**
             **/_wa_src/**
             **/.vercel/**
+            ${{ steps.protect.outputs.extra_exclude }}
+
+      - name: Restore protected pages if this deploy reverted them
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          PLESK_FTP_PATH: /httpdocs
+        run: python agent/scripts/protect_fixed_pages.py restore-live
+        continue-on-error: true

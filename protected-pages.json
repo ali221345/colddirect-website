@@ -1,0 +1,19 @@
+{
+  "pages": [
+    {
+      "id": "coverage",
+      "url": "https://www.colddirect.co.uk/coverage/",
+      "files": [
+        "coverage.html",
+        "coverage/index.html",
+        "colddirect-public-html/coverage.html",
+        "colddirect-public-html/coverage/index.html"
+      ],
+      "expected_title": "Commercial Refrigeration Coverage London | 25 Mile Radius | Cold Direct",
+      "must_contain": "North London towns we already run",
+      "min_bytes": 8000,
+      "protected_at": "2026-09-20",
+      "reason": "Hand-fixed hub. Overnight FTP from git was reverting the short stub."
+    }
+  ]
+}
