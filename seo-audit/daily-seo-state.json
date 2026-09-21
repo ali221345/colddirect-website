@@ -29,6 +29,13 @@
         "clicks": 14,
         "impressions": 41,
         "ctr": 0.34146341463414637
+      },
+      {
+        "date": "2026-09-21",
+        "position": 9.880952380952381,
+        "clicks": 14,
+        "impressions": 42,
+        "ctr": 0.3333333333333333
       }
     ],
     "freezer repair london": [
@@ -52,6 +59,13 @@
         "clicks": 3,
         "impressions": 9,
         "ctr": 0.3333333333333333
+      },
+      {
+        "date": "2026-09-21",
+        "position": 7.9,
+        "clicks": 4,
+        "impressions": 10,
+        "ctr": 0.4
       }
     ],
     "commercial fridge repair london": [
@@ -75,6 +89,13 @@
         "clicks": 13,
         "impressions": 39,
         "ctr": 0.3333333333333333
+      },
+      {
+        "date": "2026-09-21",
+        "position": 13.833333333333334,
+        "clicks": 18,
+        "impressions": 42,
+        "ctr": 0.42857142857142855
       }
     ],
     "cold room repair london": [
@@ -98,6 +119,13 @@
         "clicks": 31,
         "impressions": 47,
         "ctr": 0.6595744680851063
+      },
+      {
+        "date": "2026-09-21",
+        "position": 6.775,
+        "clicks": 27,
+        "impressions": 40,
+        "ctr": 0.675
       }
     ],
     "chiller repair near me": [
@@ -120,6 +148,13 @@
         "position": 28,
         "clicks": 0,
         "impressions": 1,
+        "ctr": 0
+      },
+      {
+        "date": "2026-09-21",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
         "ctr": 0
       }
     ],
@@ -144,6 +179,13 @@
         "clicks": 0,
         "impressions": 0,
         "ctr": 0
+      },
+      {
+        "date": "2026-09-21",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
       }
     ],
     "ice machine repair london": [
@@ -163,6 +205,13 @@
       },
       {
         "date": "2026-09-20",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      },
+      {
+        "date": "2026-09-21",
         "position": 0,
         "clicks": 0,
         "impressions": 0,

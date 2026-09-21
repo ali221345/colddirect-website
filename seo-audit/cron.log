@@ -30,3 +30,13 @@
 [2026-09-20T15:03:17.044Z] SITEMAP_GSC [{"type":"web","submitted":"118","indexed":"0"}]
 [2026-09-20T15:03:17.045Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-20.md
 [2026-09-20T15:03:17.045Z] DONE changes=0 alerts=2
+[2026-09-21T05:09:55.944Z] START daily-seo-update 2026-09-21
+[2026-09-21T05:09:55.946Z] GSC window 2026-09-14 .. 2026-09-20
+[2026-09-21T05:09:56.976Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-09-21T05:09:57.919Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-09-21T05:10:05.443Z] ALERT 404 /blog/types-of-cold-storage head=404 get=404
+[2026-09-21T05:10:06.126Z] ALERT 404 /blog/smeg-fridge-freezer-control-panel head=404 get=404
+[2026-09-21T05:10:08.444Z] SITEMAP http=200 locs=108
+[2026-09-21T05:10:08.539Z] SITEMAP_GSC [{"type":"web","submitted":"118","indexed":"0"}]
+[2026-09-21T05:10:08.540Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-21.md
+[2026-09-21T05:10:08.540Z] DONE changes=0 alerts=2
