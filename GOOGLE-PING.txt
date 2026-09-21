@@ -5,7 +5,8 @@ GOOGLE SEARCH CONSOLE — Request Indexing (2 URLs per day max)
 3. Click Request Indexing
 4. Do 2 per day max
 
-Today (2026-09-19):
-- https://www.colddirect.co.uk/chiller-repairs-london
+Today (2026-09-21):
+- https://www.colddirect.co.uk/commercial-fridge-repair-london/
+- https://www.colddirect.co.uk/fridge-repair-london/
 
 API: python tools/request_indexing.py (Indexing API URL_UPDATED + URL Inspection).

@@ -14,6 +14,36 @@
       "min_bytes": 8000,
       "protected_at": "2026-09-20",
       "reason": "Hand-fixed hub. Overnight FTP from git was reverting the short stub."
+    },
+    {
+      "id": "commercial-fridge-repair-london",
+      "url": "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+      "files": [
+        "commercial-fridge-repair-london.html",
+        "commercial-fridge-repair-london/index.html",
+        "colddirect-public-html/commercial-fridge-repair-london.html",
+        "colddirect-public-html/commercial-fridge-repair-london/index.html"
+      ],
+      "expected_title": "Commercial Fridge Repair London | Same-Day 24/7 Emergency",
+      "must_contain": "Common Commercial Fridge Faults",
+      "min_bytes": 13675,
+      "protected_at": "2026-09-21",
+      "reason": "GSC: exact-query title/h1 so pos-12 lands here not homepage"
+    },
+    {
+      "id": "fridge-repair-london",
+      "url": "https://www.colddirect.co.uk/fridge-repair-london/",
+      "files": [
+        "fridge-repair-london.html",
+        "fridge-repair-london/index.html",
+        "colddirect-public-html/fridge-repair-london.html",
+        "colddirect-public-html/fridge-repair-london/index.html"
+      ],
+      "expected_title": "Fridge Repair London | Same-Day Commercial, 2\u20134 Hour Callout",
+      "must_contain": "Fridge repair for London kitchens and homes on our radius",
+      "min_bytes": 8074,
+      "protected_at": "2026-09-21",
+      "reason": "GSC: canonical for fridge-repairs-london 301; link to commercial fridge money page"
     }
   ]
 }
