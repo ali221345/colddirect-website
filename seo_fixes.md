@@ -133,4 +133,9 @@ Before/after robots: none specified (defaulted indexable) -> noindex, follow
 Change: added `<meta name="robots" content="noindex, follow">`, repointed canonical to the stronger, already-optimised `/freezer-room-repair-london/` page (741-word, FAQPage-schema page that already targets this exact query), and added an on-page link steering readers/crawlers to that page. No content deleted.
 Reason category: noindex-trap (duplicate/thin page splitting authority for the same GSC query as an existing well-optimised page)
 
+GSC URL Inspection (2026-09-23 22:42, post-deploy):
+- `/walk-in-freezer-room-repair-london/` — verdict NEUTRAL, coverageState "URL is unknown to Google" (not yet crawled with new noindex tag; expected for a low-signal page, re-check next follow-up pass).
+- `/freezer-room-repair-london/` (canonical target) — verdict NEUTRAL, coverageState "Discovered - currently not indexed" (Google has seen the URL but hasn't indexed it yet, despite it converting clicks per GSC query data — worth requesting indexing on this URL in a future run).
+Live IIS confirmed post-deploy: root `.html` still 301s to the directory URL; the directory URL (actually served) now has `noindex, follow` and canonical to `/freezer-room-repair-london/`, matching the commit.
+
 Candidate for a future run (not attempted tonight, per 1-page-per-run limit): rewrite `fridge-repair-london.html` further or address the `check2` GSC cannibalisation rows where "freezer repair london" (18 clicks, pos 26) is landing across `/`, `/fridge-freezer-repairs-london`, and `/freezer-repairs-london` instead of consolidating onto `/freezer-repair-london/`.
