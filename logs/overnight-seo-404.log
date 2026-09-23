@@ -152,3 +152,13 @@ OK	200	200	https://www.colddirect.co.uk/display-cooler-repair-london/
 OK	200	200	https://www.colddirect.co.uk/ice-machine-repair-north-london/
 OK	200	200	https://www.colddirect.co.uk/commercial-freezer-repair-london/
 OK	200	200	https://www.colddirect.co.uk/freezer-room-repair-north-london/
+
+[2026-09-23 22:37] Publish pass — walk-in-freezer-room-repair-london noindex/canonical fix
+Checked internal links on touched page (root .html, directory index.html, public-html mirror):
+  /freezer-room-repair-north-london -> 301 (redirects to trailing slash, OK)
+  /walk-in-freezer-repair-london -> 200 OK
+  /freezer-room-repair-london/ -> 200 OK (new canonical target)
+  /cold-storage.html -> 301 (redirects to /cold-storage/, OK)
+  /cold-room-repair-london.html -> 301 (redirects to /cold-room-repair-london/, OK)
+  /commercial-fridge-repair-london.html -> 301 (redirects to trailing slash, OK)
+No broken (4xx/5xx) internal links found.

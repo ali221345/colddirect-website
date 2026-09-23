@@ -117,3 +117,20 @@ GSC reason: noindex-trap
 GSC Live Test 19 Sep 21:43 showed `/air-conditioning-repair-london/` blocked by noindex. Live IIS files (not repo copies) had `<meta name="robots" content="noindex, nofollow">` on both `air-conditioning-repair-london.html` and `air-conditioning-repair-london/index.html`. `web.config` had no `X-Robots-Tag`. Set those to `index, follow`. Confirmed `/chiller-repair-london/` already `index, follow`. Added explicit `index, follow` on `/ice-machine-repair-london/` HTML. Left `noindex, follow` only on `/blog/different-types-of-ice` and plural canonicals (`air-conditioning-repairs-london`, `chiller-repairs-london`). IIS only. Did not touch Vercel.
 
 Guards re-run 19 Sep 22:06 (IIS, not Vercel): live `curl -I` on the three singular money URLs is `200` Microsoft-IIS/10.0 with **no** `X-Robots-Tag` / header `noindex`. HTML is `index, follow`. Ice blog and both plural canonicals stay `noindex, follow`. GSC inspect: AC `/` is **Submitted and indexed** / `INDEXING_ALLOWED` (last crawl 19 Sep 20:57 UTC). Ice `/` is `INDEXING_ALLOWED` (canonical without slash).
+
+## PUBLISHED — walk-in-freezer-room-repair-london — 2026-09-23 22:41
+Keyword Tags: freezer room repair london, walk-in freezer repair london, cannibalisation-fix, Foster freezer repair, Williams freezer repair, commercial refrigeration repair London
+SEO Focus: local intent, commercial, emergency, duplicate-content cleanup
+Target Borough: Greater London (North London base)
+GSC Source: query=freezer room repair london clicks=5 impressions=25 pos=31.6 CTR=20% date=2026-09-23
+Files touched:
+- walk-in-freezer-room-repair-london.html (root)
+- colddirect-public-html/walk-in-freezer-room-repair-london.html
+- walk-in-freezer-room-repair-london/index.html (added by publish pass — this is the file IIS actually serves at the live trailing-slash URL; the draft only touched the two files above, which both 301 away, so the fix would have been a no-op without this addition)
+Before/after title: unchanged ("Walk-in Freezer Room Repair London | Same-Day Callout - Cold Direct") — title left as-is per checklist since this is now a noindex/canonical page, not a new SERP target.
+Before/after canonical: self-canonical (walk-in-freezer-room-repair-london) -> https://www.colddirect.co.uk/freezer-room-repair-london/
+Before/after robots: none specified (defaulted indexable) -> noindex, follow
+Change: added `<meta name="robots" content="noindex, follow">`, repointed canonical to the stronger, already-optimised `/freezer-room-repair-london/` page (741-word, FAQPage-schema page that already targets this exact query), and added an on-page link steering readers/crawlers to that page. No content deleted.
+Reason category: noindex-trap (duplicate/thin page splitting authority for the same GSC query as an existing well-optimised page)
+
+Candidate for a future run (not attempted tonight, per 1-page-per-run limit): rewrite `fridge-repair-london.html` further or address the `check2` GSC cannibalisation rows where "freezer repair london" (18 clicks, pos 26) is landing across `/`, `/fridge-freezer-repairs-london`, and `/freezer-repairs-london` instead of consolidating onto `/freezer-repair-london/`.
