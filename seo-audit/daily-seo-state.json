@@ -50,6 +50,13 @@
         "clicks": 17,
         "impressions": 52,
         "ctr": 0.3269230769230769
+      },
+      {
+        "date": "2026-09-24",
+        "position": 9.8125,
+        "clicks": 16,
+        "impressions": 48,
+        "ctr": 0.3333333333333333
       }
     ],
     "freezer repair london": [
@@ -94,6 +101,13 @@
         "clicks": 6,
         "impressions": 13,
         "ctr": 0.46153846153846156
+      },
+      {
+        "date": "2026-09-24",
+        "position": 9,
+        "clicks": 7,
+        "impressions": 17,
+        "ctr": 0.4117647058823529
       }
     ],
     "commercial fridge repair london": [
@@ -138,6 +152,13 @@
         "clicks": 19,
         "impressions": 58,
         "ctr": 0.3275862068965517
+      },
+      {
+        "date": "2026-09-24",
+        "position": 12.580645161290322,
+        "clicks": 18,
+        "impressions": 62,
+        "ctr": 0.2903225806451613
       }
     ],
     "cold room repair london": [
@@ -182,6 +203,13 @@
         "clicks": 24,
         "impressions": 35,
         "ctr": 0.6857142857142857
+      },
+      {
+        "date": "2026-09-24",
+        "position": 6.6923076923076925,
+        "clicks": 24,
+        "impressions": 39,
+        "ctr": 0.6153846153846154
       }
     ],
     "chiller repair near me": [
@@ -225,6 +253,13 @@
         "position": 17,
         "clicks": 0,
         "impressions": 2,
+        "ctr": 0
+      },
+      {
+        "date": "2026-09-24",
+        "position": 19.5,
+        "clicks": 0,
+        "impressions": 4,
         "ctr": 0
       }
     ],
@@ -270,6 +305,13 @@
         "clicks": 0,
         "impressions": 0,
         "ctr": 0
+      },
+      {
+        "date": "2026-09-24",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
       }
     ],
     "ice machine repair london": [
@@ -310,6 +352,13 @@
       },
       {
         "date": "2026-09-23",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      },
+      {
+        "date": "2026-09-24",
         "position": 0,
         "clicks": 0,
         "impressions": 0,
