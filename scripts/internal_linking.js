@@ -31,13 +31,13 @@ const LINKS = [
     href: "/fridge-repair-london",
     anchor: "fridge repair london",
     count: 1,
-    note: "Dedicated page is not ranking; homepage currently takes the clicks",
+    note: "Dedicated page is not ranking; homepage currently takes 29/31 of this query's clicks (GSC 2026-09-23).",
   },
   {
     href: "/freezer-repair-london",
     anchor: "freezer repair london",
     count: 1,
-    note: "Clicks currently leak to /fridge-freezer-repairs-london",
+    note: "Homepage takes 6/18 of this query's clicks and 11 leak to /fridge-freezer-repairs-london (GSC 2026-09-23).",
   },
   {
     href: "/commercial-freezer-repair-london",

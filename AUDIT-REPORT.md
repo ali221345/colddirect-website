@@ -1,18 +1,18 @@
 # Cold Direct SEO Audit Report
 
 **Total Pages Scanned:** 107
-**Weak Pages Found:** 81
+**Weak Pages Found:** 80
 
 | File | Words | Has SEO | Image OK | Priority |
 |------|-------|---------|----------|----------|
 | commercial-fridge-repair-london.html | 1788 | Yes | Yes | Commercial Fridge |
 | commercial-fridge-repair-north-london.html | 1248 | No | No | Commercial Fridge |
-| commercial-freezer-repair-london.html | 1817 | Yes | Yes | Commercial Freezer |
+| commercial-freezer-repair-london.html | 1817 | Yes | No | Commercial Freezer |
 | commercial-freezer-repair-north-london.html | 1410 | Yes | Yes | Commercial Freezer |
 | commercial-freezer-repair-tottenham.html | 256 | No | No | Commercial Freezer |
 | freezer-room-repair-london.html | 741 | Yes | No | Freezer Room |
 | freezer-room-repair-north-london.html | 1208 | Yes | Yes | Freezer Room |
-| walk-in-freezer-room-repair-london.html | 257 | No | No | Freezer Room |
+| walk-in-freezer-room-repair-london.html | 281 | No | No | Freezer Room |
 | cold-room-repair-barnet.html | 861 | No | No | Cold Room |
 | cold-room-repair-edgware.html | 799 | No | No | Cold Room |
 | cold-room-repair-enfield.html | 930 | No | No | Cold Room |
@@ -82,7 +82,7 @@
 | faqs.html | 981 | No | No | Other |
 | foster-fridge-repair-london.html | 683 | Yes | No | Other |
 | freezer-repair-london.html | 1354 | Yes | No | Other |
-| fridge-repair-london.html | 804 | No | No | Other |
+| fridge-repair-london.html | 1260 | Yes | No | Other |
 | fridge-room-repair.html | 298 | No | No | Other |
 | gram-fridge-repair-london.html | 672 | Yes | No | Other |
 | gsc-analysis-2026-09-19.html | 941 | No | No | Other |
