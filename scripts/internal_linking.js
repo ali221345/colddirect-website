@@ -45,6 +45,12 @@ const LINKS = [
     count: 1,
     note: "Clicks currently go to /commercial-freezer-repair-north-london",
   },
+  {
+    href: "/freezer-room-repair-london",
+    anchor: "freezer room repair london",
+    count: 1,
+    note: "Low-click (5) but position 31.6 - dedicated page just strengthened (2026-09-25), needs an internal signal boost",
+  },
 ];
 
 function countExact(html, href, anchor) {
