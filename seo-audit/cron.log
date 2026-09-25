@@ -67,3 +67,11 @@
 [2026-09-24T05:09:32.270Z] SITEMAP_GSC [{"type":"web","submitted":"118","indexed":"0"}]
 [2026-09-24T05:09:32.271Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-24.md
 [2026-09-24T05:09:32.271Z] DONE changes=0 alerts=0
+[2026-09-25T05:09:05.777Z] START daily-seo-update 2026-09-25
+[2026-09-25T05:09:05.779Z] GSC window 2026-09-18 .. 2026-09-24
+[2026-09-25T05:09:07.013Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-09-25T05:09:09.558Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-09-25T05:09:22.101Z] SITEMAP http=200 locs=118
+[2026-09-25T05:09:22.396Z] SITEMAP_GSC [{"type":"web","submitted":"118","indexed":"0"}]
+[2026-09-25T05:09:22.397Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-25.md
+[2026-09-25T05:09:22.397Z] DONE changes=0 alerts=0
