@@ -5,10 +5,10 @@
   if (!root || !track || !dotsContainer) return;
   var current = 0;
   dotsContainer.innerHTML = "";
-  for (let i = 0; i < 7; i++) dotsContainer.innerHTML += `<span onclick="goTo(${i})"></span>`;
+  for (let i = 0; i < 8; i++) dotsContainer.innerHTML += `<span onclick="goTo(${i})"></span>`;
   function goTo(next) {
-    current = ((next % 7) + 7) % 7;
-    track.style.transform = `translateX(-${current * 14.2857}%)`;
+    current = ((next % 8) + 8) % 8;
+    track.style.transform = `translateX(-${current * 12.5}%)`;
     for (var d = 0; d < dotsContainer.children.length; d++) {
       dotsContainer.children[d].className = d === current ? "on" : "";
     }
