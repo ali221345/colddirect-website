@@ -171,3 +171,16 @@ Checked internal links on touched page (root .html, directory index.html, public
   /walk-in-freezer-repair-london/ -> 200 OK
   /cold-room-repair-london/ -> 200 OK
 No broken (4xx/5xx) internal links found.
+
+[2026-09-26 21:51] Publish pass — freezer-repair-london title/H1/meta standardisation + FAQ expansion
+Checked internal links on touched page (root .html, directory index.html, public-html mirror) — live HTTP check:
+  /commercial-freezer-repair-london -> 200 OK
+  /williams-freezer-repair-london -> 200 OK
+  /subzero-freezer-repair-london -> 200 OK
+  /commercial-freezer-repair-north-london -> 200 OK
+  /freezer-room-repair-north-london -> 200 OK
+  /fridge-repair-london -> 200 OK
+  /ice-cream-machine-repair-london -> 200 OK
+  /walk-in-freezer-repair-london/ -> 200 OK
+  /freezer-room-repair-london/ -> 200 OK
+No broken (4xx/5xx) internal links found.
