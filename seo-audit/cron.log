@@ -75,3 +75,12 @@
 [2026-09-25T05:09:22.396Z] SITEMAP_GSC [{"type":"web","submitted":"118","indexed":"0"}]
 [2026-09-25T05:09:22.397Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-25.md
 [2026-09-25T05:09:22.397Z] DONE changes=0 alerts=0
+[2026-09-26T05:09:22.013Z] START daily-seo-update 2026-09-26
+[2026-09-26T05:09:22.015Z] GSC window 2026-09-19 .. 2026-09-25
+[2026-09-26T05:09:23.139Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-09-26T05:09:24.638Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-09-26T05:09:34.632Z] SITEMAP http=200 locs=362
+[2026-09-26T05:09:34.827Z] SITEMAP_GSC [{"type":"web","submitted":"362","indexed":"0"}]
+[2026-09-26T05:09:35.858Z] FTP_OK UPLOADED blog/why-commercial-freezer-not-freezing.html
+[2026-09-26T05:09:35.859Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-09-26.md
+[2026-09-26T05:09:35.860Z] DONE changes=1 alerts=0
