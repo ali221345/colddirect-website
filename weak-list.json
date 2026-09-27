@@ -1,569 +1,642 @@
 [
   {
     "file": "commercial-fridge-repair-north-london.html",
-    "words": 1274,
+    "words": 1223,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 1
   },
   {
     "file": "commercial-freezer-repair-tottenham.html",
-    "words": 262,
+    "words": 235,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 2
   },
   {
     "file": "walk-in-freezer-room-repair-london.html",
-    "words": 293,
+    "words": 261,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 3
   },
   {
     "file": "cold-room-repair-barnet.html",
-    "words": 866,
+    "words": 858,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-edgware.html",
-    "words": 805,
+    "words": 796,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-enfield.html",
-    "words": 937,
+    "words": 927,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-finchley.html",
-    "words": 836,
+    "words": 828,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-harrow.html",
-    "words": 849,
+    "words": 831,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-london.html",
-    "words": 970,
+    "words": 945,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-north-london.html",
-    "words": 902,
+    "words": 891,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-palmers-green.html",
-    "words": 809,
+    "words": 801,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-southgate.html",
-    "words": 806,
+    "words": 797,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-tottenham.html",
-    "words": 814,
+    "words": 805,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-wembley.html",
-    "words": 835,
+    "words": 824,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "cold-room-repair-wood-green.html",
-    "words": 827,
+    "words": 819,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 4
   },
   {
     "file": "about-us.html",
-    "words": 317,
+    "words": 306,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "about.html",
     "words": 3,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "adexa-fridge-repair-london.html",
-    "words": 863,
+    "words": 833,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "air-conditioning-repair-london.html",
-    "words": 755,
+    "words": 718,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "air-conditioning-repairs-london.html",
-    "words": 223,
+    "words": 207,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "appliances-repair-london.html",
-    "words": 714,
+    "words": 681,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "blast-chiller-repair-london.html",
-    "words": 654,
+    "words": 628,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "blast-chiller-repair-north-london.html",
-    "words": 658,
+    "words": 633,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "bottle-cooler-repair-london.html",
-    "words": 707,
+    "words": 685,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "brands.html",
-    "words": 206,
+    "words": 203,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "catering-repair-london.html",
-    "words": 656,
+    "words": 623,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "cellar-cooler-repair-london.html",
-    "words": 739,
+    "words": 720,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "chiller-repair-london.html",
-    "words": 810,
+    "words": 761,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "chiller-repair-north-london.html",
-    "words": 791,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "chiller-repairs-london.html",
     "words": 753,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "chiller-repairs-london.html",
+    "words": 726,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "commercial-appliances-repair-london.html",
-    "words": 392,
+    "words": 369,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "commercial-blast-chiller-repair-london.html",
-    "words": 656,
+    "words": 630,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "commercial-blast-freezer-repair-london.html",
-    "words": 519,
+    "words": 491,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "commercial-dishwasher-repair-london.html",
     "words": 14,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "commercial-ice-machine-repair-london.html",
-    "words": 950,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-brent.html",
-    "words": 1162,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-camden.html",
-    "words": 1481,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-chelsea.html",
-    "words": 1190,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-city-of-london.html",
-    "words": 1275,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-croydon.html",
-    "words": 1198,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-ealing.html",
-    "words": 1179,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-greenwich.html",
-    "words": 1183,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-hackney.html",
-    "words": 1214,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-hammersmith.html",
-    "words": 1187,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-haringey.html",
-    "words": 1211,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-hounslow.html",
-    "words": 1184,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-islington.html",
-    "words": 1260,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-kensington.html",
-    "words": 1203,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-lambeth.html",
-    "words": 1175,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-newham.html",
-    "words": 1185,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-richmond.html",
-    "words": 1177,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-southwark.html",
-    "words": 1194,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-tower-hamlets.html",
-    "words": 1210,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-wandsworth.html",
-    "words": 1158,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "commercial-refrigeration-repair-westminster.html",
-    "words": 1228,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "contact.html",
-    "words": 347,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "dairy-cabinet-repair-london.html",
-    "words": 1025,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "display-cabinet-repair-north-london.html",
-    "words": 694,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "display-cooler-repair-london.html",
-    "words": 250,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "drinks-fridge-repair.html",
-    "words": 165,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "empire-fridge-repair-london.html",
-    "words": 806,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "faqs.html",
-    "words": 999,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "fridge-room-repair.html",
-    "words": 306,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "gsc-analysis-2026-09-19.html",
-    "words": 1119,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "ice-cream-machine-repair-london.html",
-    "words": 842,
-    "hasSeo": false,
-    "imageOk": false,
-    "status": "WEAK"
-  },
-  {
-    "file": "ice-machine-repair-london.html",
     "words": 922,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-brent.html",
+    "words": 1157,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-camden.html",
+    "words": 1468,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-chelsea.html",
+    "words": 1172,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-city-of-london.html",
+    "words": 1270,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-croydon.html",
+    "words": 1190,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-ealing.html",
+    "words": 1171,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-greenwich.html",
+    "words": 1175,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-hackney.html",
+    "words": 1205,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-hammersmith.html",
+    "words": 1173,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-haringey.html",
+    "words": 1206,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-hounslow.html",
+    "words": 1170,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-islington.html",
+    "words": 1250,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-kensington.html",
+    "words": 1194,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-lambeth.html",
+    "words": 1169,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-newham.html",
+    "words": 1176,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-richmond.html",
+    "words": 1169,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-southwark.html",
+    "words": 1186,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-tower-hamlets.html",
+    "words": 1204,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-wandsworth.html",
+    "words": 1152,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "commercial-refrigeration-repair-westminster.html",
+    "words": 1217,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "contact.html",
+    "words": 324,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "display-cabinet-repair-north-london.html",
+    "words": 676,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "display-cooler-repair-london.html",
+    "words": 223,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "drinks-fridge-repair.html",
+    "words": 160,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "empire-fridge-repair-london.html",
+    "words": 781,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "faqs.html",
+    "words": 968,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "fridge-room-repair.html",
+    "words": 277,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "gsc-analysis-2026-09-19.html",
+    "words": 729,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "ice-cream-machine-repair-london.html",
+    "words": 812,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
+  },
+  {
+    "file": "ice-machine-repair-london.html",
+    "words": 892,
+    "hasSeo": false,
+    "imageOk": false,
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "ice-machine-repair-north-london.html",
-    "words": 954,
+    "words": 926,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "ice-o-matic-fridge-repairs.html",
-    "words": 350,
+    "words": 308,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "multideck-fridge-repair-london.html",
-    "words": 453,
+    "words": 424,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "multideck-repair-london.html",
-    "words": 449,
+    "words": 420,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "news.html",
     "words": 3,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "open-front-display-repair-london.html",
-    "words": 455,
+    "words": 425,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "polar-fridge-repair-london.html",
-    "words": 861,
+    "words": 834,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "prep-fridge-repair-london.html",
-    "words": 494,
+    "words": 468,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "services.html",
-    "words": 64,
+    "words": 63,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "subzero-fridge-repair-london.html",
-    "words": 794,
+    "words": 744,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "supermarket-fridge-repair-london.html",
-    "words": 719,
+    "words": 693,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "undercounter-fridge-repair-london.html",
-    "words": 475,
+    "words": 448,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "walk-in-chiller-repair.html",
-    "words": 341,
+    "words": 307,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "wine-cooler-repair-london.html",
-    "words": 701,
+    "words": 674,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   },
   {
     "file": "write-a-review.html",
     "words": 29,
     "hasSeo": false,
     "imageOk": false,
-    "status": "WEAK"
+    "status": "WEAK",
+    "priority": 5
   }
 ]

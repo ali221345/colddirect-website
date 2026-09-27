@@ -184,3 +184,27 @@ Checked internal links on touched page (root .html, directory index.html, public
   /walk-in-freezer-repair-london/ -> 200 OK
   /freezer-room-repair-london/ -> 200 OK
 No broken (4xx/5xx) internal links found.
+
+[2026-09-27 22:05] Publish pass — commercial-fridge-repair-london title/meta/robots/benefits refresh
+Checked internal links on touched page (root .html, directory index.html, public-html root+folder mirrors) — live HTTP check:
+  /adexa-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /appliances-repair-london -> 301 (redirects to trailing slash, OK)
+  /blog/why-commercial-fridge-not-cold-enough -> 200 OK
+  /catering-repair-london -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-barnet -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-enfield -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-finchley -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-harrow -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-london/ -> 200 OK
+  /cold-room-repair-north-london -> 301 (redirects to trailing slash, OK)
+  /cold-room-repair-wembley -> 301 (redirects to trailing slash, OK)
+  /commercial-appliances-repair-london -> 301 (redirects to trailing slash, OK)
+  /commercial-freezer-repair-london -> 301 (redirects to trailing slash, OK)
+  /commercial-fridge-repair-north-london/ -> 200 OK
+  /commercial-refrigeration-repair-{camden,city-of-london,croydon,ealing,hackney,haringey,islington,newham,westminster} -> all 301 (redirect to trailing slash, OK)
+  /contact -> 301 (redirects to trailing slash, OK)
+  /empire-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /polar-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /williams-fridge-repair-london/ -> 200 OK
+No broken (4xx/5xx) internal links found.
