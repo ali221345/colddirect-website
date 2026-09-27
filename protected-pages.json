@@ -24,11 +24,11 @@
         "colddirect-public-html/commercial-fridge-repair-london.html",
         "colddirect-public-html/commercial-fridge-repair-london/index.html"
       ],
-      "expected_title": "Commercial Fridge Repair London | Same-Day 24/7 Emergency",
+      "expected_title": "Emergency Same Day Commercial Fridge Repair London | ColdDirect",
       "must_contain": "Common Commercial Fridge Faults",
       "min_bytes": 13675,
       "protected_at": "2026-09-21",
-      "reason": "GSC: exact-query title/h1 so pos-12 lands here not homepage"
+      "reason": "GSC: exact-query title/h1 so pos-12 lands here not homepage. Title updated 2026-09-27 by SEO Draft/Publish to the site's Emergency Same Day convention."
     },
     {
       "id": "fridge-repair-london",
