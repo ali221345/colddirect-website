@@ -208,3 +208,16 @@ Checked internal links on touched page (root .html, directory index.html, public
   /polar-fridge-repair-london -> 301 (redirects to trailing slash, OK)
   /williams-fridge-repair-london/ -> 200 OK
 No broken (4xx/5xx) internal links found.
+
+[2026-09-28 22:05] Publish pass — fridge-repair-london title/H1/meta/schema/FAQ refresh
+Checked internal links on touched page (root .html, directory index.html, public-html root+folder mirrors) — live HTTP check:
+  /adexa-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /commercial-fridge-repair-london/ -> 200 OK
+  /commercial-fridge-repair-north-london -> 301 (redirects to trailing slash, OK)
+  /empire-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /freezer-repair-london -> 301 (redirects to trailing slash, OK)
+  /freezer-repair-london/ -> 200 OK
+  /ice-machine-repair-london -> 301 (redirects to trailing slash, OK)
+  /polar-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+  /subzero-fridge-repair-london -> 301 (redirects to trailing slash, OK)
+No broken (4xx/5xx) internal links found.
