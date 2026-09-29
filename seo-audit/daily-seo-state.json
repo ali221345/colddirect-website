@@ -85,6 +85,13 @@
         "clicks": 7,
         "impressions": 64,
         "ctr": 0.109375
+      },
+      {
+        "date": "2026-09-29",
+        "position": 10,
+        "clicks": 7,
+        "impressions": 64,
+        "ctr": 0.109375
       }
     ],
     "freezer repair london": [
@@ -164,6 +171,13 @@
         "clicks": 5,
         "impressions": 31,
         "ctr": 0.16129032258064516
+      },
+      {
+        "date": "2026-09-29",
+        "position": 10.794117647058824,
+        "clicks": 5,
+        "impressions": 34,
+        "ctr": 0.14705882352941177
       }
     ],
     "commercial fridge repair london": [
@@ -243,6 +257,13 @@
         "clicks": 7,
         "impressions": 63,
         "ctr": 0.1111111111111111
+      },
+      {
+        "date": "2026-09-29",
+        "position": 11.431034482758621,
+        "clicks": 7,
+        "impressions": 58,
+        "ctr": 0.1206896551724138
       }
     ],
     "cold room repair london": [
@@ -322,6 +343,13 @@
         "clicks": 10,
         "impressions": 32,
         "ctr": 0.3125
+      },
+      {
+        "date": "2026-09-29",
+        "position": 12.095238095238095,
+        "clicks": 14,
+        "impressions": 42,
+        "ctr": 0.3333333333333333
       }
     ],
     "chiller repair near me": [
@@ -401,6 +429,13 @@
         "clicks": 0,
         "impressions": 11,
         "ctr": 0
+      },
+      {
+        "date": "2026-09-29",
+        "position": 15.909090909090908,
+        "clicks": 0,
+        "impressions": 11,
+        "ctr": 0
       }
     ],
     "commercial freezer repair london": [
@@ -476,6 +511,13 @@
       },
       {
         "date": "2026-09-28",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      },
+      {
+        "date": "2026-09-29",
         "position": 0,
         "clicks": 0,
         "impressions": 0,
@@ -559,6 +601,13 @@
         "clicks": 0,
         "impressions": 0,
         "ctr": 0
+      },
+      {
+        "date": "2026-09-29",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
       }
     ]
   },
@@ -568,6 +617,9 @@
     "mid-freezer repair london|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-19",
     "mid-commercial fridge repair london|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-22",
     "mid-chiller repair near me|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-22",
-    "mid-fridge repair london|blog/why-commercial-freezer-not-freezing.html": "2026-09-26"
+    "mid-fridge repair london|blog/why-commercial-freezer-not-freezing.html": "2026-09-26",
+    "mid-commercial fridge repair london|blog/why-commercial-freezer-not-freezing.html": "2026-09-29",
+    "mid-cold room repair london|blog/why-commercial-fridge-not-cold-enough.html": "2026-09-29",
+    "mid-chiller repair near me|blog/why-commercial-freezer-not-freezing.html": "2026-09-29"
   }
 }
