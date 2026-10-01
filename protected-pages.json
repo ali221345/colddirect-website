@@ -39,11 +39,11 @@
         "colddirect-public-html/fridge-repair-london.html",
         "colddirect-public-html/fridge-repair-london/index.html"
       ],
-      "expected_title": "Fridge Repair London | Same-Day Commercial, 2\u20134 Hour Callout",
+      "expected_title": "Emergency Same Day Fridge Repair London | ColdDirect 24/7",
       "must_contain": "Fridge repair for London kitchens and homes on our radius",
       "min_bytes": 8074,
       "protected_at": "2026-09-21",
-      "reason": "GSC: canonical for fridge-repairs-london 301; link to commercial fridge money page"
+      "reason": "GSC: canonical for fridge-repairs-london 301; link to commercial fridge money page. Title updated 2026-09-30/10-01 by SEO Draft/Publish (commit bbf007c) to the site's Emergency Same Day convention."
     }
   ]
 }
