@@ -99,6 +99,13 @@
         "clicks": 3,
         "impressions": 58,
         "ctr": 0.05172413793103448
+      },
+      {
+        "date": "2026-10-01",
+        "position": 9.218181818181819,
+        "clicks": 3,
+        "impressions": 55,
+        "ctr": 0.05454545454545454
       }
     ],
     "freezer repair london": [
@@ -189,6 +196,13 @@
       {
         "date": "2026-09-30",
         "position": 10.142857142857142,
+        "clicks": 2,
+        "impressions": 35,
+        "ctr": 0.05714285714285714
+      },
+      {
+        "date": "2026-10-01",
+        "position": 9.542857142857143,
         "clicks": 2,
         "impressions": 35,
         "ctr": 0.05714285714285714
@@ -285,6 +299,13 @@
         "clicks": 3,
         "impressions": 46,
         "ctr": 0.06521739130434782
+      },
+      {
+        "date": "2026-10-01",
+        "position": 6.45,
+        "clicks": 3,
+        "impressions": 40,
+        "ctr": 0.075
       }
     ],
     "cold room repair london": [
@@ -378,6 +399,13 @@
         "clicks": 11,
         "impressions": 40,
         "ctr": 0.275
+      },
+      {
+        "date": "2026-10-01",
+        "position": 15.235294117647058,
+        "clicks": 9,
+        "impressions": 34,
+        "ctr": 0.2647058823529412
       }
     ],
     "chiller repair near me": [
@@ -468,6 +496,13 @@
       {
         "date": "2026-09-30",
         "position": 15.272727272727273,
+        "clicks": 0,
+        "impressions": 11,
+        "ctr": 0
+      },
+      {
+        "date": "2026-10-01",
+        "position": 14,
         "clicks": 0,
         "impressions": 11,
         "ctr": 0
@@ -564,6 +599,13 @@
         "clicks": 0,
         "impressions": 0,
         "ctr": 0
+      },
+      {
+        "date": "2026-10-01",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
       }
     ],
     "ice machine repair london": [
@@ -653,6 +695,13 @@
       },
       {
         "date": "2026-09-30",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      },
+      {
+        "date": "2026-10-01",
         "position": 0,
         "clicks": 0,
         "impressions": 0,
