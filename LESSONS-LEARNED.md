@@ -73,13 +73,34 @@ between succeeded). Two theories were tested and BOTH DISPROVEN with real eviden
 - Runtime correlation — successful runs took just as long (10-14 min) as failed ones,
   so it isn't simply "doing more work in one run."
 
-**Status: still unresolved as of 2026-10-02.** Do not re-propose either disproven
-theory as a fix without new evidence. Next diagnostic step (not yet tried): get
-actual token-level usage data for a truncating run (prompt_tokens/completion_tokens
-from the provider response, not inferred from file sizes) to see whether the
-truncation is genuinely output-side (model generating excessively, e.g. repetition)
-or something else entirely. `hermes insights --days 1 --source cron` may surface this
-per the colddirect-cron-ops skill — check that before guessing again.
+**ROOT CAUSE CONFIRMED 2026-10-02** via direct log evidence (`agent.log`, grep for
+`cron_a9da04730c00_*` + `API call #`). This is NOT a file-size, tool-count, or
+context-window problem — those are all genuinely fine (sonnet-5 has a 1M token context
+window and a 128K output cap; even a 26-call run only reaches ~112K input tokens).
+
+The actual mechanism is Hermes's own documented `_continue_text()` thinking-only-
+truncation path (`agent/turn_truncation.py` ~L241-260, comment: "Thinking-only
+truncation: continuing with thinking ON re-burns the budget"): on some nights, when
+the model goes to write its FINAL end-of-run text response after a long chain of tool
+calls (18-26+ calls that complete fine), it generates reasoning/thinking tokens but
+ZERO visible output text, hits the length limit, and even after Hermes auto-disables
+reasoning on the retry, still fails to produce visible text within 4 continuation
+attempts. Confirmed in `agent.log` for the 2026-09-29 failure: 24 tool-calling API
+calls completed normally, then the job died ~45s after the last tool call — i.e. on
+the final text-only summary response, not during any content-writing step. A
+diagnostic subagent investigating this exact bug independently hit the identical
+failure itself, and Hermes's own error copy named the mechanism precisely: "the model
+hit its output-token limit ... its reasoning consumed the entire budget each time."
+
+This is a generic, named Hermes failure pattern — not specific to this skill or this
+project. It appears to be stochastic (the model occasionally gets "stuck" generating
+only internal reasoning for a final text response, unrelated to task content). The
+`colddirect-overnight-seo-draft` skill was updated with this finding and a note to
+keep the end-of-run report short, but that is a mitigation, not a guaranteed fix —
+if it keeps recurring, this is arguably a Hermes-core issue (the auto-disable-
+reasoning retry not working reliably) rather than something fixable at the skill/cron
+level. Do not re-propose the file-size or toolset-count theories again; they are
+conclusively ruled out by this evidence.
 
 ## 2026-09-24 — Redirect-loop risk on `/services/` discovered, not yet fixed
 
