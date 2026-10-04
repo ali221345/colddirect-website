@@ -120,6 +120,13 @@
         "clicks": 3,
         "impressions": 49,
         "ctr": 0.061224489795918366
+      },
+      {
+        "date": "2026-10-04",
+        "position": 7.630434782608695,
+        "clicks": 1,
+        "impressions": 46,
+        "ctr": 0.021739130434782608
       }
     ],
     "freezer repair london": [
@@ -234,6 +241,13 @@
         "clicks": 0,
         "impressions": 24,
         "ctr": 0
+      },
+      {
+        "date": "2026-10-04",
+        "position": 9.88888888888889,
+        "clicks": 1,
+        "impressions": 18,
+        "ctr": 0.05555555555555555
       }
     ],
     "commercial fridge repair london": [
@@ -348,6 +362,13 @@
         "clicks": 1,
         "impressions": 35,
         "ctr": 0.02857142857142857
+      },
+      {
+        "date": "2026-10-04",
+        "position": 6.162790697674419,
+        "clicks": 3,
+        "impressions": 43,
+        "ctr": 0.06976744186046512
       }
     ],
     "cold room repair london": [
@@ -462,6 +483,13 @@
         "clicks": 6,
         "impressions": 32,
         "ctr": 0.1875
+      },
+      {
+        "date": "2026-10-04",
+        "position": 16.17241379310345,
+        "clicks": 7,
+        "impressions": 29,
+        "ctr": 0.2413793103448276
       }
     ],
     "chiller repair near me": [
@@ -575,6 +603,13 @@
         "position": 12.083333333333334,
         "clicks": 0,
         "impressions": 12,
+        "ctr": 0
+      },
+      {
+        "date": "2026-10-04",
+        "position": 10.428571428571429,
+        "clicks": 0,
+        "impressions": 14,
         "ctr": 0
       }
     ],
@@ -690,6 +725,13 @@
         "clicks": 0,
         "impressions": 0,
         "ctr": 0
+      },
+      {
+        "date": "2026-10-04",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
       }
     ],
     "ice machine repair london": [
@@ -800,6 +842,13 @@
       },
       {
         "date": "2026-10-03",
+        "position": 0,
+        "clicks": 0,
+        "impressions": 0,
+        "ctr": 0
+      },
+      {
+        "date": "2026-10-04",
         "position": 0,
         "clicks": 0,
         "impressions": 0,
