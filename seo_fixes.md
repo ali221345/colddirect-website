@@ -150,3 +150,22 @@ Reason category: leak (real GSC query getting meaningful clicks, but 31/33 of th
 
 ### Publish verification — 2026-09-28 22:05
 Committed bbf007c, pushed to main. GitHub Actions "Deploy to WHUK Plesk" run 36482395950 completed success (26s). Live https://www.colddirect.co.uk/fridge-repair-london/ checked post-deploy: title, meta description, robots meta, canonical, and Service schema serviceType all match the committed source. GSC URL Inspection API (service account) verdict for the page: PASS, coverageState "Submitted and indexed", robotsTxtState ALLOWED, indexingState INDEXING_ALLOWED, googleCanonical/userCanonical both `https://www.colddirect.co.uk/fridge-repair-london/`, richResultsResult PASS (Review snippets detected). No DO-NOT-TOUCH files were touched; internal link check on the page found no broken (4xx/5xx) links.
+
+## PUBLISHED — commercial-freezer-repair-north-london — 2026-10-05 21:15
+Keyword Tags: commercial freezer repair london, commercial freezer repair north london, Foster freezer repair, Williams freezer repair, commercial refrigeration repair London
+SEO Focus: local intent, commercial, emergency, brand-specific
+Target Borough: North London (Enfield base)
+GSC Source: query=commercial freezer repair london clicks=10 impressions=11 pos=3.36 CTR=90.9% date=2026-10-05 (top_queries row, gsc_report.csv) — WINNER per the CTR>40%+pos<5 rule (position 3.36, CTR 90.9%), so per the skill's own checklist this page gets a "verify robots/schema only" pass, NOT a title/content rewrite.
+Files touched:
+- commercial-freezer-repair-north-london.html (root)
+- commercial-freezer-repair-north-london/index.html (folder, live IIS URL)
+- colddirect-public-html/commercial-freezer-repair-north-london.html
+Before/after title: unchanged on all 3 copies — this is a winner page (pos 3.36 < 5, CTR 90.9% > 40%), so per the checklist's WINNER exemption the title is left as-is, not rewritten onto the Emergency Same Day convention.
+Before/after robots: all 3 copies had NO explicit <meta name="robots"> tag at all (defaulted indexable but unverifiable) -> added explicit <meta name="robots" content="index, follow"> to all 3, directly after <title>. This is the only change made tonight.
+Change summary: page was already substantial (1816 words, existing schema markup present) and already ranking as a genuine winner for its target query — confirmed via live GSC data, not assumed. The only real gap found was the missing explicit robots directive, which the skill's checklist requires on money/singular pages regardless of ranking status. No title, H1, meta description, schema, or body content was touched — this is a minimal, targeted fix matching the "verify robots/schema only" instruction for winner pages, not a full rewrite.
+Internal links: not modified this run — scripts/internal_linking.js and homepage links are the publish job's responsibility per skill rules; no evidence tonight that this page needs new internal link weight (it is already winning for its target query).
+Reason category: winner (confirmed via real GSC data: position 3.36, CTR 90.9%, meeting both the position<5 AND CTR>40% winner criteria) — fix was a compliance gap (missing robots meta), not a ranking-opportunity rewrite.
+
+### Skipped / not touched tonight (1-page-per-run limit)
+- `commercial-fridge-repair-north-london.html`, `commercial-freezer-repair-tottenham.html`, the `cold-room-repair-{borough}.html` batch: still no individual GSC query/page row in tonight's gsc_report.csv grounding a keyword choice for any of these specific URLs.
+- This draft pass was run manually (not via the cron job) specifically to test whether removing the free-form final-response step (per the LESSONS-LEARNED.md 2026-10-05 fix) resolves the standing truncation bug — see LESSONS-LEARNED.md for the outcome of this test.
