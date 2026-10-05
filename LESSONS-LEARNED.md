@@ -92,15 +92,44 @@ diagnostic subagent investigating this exact bug independently hit the identical
 failure itself, and Hermes's own error copy named the mechanism precisely: "the model
 hit its output-token limit ... its reasoning consumed the entire budget each time."
 
-This is a generic, named Hermes failure pattern — not specific to this skill or this
-project. It appears to be stochastic (the model occasionally gets "stuck" generating
-only internal reasoning for a final text response, unrelated to task content). The
-`colddirect-overnight-seo-draft` skill was updated with this finding and a note to
-keep the end-of-run report short, but that is a mitigation, not a guaranteed fix —
-if it keeps recurring, this is arguably a Hermes-core issue (the auto-disable-
-reasoning retry not working reliably) rather than something fixable at the skill/cron
-level. Do not re-propose the file-size or toolset-count theories again; they are
-conclusively ruled out by this evidence.
+**CORRECTION 2026-10-05: the 2026-10-02 "confirmed root cause" above was WRONG.**
+The mitigation applied that day (`reasoning_effort: none`, which was verified to
+correctly send `thinking: {"type": "disabled"}` to the Anthropic API per
+`agent/anthropic_adapter.py` — the config plumbing genuinely worked) did NOT fix the
+bug. The job failed again on 2026-10-05 with the identical error, reasoning fully
+disabled. So reasoning-token exhaustion was never the real cause either — it was a
+plausible-sounding theory based on Hermes's own error copy, but the error message
+("the model hit its output-token limit... its reasoning consumed the entire budget")
+is a GENERIC message that same code path prints for the thinking-exhaustion case
+specifically, and it was wrongly assumed to be diagnostic rather than just the
+label for whichever sub-case triggered the generic 4-retry-then-fail logic in
+`_continue_text()`. Lesson: a subagent (or anyone) hitting the "same" error itself
+while investigating is suggestive, not proof of mechanism — Hermes's own cron jobs
+and ad-hoc investigation sessions can all hit the same generic truncation path for
+DIFFERENT underlying reasons.
+
+**What is still true and re-confirmed on 2026-10-05:** the crash happens at the exact
+same moment every single time — immediately after the model's last tool call,
+specifically when it tries to compose its free-form final text summary. `agent.log`
+on 2026-10-05 shows the last successful tool-calling API call completing normally,
+then the job dying ~30-45s later with NO further logged API call in between —
+consistent with 4 silent continuation-retry attempts (Hermes's own diagnostic
+`_vprint` lines for those retries are not written to `agent.log` at INFO level, which
+is why the retry content itself couldn't be inspected directly).
+
+**Fix applied 2026-10-05 (structural, not another parameter tweak):** removed the
+free-form final summary step entirely. The `colddirect-overnight-seo-draft` skill and
+its cron prompt were both changed so the model writes its full report into the
+structured `## DRAFT PENDING PUBLISH` block in `seo_fixes.md` (via a tool call — tool
+calls have never failed in any logged run) and its actual final chat response is
+required to be ONLY a fixed one-line sentence, not a composed summary. This removes
+the specific step that was crashing every time, regardless of what the underlying
+mechanism in Hermes turns out to be. Verify this actually works on the next scheduled
+run (21:30) before declaring it fixed — given two prior "fixed" claims were wrong,
+do not report this as resolved until a real successful run confirms it.
+
+Do not re-propose file-size, toolset-count, or reasoning-effort theories again; all
+three are conclusively disproven by direct evidence as of 2026-10-05.
 
 ## 2026-09-24 — Redirect-loop risk on `/services/` discovered, not yet fixed
 
