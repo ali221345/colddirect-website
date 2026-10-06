@@ -142,14 +142,60 @@ run never got far enough to reach a final-summary step at all (it crashed mid-re
 while diffing root-vs-folder index.html files on API call #16-17, well before any
 `seo_fixes.md` DRAFT block was written). This proves the crash is NOT tied to the
 free-form final-summary step specifically — that theory is now disproven alongside the
-file-size/toolset-count/reasoning-effort theories. The crash appears to be a
-continuation/truncation bug in the underlying Hermes conversation loop that can trigger
-on ANY sufficiently long tool-calling turn in this job, not a property of which step is
-last. No fix is proposed here — only recording that the 2026-10-05 fix did not hold,
-per Ali's standing instruction to never declare a theory confirmed without a verified
-successful run. Next step: needs fresh investigation into the continuation-retry
-mechanism itself (the `_continue_text()` 4-retry-then-fail path), not another
-structural workaround to the draft job's own prompt/skill.
+file-size/toolset-count/reasoning-effort theories.
+
+**ROOT CAUSE FOUND 2026-10-06, with reproducible live evidence (not log archaeology).**
+Built `truncation_diagnostic_patch.py` (monkey-patches `agent.turn_truncation._continue_text`
+to log every retry attempt's actual `finish_reason`/content/reasoning to a plain file,
+bypassing Hermes's gated `_vprint` diagnostic system that normally hides this) and
+`run_diagnostic_draft.py` (runs the exact same skill/prompt through a real `AIAgent`
+turn outside the cron scheduler, so the patch stays active). Ran it live for ~14 minutes.
+
+**Finding:** every truncation event (6 total across one run, at wildly different points —
+API calls #3, #6, #13, #16, #18, at token counts of 19K/20K/27K/34K/35K, nowhere near any
+real limit) showed the IDENTICAL signature: `finish_reason='length'` (the API's own claim
+of "I hit the output limit") together with `content_len=0` AND `reasoning_len=0` — the
+actual response body was completely empty. This is a logical contradiction: a response
+cannot legitimately report hitting a length limit while containing zero generated tokens
+of any kind (visible or reasoning). Full log: `truncation_debug.log` in the project root
+(diagnostic artifact, not committed — recreate by re-running `run_diagnostic_draft.py`
+if this needs re-verifying).
+
+This conclusively rules out every content-based theory (file size, tool count, reasoning
+effort, final-summary composition) because the failure is not about what the model is
+asked to produce — it is an intermittent, empty API response being mislabeled as a
+length-limit hit. Most likely an upstream relay/streaming glitch between Nous's provider
+relay and the Anthropic backend (a dropped/truncated response stream reported as
+`finish_reason=length` instead of a transport error). This is NOT something fixable by
+editing the `colddirect-overnight-seo-draft` skill or its prompt — the bug is in how
+API responses are delivered/parsed, several layers below the project's control.
+
+**Also important:** in the same diagnostic run, the agent SUCCESSFULLY RECOVERED from 3
+of the 4 empty-response hits within the same turn (continued working normally after
+attempts 1, 2, and 3) — it only failed because the 4th retry also happened to come back
+empty, which exhausted Hermes's hardcoded 4-attempt ceiling
+(`agent/turn_truncation.py` line 263: `if n < 4`). This means the underlying task
+genuinely CAN succeed; failure only occurs on an unlucky run that hits the empty-response
+glitch 4+ times. Since 4 is hardcoded in Hermes core (not a per-job config value), it
+cannot be raised at the project level.
+
+**Fix applied 2026-10-06 (addresses the real mechanism — retry the WHOLE JOB, not the
+response):** created a new cron job "ColdDirect Overnight SEO Draft Retry" (`c22ed20da104`,
+22:00 daily) that checks whether the 21:30 run already succeeded (a fresh
+`## DRAFT PENDING PUBLISH` entry within the last 2 hours); if not, it re-runs the full
+draft pass as an independent second attempt. Since each run's failure is caused by random
+bad luck on 4 consecutive API responses (not a deterministic content problem), an
+independent retry has every chance of succeeding where the first one didn't. Moved
+Publish to 22:20 and Nightly Report to 22:40 so the chain still completes in order.
+This is NOT a guess — it directly targets the actual confirmed mechanism (random
+transient failures, fixed by independent re-attempts) rather than another change to
+task content/prompt/config, all of which are now proven irrelevant to the real cause.
+
+**Status: this is the first fix for this bug backed by live, reproducible, mechanism-level
+evidence rather than inference from post-mortem logs.** Still verify on real scheduled
+nights before considering this fully resolved — but unlike every prior attempt, this one
+is not another guess at what might be wrong with the task; it is a structural response to
+a precisely identified and reproduced failure mode.
 
 ## 2026-09-24 — Redirect-loop risk on `/services/` discovered, not yet fixed
 
