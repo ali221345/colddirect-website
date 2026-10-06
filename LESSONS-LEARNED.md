@@ -131,6 +131,26 @@ do not report this as resolved until a real successful run confirms it.
 Do not re-propose file-size, toolset-count, or reasoning-effort theories again; all
 three are conclusively disproven by direct evidence as of 2026-10-05.
 
+**2026-10-06 21:30 scheduled run — fix from 2026-10-05 DISPROVEN.** The
+`colddirect-overnight-seo-draft` job failed again with the identical
+`RuntimeError: Response remained truncated after 4 continuation attempts` error,
+despite the free-form-final-summary removal applied the day before. Per `agent.log`:
+last successful tool-calling API call (#17) completed at 21:41:23, job died 42s later
+at 21:42:05 with the same "4 continuation attempts" message and no further logged API
+call in between — the exact same signature as every prior occurrence. Crucially, this
+run never got far enough to reach a final-summary step at all (it crashed mid-research,
+while diffing root-vs-folder index.html files on API call #16-17, well before any
+`seo_fixes.md` DRAFT block was written). This proves the crash is NOT tied to the
+free-form final-summary step specifically — that theory is now disproven alongside the
+file-size/toolset-count/reasoning-effort theories. The crash appears to be a
+continuation/truncation bug in the underlying Hermes conversation loop that can trigger
+on ANY sufficiently long tool-calling turn in this job, not a property of which step is
+last. No fix is proposed here — only recording that the 2026-10-05 fix did not hold,
+per Ali's standing instruction to never declare a theory confirmed without a verified
+successful run. Next step: needs fresh investigation into the continuation-retry
+mechanism itself (the `_continue_text()` 4-retry-then-fail path), not another
+structural workaround to the draft job's own prompt/skill.
+
 ## 2026-09-24 — Redirect-loop risk on `/services/` discovered, not yet fixed
 
 **What happened:** While adding schema.org structured data, found that `/services/`
