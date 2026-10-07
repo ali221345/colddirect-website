@@ -548,7 +548,7 @@ p, li { font-size: 16px; color: #3d5160; }
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 1000;
   background: rgba(10, 37, 64, 0.35);
   padding: 16px;
   overflow: auto;
@@ -575,3 +575,17 @@ p, li { font-size: 16px; color: #3d5160; }
   color: #0a2540;
 }
 .contact-block a { font-weight: 700; }
+
+/* Mobile navigation for the shared SSI header. */
+.cd-nav-toggle { display: none; }
+@media (max-width: 900px) {
+  .cd-main-header .cd-header-inner { min-height: 84px !important; gap: 12px; }
+  .cd-main-header .cd-logo { height: 84px; max-width: calc(100% - 76px); }
+  .cd-main-header .cd-logo img { height: auto !important; width: 230px !important; max-width: 100%; max-height: 68px !important; transform: none !important; }
+  .cd-nav-toggle { display: block; min-width: 64px; min-height: 44px; margin-left: auto; padding: 10px; border: 1px solid #0a2540; background: #fff; color: #0a2540; font: inherit; cursor: pointer; }
+  .cd-main-header .cd-nav { display: none; width: 100%; max-height: calc(100dvh - 160px); overflow-y: auto; }
+  .cd-main-header .cd-nav.open { display: block; }
+  .cd-main-header .cd-nav > ul { flex-direction: column; align-items: stretch; gap: 0; padding: 0 0 12px; }
+  .cd-main-header .cd-nav > ul > li > a { display: block; min-height: 44px; padding: 12px 4px; }
+  .cd-main-header .cd-nav .dropdown { display: none !important; }
+}

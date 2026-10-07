@@ -142,6 +142,7 @@
 (function(){
   document.querySelectorAll('.has-mega-menu > a').forEach(function(link){
     link.addEventListener('click', function(e){
+      if(window.matchMedia('(max-width:900px)').matches) return;
       e.preventDefault();
       var mega = this.nextElementSibling;
       var isOpen = mega.classList.contains('open');
@@ -156,6 +157,7 @@
     var item = e.target.closest('.cd-nav .has-dropdown');
     if(item && item.classList.contains('has-mega-menu')) return;
     var toggle = item && e.target.closest('a') && e.target.closest('a').parentElement === item;
+    if(toggle && window.matchMedia('(max-width:900px)').matches) return;
     if(toggle && window.matchMedia('(max-width:1099px)').matches){
       e.preventDefault();
       var willOpen = !item.classList.contains('open');
