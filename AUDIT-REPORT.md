@@ -1,13 +1,5 @@
 # Cold Direct SEO Audit Report
 
-Scanned: 107 files
-
-## Summary
-- Weak pages: 107
-- OK pages: 0
-
-## Weak Pages (Priority Order)
-
 | File | Words | Has SEO | Image OK | Priority |
 |------|-------|---------|----------|----------|
 | commercial-fridge-repair-london.html | 1822 | ✗ | ✗ | commercial-fridge |
@@ -118,114 +110,9 @@ Scanned: 107 files
 | wine-cooler-repair-london.html | 688 | ✗ | ✗ | other |
 | write-a-review.html | 29 | ✗ | ✗ | other |
 
-## All Pages
+## Summary
 
-| File | Words | Has SEO | Image OK | Status |
-|------|-------|---------|----------|--------|
-| commercial-fridge-repair-london.html | 1822 | ✗ | ✗ | WEAK |
-| commercial-fridge-repair-north-london.html | 1249 | ✗ | ✗ | WEAK |
-| commercial-freezer-repair-london.html | 1818 | ✗ | ✗ | WEAK |
-| commercial-freezer-repair-north-london.html | 1411 | ✗ | ✗ | WEAK |
-| commercial-freezer-repair-tottenham.html | 257 | ✗ | ✗ | WEAK |
-| freezer-room-repair-london.html | 892 | ✗ | ✗ | WEAK |
-| freezer-room-repair-north-london.html | 1209 | ✗ | ✗ | WEAK |
-| walk-in-freezer-room-repair-london.html | 282 | ✗ | ✗ | WEAK |
-| cold-room-repair-barnet.html | 862 | ✗ | ✗ | WEAK |
-| cold-room-repair-edgware.html | 800 | ✗ | ✗ | WEAK |
-| cold-room-repair-enfield.html | 931 | ✗ | ✗ | WEAK |
-| cold-room-repair-finchley.html | 832 | ✗ | ✗ | WEAK |
-| cold-room-repair-harrow.html | 835 | ✗ | ✗ | WEAK |
-| cold-room-repair-london.html | 960 | ✗ | ✗ | WEAK |
-| cold-room-repair-north-london.html | 895 | ✗ | ✗ | WEAK |
-| cold-room-repair-palmers-green.html | 805 | ✗ | ✗ | WEAK |
-| cold-room-repair-southgate.html | 801 | ✗ | ✗ | WEAK |
-| cold-room-repair-tottenham.html | 809 | ✗ | ✗ | WEAK |
-| cold-room-repair-wembley.html | 828 | ✗ | ✗ | WEAK |
-| cold-room-repair-wood-green.html | 823 | ✗ | ✗ | WEAK |
-| about-us.html | 313 | ✗ | ✗ | WEAK |
-| about.html | 3 | ✗ | ✗ | WEAK |
-| adexa-fridge-repair-london.html | 851 | ✗ | ✗ | WEAK |
-| air-conditioning-repair-london.html | 744 | ✗ | ✗ | WEAK |
-| air-conditioning-repairs-london.html | 219 | ✗ | ✗ | WEAK |
-| appliances-repair-london.html | 712 | ✗ | ✗ | WEAK |
-| blast-chiller-repair-london.html | 652 | ✗ | ✗ | WEAK |
-| blast-chiller-repair-north-london.html | 657 | ✗ | ✗ | WEAK |
-| blast-freezer-repair-london.html | 1009 | ✗ | ✗ | WEAK |
-| blast-freezing.html | 974 | ✗ | ✗ | WEAK |
-| bottle-cooler-repair-london.html | 700 | ✗ | ✗ | WEAK |
-| brands.html | 208 | ✗ | ✗ | WEAK |
-| cabinet-fridge-repair-london.html | 1561 | ✗ | ✗ | WEAK |
-| catering-repair-london.html | 650 | ✗ | ✗ | WEAK |
-| cellar-cooler-repair-london.html | 735 | ✗ | ✗ | WEAK |
-| chiller-repair-london.html | 787 | ✗ | ✗ | WEAK |
-| chiller-repair-north-london.html | 770 | ✗ | ✗ | WEAK |
-| chiller-repairs-london.html | 741 | ✗ | ✗ | WEAK |
-| cold-storage.html | 1082 | ✗ | ✗ | WEAK |
-| commercial-appliances-repair-london.html | 396 | ✗ | ✗ | WEAK |
-| commercial-blast-chiller-repair-london.html | 654 | ✗ | ✗ | WEAK |
-| commercial-blast-freezer-repair-london.html | 512 | ✗ | ✗ | WEAK |
-| commercial-chest-freezer-repair-london.html | 990 | ✗ | ✗ | WEAK |
-| commercial-dishwasher-repair-london.html | 15 | ✗ | ✗ | WEAK |
-| commercial-display-cabinet-repair-london.html | 657 | ✗ | ✗ | WEAK |
-| commercial-ice-machine-repair-london.html | 944 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-brent.html | 1166 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-camden.html | 1477 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-chelsea.html | 1180 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-city-of-london.html | 1278 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-croydon.html | 1198 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-ealing.html | 1179 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-greenwich.html | 1183 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-hackney.html | 1213 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-hammersmith.html | 1181 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-haringey.html | 1214 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-hounslow.html | 1178 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-islington.html | 1258 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-kensington.html | 1202 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-lambeth.html | 1177 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-newham.html | 1184 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-richmond.html | 1177 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-southwark.html | 1194 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-tower-hamlets.html | 1212 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-wandsworth.html | 1160 | ✗ | ✗ | WEAK |
-| commercial-refrigeration-repair-westminster.html | 1226 | ✗ | ✗ | WEAK |
-| contact.html | 343 | ✗ | ✗ | WEAK |
-| dairy-cabinet-repair-london.html | 1002 | ✗ | ✗ | WEAK |
-| display-cabinet-repair-london.html | 654 | ✗ | ✗ | WEAK |
-| display-cabinet-repair-north-london.html | 680 | ✗ | ✗ | WEAK |
-| display-cooler-repair-london.html | 245 | ✗ | ✗ | WEAK |
-| display-fridge-repair-london.html | 943 | ✗ | ✗ | WEAK |
-| drinks-fridge-repair.html | 169 | ✗ | ✗ | WEAK |
-| empire-fridge-repair-london.html | 799 | ✗ | ✗ | WEAK |
-| faqs.html | 981 | ✗ | ✗ | WEAK |
-| foster-fridge-repair-london.html | 684 | ✗ | ✗ | WEAK |
-| freezer-repair-london.html | 1362 | ✗ | ✗ | WEAK |
-| fridge-repair-london.html | 1327 | ✗ | ✗ | WEAK |
-| fridge-room-repair.html | 299 | ✗ | ✗ | WEAK |
-| gram-fridge-repair-london.html | 673 | ✗ | ✗ | WEAK |
-| gsc-analysis-2026-09-19.html | 941 | ✗ | ✗ | WEAK |
-| hoshizaki-ice-machine-repair-london.html | 1059 | ✗ | ✗ | WEAK |
-| ice-cream-machine-repair-london.html | 836 | ✗ | ✗ | WEAK |
-| ice-machine-repair-london.html | 913 | ✗ | ✗ | WEAK |
-| ice-machine-repair-north-london.html | 948 | ✗ | ✗ | WEAK |
-| ice-o-matic-fridge-repairs.html | 329 | ✗ | ✗ | WEAK |
-| multideck-fridge-repair-london.html | 444 | ✗ | ✗ | WEAK |
-| multideck-repair-london.html | 440 | ✗ | ✗ | WEAK |
-| news.html | 3 | ✗ | ✗ | WEAK |
-| open-front-display-repair-london.html | 445 | ✗ | ✗ | WEAK |
-| polar-fridge-repair-london.html | 854 | ✗ | ✗ | WEAK |
-| prep-fridge-repair-london.html | 489 | ✗ | ✗ | WEAK |
-| refrigeration-brands-repair-london.html | 1111 | ✗ | ✗ | WEAK |
-| services.html | 63 | ✗ | ✗ | WEAK |
-| subzero-freezer-repair-london.html | 1205 | ✗ | ✗ | WEAK |
-| subzero-fridge-repair-london.html | 764 | ✗ | ✗ | WEAK |
-| supermarket-freezer-repair-london.html | 1091 | ✗ | ✗ | WEAK |
-| supermarket-fridge-repair-london.html | 709 | ✗ | ✗ | WEAK |
-| true-fridge-repair-london.html | 675 | ✗ | ✗ | WEAK |
-| undercounter-fridge-repair-london.html | 469 | ✗ | ✗ | WEAK |
-| walk-in-chiller-repair.html | 327 | ✗ | ✗ | WEAK |
-| walk-in-freezer-repair-london.html | 919 | ✗ | ✗ | WEAK |
-| walk-in-fridge-repair-london.html | 1235 | ✗ | ✗ | WEAK |
-| williams-freezer-repair-london.html | 1206 | ✗ | ✗ | WEAK |
-| williams-fridge-repair-london.html | 725 | ✗ | ✗ | WEAK |
-| wine-cooler-repair-london.html | 688 | ✗ | ✗ | WEAK |
-| write-a-review.html | 29 | ✗ | ✗ | WEAK |
+- **Total Pages:** 107
+- **Weak Pages:** 107
+- **Pages < 400 words:** 17
+- **Pages without SEO section:** 107
