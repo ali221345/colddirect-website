@@ -1,0 +1,118 @@
+{
+  "completed_at": "2026-10-07T21:47:23.908455+00:00",
+  "inventory": 9,
+  "checks": 42,
+  "passed": true,
+  "rows": [
+    {
+      "path": "/commercial-fridge-repair-london/",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "hero_clear": true,
+        "cost_link": true
+      }
+    },
+    {
+      "path": "/commercial-freezer-repair-london/",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "faq_correct": true,
+        "coverage_clear": true,
+        "valid_jsonld": true
+      }
+    },
+    {
+      "path": "/commercial-fridge-repair-london.html",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "hero_clear": true,
+        "cost_link": true
+      }
+    },
+    {
+      "path": "/commercial-freezer-repair-london.html",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "faq_correct": true,
+        "coverage_clear": true,
+        "valid_jsonld": true
+      }
+    },
+    {
+      "path": "/commercial-fridge-repair-london.asp",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-fridge-repair-london.asp",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "existing_links_preserved": true
+      }
+    },
+    {
+      "path": "/commercial-freezer-repair-london.asp",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-freezer-repair-london.asp",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "existing_links_preserved": true
+      }
+    },
+    {
+      "path": "/blog/commercial-fridge-repair-cost-london/",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "existing_links_preserved": true
+      }
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "existing_links_preserved": true
+      }
+    },
+    {
+      "path": "/commercial-freezer-repair-north-london/",
+      "status": 200,
+      "final": "https://www.colddirect.co.uk/commercial-freezer-repair-north-london/",
+      "checks": {
+        "http200": true,
+        "final_preserved": true,
+        "identity_preserved": true,
+        "existing_links_preserved": true
+      }
+    }
+  ],
+  "limits": [
+    "No post-release Google recrawl or ranking improvement established",
+    "No real calls or enquiries submitted",
+    "ASP canonical consolidation deferred; variants remain indexed independently"
+  ]
+}
