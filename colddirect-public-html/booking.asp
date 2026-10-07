@@ -55,6 +55,9 @@ fullMsg = "New consultation booking from colddirect.co.uk" & vbCrLf & vbCrLf _
   & "Page: " & page & vbCrLf _
   & "Time: " & Now()
 
+Dim accepted, writeSucceeded, notifyStatus
+accepted = False
+
 Dim fso, logFile, logPath, jsonPath, jsonF
 Set fso = Server.CreateObject("Scripting.FileSystemObject")
 If Err.Number <> 0 Then Err.Clear
@@ -65,13 +68,19 @@ If Not fso Is Nothing Then
   Set logFile = fso.OpenTextFile(logPath & "\booking-log.txt", 8, True)
   If Err.Number = 0 Then
     logFile.WriteLine Now() & vbTab & name & vbTab & phone & vbTab & email & vbTab & message
+    writeSucceeded = (Err.Number = 0)
+    Err.Clear
     logFile.Close
+    If writeSucceeded And Err.Number = 0 Then accepted = True
   End If
   Err.Clear
   Set jsonF = fso.OpenTextFile(logPath & "\bookings.json", 8, True)
   If Err.Number = 0 Then
     jsonF.WriteLine "{""time"":""" & Now() & """,""name"":""" & Replace(name, """", "'") & """,""phone"":""" & phone & """,""email"":""" & email & """},"
+    writeSucceeded = (Err.Number = 0)
+    Err.Clear
     jsonF.Close
+    If writeSucceeded And Err.Number = 0 Then accepted = True
   End If
 End If
 Set logFile = Nothing
@@ -91,7 +100,15 @@ If Not ntfyHttp Is Nothing Then
   ntfyHttp.setRequestHeader "Title", "New Booking! " & name
   ntfyHttp.setRequestHeader "Priority", "high"
   ntfyHttp.setRequestHeader "Tags", "envelope"
-  ntfyHttp.Send fullMsg
+  If Err.Number = 0 Then
+    ntfyHttp.Send fullMsg
+    If Err.Number = 0 Then
+      notifyStatus = ntfyHttp.Status
+      If Err.Number = 0 Then
+        If notifyStatus >= 200 And notifyStatus < 300 Then accepted = True
+      End If
+    End If
+  End If
 End If
 Set ntfyHttp = Nothing
 Err.Clear
@@ -107,10 +124,19 @@ If Err.Number = 0 Then
   mail.Configuration.Fields.Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "localhost"
   mail.Configuration.Fields.Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25
   mail.Configuration.Fields.Update
-  mail.Send
+  If Err.Number = 0 Then
+    mail.Send
+    If Err.Number = 0 Then accepted = True
+  End If
 End If
 Set mail = Nothing
 Err.Clear
+
+If Not accepted Then
+  Response.Status = "503 Service Unavailable"
+  Response.Write "{""ok"":false,""error"":""We could not save or send your request. Please try again or call 07983 759320.""}"
+  Response.End
+End If
 
 Response.Write "{""ok"":true,""message"":""We will call you shortly on 07983 759320""}"
 %>

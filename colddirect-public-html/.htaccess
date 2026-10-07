@@ -12,8 +12,20 @@ RewriteRule ^commercial-fridge-repairs-london(/|\.html|\.asp)?$ /commercial-frid
 # Indexed .html URLs -> trailing slash (keep google / root index.html)
 RewriteRule ^google[0-9a-z]+\.html$ - [L]
 RewriteRule ^index\.html$ - [L]
+# Keep the Services directory index out of the generic HTML redirect.
+RewriteRule ^services/index\.html$ - [L]
+# Preserve the restored Liebherr directory index.
+RewriteRule ^liebherr-fridge-repair-london/index\.html$ - [L]
+# Keep the brands directory index out of the generic HTML redirect.
+RewriteRule ^refrigeration-brands-repair-london/index\.html$ - [L]
 RewriteRule ^commercial-dishwasher-repair-london(\.html)?/?$ /catering-repair-london/ [R=301,L]
 RewriteRule ^dishwashers-london(\.html)?/?$ /catering-repair-london/ [R=301,L]
+# Serve the repair-cost article at its existing slash canonical without a loop.
+RewriteRule ^blog/commercial-fridge-repair-cost-london\.html$ - [L]
+RewriteRule ^blog/commercial-fridge-repair-cost-london$ /blog/commercial-fridge-repair-cost-london/ [R=301,L]
+RewriteRule ^blog/commercial-fridge-repair-cost-london/$ /blog/commercial-fridge-repair-cost-london.html [L]
+# Legacy news is an alias of the existing blog, not a separate article.
+RewriteRule ^news(?:/index\.html|/|\.html)?$ https://www.colddirect.co.uk/blog/ [R=301,L]
 RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
 
 # Known Google 404 aliases
@@ -31,6 +43,16 @@ RedirectMatch 301 ^/fridge-repair-london.html$ /fridge-repair-london/
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Repair only public aliases confirmed as 404 by the internal-link audit.
+RewriteRule ^appliances-repair-london$ /appliances-repair-london/ [R=301,L]
+RewriteRule ^catering-repair-london$ /catering-repair-london/ [R=301,L]
+RewriteRule ^chiller-repair-london$ /chiller-repair-london/ [R=301,L]
+RewriteRule ^bottle-cooler-repair$ /bottle-cooler-repair-london/ [R=301,L]
+RewriteRule ^display-fridge-repair$ /display-fridge-repair-london/ [R=301,L]
+
+# Keep the restored slash canonical out of the old Liebherr HTML alias redirect.
+RewriteRule ^liebherr-fridge-repair-london/$ - [L]
+
 # Pretty URLs: /slug/ and /slug serve slug.html when that file exists (nginx often 404s these).
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -44,7 +66,8 @@ RewriteRule ^ice-o-matic-fridge-repairs/?$ /ice-o-matic-fridge-repairs.html [L]
 RewriteRule ^about/?$ /about-us.html [R=301,L]
 RewriteRule ^contact-us/?$ /contact.html [R=301,L]
 RewriteRule ^book-a-repair-page/?$ /contact.html [R=301,L]
-RewriteRule ^services/?$ / [R=301,L]
+RewriteRule ^services$ /services/ [R=301,L]
+RewriteRule ^services/$ - [L]
 
 # Live blog (do not 301 these). Unknown old slugs still go home.
 RewriteRule ^blog/?$ /blog/index.html [L]
@@ -52,7 +75,6 @@ RewriteRule ^blog/index\.html$ - [L]
 RewriteRule ^blog/[a-z0-9-]+\.html$ - [L]
 RewriteRule ^blog/commercial-freezer-ice-buildup-causes/?$ /blog/commercial-freezer-ice-buildup-causes/index.html [L]
 RewriteRule ^blog/cold-room-temperature-fluctuation/?$ /blog/cold-room-temperature-fluctuation/index.html [L]
-RewriteRule ^blog/commercial-fridge-repair-cost-london/?$ /blog/commercial-fridge-repair-cost-london.html [R=301,L]
 RewriteRule ^blog/different-types-of-ice/?$ /blog/different-types-of-ice.html [L]
 RewriteRule ^blog/?(.*)$ / [R=301,L]
 

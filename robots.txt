@@ -1,28 +1,15 @@
+# One shared group: named crawlers must inherit the utility exclusions too.
 User-agent: *
-Allow: /
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
 Disallow: /agent-status.html
+Disallow: /agent-status/
 Disallow: /image-preview.html
 Disallow: /agent-status-full-report.txt
-
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
 
 Sitemap: https://www.colddirect.co.uk/sitemap.xml
