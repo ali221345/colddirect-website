@@ -24,6 +24,8 @@ RewriteRule ^refrigeration-brands-repair-london/index\.html$ - [L]
 RewriteRule ^blog/commercial-fridge-repair-cost-london\.html$ - [L]
 RewriteRule ^blog/commercial-fridge-repair-cost-london$ /blog/commercial-fridge-repair-cost-london/ [R=301,L]
 RewriteRule ^blog/commercial-fridge-repair-cost-london/$ /blog/commercial-fridge-repair-cost-london.html [L]
+# Legacy news is an alias of the existing blog, not a separate article.
+RewriteRule ^news(?:/index\.html|/|\.html)?$ https://www.colddirect.co.uk/blog/ [R=301,L]
 RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
 
 RewriteRule ^ice-cream-machine-repairs-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
