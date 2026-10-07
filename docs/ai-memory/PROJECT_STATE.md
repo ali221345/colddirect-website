@@ -90,3 +90,11 @@ SEO indexation/ranking changes are not yet measured. Services content remains sp
 
 Plesk Git is configured for automatic main deployment to \\httpdocs (no post-deployment
 actions). GitHub workflow skips do not disable this separate integration.
+
+## Merge status — 2026-10-07
+PR #15 is ready for review but NOT merged. Automatic approval review rejected the
+merge because main triggers automatic Plesk deployment and could overwrite unrelated
+production files. Do not bypass or retry without approval/evidence resolving that risk.
+The focused /httpdocs/.htaccess fix remains live and tested; source changes are on
+ai/docs-project-memory. Main still contains the old rule until approved integration,
+so a future deployment from main could reintroduce it. No deployment settings changed.

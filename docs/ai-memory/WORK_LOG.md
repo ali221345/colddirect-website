@@ -36,3 +36,11 @@ scanned 418 files with zero errors. Fresh browser query displays Services (old 3
 Updated both repository .htaccess copies, six memory files and root lessons. Merge
 uses [skip ci] to preserve unrelated live work while recording the already applied fix.
 No SEO uplift claimed; no enquiry/payment submitted; no IIS/DNS/security settings changed.
+
+## Merge status — 2026-10-07
+PR #15 is ready for review but NOT merged. Automatic approval review rejected the
+merge because main triggers automatic Plesk deployment and could overwrite unrelated
+production files. Do not bypass or retry without approval/evidence resolving that risk.
+The focused /httpdocs/.htaccess fix remains live and tested; source changes are on
+ai/docs-project-memory. Main still contains the old rule until approved integration,
+so a future deployment from main could reintroduce it. No deployment settings changed.

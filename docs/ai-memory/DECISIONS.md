@@ -36,3 +36,11 @@ Plesk Git settings checked before merge: main automatically deploys to \\httpdoc
 with no post-deployment shell actions. [skip ci] suppresses GitHub workflows only;
 it does not suppress Plesk's configured deployment. The reviewed diff changes two
 routing files, documentation and the verification artifacts; core page files are unchanged.
+
+## Merge status — 2026-10-07
+PR #15 is ready for review but NOT merged. Automatic approval review rejected the
+merge because main triggers automatic Plesk deployment and could overwrite unrelated
+production files. Do not bypass or retry without approval/evidence resolving that risk.
+The focused /httpdocs/.htaccess fix remains live and tested; source changes are on
+ai/docs-project-memory. Main still contains the old rule until approved integration,
+so a future deployment from main could reintroduce it. No deployment settings changed.
