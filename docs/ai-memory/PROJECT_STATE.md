@@ -101,3 +101,6 @@ so a future deployment from main could reintroduce it. No deployment settings ch
 
 ## 2026-10-07 — Crawl policy continuation and current status
 PR #15 merged as 15886fb82f8c3a40eaf60e4f5c59f629944af5a1 with explicit user approval; its deployment completed successfully and ten live route checks passed. This supersedes the earlier pending/rejected merge status. Live robots.txt still has named Allow-only groups that bypass wildcard utility exclusions. PR #14 is being continued with its existing shared-group fix; 192 policy checks pass. Production release of #14 is not yet verified.
+
+## PR #14 release gate — 2026-10-07
+Automatic approval review rejected the production merge: main triggers automatic Plesk deployment, risking overwrite of unrelated live files; exact PR14 production approval is required. No merge/deployment performed and no workaround attempted. Prepared policy passes 192 checks. Explicit approval requested; pending user response.

@@ -47,3 +47,6 @@ so a future deployment from main could reintroduce it. No deployment settings ch
 
 ## 2026-10-07 — Crawl policy continuation and current status
 Read all six memory files and root lessons; inspected existing PR #14 diff and main 15886fb. Fresh HTTP robots matched old policy. Re-ran PR #14 checker in an isolated validation directory: 192 checks passed. Continued the original branch, preserved current main including Services fix, and appended current memory. No content rewrite or ranking uplift claimed. PR #14 release verification pending.
+
+## PR #14 release gate — 2026-10-07
+Automatic approval review rejected the production merge: main triggers automatic Plesk deployment, risking overwrite of unrelated live files; exact PR14 production approval is required. No merge/deployment performed and no workaround attempted. Prepared policy passes 192 checks. Explicit approval requested; pending user response.
