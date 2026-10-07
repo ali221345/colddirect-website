@@ -34,7 +34,7 @@ jobs:
           if [ -f "GSC-DAILY-REPORT.md" ]; then git add GSC-DAILY-REPORT.md; fi
           if [ -f "GSC-DAILY-REPORT.json" ]; then git add GSC-DAILY-REPORT.json; fi
           if ls logs/gsc_daily_* 1> /dev/null 2>&1; then git add logs/gsc_daily_*; fi
-          git add colddirect-public-html/sitemap.xml colddirect-public-html/robots.txt
+          git add sitemap.xml colddirect-public-html/sitemap.xml colddirect-public-html/robots.txt
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
