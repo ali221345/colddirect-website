@@ -24,3 +24,10 @@ main/master pushes trigger production FTP deployment.
 Use fresh query/page data, preserve winning URLs and avoid content rewrites based solely
 on AUDIT-REPORT.md. Its all-pages-WEAK result is a heuristic requiring validation.
 Prior notes and the current workflow disagree about which deployment tree is authoritative.
+
+## 2026-10-07 — Persist the authorized Services fix without a full redeploy
+The user explicitly requested the routing bug be fixed. Apply only the proven .htaccess
+change in production, retain a local pre-change backup, and commit both root/mirror
+copies so future deployments retain it. Merge with [skip ci] because the full FTP push
+can overwrite unrelated production work; the focused change is already live and tested.
+This supersedes the onboarding-only decision to leave memory on a draft branch.

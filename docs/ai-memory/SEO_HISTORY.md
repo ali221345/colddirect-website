@@ -26,3 +26,9 @@ route and the live homepage links singular. Establish current canonical/redirect
 state before altering either URL.
 
 SEO results from this session: none measured; memory only.
+
+## 2026-10-07 — Services routing repair
+Before: GET/HEAD /services/ -> 301 homepage. After: 200 Services content, canonical
+https://www.colddirect.co.uk/services/, no noindex/nofollow, JSON-LD parses. Bare and
+.html aliases lead directly to the canonical route. Removes a concrete crawl obstacle;
+does not prove Google indexation or ranking improvement. Report: reports/services-routing-2026-10-07.json.

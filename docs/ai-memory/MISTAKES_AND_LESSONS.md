@@ -22,3 +22,11 @@ full evidence and subsequent corrections; this file does not replace it.
 
 No new production mistake, failed content experiment or regression was introduced
 or fixed in this onboarding session.
+
+## 2026-10-07 — Diagnose all active rewrite files, even on IIS
+The earlier Services investigation searched web.config and missed the explicit
+.htaccess home redirect. The live IIS/Plesk response changed immediately when that
+rule was corrected. Server headers alone do not establish which rewrite configuration
+is active. Guard services/index.html before the generic HTML redirect; default documents
+can re-enter rewrite handling. Test fresh HTTP responses and query URLs when a browser
+has cached a permanent redirect. Do not replace live configuration with a stale mirror.

@@ -66,8 +66,7 @@ Live homepage observed today:
 - Description and telephone CTA links present; no meta robots tag observed.
 - Two JSON-LD blocks parse: HVACBusiness and FAQPage. Old notes claiming ApplianceRepair
   everywhere do not describe this live homepage.
-- Direct navigation to /services/ ends at the homepage, matching the unresolved lesson.
-  Status code and redirect chain not measured; do not assume the responsible rule.
+- Initial /services/ navigation ended at the homepage. The focused fix below supersedes this finding.
 
 Live robots access was blocked by the browser client; web fetches also failed earlier.
 This is a tool limitation, not evidence of site downtime or blocked Google access.
@@ -77,3 +76,14 @@ Console permissions checked. Existing business claims are not independently veri
 ## Remaining first-review work
 Full deployment-copy reconciliation, live HTTP redirect/404 checks, booking flow review,
 fresh GSC query/page data and performance measurements remain outstanding.
+
+## 2026-10-07 — Services redirect fixed
+User requested the recurring Services/SEO bug be fixed. Production /httpdocs/.htaccess
+contained an explicit services-to-home 301. Replaced it with a bare-path redirect to
+/services/ and a pass-through for the directory. Added services/index.html exception
+before generic HTML redirects to prevent default-document loops. No web.config or
+Plesk infrastructure setting changed. Root and mirror .htaccess receive the same fix.
+Live checks: ten routes passed; /services/ 200, /services and /services.html each 301
+to /services/, index.html 200 with the same canonical. H1/JSON-LD/indexing checked.
+Browser retained the old cached 301; a fresh query returned the corrected page.
+SEO indexation/ranking changes are not yet measured. Services content remains sparse.

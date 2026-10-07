@@ -246,3 +246,24 @@ investigation risks creating a new loop. Flagged, not touched.
 **Status: open, needs a dedicated investigation pass** using the
 `iis-webconfig-redirect-debug` skill's verification method (curl -sI without following
 redirects, check for a loop) before attempting any fix.
+
+
+## 2026-10-07 — Services redirect resolved in .htaccess
+
+The user requested the recurring Services/SEO bug be fixed. GET and HEAD confirmed
+/services/ -> 301 homepage. The live /httpdocs/.htaccess explicitly contained
+`RewriteRule ^services/?$ / [R=301,L]`, despite the IIS response headers and absence
+of a services rule in web.config. Replaced it with a bare Services canonical redirect
+and directory pass-through, and exempted services/index.html from generic HTML
+redirects to prevent default-document reprocessing loops. Preserved all other rules.
+
+After focused Plesk save: /services/ 200; /services and /services.html each 301 directly
+to /services/; /services/index.html 200, with canonical /services/. Ten live routes
+passed tools/check-services-routing.py, including homepage and four core repair pages.
+Services H1, indexing directives and JSON-LD checked; 418-file JSON-LD validation passed.
+Browser had cached the prior 301; a fresh query displayed the corrected Services page.
+Root and mirror .htaccess updated in Git. [skip ci] merge prevents an unnecessary
+full FTP redeploy overwriting unrelated live changes. No SEO ranking uplift claimed.
+
+Lesson: inspect .htaccess as well as web.config and verify actual response changes;
+server headers alone do not establish the active routing configuration.

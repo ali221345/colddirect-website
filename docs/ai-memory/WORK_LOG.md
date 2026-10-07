@@ -25,3 +25,14 @@ No production deployment, SEO uplift or full technical audit claimed.
 Commit: docs: establish ColdDirect operational project memory.
 Use this commit message/branch to locate the commit in Git history; its SHA is assigned
 after these files are committed. No self-referential SHA fabricated.
+
+## 2026-10-07 — Authorized Services routing fix
+Read root history, memory and deployed files. Reproduced 301 to / by GET and HEAD.
+Proved exact .htaccess rule in /httpdocs; saved pre-change backup locally. Edited only
+the services redirect and added an index.html exception. Applied via Plesk editor.
+Verified ten live routes using tools/check-services-routing.py, Services H1/canonical/
+indexing/schema, plus existing homepage and four service routes. JSON-LD validator
+scanned 418 files with zero errors. Fresh browser query displays Services (old 301 cached).
+Updated both repository .htaccess copies, six memory files and root lessons. Merge
+uses [skip ci] to preserve unrelated live work while recording the already applied fix.
+No SEO uplift claimed; no enquiry/payment submitted; no IIS/DNS/security settings changed.

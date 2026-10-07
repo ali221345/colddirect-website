@@ -26,3 +26,9 @@ links, Liebherr page, backup/rank tooling) is not automatically a new task.
 First completed foundation: six memory files on a dedicated branch. Highest-confidence
 next website task is #1 investigation; implementation depends on proving the responsible
 routing rule and testing for loops.
+
+## 2026-10-07 update
+Opportunity #1 is resolved: the Services home redirect was in .htaccess. Ten live route
+checks passed after the focused production change. Keep the regression checker for
+future deploys. Remaining separate work: make the Services hub more useful, then
+validate indexation in Search Console; neither is claimed complete by this routing fix.
