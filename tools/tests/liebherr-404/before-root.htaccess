@@ -16,8 +16,6 @@ RewriteRule ^google[0-9a-z]+\.html$ - [L]
 RewriteRule ^index\.html$ - [L]
 # Keep the Services directory index out of the generic HTML redirect.
 RewriteRule ^services/index\.html$ - [L]
-# Preserve the restored Liebherr directory index.
-RewriteRule ^liebherr-fridge-repair-london/index\.html$ - [L]
 # Keep the brands directory index out of the generic HTML redirect.
 RewriteRule ^refrigeration-brands-repair-london/index\.html$ - [L]
 # Serve the repair-cost article at its existing slash canonical without a loop.
@@ -45,9 +43,6 @@ RewriteRule ^catering-repair-london$ /catering-repair-london/ [R=301,L]
 RewriteRule ^chiller-repair-london$ /chiller-repair-london/ [R=301,L]
 RewriteRule ^bottle-cooler-repair$ /bottle-cooler-repair-london/ [R=301,L]
 RewriteRule ^display-fridge-repair$ /display-fridge-repair-london/ [R=301,L]
-
-# Keep the restored slash canonical out of the old Liebherr HTML alias redirect.
-RewriteRule ^liebherr-fridge-repair-london/$ - [L]
 
 # Pretty URLs: /slug/ and /slug serve slug.html when that file exists (nginx often 404s these).
 RewriteCond %{REQUEST_FILENAME} !-f
