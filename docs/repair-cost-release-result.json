@@ -1,0 +1,182 @@
+{
+  "checked_at": "2026-10-07T18:01:56.277368+00:00",
+  "commit": "6d0a4570e7f8c86876e0bade9fe2522c37efd777",
+  "passed_checks": 24,
+  "rows": [
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/",
+      "method": "GET",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/",
+      "method": "HEAD",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "GET",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "HEAD",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html",
+      "method": "GET",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html",
+      "method": "HEAD",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "GET",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "HEAD",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london",
+      "method": "GET",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london",
+      "method": "HEAD",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "GET",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%252Fb"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "HEAD",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%252Fb"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570",
+      "method": "GET",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570",
+      "method": "HEAD",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570",
+      "method": "GET",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570",
+      "method": "HEAD",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html?releasecheck=6d0a4570"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570",
+      "method": "GET",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570"
+    },
+    {
+      "url": "http://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570",
+      "method": "HEAD",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/services/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/fridge-repair-london/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/freezer-repair-london/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/cold-room-repair-london/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-not-cooling/",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "limitations": [
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "GET",
+      "kind": "encoded_query_double_escape",
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%252Fb"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london?releasecheck=6d0a4570&x=a%2Fb",
+      "method": "HEAD",
+      "kind": "encoded_query_double_escape",
+      "location": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/?releasecheck=6d0a4570&x=a%252Fb"
+    }
+  ],
+  "legacy_observations": [
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-freezer-ice-buildup-causes/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/cold-room-temperature-fluctuation/",
+      "status": 200,
+      "location": null
+    }
+  ]
+}
+

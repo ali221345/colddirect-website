@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-10-07T17:55:03.591448+00:00",
+  "sitemap_urls": 112,
+  "checked_urls": 120,
+  "issues": [
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london",
+      "kind": "redirect_loop",
+      "detail": ""
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html",
+      "kind": "redirect_loop",
+      "detail": ""
+    },
+    {
+      "url": "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/",
+      "kind": "redirect_loop",
+      "detail": ""
+    },
+    {
+      "url": "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/commercial-freezer-repair-london"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/commercial-freezer-repair-tottenham/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/commercial-freezer-repair-tottenham"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/commercial-ice-machine-repair-london/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/commercial-ice-machine-repair-london"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/display-cooler-repair-london/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/display-cooler-repair-london"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/drinks-fridge-repair/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/drinks-fridge-repair"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/freezer-room-repair-north-london/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/freezer-room-repair-north-london"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/fridge-room-repair/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/fridge-room-repair"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/ice-machine-repair-north-london/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/ice-machine-repair-north-london"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/news/",
+      "kind": "h1_count",
+      "detail": "0"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/refrigeration-brands-repair-london/",
+      "kind": "http_status",
+      "detail": "404"
+    },
+    {
+      "url": "https://www.colddirect.co.uk/walk-in-chiller-repair/",
+      "kind": "canonical_mismatch",
+      "detail": "https://www.colddirect.co.uk/walk-in-chiller-repair"
+    }
+  ],
+  "changes": {
+    "new": [],
+    "resolved": [
+      {
+        "url": "https://www.colddirect.co.uk/services/index.html",
+        "kind": "canonical_mismatch",
+        "detail": "https://www.colddirect.co.uk/services/"
+      }
+    ]
+  },
+  "changes_note": "Services alias resolved record reflects audit logic correction only, not website change."
+}
