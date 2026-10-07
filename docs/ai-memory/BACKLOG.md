@@ -32,3 +32,6 @@ Opportunity #1 is resolved: the Services home redirect was in .htaccess. Ten liv
 checks passed after the focused production change. Keep the regression checker for
 future deploys. Remaining separate work: make the Services hub more useful, then
 validate indexation in Search Console; neither is claimed complete by this routing fix.
+
+## 2026-10-07 — Crawl policy continuation and current status
+Services routing task is completed: PR #15 merged/deployed, ten live routes pass. Continue existing crawl-policy PR #14: proven named-group exclusion bug, 192 checks pass; release verification pending. Sitemap inventory reconciliation remains the next priority; inspect canonical/noindex/redirect entries before removing URLs.

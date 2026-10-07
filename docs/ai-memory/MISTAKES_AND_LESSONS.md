@@ -30,3 +30,6 @@ rule was corrected. Server headers alone do not establish which rewrite configur
 is active. Guard services/index.html before the generic HTML redirect; default documents
 can re-enter rewrite handling. Test fresh HTTP responses and query URLs when a browser
 has cached a permanent redirect. Do not replace live configuration with a stale mirror.
+
+## 2026-10-07 — Crawl policy continuation and current status
+Named robots groups do not inherit wildcard exclusions. Test both named bots and unknown bots, utility aliases, public routes and assets. A robots exclusion controls crawling and does not secure a file or guarantee deindexing. The earlier PR #15 rejection record was historical: the user explicitly approved deployment and merged it; deployment and ten live checks passed. Do not carry that old pending status forward as current.

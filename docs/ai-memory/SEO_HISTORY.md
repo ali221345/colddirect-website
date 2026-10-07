@@ -32,3 +32,6 @@ Before: GET/HEAD /services/ -> 301 homepage. After: 200 Services content, canoni
 https://www.colddirect.co.uk/services/, no noindex/nofollow, JSON-LD parses. Bare and
 .html aliases lead directly to the canonical route. Removes a concrete crawl obstacle;
 does not prove Google indexation or ranking improvement. Report: reports/services-routing-2026-10-07.json.
+
+## 2026-10-07 — Crawl policy continuation and current status
+Fresh live robots.txt confirmed the old named Allow-only groups on 2026-10-07. Google's documented group-selection rules confirm named groups do not inherit wildcard rules (https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec). Existing PR #14 shared-group policy passes 192 bot/path checks across identical root/mirror copies. No ranking/indexation uplift measured; release not yet verified. Services PR #15 is merged/deployed and ten live checks passed.

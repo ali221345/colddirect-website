@@ -44,3 +44,9 @@ production files. Do not bypass or retry without approval/evidence resolving tha
 The focused /httpdocs/.htaccess fix remains live and tested; source changes are on
 ai/docs-project-memory. Main still contains the old rule until approved integration,
 so a future deployment from main could reintroduce it. No deployment settings changed.
+
+## 2026-10-07 — Crawl policy continuation and current status
+Continue existing PR #14 rather than recreate Hermes' work. Share the existing named agents and wildcard in one group, retaining public crawl access and the sitemap declaration. Block only existing utility paths plus /agent-status/ alias. This is crawl policy, not access control or guaranteed search-result removal. Preserve all main changes from PR #15 while integrating the branch; no page/URL migration or hosting-setting change. PR #15's earlier blocked status is superseded by explicit user approval, merge 15886fb and successful deployment.
+
+## PR #14 release gate — 2026-10-07
+Automatic approval review rejected the production merge: main triggers automatic Plesk deployment, risking overwrite of unrelated live files; exact PR14 production approval is required. No merge/deployment performed and no workaround attempted. Prepared policy passes 192 checks. Explicit approval requested; pending user response.
