@@ -87,3 +87,6 @@ Live checks: ten routes passed; /services/ 200, /services and /services.html eac
 to /services/, index.html 200 with the same canonical. H1/JSON-LD/indexing checked.
 Browser retained the old cached 301; a fresh query returned the corrected page.
 SEO indexation/ranking changes are not yet measured. Services content remains sparse.
+
+Plesk Git is configured for automatic main deployment to \\httpdocs (no post-deployment
+actions). GitHub workflow skips do not disable this separate integration.

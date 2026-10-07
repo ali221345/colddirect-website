@@ -31,3 +31,8 @@ change in production, retain a local pre-change backup, and commit both root/mir
 copies so future deployments retain it. Merge with [skip ci] because the full FTP push
 can overwrite unrelated production work; the focused change is already live and tested.
 This supersedes the onboarding-only decision to leave memory on a draft branch.
+
+Plesk Git settings checked before merge: main automatically deploys to \\httpdocs,
+with no post-deployment shell actions. [skip ci] suppresses GitHub workflows only;
+it does not suppress Plesk's configured deployment. The reviewed diff changes two
+routing files, documentation and the verification artifacts; core page files are unchanged.
