@@ -90,9 +90,10 @@
             try {
               data = JSON.parse(text);
             } catch (err) {
-              data = { ok: res.ok };
+              throw new Error("Invalid booking response");
             }
-            return { ok: res.ok && data.ok !== false, data: data };
+            if (!res.ok || !data || data.ok !== true) throw new Error("Booking was not accepted");
+            return { data: data };
           });
         })
         .then(function (result) {
@@ -102,8 +103,8 @@
           form.reset();
         })
         .catch(function () {
-          status.className = "booking-status ok";
-          status.textContent = SUCCESS_MSG;
+          status.className = "booking-status err";
+          status.textContent = "We could not send your request. Please try again or call 07983 759320.";
         });
     });
   }
