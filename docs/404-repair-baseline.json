@@ -1,0 +1,922 @@
+{
+  "checked_at": "2026-10-07T18:10:04.648967+00:00",
+  "checked_total": 253,
+  "status_counts": {
+    "200": 215,
+    "404": 38
+  },
+  "truncated": false,
+  "proven_404": [
+    {
+      "url": "https://www.colddirect.co.uk/appliances-repair-london",
+      "final_url": "https://www.colddirect.co.uk/appliances-repair-london",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/appliances-repair-london",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/catering-repair-london/",
+        "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
+        "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+        "https://www.colddirect.co.uk/commercial-fridge-repair-london/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/bottle-cooler-repair",
+      "final_url": "https://www.colddirect.co.uk/bottle-cooler-repair",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/bottle-cooler-repair",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/drinks-fridge-repair/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/catering-repair-london",
+      "final_url": "https://www.colddirect.co.uk/catering-repair-london",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/catering-repair-london",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/appliances-repair-london/",
+        "https://www.colddirect.co.uk/blast-chiller-repair-london/",
+        "https://www.colddirect.co.uk/blast-chiller-repair-north-london/",
+        "https://www.colddirect.co.uk/blast-freezer-repair-london/",
+        "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
+        "https://www.colddirect.co.uk/commercial-blast-chiller-repair-london/",
+        "https://www.colddirect.co.uk/commercial-blast-freezer-repair-london/",
+        "https://www.colddirect.co.uk/commercial-display-cabinet-repair-london/",
+        "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+        "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+        "https://www.colddirect.co.uk/commercial-fridge-repair-north-london/",
+        "https://www.colddirect.co.uk/display-cabinet-repair-london/",
+        "https://www.colddirect.co.uk/prep-fridge-repair-london/",
+        "https://www.colddirect.co.uk/undercounter-fridge-repair-london/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/chiller-repair-london",
+      "final_url": "https://www.colddirect.co.uk/chiller-repair-london",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/chiller-repair-london",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/commercial-fridge-repair-north-london/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/display-fridge-repair",
+      "final_url": "https://www.colddirect.co.uk/display-fridge-repair",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/display-fridge-repair",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/drinks-fridge-repair/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/bottle-cooler-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/bottle-cooler-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/bottle-cooler-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/bottle-cooler-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cellar-cooler-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cellar-cooler-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cellar-cooler-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cellar-cooler-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cold-room-repair-north-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cold-room-repair-north-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cold-room-repair-north-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/cold-room-repair-north-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-freezer-repair-north-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-freezer-repair-north-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-freezer-repair-north-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-freezer-repair-north-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-fridge-repair-north-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-fridge-repair-north-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-fridge-repair-north-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-fridge-repair-north-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-brent.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-brent/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-brent.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-brent/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-camden.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-camden/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-camden.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-camden/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-chelsea.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-chelsea/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-chelsea.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-chelsea/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-city-of-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-city-of-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-city-of-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-city-of-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-croydon.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-croydon/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-croydon.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-croydon/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-ealing.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-ealing/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-ealing.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-ealing/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-greenwich.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-greenwich/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-greenwich.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-greenwich/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hackney.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hackney/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hackney.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hackney/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hammersmith.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hammersmith/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hammersmith.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hammersmith/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-haringey.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-haringey/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-haringey.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-haringey/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hounslow.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hounslow/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hounslow.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-hounslow/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-islington.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-islington/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-islington.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-islington/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-kensington.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-kensington/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-kensington.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-kensington/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-lambeth.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-lambeth/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-lambeth.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-lambeth/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-newham.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-newham/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-newham.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-newham/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-richmond.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-richmond/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-richmond.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-richmond/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-southwark.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-southwark/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-southwark.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-southwark/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-tower-hamlets.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-tower-hamlets/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-tower-hamlets.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-tower-hamlets/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-wandsworth.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-wandsworth/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-wandsworth.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-wandsworth/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-westminster.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-westminster/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-westminster.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/commercial-refrigeration-repair-westminster/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/display-cabinet-repair-north-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/display-cabinet-repair-north-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/display-cabinet-repair-north-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/display-cabinet-repair-north-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-room-repair-north-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-room-repair-north-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-room-repair-north-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/freezer-room-repair-north-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/fridge-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/fridge-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/fridge-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/fridge-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-cream-machine-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-cream-machine-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-cream-machine-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-cream-machine-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-machine-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-machine-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-machine-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/ice-machine-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/wine-cooler-repair-london.html",
+      "final_url": "https://www.colddirect.co.uk/preview-colddirect-homepage/wine-cooler-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/wine-cooler-repair-london.html",
+          "status": 301
+        },
+        {
+          "url": "https://www.colddirect.co.uk/preview-colddirect-homepage/wine-cooler-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/preview-colddirect-homepage/"
+      ],
+      "seed": false
+    },
+    {
+      "url": "https://www.colddirect.co.uk/refrigeration-brands-repair-london/",
+      "final_url": "https://www.colddirect.co.uk/refrigeration-brands-repair-london/",
+      "chain": [
+        {
+          "url": "https://www.colddirect.co.uk/refrigeration-brands-repair-london/",
+          "status": 404
+        }
+      ],
+      "status": 404,
+      "referring_pages": [
+        "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london.html",
+        "https://www.colddirect.co.uk/blog/commercial-fridge-repair-cost-london/"
+      ],
+      "seed": true
+    }
+  ],
+  "preview_changes": [
+    {
+      "before": "bottle-cooler-repair-london.html",
+      "after": "/bottle-cooler-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "cellar-cooler-repair-london.html",
+      "after": "/cellar-cooler-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "cold-room-repair-north-london.html",
+      "after": "/cold-room-repair-north-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-freezer-repair-north-london.html",
+      "after": "/commercial-freezer-repair-north-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-fridge-repair-north-london.html",
+      "after": "/commercial-fridge-repair-north-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-brent.html",
+      "after": "/commercial-refrigeration-repair-brent/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-camden.html",
+      "after": "/commercial-refrigeration-repair-camden/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-chelsea.html",
+      "after": "/commercial-refrigeration-repair-chelsea/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-city-of-london.html",
+      "after": "/commercial-refrigeration-repair-city-of-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-croydon.html",
+      "after": "/commercial-refrigeration-repair-croydon/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-ealing.html",
+      "after": "/commercial-refrigeration-repair-ealing/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-greenwich.html",
+      "after": "/commercial-refrigeration-repair-greenwich/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-hackney.html",
+      "after": "/commercial-refrigeration-repair-hackney/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-hammersmith.html",
+      "after": "/commercial-refrigeration-repair-hammersmith/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-haringey.html",
+      "after": "/commercial-refrigeration-repair-haringey/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-hounslow.html",
+      "after": "/commercial-refrigeration-repair-hounslow/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-islington.html",
+      "after": "/commercial-refrigeration-repair-islington/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-kensington.html",
+      "after": "/commercial-refrigeration-repair-kensington/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-lambeth.html",
+      "after": "/commercial-refrigeration-repair-lambeth/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-newham.html",
+      "after": "/commercial-refrigeration-repair-newham/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-richmond.html",
+      "after": "/commercial-refrigeration-repair-richmond/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-southwark.html",
+      "after": "/commercial-refrigeration-repair-southwark/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-tower-hamlets.html",
+      "after": "/commercial-refrigeration-repair-tower-hamlets/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-wandsworth.html",
+      "after": "/commercial-refrigeration-repair-wandsworth/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "commercial-refrigeration-repair-westminster.html",
+      "after": "/commercial-refrigeration-repair-westminster/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "display-cabinet-repair-north-london.html",
+      "after": "/display-cabinet-repair-north-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "freezer-repair-london.html",
+      "after": "/freezer-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "freezer-room-repair-north-london.html",
+      "after": "/freezer-room-repair-north-london/",
+      "destination_status": 200,
+      "canonical_redirected": true
+    },
+    {
+      "before": "fridge-repair-london.html",
+      "after": "/fridge-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "ice-cream-machine-repair-london.html",
+      "after": "/ice-cream-machine-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "ice-machine-repair-london.html",
+      "after": "/ice-machine-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    },
+    {
+      "before": "wine-cooler-repair-london.html",
+      "after": "/wine-cooler-repair-london/",
+      "destination_status": 200,
+      "canonical_redirected": false
+    }
+  ],
+  "static_checks": 108,
+  "release_status": "Prepared; no production release or live fix yet"
+}
