@@ -12,6 +12,8 @@ RewriteRule ^commercial-fridge-repairs-london(/|\.html|\.asp)?$ /commercial-frid
 # Indexed .html URLs -> trailing slash (keep google / root index.html)
 RewriteRule ^google[0-9a-z]+\.html$ - [L]
 RewriteRule ^index\.html$ - [L]
+# Keep the Services directory index out of the generic HTML redirect.
+RewriteRule ^services/index\.html$ - [L]
 RewriteRule ^commercial-dishwasher-repair-london(\.html)?/?$ /catering-repair-london/ [R=301,L]
 RewriteRule ^dishwashers-london(\.html)?/?$ /catering-repair-london/ [R=301,L]
 RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
@@ -44,7 +46,8 @@ RewriteRule ^ice-o-matic-fridge-repairs/?$ /ice-o-matic-fridge-repairs.html [L]
 RewriteRule ^about/?$ /about-us.html [R=301,L]
 RewriteRule ^contact-us/?$ /contact.html [R=301,L]
 RewriteRule ^book-a-repair-page/?$ /contact.html [R=301,L]
-RewriteRule ^services/?$ / [R=301,L]
+RewriteRule ^services$ /services/ [R=301,L]
+RewriteRule ^services/$ - [L]
 
 # Live blog (do not 301 these). Unknown old slugs still go home.
 RewriteRule ^blog/?$ /blog/index.html [L]
