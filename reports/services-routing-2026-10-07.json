@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-07T14:58:35.613779+00:00",
+  "results": [
+    {
+      "path": "/services/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/services/?routingcheck=20261007",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/services",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/services/"
+    },
+    {
+      "path": "/services.html",
+      "status": 301,
+      "location": "https://www.colddirect.co.uk/services/"
+    },
+    {
+      "path": "/services/index.html",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/fridge-repair-london/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/freezer-repair-london/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/commercial-fridge-repair-london/",
+      "status": 200,
+      "location": null
+    },
+    {
+      "path": "/cold-room-repair-london/",
+      "status": 200,
+      "location": null
+    }
+  ],
+  "services_content": "H1, canonical, indexing directives and JSON-LD checked"
+}
