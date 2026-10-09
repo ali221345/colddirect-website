@@ -77,3 +77,14 @@ Service + FAQPage nodes unchanged (not org types).
 - Are engineers F-Gas certified?
 - What is the call-out / quote process?
 - Do you cover Enfield / North London / 25 miles?
+
+## 2026-10-09 — Generic fridge/freezer and services hub
+
+| Keyword cluster | Search intent | Canonical target | Current action |
+|---|---|---|---|
+| fridge repair London | Commercial repair / local | `fridge-repair-london.html` | Keep this exact target; improve its unique search snippet and link from the services hub. Preserve the separate commercial-fridge page and homepage rather than repeating the phrase across every service page. |
+| freezer repair London | Commercial repair / local | `freezer-repair-london.html` | Keep this exact target; improve its unique search snippet and link from the services hub. Preserve commercial-freezer and room pages for their narrower equipment intent. |
+| commercial refrigeration services London | Service overview | `services.html` | Use a descriptive H1, concise summary and contextual links to existing repair pages. This URL was still “unknown to Google” in the 2026-10-09 bounded inspection although present in the 114-URL sitemap; monitor the next comparable inspection. |
+| fridge service London / planned servicing / PPM | Commercial planned maintenance | No separate target confirmed | Keep blocked until the owner confirms ColdDirect sells planned visits or contracts. Do not add unsupported maintenance offers, prices or terms. |
+
+The complete GSC keyword window currently available is 2026-09-07–2026-10-04, before recent service-page changes. Exact-query totals: fridge repair London 27 clicks / 187 impressions / avg position 14.37; freezer repair London 22 / 89 / 16.97. Most clicks were associated with the homepage or legacy combined URLs; do not claim a stable page-one ranking or attribute later results to recent changes. Reuse the saved complete report until its weekly refresh interval allows a new query.
