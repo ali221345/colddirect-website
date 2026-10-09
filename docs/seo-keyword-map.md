@@ -27,7 +27,7 @@ Status legend: `live` = page exists · `fix` = needs copy/meta · `new` = propos
 | bottle cooler / display fridge repair | Transactional | bottle-cooler / display-fridge pages | existing | P1 | live — collapse non-London dups |
 | blast chiller / blast freezer repair | Transactional | blast-*-london.html | existing | P2 | live |
 | catering equipment repair London | Commercial | catering-repair-london.html | existing | P2 | live |
-| commercial refrigeration servicing / PPM London | Commercial | — | new only if PPM sold | P2 | blocked until offer confirmed |
+| commercial refrigeration servicing / PPM London | Commercial planned maintenance | `commercial-refrigeration-servicing-london.html` | new page | P1 | owner confirmed planned visits/contracts on 2026-10-09; confirm scope and terms before booking |
 | commercial fridges for sale UK | Buy equipment | — | do **not** target | — | out of scope |
 | multideck fridge buy / lease | Buy equipment | — | do **not** target | — | out of scope |
 | why commercial freezer not freezing | Informational | blog posts | existing | P2 | live |
@@ -85,6 +85,11 @@ Service + FAQPage nodes unchanged (not org types).
 | fridge repair London | Commercial repair / local | `fridge-repair-london.html` | Keep this exact target; improve its unique search snippet and link from the services hub. Preserve the separate commercial-fridge page and homepage rather than repeating the phrase across every service page. |
 | freezer repair London | Commercial repair / local | `freezer-repair-london.html` | Keep this exact target; improve its unique search snippet and link from the services hub. Preserve commercial-freezer and room pages for their narrower equipment intent. |
 | commercial refrigeration services London | Service overview | `services.html` | Use a descriptive H1, concise summary and contextual links to existing repair pages. This URL was still “unknown to Google” in the 2026-10-09 bounded inspection although present in the 114-URL sitemap; monitor the next comparable inspection. |
-| fridge service London / planned servicing / PPM | Commercial planned maintenance | No separate target confirmed | Keep blocked until the owner confirms ColdDirect sells planned visits or contracts. Do not add unsupported maintenance offers, prices or terms. |
+| fridge service London / planned servicing / PPM | Commercial planned maintenance | `commercial-refrigeration-servicing-london.html` | Owner confirmed planned visits/contracts on 2026-10-09. Use this page for planned servicing; keep emergency repair pages focused on breakdowns. Do not invent visit frequency, prices, reports, certifications or response terms. |
 
 The complete GSC keyword window currently available is 2026-09-07–2026-10-04, before recent service-page changes. Exact-query totals: fridge repair London 27 clicks / 187 impressions / avg position 14.37; freezer repair London 22 / 89 / 16.97. Most clicks were associated with the homepage or legacy combined URLs; do not claim a stable page-one ranking or attribute later results to recent changes. Reuse the saved complete report until its weekly refresh interval allows a new query.
+
+
+## 2026-10-09 — Planned commercial servicing target
+
+The owner confirmed that Cold Direct offers planned servicing visits and contracts. A dedicated page now targets commercial refrigeration servicing London and supports fridge service/freezer service London intent. The page describes equipment-dependent checks already present in the repair-page copy, links to the separate emergency repair pages, and asks businesses to confirm scope and terms before booking. It publishes no unconfirmed schedule, price, report, certification or response promise. Google ignores the meta keywords tag, so use a clear title/description, useful page copy and internal links instead of keyword-tag stuffing.
