@@ -2,7 +2,8 @@ name: ColdDirect Source Backup
 
 on:
   # Check daily and run an archive every 48 hours from the first scheduled slot.
-  - cron: '0 2 * * *'
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 permissions:
