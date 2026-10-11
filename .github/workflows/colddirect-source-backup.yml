@@ -1,0 +1,64 @@
+name: ColdDirect Source Backup
+
+on:
+  # Check daily and run an archive every 48 hours from the first scheduled slot.
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the 48-hour backup is due
+        id: cadence
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          anchor=$(date -u -d '2026-10-12 02:00:00 UTC' +%s)
+          now=$(date -u +%s)
+          elapsed=$((now - anchor))
+          if (( elapsed < 0 )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          elapsed_days=$((elapsed / 86400))
+          if (( elapsed_days % 2 == 0 )); then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out site source
+        if: steps.cadence.outputs.run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Create source archive
+        if: steps.cadence.outputs.run == 'true'
+        shell: bash
+        run: |
+          mkdir -p backup-output
+          git archive --format=tar.gz --output="backup-output/coldirect-source-${GITHUB_SHA}.tar.gz" HEAD
+
+      - name: Store backup artifact for 30 days
+        if: steps.cadence.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: colddirect-source-backup-${{ github.run_id }}
+          path: backup-output/coldirect-source-${{ github.sha }}.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Report skipped daily check
+        if: steps.cadence.outputs.run != 'true'
+        run: echo "48-hour cadence: backup not due today."
