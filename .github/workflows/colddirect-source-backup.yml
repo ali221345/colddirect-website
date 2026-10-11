@@ -61,4 +61,5 @@ jobs:
 
       - name: Report skipped daily check
         if: steps.cadence.outputs.run != 'true'
-        run: echo "48-hour cadence: backup not due today."
+        run: |
+          echo "48-hour cadence: backup not due today."
