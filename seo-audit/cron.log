@@ -207,3 +207,13 @@
 [2026-10-11T11:12:53.290Z] SITEMAP_GSC [{"type":"web","submitted":"112","indexed":"0"}]
 [2026-10-11T11:12:53.291Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-10-11.md
 [2026-10-11T11:12:53.292Z] DONE changes=0 alerts=0
+[2026-10-12T12:45:37.467Z] START daily-seo-update 2026-10-12
+[2026-10-12T12:45:37.469Z] GSC window 2026-10-05 .. 2026-10-11
+[2026-10-12T12:45:38.607Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-10-12T12:45:40.239Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-10-12T12:45:40.240Z] ALERT position drop >5 in ~48h: "commercial fridge repair london" 8.0 -> 14.0
+[2026-10-12T12:45:53.637Z] SITEMAP http=200 locs=116
+[2026-10-12T12:45:54.053Z] SITEMAP_GSC [{"type":"web","submitted":"112","indexed":"0"}]
+[2026-10-12T12:45:55.398Z] FTP_OK UPLOADED blog/different-types-of-ice.html
+[2026-10-12T12:45:55.435Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-10-12.md
+[2026-10-12T12:45:55.435Z] DONE changes=1 alerts=1
