@@ -93,7 +93,7 @@
     <p class="kicker">Commercial refrigeration only - 24/7 emergency - 25 mile radius</p>
     <p style="font-weight:700;margin:0 0 10px;">COMMERCIAL ONLY - We Don't Repair Domestic Fridge/Freezers</p>
     <h1>Fridge Repair London</h1>
-    <p class="lead">Fridge repair across London and North London. Commercial kitchens only; household fridge-freezers are not covered. 24/7 emergency. 25 mile radius.</p>
+    <p class="lead">Fridge repair in London for commercial kitchens, shops and hospitality businesses. Tell us your postcode, fridge make and current fault to check call-out availability. We repair commercial equipment only.</p>
     <div class="cta-row">
       <a class="btn" href="tel:+447983759320">Mobile 07983 759320</a>
       <a class="btn" href="tel:08001123427">Freephone 0800 112 3427</a>
@@ -112,8 +112,9 @@
     <p>For a household fridge in a flat or house, contact a domestic appliance repair specialist. Cold Direct repairs commercial equipment only.</p>
     <p>24/7 emergency fridge repair for trade sites covers Camden, Islington, the City, Westminster, Barnet, Harrow, Watford, Tottenham, Edmonton, Walthamstow, Finchley, Wood Green, Hackney, Haringey, Stratford, Romford, Ilford, Enfield, Southgate and the rest of Greater London inside 25 miles of North London. Call mobile 07983 759320, freephone 0800 112 3427 or London office 0203 952 4822.</p>
     <p>Related commercial pages: <a href="/commercial-fridge-repair-north-london">commercial fridge repair North London</a>, <a href="/polar-fridge-repair-london">Polar fridge repair</a>, <a href="/adexa-fridge-repair-london">Adexa fridge repair</a>, <a href="/empire-fridge-repair-london">Empire fridge repair</a>, <a href="/subzero-fridge-repair-london">Sub-Zero fridge repair</a>, <a href="/freezer-repair-london">freezer repair London</a>.</p>
-    <p>Brand blue #0077B6 is used on buttons and the light hero. The page background stays white. We quote before we start. We do not guess temperatures. If the fridge is a trade cabinet, bring the model from the plate if you can read it.</p>
-    <p>Fridge repair London covers different equipment types. Cold Direct's service is for commercial fridges in restaurants, shops and other trade sites. Trade jobs get EHO-ready probe readings, 24/7 emergency attendance and a 25 mile radius from North London. Household fridge-freezer jobs are not booked. Common commercial faults stay the same across Polar, Adexa, Empire, Williams and Foster: blocked condensers, split gaskets, iced evaporators and controllers that lie. Call mobile 07983 759320, freephone 0800 112 3427 or London office 0203 952 4822. For a Polar plate use the Polar page. For a generic commercial fridge in a restaurant use commercial fridge repair North London.</p>
+    <h2>What to have ready when you call</h2>
+    <p>This fridge repair service is for trade equipment in businesses. Have your postcode, cabinet make and model, displayed temperature and a brief description of the fault ready. Mention any alarm code and whether the unit is an upright, under-counter, prep or display fridge. We quote the repair after diagnosing the fault, before work starts.</p>
+
       <h2>FAQ</h2>
       <div class="faq">
         <h3>Do you offer fridge repair London the same day?</h3>
