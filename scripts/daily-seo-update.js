@@ -12,6 +12,8 @@ const { join, dirname } = require("path");
 const { homedir } = require("os");
 const { pathToFileURL } = require("url");
 
+const PREPARE_ONLY = process.env.COLD_SEO_PREPARE_ONLY === "1";
+
 const ROOT = join(__dirname, "..");
 const PUBLIC = join(ROOT, "colddirect-public-html");
 const AUDIT = join(ROOT, "seo-audit");
@@ -378,7 +380,7 @@ async function main() {
   const today = todayLondon();
   const changes = [];
   const alerts = [];
-  log("START daily-seo-update " + today);
+  log("START daily-seo-update " + today + (PREPARE_ONLY ? " PREPARE_ONLY" : " PUBLISH"));
 
   const endDate = ymdOffset(today, 1);
   const startDate = ymdOffset(endDate, 6);
@@ -526,12 +528,16 @@ async function main() {
   let locCount = (sm.body.match(/<loc>/g) || []).length;
   log("SITEMAP http=" + sm.code + " locs=" + locCount);
   if (sm.code === "500") {
-    alerts.push("ALERT sitemap 500 — pass-through rule + FTP web.config + GSC resubmit");
-    log("SITEMAP_500 attempting web.config FTP and GSC resubmit");
+    alerts.push(PREPARE_ONLY ? "ALERT sitemap 500 — investigate; no publication or submission" : "ALERT sitemap 500 — pass-through rule + FTP web.config + GSC resubmit");
+    log(PREPARE_ONLY ? "SITEMAP_500 prepare-only: investigate configuration" : "SITEMAP_500 attempting web.config FTP and GSC resubmit");
     deploy.push("web.config");
     try {
-      await client.sitemaps.submit({ siteUrl, feedpath: `https://${HOST}/sitemap.xml` });
-      changes.push("GSC sitemap resubmit after 500");
+      if (PREPARE_ONLY) {
+        alerts.push("PREPARED_ONLY: sitemap submission skipped; investigate HTTP 500");
+      } else {
+        await client.sitemaps.submit({ siteUrl, feedpath: `https://${HOST}/sitemap.xml` });
+        changes.push("GSC sitemap resubmit after 500");
+      }
     } catch (e) {
       log("SITEMAP_RESUBMIT_FAIL " + e.message);
     }
@@ -553,7 +559,11 @@ async function main() {
     return true;
   });
   if (uniqueDeploy.length) {
-    ftpUpload(uniqueDeploy);
+    if (PREPARE_ONLY) {
+      log("PREPARED_ONLY: no FTP upload; review candidate changes before promotion");
+    } else if (!ftpUpload(uniqueDeploy)) {
+      throw new Error("FTP publication failed; changes were not confirmed published");
+    }
   }
 
   const ranked = queryRows
@@ -592,7 +602,7 @@ async function main() {
     `- \`<loc>\` count: ${locCount} (expect ~${SITEMAP_EXPECT})`,
     `- GSC: ${JSON.stringify(submittedGsc)}`,
     "",
-    "## What changed",
+    PREPARE_ONLY ? "## Proposed changes (not published)" : "## What changed",
     changes.length ? changes.map((c) => `- ${c}`).join("\n") : "- No title, link, or 404 changes today (guards held).",
     "",
     "## Alerts",
@@ -607,7 +617,8 @@ async function main() {
 
   const reportPath = join(AUDIT, `daily-report-${today}.md`);
   writeFileSync(reportPath, report, "utf8");
-  saveState(state);
+  if (!PREPARE_ONLY) saveState(state);
+  else log("PREPARED_ONLY: applied-change state not advanced");
   log("WROTE " + reportPath);
   log("DONE changes=" + changes.length + " alerts=" + alerts.length);
 }
