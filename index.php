@@ -102,7 +102,7 @@ body{background:#ffffff;color:#0a2540}
       <h2>Commercial refrigeration repair for trade kitchens</h2>
       <p>We provide both repair and service / maintenance for commercial refrigeration. Cold Direct repairs commercial refrigeration for restaurants, pubs, bars, cafes, takeaways, sandwich shops, hotels, staff canteens, convenience stores and supermarkets. We do not take domestic house call-outs. Every van is set up for trade equipment: walk-in cold rooms, freezer rooms, prep fridges, display cabinets, bottle coolers, cellar coolers and wine storage.</p>
       <h2>Commercial refrigeration service London</h2>
-      <p>Commercial refrigeration service London is PPM across the kitchen, not a new page for every keyword. Servicing condensers, door furniture and probes on a service contract stops Saturday breakdowns. Catering sites use planned servicing so the EHO sees logs, not excuses. We still run 24/7 repair when a cold room or freezer has already climbed. The diary visit is how restaurants, pubs and shops keep plant legal between emergencies.</p>
+      <p>Our commercial refrigeration service in London includes planned maintenance for restaurant, pub and shop equipment. Visits cover condensers, door seals and temperature probes to help identify wear and reduce the risk of breakdowns. For equipment that has already lost temperature, contact our team about an emergency repair.</p>
       <p>North London Commercial Refrigeration Engineers from our team work a 25 mile radius from North London. That takes in all of Greater London and the main Hertfordshire and Essex corridors our customers already use for suppliers. If your site is in that ring, call us. If you are just outside it, still call - we will tell you on the first conversation whether we can reach you today.</p>
       <p>A warm walk-in at 10pm on a Saturday is an emergency, not a Monday job. We run 24/7 emergency commercial refrigeration repair so chefs, duty managers and night porters can get a number that answers. You speak to someone who books refrigeration work every day. You get a time, not a ticket number.</p>
       <p>Most commercial faults we see are the same handful: dirty condensers, failed evaporator fans, leaking door furniture, iced evaporators, weak compressors, and controllers that have lost their set point. We diagnose on site, quote the repair before we start, and carry common Williams, Foster, Polar, Blizzard and Gram parts so first-visit fixes stay high. If a part has to be ordered, we tell you the lead time before you commit.</p>
@@ -226,8 +226,8 @@ body{background:#ffffff;color:#0a2540}
         <li><a href="/commercial-refrigeration-repair-newham">Stratford</a></li>
         <li>All London (25 mile radius)</li>
       </ul>
-      <h2>London Cold Chain repair pages</h2>
-      <p>Dedicated London pages for fast local response. Each borough page has unique Cold Chain copy, LocalBusiness schema and a path to book.</p>
+      <h2>Commercial refrigeration repair across London</h2>
+      <p>Find commercial refrigeration repair information for your London area below. When you contact us, have your postcode, equipment make and model, and a description of the fault ready so we can confirm availability.</p>
       <ul class="areas">
         <li><a href="/commercial-refrigeration-repair-camden">Camden</a></li>
         <li><a href="/commercial-refrigeration-repair-islington">Islington</a></li>
