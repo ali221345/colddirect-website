@@ -1,4 +1,4 @@
-name: Daily SEO Agent
+name: Daily Sitemap and HTML Checks
 
 on:
   schedule:
@@ -8,12 +8,18 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: colddirect-production
+  cancel-in-progress: false
+
 jobs:
   seo-agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,21 +29,17 @@ jobs:
       - name: Install agent dependencies
         run: pip install -r agent/requirements.txt
 
-      - name: Run SEO Agent
+      - name: Generate sitemap and check HTML
         run: python agent/run.py
 
-      - name: Commit GSC Daily Report + sitemap and robots if changed
+      - name: Commit sitemap and robots if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p logs
-          if [ -f "GSC-DAILY-REPORT.md" ]; then git add GSC-DAILY-REPORT.md; fi
-          if [ -f "GSC-DAILY-REPORT.json" ]; then git add GSC-DAILY-REPORT.json; fi
-          if ls logs/gsc_daily_* 1> /dev/null 2>&1; then git add logs/gsc_daily_*; fi
-          git add sitemap.xml colddirect-public-html/sitemap.xml colddirect-public-html/robots.txt
+          git add sitemap.xml robots.txt colddirect-public-html/sitemap.xml
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: daily SEO agent - sitemap + GSC daily report"
+            git commit -m "chore: daily sitemap and robots checks"
             git push
           fi

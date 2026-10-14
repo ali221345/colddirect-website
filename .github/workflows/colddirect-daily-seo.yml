@@ -1,37 +1,41 @@
 name: ColdDirect Daily SEO
 on:
   schedule:
-    - cron: '0 5 * * *'  # 6am London
+    - cron: '0 5 * * *'  # 06:00 BST / 05:00 GMT
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: colddirect-production
+  cancel-in-progress: false
+
 jobs:
   seo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Install deps
         run: npm install googleapis
-      - name: Install python for FTP
-        run: python3 -c "import ftplib"
       - name: Run daily SEO update
         env:
+          COLD_SEO_PREPARE_ONLY: "1"
           GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
           GSC_SITE_URL: https://www.colddirect.co.uk/
-          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
-          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
-          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
-          COLD_FTP_PATH: /httpdocs
         run: node scripts/daily-seo-update.js
-      - name: Commit reports
+      - name: Package non-sensitive preparation status
         run: |
-          git config user.name "seo-bot"
-          git config user.email "bot@colddirect.co.uk"
-          git add seo-audit/ || true
-          git add colddirect-public-html/web.config || true
-          git add colddirect-public-html/blog/ || true
-          git diff --staged --quiet || git commit -m "daily seo $(date +%Y-%m-%d)"
-          git push || true
+          mkdir -p seo-output
+          git diff --name-only -- colddirect-public-html/ > seo-output/proposed-files.txt
+          echo "Prepared only. No site deployment or indexing submission. Analytics and patch contents are deliberately not uploaded to this public repository. Regenerate and review candidate changes with appropriate private data access; reconcile root/directory copies before promotion." > seo-output/STATUS.txt
+      - name: Retain non-sensitive status for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: colddirect-seo-review-${{ github.run_id }}
+          path: seo-output/
+          if-no-files-found: error
+          retention-days: 30
