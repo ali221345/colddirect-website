@@ -19,7 +19,7 @@ body{background:#ffffff;color:#0a2540}
 .topbar,.cta-band,.site-footer,.sticky-cta{background:#f1f7ff !important;color:#0a2540 !important}
 .topbar a,.cta-band a,.cta-band h2,.cta-band p,.site-footer a,.site-footer h3,.legal{color:#0a2540 !important}
 </style>
-  <link rel="stylesheet" href="css/styles.css?v=navwrap2">
+  <link rel="stylesheet" href="/css/styles.css?v=navwrap2">
   <link rel="stylesheet" href="/assets/slider.css?v=sliderbright1">
   <script type="application/ld+json">
 {
@@ -333,7 +333,7 @@ body{background:#ffffff;color:#0a2540}
     <a href="tel:08001123427">0800 112 3427</a>
     <a href="tel:+442039524822">0203 952 4822</a>
   </div>
-  <script src="js/main.js"></script>
+  <script src="/js/main.js"></script>
   <script src="/assets/booking.js?v=20260912c"></script>
   <script src="/assets/slider.js"></script>
 </body>
