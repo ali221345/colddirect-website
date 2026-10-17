@@ -17,12 +17,15 @@ from googleapiclient.errors import HttpError
 
 SITE = "https://www.colddirect.co.uk/"
 URLS = [
-    "https://www.colddirect.co.uk/fridge-repair-london/",
-    "https://www.colddirect.co.uk/freezer-repair-london/",
-    "https://www.colddirect.co.uk/ice-cream-machine-repair-london/",
+    "https://www.colddirect.co.uk/chiller-repairs-london/",
+    "https://www.colddirect.co.uk/chiller-repair-london/",
     "https://www.colddirect.co.uk/blog/different-types-of-ice",
-    "https://www.colddirect.co.uk/blog/prevent-commercial-fridge-breakdown/",
-    "https://www.colddirect.co.uk/blog/commercial-freezer-temperature-guide/",
+    "https://www.colddirect.co.uk/blog/types-of-cold-storage",
+    "https://www.colddirect.co.uk/freezer-room-repair-london/",
+    "https://www.colddirect.co.uk/cold-room-repair-london/",
+    "https://www.colddirect.co.uk/ice-machine-repair-london/",
+    "https://www.colddirect.co.uk/foster-fridge-repair-london/",
+    "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
 ]
 KEY_CANDIDATES = [
     Path(r"C:\Users\khora\gsc-oauth.json"),

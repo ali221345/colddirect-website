@@ -281,7 +281,7 @@ body{background:#ffffff;color:#0a2540}
 <h2>Commercial Refrigeration Repair London - 24/7 Emergency</h2>
 <ul>
 <li><a href="cold-room-repair-london.html">Cold Room Repair London</a> - 1hr response</li>
-<li><a href="freezer-room-repair-london.html">Freezer Room Repair London</a></li>
+<li><a href="/freezer-room-repair-london/">Freezer Room Repair London - 24/7 emergency callout</a></li>
 <li><a href="commercial-fridge-repair-london.html">Commercial Fridge Repair London</a></li>
 <li><a href="walk-in-fridge-repair-london.html">Walk-in Fridge Repair London</a></li>
 <li><a href="ice-machine-repair-london.html">Ice Machine Repair London</a></li>
