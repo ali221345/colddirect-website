@@ -1,0 +1,30 @@
+---
+description: Core operating instructions, memory rules, bilingual reporting (FA/EN), and anti-regression guards for the Cold Direct multi-workflow autonomous SEO agent.
+alwaysApply: true
+---
+
+# Cold Direct Autonomous Multi-Workflow Agent Rules
+
+## 1. Persistent Memory & Mistake Prevention (Tasks 1 & 9)
+- **Read Memory First**: Before making any edits, read `docs/ai-memory/MISTAKES_AND_LESSONS.md`, `docs/ai-memory/PROJECT_STATE.md`, `docs/ai-memory/WORK_LOG.md`, and `protected-pages.json`.
+- **Update Memory After Every Task**: Log all completed work, architectural decisions, and lessons learned into `docs/ai-memory/` and the user's persistent store (`C:\Users\khora\AppData\Local\Cursor\AgentStores\cursor_agent_stores\u420035230\files\colddirect-memory.md`).
+- **Never Repeat Past Mistakes**:
+  - **Root is Production**: `.github/workflows/deploy.yml` deploys the **repository root** (`./`) to WHUK Plesk `/httpdocs/` and excludes `colddirect-public-html/**`. Always edit the root `<slug>.html` AND `<slug>/index.html`, then sync to `colddirect-public-html/`.
+  - **Protected Pages**: Never overwrite `coverage`, `commercial-fridge-repair-london`, or `fridge-repair-london` without running `python agent/scripts/protect_fixed_pages.py check` and updating `protected-pages.json` if intentional.
+  - **Clean Canonicals Only**: Every indexable page must have a self-referencing `https://www.colddirect.co.uk/<slug>/` canonical (never `.asp` or non-slash URLs when the slash route is canonical).
+  - **Unmasked Phone Numbers**: Never use masked phone numbers (`+447****9320`); always use `tel:+447983759320`, `tel:08001123427`, and `tel:+442039524822`.
+  - **Commercial Only**: Cold Direct repairs commercial refrigeration only (no domestic/household appliances).
+  - **Plain FTP on Plesk**: WHUK Plesk FTP (`5.77.41.163`) times out on `FTP_TLS` `conn.unwrap()`. Always use plain `ftplib.FTP()` or `security: loose` in `SamKirkland/FTP-Deploy-Action`.
+
+## 2. Multi-Agent & Tool Orchestration (Task 2 & 6)
+- Proactively use all available MCP tools (`user-google-search-console`, `gh` CLI, and specialized subagents in `.cursor/agents/` such as `auto-auditor`, `seo-writer`, `internal-linker`, `gsc-daily-report`, `protect-fixed-pages`, `indexer`).
+- The owner has granted full standing permission to connect to GitHub (`ali221345/colddirect-website`), Google Search Console (`https://www.colddirect.co.uk/`), and WHUK Plesk FTP for automated SEO improvements, backups, and deployments.
+
+## 3. Page-One Google SEO Strategy (Task 3)
+- Focus on moving all commercial refrigeration keywords in London to Page 1 (positions 1–10):
+  - `cold room repair london`, `commercial fridge repair london`, `commercial freezer repair london`, `fridge repair london`, `freezer repair london`, `freezer room repair london`, `commercial appliances repair london`, `chiller repair london`, `ice machine repair london`.
+- Respect safety cooldowns: max 1 title rewrite per 7 days per page; never stuff keywords; always validate JSON-LD (`npm test`) before pushing.
+
+## 4. Bilingual Reporting (Persian + English) & Mobile Delivery (Tasks 5, 7, 8)
+- Always provide work summaries and daily SEO reports in **both Persian (فارسی) and English**.
+- Automated workflows generate bilingual reports (`seo-audit/daily-report-YYYY-MM-DD-fa-en.md`) and push them to mobile notification channels (ntfy / Telegram / WhatsApp / GitHub Mobile Issues) so the owner can monitor and interact from their phone at any time.

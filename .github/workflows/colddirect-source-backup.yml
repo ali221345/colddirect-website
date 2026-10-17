@@ -1,13 +1,14 @@
 name: ColdDirect Source Backup
 
 on:
-  # Check daily and run an archive every 48 hours from the first scheduled slot.
+  # Check daily and run an archive + Plesk live snapshot + update every 48 hours from the first scheduled slot.
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
 
 jobs:
   source-backup:
@@ -42,22 +43,55 @@ jobs:
       - name: Check out site source
         if: steps.cadence.outputs.run == 'true'
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
-      - name: Create source archive
+      - name: Set up Python 3.12
+        if: steps.cadence.outputs.run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Snapshot live WHUK Plesk files via FTP
+        if: steps.cadence.outputs.run == 'true'
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
+          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
+          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
+          COLD_FTP_PATH: /httpdocs
+        run: python tools/backup_plesk_live.py
+
+      - name: Create full source + live Plesk backup archive
         if: steps.cadence.outputs.run == 'true'
         shell: bash
         run: |
           mkdir -p backup-output
-          git archive --format=tar.gz --output="backup-output/coldirect-source-${GITHUB_SHA}.tar.gz" HEAD
+          git archive --format=tar.gz --output="backup-output/colddirect-source-${GITHUB_SHA}.tar.gz" HEAD
+          if [ -d "backup-output/plesk-live-httpdocs" ]; then
+            tar -czf "backup-output/colddirect-plesk-live-${GITHUB_SHA}.tar.gz" -C backup-output plesk-live-httpdocs
+          fi
 
-      - name: Store backup artifact for 30 days
+      - name: Store backup artifact for 90 days
         if: steps.cadence.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: colddirect-source-backup-${{ github.run_id }}
-          path: backup-output/coldirect-source-${{ github.sha }}.tar.gz
+          name: colddirect-48h-backup-${{ github.run_id }}
+          path: |
+            backup-output/colddirect-source-${{ github.sha }}.tar.gz
+            backup-output/colddirect-plesk-live-${{ github.sha }}.tar.gz
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
+
+      - name: Send 48-hour backup notification to mobile (FA + EN)
+        if: steps.cadence.outputs.run == 'true'
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
+        run: |
+          python -c "import urllib.request, os, datetime; t=os.environ.get('NTFY_TOPIC','colddirect-seo-khora-8492'); msg='✅ بکاپ ۴۸ ساعته سایت ColdDirect (گیت + سرور پلسک) با موفقیت ذخیره شد.\n🇬🇧 48-Hour Full Site & Plesk Live Backup completed successfully.'; req=urllib.request.Request('https://ntfy.sh/'+t, data=msg.encode('utf-8'), headers={'Title':'ColdDirect 48h Backup OK','Tags':'package,white_check_mark'}, method='POST'); urllib.request.urlopen(req, timeout=15)" || true
 
       - name: Report skipped daily check
         if: steps.cadence.outputs.run != 'true'

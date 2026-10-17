@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: colddirect-daily-seo
@@ -55,6 +56,14 @@ jobs:
           GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
         run: python tools/daily_auto_seo.py
 
+      - name: Generate bilingual (Persian + English) report & push to mobile
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WHATSAPP_WEBHOOK_URL: ${{ secrets.WHATSAPP_WEBHOOK_URL }}
+        run: python tools/send_bilingual_report.py
+
       - name: Validate JSON-LD, assets & protected pages
         run: |
           npm test
@@ -68,7 +77,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No repository changes to commit today."
           else
-            git commit -m "chore(seo): automatic daily GSC fixes, internal links, and sitemap sync"
+            git commit -m "chore(seo): automatic daily GSC fixes, internal links, bilingual report & sitemap sync"
             git pull --rebase origin main
             git push origin main
           fi
@@ -125,6 +134,20 @@ jobs:
       - name: Verify critical production pages
         run: python tools/verify-production-pages.py
 
+      - name: Publish bilingual report to GitHub Mobile Issue thread
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUM=$(gh issue list --repo "${{ github.repository }}" --search "گزارش روزانه سئو و وضعیت سایت Cold Direct in:title" --state open --json number --jq '.[0].number')
+          if [ -z "$ISSUE_NUM" ] || [ "$ISSUE_NUM" = "null" ]; then
+            gh issue create --repo "${{ github.repository }}" \
+              --title "📱 گزارش روزانه سئو و وضعیت سایت Cold Direct (Mobile SEO Dashboard FA/EN)" \
+              --body-file seo-audit/LATEST-REPORT-FA-EN.md
+          else
+            gh issue edit "$ISSUE_NUM" --repo "${{ github.repository }}" --body-file seo-audit/LATEST-REPORT-FA-EN.md
+            gh issue comment "$ISSUE_NUM" --repo "${{ github.repository }}" --body-file seo-audit/LATEST-REPORT-FA-EN.md
+          fi
+
       - name: Upload seo-audit artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -132,6 +155,7 @@ jobs:
           name: seo-audit-${{ github.run_id }}
           path: |
             seo-audit/daily-report-*.md
+            seo-audit/LATEST-REPORT-FA-EN.md
             seo-audit/daily-positions.csv
             seo-audit/daily-seo-state.json
             seo-audit/daily-auto-seo-last.json
