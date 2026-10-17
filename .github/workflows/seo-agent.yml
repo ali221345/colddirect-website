@@ -2,44 +2,91 @@ name: Daily Sitemap and HTML Checks
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
-concurrency:
-  group: colddirect-production
-  cancel-in-progress: false
-
 jobs:
   seo-agent:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.12'
 
-      - name: Install agent dependencies
-        run: pip install -r agent/requirements.txt
-
-      - name: Generate sitemap and check HTML
+      - name: Run SEO checks and generate sitemap
         run: python agent/run.py
 
-      - name: Commit sitemap and robots if changed
+      - name: Protected pages must pass fingerprint
+        run: python agent/scripts/protect_fixed_pages.py check
+
+      - name: Commit and push sitemap or robots updates
+        id: commit_sitemap
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml robots.txt colddirect-public-html/sitemap.xml
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No sitemap or robots changes to commit."
           else
-            git commit -m "chore: daily sitemap and robots checks"
-            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git commit -m "chore(seo): update sitemap and robots"
+            git pull --rebase origin main
+            git push origin main
           fi
+
+      - name: Protected pages — skip globs if git were stale
+        if: steps.commit_sitemap.outputs.changed == 'true'
+        id: protect
+        run: python agent/scripts/protect_fixed_pages.py github-excludes
+
+      - name: Deploy updated sitemap to WHUK Plesk via FTP
+        if: steps.commit_sitemap.outputs.changed == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /httpdocs/
+          security: loose
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/.env*
+            **/.cursor/**
+            **/colddirect-public-html/**
+            **/preview-colddirect-homepage/**
+            **/plesk-upload/**
+            **/plesk-hero-upload/**
+            **/agent/**
+            **/docs/**
+            **/tools/**
+            **/scripts/**
+            **/seo-audit/**
+            **/reports/**
+            **/logs/**
+            **/*.py
+            **/*.ps1
+            **/*.sh
+            **/*.md
+            **/package*.json
+            ${{ steps.protect.outputs.extra_exclude }}
+
+      - name: Upload SEO report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-report
+          path: agent/reports/seo-report.json

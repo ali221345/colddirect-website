@@ -113,7 +113,7 @@ def _env_file() -> dict[str, str]:
 
 
 def ftp_connect():
-    from ftplib import FTP, FTP_TLS, error_perm
+    from ftplib import FTP
 
     file_env = _env_file()
     host = os.getenv("PLESK_FTP_HOST") or os.getenv("FTP_SERVER") or os.getenv("COLD_FTP_HOST") or file_env.get("PLESK_FTP_HOST") or file_env.get("COLD_FTP_HOST") or ""
@@ -124,17 +124,10 @@ def ftp_connect():
         print("FTP_FAIL missing credentials")
         return None, None
     cfg = {"path": path}
-    try:
-        ftp = FTP_TLS()
-        ftp.connect(host, 21, timeout=60)
-        ftp.login(user, password)
-        ftp.prot_p()
-        ftp.set_pasv(True)
-    except (error_perm, OSError, TimeoutError):
-        ftp = FTP()
-        ftp.connect(host, 21, timeout=60)
-        ftp.login(user, password)
-        ftp.set_pasv(True)
+    ftp = FTP()
+    ftp.connect(host, 21, timeout=60)
+    ftp.login(user, password)
+    ftp.set_pasv(True)
     ftp.cwd(path)
     return ftp, cfg
 

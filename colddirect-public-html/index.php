@@ -19,7 +19,7 @@ body{background:#ffffff;color:#0a2540}
 .topbar,.cta-band,.site-footer,.sticky-cta{background:#f1f7ff !important;color:#0a2540 !important}
 .topbar a,.cta-band a,.cta-band h2,.cta-band p,.site-footer a,.site-footer h3,.legal{color:#0a2540 !important}
 </style>
-  <link rel="stylesheet" href="/css/styles.css?v=sliderbright1">
+  <link rel="stylesheet" href="/css/styles.css?v=navwrap2">
   <link rel="stylesheet" href="/assets/slider.css?v=sliderbright1">
   <script type="application/ld+json">
 {
@@ -282,6 +282,7 @@ body{background:#ffffff;color:#0a2540}
 <ul>
 <li><a href="cold-room-repair-london.html">Cold Room Repair London</a> - 1hr response</li>
 <li><a href="/freezer-room-repair-london/">Freezer Room Repair London - 24/7 emergency callout</a></li>
+<li><a href="/commercial-appliances-repair-london/">Commercial Appliances Repair London</a> - 24/7 trade refrigeration</li>
 <li><a href="commercial-fridge-repair-london.html">Commercial Fridge Repair London</a></li>
 <li><a href="walk-in-fridge-repair-london.html">Walk-in Fridge Repair London</a></li>
 <li><a href="ice-machine-repair-london.html">Ice Machine Repair London</a></li>
@@ -317,11 +318,13 @@ body{background:#ffffff;color:#0a2540}
           <p>
             <a href="/commercial-fridge-repair-london">commercial fridge repair London</a><br>
             <a href="/commercial-freezer-repair-london">commercial freezer repair London</a><br>
+            <a href="/freezer-room-repair-london/">Freezer room repair London</a><br>
+            <a href="/commercial-appliances-repair-london/">Commercial appliances repair London</a><br>
             <a href="/cold-room-repair-north-london">Cold room</a><br>
             <a href="/cellar-cooler-repair-london">Cellar cooler</a>
           </p>
           <p>
-            <a href="/freezer-repair-london/">Freezer Repair London</a> | <a href="/fridge-repair-london/">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london/">Cold Room Repair</a> | <a href="/chiller-repair-london/">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a>
+            <a href="/freezer-repair-london/">Freezer Repair London</a> | <a href="/fridge-repair-london/">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london/">Cold Room Repair</a> | <a href="/freezer-room-repair-london/">Freezer Room Repair London</a> | <a href="/commercial-appliances-repair-london/">Commercial Appliances Repair London</a> | <a href="/chiller-repair-london/">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a>
           </p>
         </div>
       </div>

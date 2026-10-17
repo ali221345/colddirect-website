@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-17",
+  "fixed_canonicals": [],
+  "unindexed_priority_urls": [
+    "https://www.colddirect.co.uk/blog/different-types-of-ice/",
+    "https://www.colddirect.co.uk/blog/types-of-cold-storage/",
+    "https://www.colddirect.co.uk/blog/why-commercial-freezer-icing-up/",
+    "https://www.colddirect.co.uk/chiller-repairs-london/",
+    "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
+    "https://www.colddirect.co.uk/freezer-room-repair-london/"
+  ],
+  "links_injected": [
+    "blog/different-types-of-ice.html -> /commercial-appliances-repair-london/",
+    "blog/commercial-fridge-not-cooling.html -> /chiller-repairs-london/",
+    "blog/commercial-freezer-temperature-guide.html -> /chiller-repairs-london/"
+  ],
+  "twins_synced": 3
+}

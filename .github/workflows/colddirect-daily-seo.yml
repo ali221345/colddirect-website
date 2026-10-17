@@ -1,41 +1,139 @@
 name: ColdDirect Daily SEO
+
 on:
   schedule:
-    - cron: '0 5 * * *'  # 06:00 BST / 05:00 GMT
+    # 05:00 UTC daily (06:00 London BST / 05:00 GMT)
+    - cron: "0 5 * * *"
   workflow_dispatch:
+
 permissions:
-  contents: read
+  contents: write
+
 concurrency:
-  group: colddirect-production
+  group: colddirect-daily-seo
   cancel-in-progress: false
 
 jobs:
-  seo:
+  daily-seo:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
-      - uses: actions/setup-node@v4
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Install deps
-        run: npm install googleapis
-      - name: Run daily SEO update
-        env:
-          COLD_SEO_PREPARE_ONLY: "1"
-          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
-          GSC_SITE_URL: https://www.colddirect.co.uk/
-        run: node scripts/daily-seo-update.js
-      - name: Package non-sensitive preparation status
+          node-version: "20"
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install googleapis & google-auth
         run: |
-          mkdir -p seo-output
-          git diff --name-only -- colddirect-public-html/ > seo-output/proposed-files.txt
-          echo "Prepared only. No site deployment or indexing submission. Analytics and patch contents are deliberately not uploaded to this public repository. Regenerate and review candidate changes with appropriate private data access; reconcile root/directory copies before promotion." > seo-output/STATUS.txt
-      - name: Retain non-sensitive status for review
+          npm install --no-save googleapis@^144.0.0
+          pip install --quiet google-auth requests
+
+      - name: Run daily GSC & SEO audit
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+          GSC_SITE_URL: ${{ vars.GSC_SITE_URL || 'https://www.colddirect.co.uk/' }}
+          COLD_SEO_PREPARE_ONLY: "0"
+          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST || secrets.FTP_SERVER || '5.77.41.163' }}
+          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER || secrets.FTP_USERNAME }}
+          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS || secrets.FTP_PASSWORD }}
+          COLD_FTP_PATH: ${{ vars.COLD_FTP_PATH || '/httpdocs' }}
+        run: node scripts/daily-seo-update.js
+
+      - name: Run daily self-healing internal links, canonicals, sitemaps & GSC indexing
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+        run: python tools/daily_auto_seo.py
+
+      - name: Validate JSON-LD, assets & protected pages
+        run: |
+          npm test
+          python agent/scripts/protect_fixed_pages.py check
+
+      - name: Commit and push daily SEO updates to main
+        run: |
+          git config user.name "ColdDirect Auto SEO Bot"
+          git config user.email "actions@github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No repository changes to commit today."
+          else
+            git commit -m "chore(seo): automatic daily GSC fixes, internal links, and sitemap sync"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      - name: Protected pages — skip globs if git were stale
+        id: protect
+        run: python agent/scripts/protect_fixed_pages.py github-excludes
+
+      - name: Deploy updated site to WHUK Plesk via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /httpdocs/
+          security: loose
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/.env*
+            **/.cursor/**
+            **/colddirect-public-html/**
+            **/preview-colddirect-homepage/**
+            **/plesk-upload/**
+            **/plesk-hero-upload/**
+            **/agent/**
+            **/docs/**
+            **/tools/**
+            **/scripts/**
+            **/seo-audit/**
+            **/reports/**
+            **/logs/**
+            **/*.py
+            **/*.ps1
+            **/*.sh
+            **/*.md
+            **/package*.json
+            ${{ steps.protect.outputs.extra_exclude }}
+
+      - name: Re-assert protected pages on live if needed
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
+          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
+          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
+          COLD_FTP_PATH: ${{ secrets.COLD_FTP_PATH }}
+        run: python agent/scripts/protect_fixed_pages.py restore-live
+
+      - name: Verify critical production pages
+        run: python tools/verify-production-pages.py
+
+      - name: Upload seo-audit artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: colddirect-seo-review-${{ github.run_id }}
-          path: seo-output/
-          if-no-files-found: error
+          name: seo-audit-${{ github.run_id }}
+          path: |
+            seo-audit/daily-report-*.md
+            seo-audit/daily-positions.csv
+            seo-audit/daily-seo-state.json
+            seo-audit/daily-auto-seo-last.json
+            seo-audit/cron.log
           retention-days: 30

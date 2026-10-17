@@ -1,89 +1,122 @@
 #!/usr/bin/env python3
-"""Request Google URL update notifications after a content pass.
-
-Uses Indexing API (urlNotifications:publish) plus Search Console URL Inspection.
-Auth: GOOGLE_APPLICATION_CREDENTIALS or C:\\Users\\khora\\gsc-oauth.json
 """
-from __future__ import annotations
-
+Inspect & Request Google Search Console Indexing + Sitemap Submission for Cold Direct.
+Supports both GitHub Actions (GSC_CREDENTIALS_JSON env var) and local service account key files.
+"""
 import json
 import os
-import sys
 from pathlib import Path
-
 from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from google.auth.transport.requests import AuthorizedSession
 
-SITE = "https://www.colddirect.co.uk/"
-URLS = [
-    "https://www.colddirect.co.uk/chiller-repairs-london/",
-    "https://www.colddirect.co.uk/chiller-repair-london/",
-    "https://www.colddirect.co.uk/blog/different-types-of-ice",
-    "https://www.colddirect.co.uk/blog/types-of-cold-storage",
-    "https://www.colddirect.co.uk/freezer-room-repair-london/",
-    "https://www.colddirect.co.uk/cold-room-repair-london/",
-    "https://www.colddirect.co.uk/ice-machine-repair-london/",
-    "https://www.colddirect.co.uk/foster-fridge-repair-london/",
-    "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
-]
-KEY_CANDIDATES = [
-    Path(r"C:\Users\khora\gsc-oauth.json"),
-    Path(__file__).resolve().parents[1] / "gsc-key.json",
-]
+ROOT = Path(__file__).resolve().parents[1]
+
 SCOPES = [
     "https://www.googleapis.com/auth/webmasters",
     "https://www.googleapis.com/auth/indexing",
 ]
 
+SITE_URL = "https://www.colddirect.co.uk/"
 
-def credentials():
-    env = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    paths = [Path(env)] if env else []
-    paths.extend(KEY_CANDIDATES)
-    for p in paths:
-        if p and p.is_file():
-            return service_account.Credentials.from_service_account_file(str(p), scopes=SCOPES)
-    raise SystemExit("No GSC key. Set GOOGLE_APPLICATION_CREDENTIALS or place gsc-oauth.json")
+DEFAULT_URLS = [
+    "https://www.colddirect.co.uk/",
+    "https://www.colddirect.co.uk/services/",
+    "https://www.colddirect.co.uk/freezer-room-repair-london/",
+    "https://www.colddirect.co.uk/commercial-appliances-repair-london/",
+    "https://www.colddirect.co.uk/chiller-repairs-london/",
+    "https://www.colddirect.co.uk/chiller-repair-london/",
+    "https://www.colddirect.co.uk/cold-room-repair-london/",
+    "https://www.colddirect.co.uk/commercial-fridge-repair-london/",
+    "https://www.colddirect.co.uk/commercial-freezer-repair-london/",
+    "https://www.colddirect.co.uk/catering-repair-london/",
+    "https://www.colddirect.co.uk/appliances-repair-london/",
+    "https://www.colddirect.co.uk/blog/different-types-of-ice/",
+    "https://www.colddirect.co.uk/blog/types-of-cold-storage/",
+    "https://www.colddirect.co.uk/blog/why-commercial-freezer-icing-up/",
+    "https://www.colddirect.co.uk/blog/cold-room-temperature-fluctuation/",
+    "https://www.colddirect.co.uk/blog/commercial-fridge-not-cooling/",
+]
 
 
-def main() -> int:
-    creds = credentials()
-    indexing = build("indexing", "v3", credentials=creds, cache_discovery=False)
-    gsc = build("searchconsole", "v1", credentials=creds, cache_discovery=False)
-    try:
-        gsc.sitemaps().submit(siteUrl=SITE, feedpath=SITE + "sitemap.xml").execute()
-        print("sitemap_submit_ok")
-    except HttpError as e:
-        print("sitemap_submit_error", e.resp.status, e.content.decode("utf-8", "replace")[:400])
-    ok = True
-    for url in URLS:
-        print("URL", url)
+def get_credentials():
+    raw_json = os.environ.get("GSC_CREDENTIALS_JSON", "").strip()
+    if raw_json:
+        info = json.loads(raw_json)
+        return service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
+
+    key_candidates = [
+        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", ""),
+        r"C:\Users\khora\gsc-oauth.json",
+        str(ROOT / "gsc-key.json"),
+        str(ROOT / "credentials.json"),
+        str(ROOT / "seo-audit" / "gsc-key.json"),
+    ]
+    for candidate in key_candidates:
+        if candidate and os.path.exists(candidate):
+            return service_account.Credentials.from_service_account_file(candidate, scopes=SCOPES)
+
+    raise FileNotFoundError(
+        "No GSC credentials found in GSC_CREDENTIALS_JSON env var or local key files."
+    )
+
+
+def run_indexing(extra_urls=None):
+    creds = get_credentials()
+    session = AuthorizedSession(creds)
+
+    # 1. Submit sitemap.xml in GSC
+    sitemap_endpoint = (
+        "https://www.googleapis.com/webmasters/v3/sites/"
+        "https%3A%2F%2Fwww.colddirect.co.uk%2F/sitemaps/"
+        "https%3A%2F%2Fwww.colddirect.co.uk%2Fsitemap.xml"
+    )
+    sm_res = session.put(sitemap_endpoint)
+    print(f"[SITEMAP SUBMIT] status={sm_res.status_code}")
+
+    urls = list(dict.fromkeys(DEFAULT_URLS + (extra_urls or [])))
+    results = []
+
+    # 2. Inspect URLs via Search Console URL Inspection API + Indexing API
+    inspect_endpoint = "https://searchconsole.googleapis.com/v1/urlInspection/index:inspect"
+    indexing_endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish"
+
+    for u in urls:
+        verdict = "UNKNOWN"
+        coverage = "UNKNOWN"
         try:
-            notify = indexing.urlNotifications().publish(
-                body={"url": url, "type": "URL_UPDATED"}
-            ).execute()
-            print("indexing_notify", json.dumps(notify, indent=2))
-        except HttpError as e:
-            ok = False
-            print("indexing_notify_error", e.resp.status, e.content.decode("utf-8", "replace")[:800])
-        try:
-            inspect = gsc.urlInspection().index().inspect(
-                body={"inspectionUrl": url, "siteUrl": SITE}
-            ).execute()
-            status = inspect.get("inspectionResult", {}).get("indexStatusResult", {})
-            print(
-                "inspect",
-                status.get("coverageState"),
-                status.get("lastCrawlTime"),
-                status.get("googleCanonical"),
-                status.get("userCanonical"),
+            r = session.post(
+                inspect_endpoint,
+                json={"inspectionUrl": u, "siteUrl": SITE_URL},
+                timeout=30,
             )
-        except HttpError as e:
-            ok = False
-            print("inspect_error", e.resp.status, e.content.decode("utf-8", "replace")[:800])
-    return 0 if ok else 1
+            if r.status_code == 200:
+                idx = r.json().get("inspectionResult", {}).get("indexStatusResult", {})
+                verdict = idx.get("verdict", "UNKNOWN")
+                coverage = idx.get("coverageState", "UNKNOWN")
+                print(f"[INSPECT 200] {u} -> verdict={verdict} | state={coverage}")
+            else:
+                print(f"[INSPECT {r.status_code}] {u}")
+        except Exception as exc:
+            print(f"[INSPECT ERR] {u} -> {exc}")
+
+        try:
+            r2 = session.post(
+                indexing_endpoint,
+                json={"url": u, "type": "URL_UPDATED"},
+                timeout=20,
+            )
+            print(f"[INDEXING API {r2.status_code}] {u}")
+        except Exception as exc:
+            print(f"[INDEXING ERR] {u} -> {exc}")
+
+        results.append({"url": u, "verdict": verdict, "coverageState": coverage})
+
+    return results
+
+
+def main():
+    run_indexing()
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

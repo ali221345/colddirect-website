@@ -33,13 +33,15 @@ const HOMEPAGE_H1_DAYS = 30;
 const FRIDGE_FREEZER_H1_UNTIL = "2026-09-28";
 
 const PRIORITY_QUERIES = [
-  { query: "fridge repair london", baseline: 21.6, file: "fridge-repair-london.html", href: "/fridge-repair-london.html", anchor: "fridge repair london" },
-  { query: "freezer repair london", baseline: 29.9, file: "freezer-repair-london.html", href: "/freezer-repair-london.html", anchor: "freezer repair london" },
-  { query: "commercial fridge repair london", baseline: 11.7, file: "commercial-fridge-repair-london.html", href: "/commercial-fridge-repair-london.html", anchor: "commercial fridge repair london" },
-  { query: "cold room repair london", baseline: 4.9, file: "cold-room-repair-london.html", href: "/cold-room-repair-london.html", anchor: "cold room repair london" },
-  { query: "chiller repair near me", baseline: 9.8, file: "chiller-repair-london.html", href: "/chiller-repair-london.html", anchor: "chiller repair near me" },
-  { query: "commercial freezer repair london", baseline: 8.2, file: "commercial-freezer-repair-london.html", href: "/commercial-freezer-repair-london.html", anchor: "commercial freezer repair london" },
-  { query: "ice machine repair london", baseline: null, file: "ice-machine-repair-london.html", href: "/ice-machine-repair-london.html", anchor: "ice machine repair london" },
+  { query: "fridge repair london", baseline: 21.6, file: "fridge-repair-london.html", href: "/fridge-repair-london/", anchor: "fridge repair london" },
+  { query: "freezer repair london", baseline: 29.9, file: "freezer-repair-london.html", href: "/freezer-repair-london/", anchor: "freezer repair london" },
+  { query: "commercial fridge repair london", baseline: 11.7, file: "commercial-fridge-repair-london.html", href: "/commercial-fridge-repair-london/", anchor: "commercial fridge repair london" },
+  { query: "cold room repair london", baseline: 4.9, file: "cold-room-repair-london.html", href: "/cold-room-repair-london/", anchor: "cold room repair london" },
+  { query: "freezer room repair london", baseline: 31.4, file: "freezer-room-repair-london.html", href: "/freezer-room-repair-london/", anchor: "freezer room repair london" },
+  { query: "commercial appliances repair london", baseline: null, file: "commercial-appliances-repair-london.html", href: "/commercial-appliances-repair-london/", anchor: "commercial appliances repair london" },
+  { query: "chiller repair near me", baseline: 9.8, file: "chiller-repair-london.html", href: "/chiller-repair-london/", anchor: "chiller repair near me" },
+  { query: "commercial freezer repair london", baseline: 8.2, file: "commercial-freezer-repair-london.html", href: "/commercial-freezer-repair-london/", anchor: "commercial freezer repair london" },
+  { query: "ice machine repair london", baseline: null, file: "ice-machine-repair-london.html", href: "/ice-machine-repair-london/", anchor: "ice machine repair london" },
 ];
 
 const BLOG_DONORS = [

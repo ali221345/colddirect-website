@@ -1,98 +1,46 @@
+#!/usr/bin/env node
 /**
- * Idempotent homepage internal links for GSC high-click queries.
- * Usage: node scripts/internal_linking.js
- *
- * SEO-safe: fridge/freezer query anchors point at dedicated pages.
- * Only cold-room query anchors point at /cold-room-repairs-london.
+ * Ensures homepage footer links for priority service pages exist in both root and colddirect-public-html.
  */
-const { existsSync, readFileSync, writeFileSync } = require("fs");
-const { join } = require("path");
+const fs = require("fs");
+const path = require("path");
 
-const ROOT = join(__dirname, "..");
-const HOMES = [
-  join(ROOT, "index.html"),
-  join(ROOT, "colddirect-public-html", "index.html"),
-];
+const ROOT = path.join(__dirname, "..");
 
 const LINKS = [
-  {
-    href: "/cold-room-repairs-london",
-    anchor: "cold room repair london",
-    count: 3,
-    note: "Priority #1 — homepage already ranks for this query; pass juice to the winning URL",
-  },
-  {
-    href: "/commercial-fridge-repair-london",
-    anchor: "commercial fridge repair london",
-    count: 1,
-    note: "Dedicated page is not ranking; homepage currently takes the clicks",
-  },
-  {
-    href: "/fridge-repair-london",
-    anchor: "fridge repair london",
-    count: 1,
-    note: "Dedicated page is not ranking; homepage currently takes 29/31 of this query's clicks (GSC 2026-09-23).",
-  },
-  {
-    href: "/freezer-repair-london",
-    anchor: "freezer repair london",
-    count: 1,
-    note: "Homepage takes 6/18 of this query's clicks and 11 leak to /fridge-freezer-repairs-london (GSC 2026-09-23).",
-  },
-  {
-    href: "/commercial-freezer-repair-london",
-    anchor: "commercial freezer repair london",
-    count: 1,
-    note: "Clicks currently go to /commercial-freezer-repair-north-london",
-  },
-  {
-    href: "/freezer-room-repair-london",
-    anchor: "freezer room repair london",
-    count: 1,
-    note: "Low-click (5) but position 31.6 - dedicated page just strengthened (2026-09-25), needs an internal signal boost",
-  },
+  { href: "/freezer-repair-london/", text: "Freezer Repair London" },
+  { href: "/fridge-repair-london/", text: "Fridge Repair London" },
+  { href: "/commercial-freezer-repair-london/", text: "Commercial Freezer Repair London" },
+  { href: "/cold-room-repair-london/", text: "Cold Room Repair" },
+  { href: "/freezer-room-repair-london/", text: "Freezer Room Repair London" },
+  { href: "/commercial-appliances-repair-london/", text: "Commercial Appliances Repair London" },
+  { href: "/chiller-repair-london/", text: "Chiller Repair London" },
+  { href: "/supermarket-fridge-repair-london/", text: "Supermarket Fridge Repair London" },
+  { href: "/air-conditioning-repair-london/", text: "Air Conditioning Repair London" }
 ];
 
-function countExact(html, href, anchor) {
-  const re = new RegExp(
-    `<a[^>]*href=["']${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[/]?["'][^>]*>\\s*${anchor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*</a>`,
-    "gi"
-  );
-  return (html.match(re) || []).length;
-}
+const TARGET_FILES = [
+  path.join(ROOT, "index.html"),
+  path.join(ROOT, "index.php"),
+  path.join(ROOT, "colddirect-public-html", "index.html"),
+  path.join(ROOT, "colddirect-public-html", "index.php")
+];
 
-function insertFooterLink(html, href, anchor) {
-  const needle = '<h3>Services</h3>';
-  const block = `<h3>Services</h3>\n          <p>\n            <a href="${href}">${anchor}</a><br>`;
-  if (!html.includes(needle)) return html;
-  if (countExact(html, href, anchor) > 0) return html;
-  return html.replace(needle, block);
-}
+const line = LINKS.map((l) => `<a href="${l.href}">${l.text}</a>`).join(" | ");
+let updatedCount = 0;
 
-function main() {
-  for (const file of HOMES) {
-    if (!existsSync(file)) {
-      console.log("skip missing", file);
-      continue;
-    }
-    let html = readFileSync(file, "utf8");
-    let changed = false;
-    for (const link of LINKS) {
-      let n = countExact(html, link.href, link.anchor);
-      while (n < link.count) {
-        const before = html;
-        html = insertFooterLink(html, link.href, link.anchor);
-        if (html === before) break;
-        changed = true;
-        n = countExact(html, link.href, link.anchor);
-      }
-      console.log(`${file}: ${n}/${link.count} "${link.anchor}" -> ${link.href}`);
-    }
-    if (changed) {
-      writeFileSync(file, html, "utf8");
-      console.log("updated", file);
-    }
+for (const filePath of TARGET_FILES) {
+  if (!fs.existsSync(filePath)) continue;
+  const orig = fs.readFileSync(filePath, "utf8");
+  let html = orig;
+  const re = /<p>\s*<a href="\/freezer-repair-london\/?"[\s\S]*?<\/p>/i;
+  if (re.test(html)) {
+    html = html.replace(re, `<p>\n            ${line}\n          </p>`);
+  }
+  if (html !== orig) {
+    fs.writeFileSync(filePath, html, "utf8");
+    updatedCount++;
   }
 }
 
-main();
+console.log(updatedCount ? `internal_linking: updated ${updatedCount} file(s)` : "internal_linking: already present");

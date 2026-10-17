@@ -4,6 +4,8 @@
     <li><a href="/commercial-fridge-repair-london/">Commercial fridge repair London</a></li>
     <li><a href="/commercial-freezer-repair-london/">Commercial freezer repair London</a></li>
     <li><a href="/cold-room-repair-london/">Cold room repair London</a></li>
+    <li><a href="/freezer-room-repair-london/">Freezer room repair London</a></li>
+    <li><a href="/commercial-appliances-repair-london/">Commercial appliances repair London</a></li>
     <li><a href="/ice-machine-repair-london/">Ice machine repair London</a></li>
     <li><a href="/chiller-repair-london/">Chiller repair London</a></li>
     <li><a href="/air-conditioning-repair-london/">Air conditioning repair London</a></li>

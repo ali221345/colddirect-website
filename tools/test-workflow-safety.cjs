@@ -10,10 +10,10 @@ assert.ok(entry > 0, 'Expected CLI entry point');
 async function scenario(prepare) {
   const root = '/offline';
   const files = new Map([
-    [root + '/colddirect-public-html/blog/why-commercial-fridge-not-cold-enough.html', '<article><p>Useful original advice.</p></article>'],
-    [root + '/seo-audit/daily-seo-state.json', JSON.stringify({ titleRewrites: {}, queryHistory: {}, linksAdded: {} })],
+    [path.join(root, 'colddirect-public-html', 'blog', 'why-commercial-fridge-not-cold-enough.html'), '<article><p>Useful original advice.</p></article>'],
+    [path.join(root, 'seo-audit', 'daily-seo-state.json'), JSON.stringify({ titleRewrites: {}, queryHistory: {}, linksAdded: {} })],
   ]);
-  const originalState = files.get(root + '/seo-audit/daily-seo-state.json');
+  const originalState = files.get(path.join(root, 'seo-audit', 'daily-seo-state.json'));
   const writes = [];
   let submissions = 0, uploads = 0;
   const fakeFs = {
@@ -54,19 +54,19 @@ async function scenario(prepare) {
     await context.run();
     assert.equal(uploads, 0, 'Prepare mode must not call FTP');
     assert.equal(submissions, 0, 'Prepare mode must not submit sitemap');
-    assert.equal(files.get(root + '/seo-audit/daily-seo-state.json'), originalState);
-    assert.ok(!writes.includes(root + '/seo-audit/daily-seo-state.json'), 'Applied state must not be saved');
+    assert.equal(files.get(path.join(root, 'seo-audit', 'daily-seo-state.json')), originalState);
+    assert.ok(!writes.includes(path.join(root, 'seo-audit', 'daily-seo-state.json')), 'Applied state must not be saved');
     const reports = [...files.entries()].filter(([p]) => /daily-report-.*\.md$/.test(p));
     assert.equal(reports.length, 1, 'Prepare mode generates a report');
     assert.match(reports[0][1], /Proposed changes \(not published\)/);
     assert.match(reports[0][1], /mid-pack link:/, 'Fixture actually proposes a content change');
     assert.match(reports[0][1], /sitemap submission skipped/);
-    assert.match(files.get(root + '/colddirect-public-html/blog/why-commercial-fridge-not-cold-enough.html'), /data-daily-seo=/);
+    assert.match(files.get(path.join(root, 'colddirect-public-html', 'blog', 'why-commercial-fridge-not-cold-enough.html')), /data-daily-seo=/);
   } else {
     await assert.rejects(context.run(), /FTP publication failed/);
     assert.equal(uploads, 1, 'Publishing attempted FTP and detected failure');
     assert.equal(submissions, 1, 'Fixture exercises sitemap submission branch');
-    assert.ok(!writes.includes(root + '/seo-audit/daily-seo-state.json'), 'Failed publication must not advance state');
+    assert.ok(!writes.includes(path.join(root, 'seo-audit', 'daily-seo-state.json')), 'Failed publication must not advance state');
     assert.ok(!writes.some(p => /daily-report-.*\.md$/.test(p)), 'Failed publication must not write a success report');
   }
 }
