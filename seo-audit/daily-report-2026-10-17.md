@@ -34,11 +34,10 @@ Window: 2026-10-10 to 2026-10-16 (Europe/London). Account: github-seo-bot@colddi
 ## Sitemap
 - Live HTTP: 200
 - `<loc>` count: 119 (expect ~115)
-- GSC: {"type":"web","submitted":"117","indexed":"0"}
+- GSC: {"type":"web","submitted":"119","indexed":"0"}
 
 ## What changed
-- mid-pack link: blog/different-types-of-ice.html -> /fridge-repair-london/ (fridge repair london pos 11.8)
-- mid-pack link: blog/different-types-of-ice.html -> /chiller-repair-london/ (chiller repair near me pos 12.0)
+- No title, link, or 404 changes today (guards held).
 
 ## Alerts
 - None

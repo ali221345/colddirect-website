@@ -19,9 +19,9 @@
 | `ice machine repair london` (تعمیر یخ‌ساز لندن) | **—** | 0 | 0 | 0.0% | ⏳ Indexing |
 
 ### ۲. کارهای انجام‌شده خودکار امروز (Automated Actions Today)
-- **همگام‌سازی فایل‌های سایت (Twins Synced):** `1` فایل بین ریشه سایت و پوشه‌های داخلی هماهنگ شد.
+- **همگام‌سازی فایل‌های سایت (Twins Synced):** `0` فایل بین ریشه سایت و پوشه‌های داخلی هماهنگ شد.
 - **اصلاح تگ‌های کنونیکال (Canonical Fixes):** `0` مورد (همه صفحات استاندارد و بدون خطا هستند).
-- **لینک‌سازی داخلی جدید (Internal Links Injected):** `1` لینک جدید (blog/different-types-of-ice.html -> /chiller-repairs-london/).
+- **لینک‌سازی داخلی جدید (Internal Links Injected):** `0` لینک جدید (لینک‌های قبلی فعال و برقرار هستند).
 - **صفحات در صف ایندکس گوگل (GSC Priority Queue):** `6` صفحه بررسی و به گوگل معرفی شد.
 - **وضعیت دیپلوی روی سرور WHUK Plesk و بکاپ ۴۸ ساعته:** فعال و بدون خطا (✅).
 
@@ -30,9 +30,9 @@
 ## 🇬🇧 Part 2: English Technical Report
 
 ### 1. Automated Self-Healing Summary
-- **Twin Files Synchronized:** `1`
+- **Twin Files Synchronized:** `0`
 - **Canonical Fixes Applied:** `0` (0 regressions detected)
-- **Internal Links Injected:** `1` (blog/different-types-of-ice.html -> /chiller-repairs-london/)
+- **Internal Links Injected:** `0` (All priority links verified active)
 - **URLs Inspected & Pinged for Indexing:** `6` priority URLs monitored
 
 ### 2. Full GSC Daily Report Output
@@ -72,11 +72,10 @@ Window: 2026-10-10 to 2026-10-16 (Europe/London). Account: github-seo-bot@colddi
 ## Sitemap
 - Live HTTP: 200
 - `<loc>` count: 119 (expect ~115)
-- GSC: {"type":"web","submitted":"117","indexed":"0"}
+- GSC: {"type":"web","submitted":"119","indexed":"0"}
 
 ## What changed
-- mid-pack link: blog/different-types-of-ice.html -> /fridge-repair-london/ (fridge repair london pos 11.8)
-- mid-pack link: blog/different-types-of-ice.html -> /chiller-repair-london/ (chiller repair near me pos 12.0)
+- No title, link, or 404 changes today (guards held).
 
 ## Alerts
 - None
