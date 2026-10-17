@@ -234,3 +234,12 @@
 [2026-10-14T09:55:48.410Z] SITEMAP_GSC [{"type":"web","submitted":"112","indexed":"0"}]
 [2026-10-14T09:55:48.411Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-10-14.md
 [2026-10-14T09:55:48.412Z] DONE changes=0 alerts=0
+[2026-10-17T14:25:47.337Z] START daily-seo-update 2026-10-17 PUBLISH
+[2026-10-17T14:25:47.339Z] GSC window 2026-10-10 .. 2026-10-16
+[2026-10-17T14:25:48.233Z] GSC siteUrl https://www.colddirect.co.uk/ account github-seo-bot@colddirect-live.iam.gserviceaccount.com
+[2026-10-17T14:25:49.795Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-positions.csv
+[2026-10-17T14:26:06.379Z] SITEMAP http=200 locs=119
+[2026-10-17T14:26:06.967Z] SITEMAP_GSC [{"type":"web","submitted":"117","indexed":"0"}]
+[2026-10-17T14:26:08.652Z] FTP_OK UPLOADED blog/different-types-of-ice.html
+[2026-10-17T14:26:08.653Z] WROTE /home/runner/work/colddirect-website/colddirect-website/seo-audit/daily-report-2026-10-17.md
+[2026-10-17T14:26:08.653Z] DONE changes=2 alerts=0
