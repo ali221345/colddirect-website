@@ -202,3 +202,14 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
   4. Upgraded `.github/workflows/colddirect-source-backup.yml` and added `tools/backup_plesk_live.py` to archive both Git source and live WHUK Plesk `/httpdocs` files every 48 hours with 90-day retention and mobile push notification.
   5. Added `tools/send_bilingual_report.py` and integrated it into `.github/workflows/colddirect-daily-seo.yml` to generate Persian + English reports (`seo-audit/LATEST-REPORT-FA-EN.md`), push notifications to mobile (`ntfy.sh/colddirect-seo-khora-8492`, Telegram, WhatsApp), and update a pinned GitHub Mobile Issue dashboard.
 
+## 2026-10-18 — Phase 1 Top-3 Google Ranking Optimization & Cannibalization Cleanup
+- Executed Phase 1 for the 4 near-Top-3 queries (`cold room repair london`, `commercial appliances repair london`, `freezer repair london`, `fridge repair london` / `commercial fridge repair london`):
+  1. **Cannibalization & Redirect Fixes**: Fixed `.htaccess` and `colddirect-public-html/.htaccess` so plural URLs (`/cold-room-repairs-london`, `/commercial-freezer-repairs-london`, `/ice-machine-repairs-london`) 301-redirect directly to their canonical London hubs (`/cold-room-repair-london/`, `/commercial-freezer-repair-london/`, `/ice-machine-repair-london/`) instead of `-north-london.html`. Removed duplicate `/cold-room-repairs-london` from `sitemap.xml` and synced `web.config`.
+  2. **Landing Page Upgrades**:
+     - `/cold-room-repair-london/`: Updated `<title>`, `<meta name="description">`, `<h1>`, FAQ JSON-LD, and added a technical walk-in cold room fault & controller alarm section (`HA`/`Hi`, `P1`/`P2`, Dixell/Carel/Eliwell).
+     - `/commercial-appliances-repair-london/`: Updated `<title>`, `<meta name="description">`, `<h1>`, FAQ JSON-LD, clean slash internal links, and first-visit diagnostic fault breakdown.
+     - `/freezer-repair-london/`: Enhanced meta description, normalized all internal links to trailing-slash canonicals, and added commercial freezer controller alarm codes (`HA`, `P1`, `P2`, `dEF`).
+  3. **Internal Link Equity Consolidation**: Updated `index.html`, `index.php`, `chiller-repairs-london`, `fridge-repair-london.asp`, and `freezer-repair-london.asp` so 100% of internal links point directly to canonical trailing-slash URLs.
+  4. **Validation**: Passed `npm test` (426 files JSON-LD + 221 asset paths) and `protect_fixed_pages.py check` (12/12 protected files).
+
+

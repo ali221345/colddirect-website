@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cold Room Repair London | Same Day 24/7</title>
   <meta name="description" content="Same-day cold room repair London. 24/7 walk-in engineers, 2–4 hour callout for restaurants and shops. Quote first. Call 07983 759320.">
-  <link rel="canonical" href="https://www.colddirect.co.uk/cold-room-repairs-london">
+  <link rel="canonical" href="https://www.colddirect.co.uk/cold-room-repair-london/">
   <style>
     *{box-sizing:border-box} html,body{margin:0;padding:0}
     body{background:#ffffff;color:#111;font-family:Arial,Helvetica,sans-serif;line-height:1.55}

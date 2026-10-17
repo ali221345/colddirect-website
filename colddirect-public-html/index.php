@@ -121,25 +121,25 @@ body{background:#ffffff;color:#0a2540}
           <img src="/images/homepage/commercial-fridge.webp" alt="Walk-in cold room at +3C with refrigeration technician">
           <h3>Commercial fridge repair</h3>
           <p>Prep counters, uprights and under-counter fridges for kitchens and shops.</p>
-          <a class="more" href="/commercial-fridge-repair-london">commercial fridge repair London</a>
+          <a class="more" href="/commercial-fridge-repair-london/">commercial fridge repair London</a>
         </article>
         <article class="card">
           <img src="/images/homepage/commercial-freezer.webp" alt="Walk-in freezer room at -20C with two refrigeration engineers">
           <h3>Commercial freezer repair</h3>
           <p>Chest and upright freezers that must hold legal frozen temperatures.</p>
-          <a class="more" href="/commercial-freezer-repair-london">commercial freezer repair London</a>
+          <a class="more" href="/commercial-freezer-repair-london/">commercial freezer repair London</a>
         </article>
         <article class="card">
           <img src="/images/cold-room-north-london-thumb.webp" alt="Cold room repair North London - walk-in chill room">
           <h3>Cold room repair</h3>
           <p>Walk-in chillers for restaurants, butchers and catering production.</p>
-          <a class="more" href="/cold-room-repair-north-london">Cold room repair →</a>
+          <a class="more" href="/cold-room-repair-london/">Cold room repair London →</a>
         </article>
         <article class="card">
           <img src="/images/freezer-room-north-london-thumb.webp" alt="Freezer room repair North London - walk-in freezer">
           <h3>Freezer room repair</h3>
           <p>Walk-in freezer rooms for wholesale, ice cream and frozen storage.</p>
-          <a class="more" href="/freezer-room-repair-north-london">Freezer room repair →</a>
+          <a class="more" href="/freezer-room-repair-london/">Freezer room repair London →</a>
         </article>
         <article class="card">
           <img src="images/display-cabinets.webp" alt="Display cabinet">
@@ -316,12 +316,12 @@ body{background:#ffffff;color:#0a2540}
         <div>
           <h3>Services</h3>
           <p>
-            <a href="/commercial-fridge-repair-london">commercial fridge repair London</a><br>
-            <a href="/commercial-freezer-repair-london">commercial freezer repair London</a><br>
+            <a href="/commercial-fridge-repair-london/">commercial fridge repair London</a><br>
+            <a href="/commercial-freezer-repair-london/">commercial freezer repair London</a><br>
             <a href="/freezer-room-repair-london/">Freezer room repair London</a><br>
             <a href="/commercial-appliances-repair-london/">Commercial appliances repair London</a><br>
-            <a href="/cold-room-repair-north-london">Cold room</a><br>
-            <a href="/cellar-cooler-repair-london">Cellar cooler</a>
+            <a href="/cold-room-repair-london/">Cold room repair London</a><br>
+            <a href="/cellar-cooler-repair-london/">Cellar cooler</a>
           </p>
           <p>
             <a href="/freezer-repair-london/">Freezer Repair London</a> | <a href="/fridge-repair-london/">Fridge Repair London</a> | <a href="/commercial-freezer-repair-london/">Commercial Freezer Repair London</a> | <a href="/cold-room-repair-london/">Cold Room Repair</a> | <a href="/freezer-room-repair-london/">Freezer Room Repair London</a> | <a href="/commercial-appliances-repair-london/">Commercial Appliances Repair London</a> | <a href="/chiller-repair-london/">Chiller Repair London</a> | <a href="/supermarket-fridge-repair-london/">Supermarket Fridge Repair London</a> | <a href="/air-conditioning-repair-london/">Air Conditioning Repair London</a>

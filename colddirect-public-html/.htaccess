@@ -5,9 +5,13 @@ RewriteBase /
 RewriteRule ^index\.php$ - [L]
 
 # One-hop plural → slash canonical (must sit before generic .html → slash)
+RewriteRule ^cold-room-repairs-london(/|\.html|\.asp)?$ /cold-room-repair-london/ [R=301,L]
 RewriteRule ^fridge-repairs-london(/|\.html|\.asp)?$ /fridge-repair-london/ [R=301,L]
 RewriteRule ^freezer-repairs-london(/|\.html|\.asp)?$ /freezer-repair-london/ [R=301,L]
 RewriteRule ^commercial-fridge-repairs-london(/|\.html|\.asp)?$ /commercial-fridge-repair-london/ [R=301,L]
+RewriteRule ^commercial-freezer-repairs-london(/|\.html|\.asp)?$ /commercial-freezer-repair-london/ [R=301,L]
+RewriteRule ^ice-machine-repairs-london(/|\.html|\.asp)?$ /ice-machine-repair-london/ [R=301,L]
+RewriteRule ^ice-cream-maker-repairs?-london(/|\.html|\.asp)?$ /ice-cream-machine-repair-london/ [R=301,L]
 
 # Indexed .html URLs -> trailing slash (keep google / root index.html)
 RewriteRule ^google[0-9a-z]+\.html$ - [L]
@@ -80,22 +84,22 @@ RewriteRule ^blog/?(.*)$ / [R=301,L]
 
 # --- Old ranking service URLs ---
 # Plural fridge/freezer/commercial-fridge handled at top (one hop to slash).
-RewriteRule ^cold-room-repairs-london/?$ /cold-room-repair-north-london.html [R=301,L]
-RewriteRule ^cold-room-repairs-london\.html$ /cold-room-repair-north-london.html [R=301,L]
-RewriteRule ^commercial-cold-room-repair-london\.html$ /cold-room-repair-north-london.html [R=301,L]
-RewriteRule ^walk-in-cold-room-repair-london/?$ /cold-room-repair-north-london.html [R=301,L]
-RewriteRule ^walk-in-fridge-repairs-london/?$ /cold-room-repair-north-london.html [R=301,L]
-RewriteRule ^freezer-room-repairs-london/?$ /freezer-room-repair-north-london.html [R=301,L]
-RewriteRule ^commercial-freezer-repairs-london/?$ /commercial-freezer-repair-north-london.html [R=301,L]
-RewriteRule ^display-fridge-repairs-london/?$ /display-cabinet-repair-north-london.html [R=301,L]
+RewriteRule ^cold-room-repairs-london/?$ /cold-room-repair-london/ [R=301,L]
+RewriteRule ^cold-room-repairs-london\.html$ /cold-room-repair-london/ [R=301,L]
+RewriteRule ^commercial-cold-room-repair-london\.html$ /cold-room-repair-london/ [R=301,L]
+RewriteRule ^walk-in-cold-room-repair-london/?$ /cold-room-repair-london/ [R=301,L]
+RewriteRule ^walk-in-fridge-repairs-london/?$ /walk-in-fridge-repair-london.html [R=301,L]
+RewriteRule ^freezer-room-repairs-london/?$ /freezer-room-repair-london/ [R=301,L]
+RewriteRule ^commercial-freezer-repairs-london/?$ /commercial-freezer-repair-london/ [R=301,L]
+RewriteRule ^display-fridge-repairs-london/?$ /display-fridge-repair-london/ [R=301,L]
 # Serve plural chiller URL (canonical on page → /chiller-repair-london/). Do not 301 to fridge.
-RewriteRule ^chiller-repairs-london\.asp$ /chiller-repair-london/ [R=301,L]
+RewriteRule ^chiller-repairs-london\.asp$ /chiller-repairs-london/ [R=301,L]
 RewriteRule ^catering-repair-london\.asp$ /catering-repair-london/ [R=301,L]
 RewriteRule ^chiller-repairs-london/?$ /chiller-repairs-london.html [L]
-RewriteRule ^ice-machine-repairs-london/?$ /ice-machine-repair-london.html [R=301,L]
-RewriteRule ^wine-cooler-repairs-london/?$ /wine-cooler-repair-london.html [R=301,L]
-RewriteRule ^bottle-cooler-repairs-london/?$ /bottle-cooler-repair-london.html [R=301,L]
-RewriteRule ^cellar-cooler-repairs-london/?$ /cellar-cooler-repair-london.html [R=301,L]
+RewriteRule ^ice-machine-repairs-london/?$ /ice-machine-repair-london/ [R=301,L]
+RewriteRule ^wine-cooler-repairs-london/?$ /wine-cooler-repair-london/ [R=301,L]
+RewriteRule ^bottle-cooler-repairs-london/?$ /bottle-cooler-repair-london/ [R=301,L]
+RewriteRule ^cellar-cooler-repairs-london/?$ /cellar-cooler-repair-london/ [R=301,L]
 # Serve plural AC URL (canonical on page → /air-conditioning-repair-london/). Do not 301 to homepage.
 RewriteRule ^air-conditioning-repairs-london/?$ /air-conditioning-repairs-london.html [L]
 RewriteRule ^air-conditioning-london\.html$ / [R=301,L]

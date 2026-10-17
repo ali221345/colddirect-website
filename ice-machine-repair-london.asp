@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ice Machine Repair London - Same Day 24/7 Emergency | ColdDirect London</title>
   <meta name="description" content="24/7 Same Day Ice Machine Repair London in London. Commercial repair for restaurants, hotels, pubs & takeaways. Call ColdDirect now - 1hr response.">
-  <link rel="canonical" href="https://www.colddirect.co.uk/ice-machine-repair-london.asp">
+  <link rel="canonical" href="https://www.colddirect.co.uk/ice-machine-repair-london/">
   <style>
     *{box-sizing:border-box} html,body{margin:0;padding:0}
     body{background:#ffffff;color:#111;font-family:Arial,Helvetica,sans-serif;line-height:1.55}
