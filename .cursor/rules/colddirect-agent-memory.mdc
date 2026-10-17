@@ -25,6 +25,6 @@ alwaysApply: true
   - `cold room repair london`, `commercial fridge repair london`, `commercial freezer repair london`, `fridge repair london`, `freezer repair london`, `freezer room repair london`, `commercial appliances repair london`, `chiller repair london`, `ice machine repair london`.
 - Respect safety cooldowns: max 1 title rewrite per 7 days per page; never stuff keywords; always validate JSON-LD (`npm test`) before pushing.
 
-## 4. Bilingual Reporting (Persian + English) & Mobile Delivery (Tasks 5, 7, 8)
-- Always provide work summaries and daily SEO reports in **both Persian (فارسی) and English**.
-- Automated workflows generate bilingual reports (`seo-audit/daily-report-YYYY-MM-DD-fa-en.md`) and push them to mobile notification channels (ntfy / Telegram / WhatsApp / GitHub Mobile Issues) so the owner can monitor and interact from their phone at any time.
+## 4. Persian (Farsi) Reporting & Mobile Delivery (Tasks 5, 7, 8)
+- **Always Report in Persian (فارسی)**: Whenever the user asks for a report or work summary (even if the user asks in English, e.g., "Can I have a report?"), ALWAYS write and send the report in **Persian (فارسی)**.
+- Automated workflows generate reports (`seo-audit/daily-report-YYYY-MM-DD-fa-en.md`) and push them to mobile notification channels (ntfy / Telegram / WhatsApp / GitHub Mobile Issues) in Persian so the owner can monitor and interact from their phone at any time.
