@@ -212,4 +212,15 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
   3. **Internal Link Equity Consolidation**: Updated `index.html`, `index.php`, `chiller-repairs-london`, `fridge-repair-london.asp`, and `freezer-repair-london.asp` so 100% of internal links point directly to canonical trailing-slash URLs.
   4. **Validation**: Passed `npm test` (426 files JSON-LD + 221 asset paths) and `protect_fixed_pages.py check` (12/12 protected files).
 
+## 2026-10-18 — Phase 2 Brand Pages, Blog Link Equity & One-Hop Redirect Architecture
+- Executed Phase 2 to consolidate brand/blog authority and eliminate multi-hop redirects discovered in live GSC 28-day page analytics:
+  1. **Critical Bug Fix in `.htaccess`**: Moved the `# --- Core / nav ---` and `# Live blog` rewrite rules ABOVE the generic `RewriteRule ^(.+?)/?$ /$1.html [L]` catch-all so `/blog/<slug>/` routes and legacy blog redirects (`smeg-fridge-freezer-control-panel`, `samsung-fridge-freezer-not-freezing`, `best-ice-cream-makers`, `cold-room-troubleshooting`, `chiller-not-cooling`) execute properly instead of falling through to `index.php`.
+  2. **One-Hop Brand & Service Alias 301s**: Consolidated all plural and legacy brand URLs (`wine-cooler-repairs-london`, `walk-in-fridge-repairs-london`, `liebherr-repairs-london`, `sub-zero-repairs-london`, `polar-repairs-london`, `foster-repairs-london`, `williams-repairs-london`, `william-fridge-repair-london`, `empire-repairs-london`, `koldbox-repairs-london`, etc.) into single-hop 301 redirects directly to their trailing-slash canonicals (`/williams-fridge-repair-london/`, `/foster-fridge-repair-london/`, `/commercial-fridge-repair-london/`, etc.).
+  3. **Fixed Masked Phone Numbers on Williams Page**: Removed `tel:+447****9320` and `tel:+442****4822` from `williams-fridge-repair-london.html` and `williams-fridge-repair-london/index.html` (zero masked `tel:` links remaining in codebase).
+  4. **Upgraded Phase 2 Service, Brand & Blog Pages**:
+     - `/ice-machine-repair-london/`: Focused `<title>` and meta description on commercial ice machine repair (`Ice Machine Repair London | Same-Day 24/7 Commercial Engineers | Cold Direct`).
+     - `/chiller-repair-london/`: Focused `<title>` and meta description on exact keyword `Chiller Repair London | Same-Day 24/7 Commercial & Rooftop | Cold Direct`.
+     - `/commercial-freezer-repair-london/`, `/foster-fridge-repair-london/`, `/williams-fridge-repair-london/`, `/true-fridge-repair-london/`, `/gram-fridge-repair-london/`, and blog guides (`commercial-fridge-not-cooling`, `why-commercial-freezer-not-freezing`, `why-commercial-fridge-not-cold-enough`): normalized all internal links to trailing-slash London canonical hubs.
+
+
 
