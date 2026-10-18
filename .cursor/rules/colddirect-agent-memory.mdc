@@ -15,6 +15,12 @@ alwaysApply: true
   - **Unmasked Phone Numbers**: Never use masked phone numbers (`+447****9320`); always use `tel:+447983759320`, `tel:08001123427`, and `tel:+442039524822`.
   - **Commercial Only**: Cold Direct repairs commercial refrigeration only (no domestic/household appliances).
   - **Plain FTP on Plesk**: WHUK Plesk FTP (`5.77.41.163`) times out on `FTP_TLS` `conn.unwrap()`. Always use plain `ftplib.FTP()` or `security: loose` in `SamKirkland/FTP-Deploy-Action`.
+ - **Coexistence with Live Plesk `auto-seo.aspx` V4 (Runs Nightly at 20:21)**:
+   1. Always run `python tools/pull_live_plesk_v4.py` before editing or deploying so live V4 updates are pulled from `/httpdocs` first.
+   2. NEVER delete or overwrite `auto-seo.aspx` or `sitemap.xml`.
+   3. NEVER remove `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-SCHEMA -->`, or `<!-- AUTO-SEO-V4-BLOGHUB -->` blocks.
+   4. Do NOT add `<!-- AUTO-SEO-LOCKED -->` to any file unless explicitly instructed by the owner.
+   5. Keep Cursor agent edits strictly focused on page body content, UI/UX layout, CSS, and conversion elements while letting `auto-seo.aspx` manage technical metadata (`<title>`, `<meta description>`, `<meta keywords>`), V4 schema, and `sitemap.xml`.
 
 ## 2. Multi-Agent & Tool Orchestration & Zero-Prompt Autonomous Execution (Tasks 2 & 6)
 - Proactively use all available MCP tools (`user-google-search-console`, `gh` CLI, and specialized subagents in `.cursor/agents/` such as `auto-auditor`, `seo-writer`, `internal-linker`, `gsc-daily-report`, `protect-fixed-pages`, `indexer`).

@@ -1,13 +1,11 @@
-name: ColdDirect Daily SEO
+name: ColdDirect Daily SEO (Report-Only — Live Metadata/Sitemap Managed by auto-seo.aspx)
 
 on:
-  schedule:
-    # 05:00 UTC daily (06:00 London BST / 05:00 GMT)
-    - cron: "0 5 * * *"
+  # Scheduled cron disabled so GitHub Actions does not overwrite live auto-seo.aspx V4 HTML/sitemap
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   issues: write
 
 concurrency:
@@ -35,26 +33,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install googleapis & google-auth
+      - name: Validate JSON-LD, assets & protected pages
         run: |
-          npm install --no-save googleapis@^144.0.0
-          pip install --quiet google-auth requests
+          npm test
+          python agent/scripts/protect_fixed_pages.py check
 
-      - name: Run daily GSC & SEO audit
-        env:
-          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
-          GSC_SITE_URL: ${{ vars.GSC_SITE_URL || 'https://www.colddirect.co.uk/' }}
-          COLD_SEO_PREPARE_ONLY: "0"
-          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST || secrets.FTP_SERVER || '5.77.41.163' }}
-          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER || secrets.FTP_USERNAME }}
-          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS || secrets.FTP_PASSWORD }}
-          COLD_FTP_PATH: ${{ vars.COLD_FTP_PATH || '/httpdocs' }}
-        run: node scripts/daily-seo-update.js
-
-      - name: Run daily self-healing internal links, canonicals, sitemaps & GSC indexing
-        env:
-          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
-        run: python tools/daily_auto_seo.py
+      - name: Verify critical production pages
+        run: python tools/verify-production-pages.py
 
       - name: Generate bilingual (Persian + English) report & push to mobile
         env:
@@ -63,76 +48,6 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           WHATSAPP_WEBHOOK_URL: ${{ secrets.WHATSAPP_WEBHOOK_URL }}
         run: python tools/send_bilingual_report.py
-
-      - name: Validate JSON-LD, assets & protected pages
-        run: |
-          npm test
-          python agent/scripts/protect_fixed_pages.py check
-
-      - name: Commit and push daily SEO updates to main
-        run: |
-          git config user.name "ColdDirect Auto SEO Bot"
-          git config user.email "actions@github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "No repository changes to commit today."
-          else
-            git commit -m "chore(seo): automatic daily GSC fixes, internal links, bilingual report & sitemap sync"
-            git pull --rebase origin main
-            git push origin main
-          fi
-
-      - name: Protected pages — skip globs if git were stale
-        id: protect
-        run: python agent/scripts/protect_fixed_pages.py github-excludes
-
-      - name: Deploy updated site to WHUK Plesk via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /httpdocs/
-          security: loose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/.env*
-            **/.cursor/**
-            **/colddirect-public-html/**
-            **/preview-colddirect-homepage/**
-            **/plesk-upload/**
-            **/plesk-hero-upload/**
-            **/agent/**
-            **/docs/**
-            **/tools/**
-            **/scripts/**
-            **/seo-audit/**
-            **/reports/**
-            **/logs/**
-            **/*.py
-            **/*.ps1
-            **/*.sh
-            **/*.md
-            **/package*.json
-            ${{ steps.protect.outputs.extra_exclude }}
-
-      - name: Re-assert protected pages on live if needed
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
-          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
-          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
-          COLD_FTP_PATH: ${{ secrets.COLD_FTP_PATH }}
-        run: python agent/scripts/protect_fixed_pages.py restore-live
-
-      - name: Verify critical production pages
-        run: python tools/verify-production-pages.py
 
       - name: Publish bilingual report to GitHub Mobile Issue thread
         env:
@@ -156,8 +71,4 @@ jobs:
           path: |
             seo-audit/daily-report-*.md
             seo-audit/LATEST-REPORT-FA-EN.md
-            seo-audit/daily-positions.csv
-            seo-audit/daily-seo-state.json
-            seo-audit/daily-auto-seo-last.json
-            seo-audit/cron.log
           retention-days: 30

@@ -1,12 +1,11 @@
-name: Daily Sitemap and HTML Checks
+name: Daily Sitemap and HTML Checks (Manual Only — Live Server Runs auto-seo.aspx at 20:21)
 
 on:
-  schedule:
-    - cron: '0 2 * * *'
+  # Scheduled cron disabled so GitHub Actions never overwrites live auto-seo.aspx V4 HTML or sitemap.xml
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   seo-agent:
@@ -23,70 +22,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run SEO checks and generate sitemap
-        run: python agent/run.py
-
       - name: Protected pages must pass fingerprint
         run: python agent/scripts/protect_fixed_pages.py check
 
-      - name: Commit and push sitemap or robots updates
-        id: commit_sitemap
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml robots.txt colddirect-public-html/sitemap.xml
-          if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No sitemap or robots changes to commit."
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            git commit -m "chore(seo): update sitemap and robots"
-            git pull --rebase origin main
-            git push origin main
-          fi
-
-      - name: Protected pages — skip globs if git were stale
-        if: steps.commit_sitemap.outputs.changed == 'true'
-        id: protect
-        run: python agent/scripts/protect_fixed_pages.py github-excludes
-
-      - name: Deploy updated sitemap to WHUK Plesk via FTP
-        if: steps.commit_sitemap.outputs.changed == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /httpdocs/
-          security: loose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/.env*
-            **/.cursor/**
-            **/colddirect-public-html/**
-            **/preview-colddirect-homepage/**
-            **/plesk-upload/**
-            **/plesk-hero-upload/**
-            **/agent/**
-            **/docs/**
-            **/tools/**
-            **/scripts/**
-            **/seo-audit/**
-            **/reports/**
-            **/logs/**
-            **/*.py
-            **/*.ps1
-            **/*.sh
-            **/*.md
-            **/package*.json
-            ${{ steps.protect.outputs.extra_exclude }}
-
-      - name: Upload SEO report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: seo-report
-          path: agent/reports/seo-report.json
