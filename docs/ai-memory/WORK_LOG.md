@@ -222,5 +222,9 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
      - `/chiller-repair-london/`: Focused `<title>` and meta description on exact keyword `Chiller Repair London | Same-Day 24/7 Commercial & Rooftop | Cold Direct`.
      - `/commercial-freezer-repair-london/`, `/foster-fridge-repair-london/`, `/williams-fridge-repair-london/`, `/true-fridge-repair-london/`, `/gram-fridge-repair-london/`, and blog guides (`commercial-fridge-not-cooling`, `why-commercial-freezer-not-freezing`, `why-commercial-fridge-not-cold-enough`): normalized all internal links to trailing-slash London canonical hubs.
 
+## 2026-10-18 — Daily GSC 28-day reporter (Search Console unavailable)
+
+Scheduled 09:00 UTC reporter could not call Search Console: no MCP, no `GSC_CREDENTIALS_JSON`, no local key, no `google` client library. Did not invent 28-day numbers or copy 7-day Action totals. Property `https://www.colddirect.co.uk/` last listed by GitHub Action `39042207996` on 17 Oct 14:47 UTC (7-day window 10–16 Oct; submitted 119 / indexed 0; `alerts=0`). No 18 Oct Daily SEO run as of 09:04 UTC. Live sitemap HTTP 200 with 118 unique locs and no backup paths (was 484 at 17 Oct 09:00). Daily Sitemap workflow `39105278810` failed (`bs4` missing). Wrote `GSC-DAILY-REPORT.md` and `logs/gsc_daily_2026-10-18.md` only. No HTML, title, indexing, or production edits.
+
 
 
