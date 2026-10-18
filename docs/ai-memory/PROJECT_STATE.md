@@ -251,3 +251,6 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - Upgraded `.github/workflows/colddirect-source-backup.yml` to take a full Git + live Plesk `/httpdocs` FTP snapshot (`tools/backup_plesk_live.py`) every 48 hours and send a bilingual completion alert to mobile.
 - Established persistent agent memory in `.cursor/rules/colddirect-agent-memory.mdc` and both Cursor AgentStores (`u420035230` and current session store).
 
+## 2026-10-18 — Daily GSC reporter still cannot query 28-day analytics
+Cursor automation still has no Search Console MCP or `GSC_CREDENTIALS_JSON`. Do not treat `reports/gsc/` (21 Sep 28-day) or GitHub Action 7-day windows as today’s 28-day figures. Property `https://www.colddirect.co.uk/` last confirmed by Action `39042207996` on 17 Oct 14:47 UTC (submitted 119, indexed 0). Live sitemap 18 Oct 09:04 UTC: HTTP 200, 118 unique locs, no backup paths. No 18 Oct Daily SEO run as of 09:04 UTC. Daily Sitemap job failed on missing `bs4`. GSC daily files live at repo-root `GSC-DAILY-REPORT.md` and `logs/gsc_daily_YYYY-MM-DD.md`; do not overwrite `reports/gsc/`.
+
