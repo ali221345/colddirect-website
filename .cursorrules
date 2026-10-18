@@ -1,0 +1,21 @@
+# Cold Direct (`colddirect.co.uk`) — Strict Coexistence Rules with Live Plesk `auto-seo.aspx` V4 Agent
+
+A live server-side SEO agent (`auto-seo.aspx`) runs directly on our WHUK Plesk server (`5.77.41.163`, `/httpdocs`) every night at **20:21 (8:21 PM)** via Plesk Scheduled Tasks. It directly modifies live `.html` files and rebuilds `sitemap.xml` with V4 SEO updates.
+
+Every Cursor agent session MUST strictly obey the following rules:
+
+## 1. Pre-Edit Sync Requirement
+- Before editing or deploying any `.html` file, ALWAYS pull the latest live server files from Plesk `/httpdocs` into the local workspace by running:
+  `python tools/pull_live_plesk_v4.py`
+- This ensures local files never overwrite the latest nightly 20:21 `auto-seo.aspx` V4 changes.
+
+## 2. Four Strict Non-Negotiable Rules
+1. **NEVER delete or overwrite `auto-seo.aspx` or `sitemap.xml`**:
+   - Both `auto-seo.aspx` and `sitemap.xml` are excluded in `.github/workflows/deploy.yml` and owned by the live Plesk server.
+2. **NEVER remove V4 SEO blocks**:
+   - NEVER remove or strip `<!-- AUTO-SEO-V4-2026 -->` (footer internal links), `<!-- AUTO-SEO-V4-SCHEMA -->` (JSON-LD `#business` HVACBusiness schema), or `<!-- AUTO-SEO-V4-BLOGHUB -->` (homepage 6-article blog hub on `index.html`).
+3. **NEVER add `<!-- AUTO-SEO-LOCKED -->` unless explicitly instructed**:
+   - Do NOT add `<!-- AUTO-SEO-LOCKED -->` to any file unless the owner explicitly asks to freeze that specific page's `<title>` and `<meta description>`.
+4. **Strict Separation of Responsibilities**:
+   - **`auto-seo.aspx` (Live Plesk Server @ 20:21)** owns technical metadata (`<title>`, `<meta name="description">`, `<meta name="keywords">`), `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-BLOGHUB -->`, missing image `alt` tags, and `sitemap.xml`.
+   - **Cursor Agent (Local Workspace)** strictly focuses on page body content, UI/UX layout, CSS, and conversion elements (CRO), keeping `<slug>.html`, `<slug>/index.html`, and `colddirect-public-html/` synchronized.

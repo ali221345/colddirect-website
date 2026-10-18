@@ -222,5 +222,28 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
      - `/chiller-repair-london/`: Focused `<title>` and meta description on exact keyword `Chiller Repair London | Same-Day 24/7 Commercial & Rooftop | Cold Direct`.
      - `/commercial-freezer-repair-london/`, `/foster-fridge-repair-london/`, `/williams-fridge-repair-london/`, `/true-fridge-repair-london/`, `/gram-fridge-repair-london/`, and blog guides (`commercial-fridge-not-cooling`, `why-commercial-freezer-not-freezing`, `why-commercial-fridge-not-cold-enough`): normalized all internal links to trailing-slash London canonical hubs.
 
+## 2026-10-18 — Phase 3 London Borough & North London Area Hub Optimization
+- Executed Phase 3 across all 20 London Borough pages (`commercial-refrigeration-repair-<borough>`) and 10 North London Cold Room town pages (`cold-room-repair-<town>`), updating 90 files in total (`<slug>.html`, `<slug>/index.html`, and `colddirect-public-html/` copies):
+  1. **20 London Borough Pages**:
+     - Replaced generic `<Borough> Cold Chain Same-Day Repair | ColdDirect` titles with high-CTR `Commercial Refrigeration Repair <Borough> | Same-Day 24/7 | Cold Direct`.
+     - Upgraded meta descriptions and JSON-LD descriptions/canonical URLs (added trailing slashes).
+     - Redirected internal link equity from secondary `-north-london` aliases directly to the primary London canonical hubs (`/cold-room-repair-london/`, `/freezer-room-repair-london/`, `/commercial-fridge-repair-london/`, `/fridge-repair-london/`, `/commercial-freezer-repair-london/`, `/freezer-repair-london/`, `/commercial-appliances-repair-london/`, `/cellar-cooler-repair-london/`).
+     - Normalized all 20 borough cross-links to trailing slashes (`/commercial-refrigeration-repair-<borough>/`) and fixed footer copyright encoding (`Â©` -> `&copy;`).
+  2. **10 North London Cold Room Town Pages (`enfield`, `barnet`, `edgware`, `finchley`, `harrow`, `palmers-green`, `southgate`, `tottenham`, `wembley`, `wood-green`)**:
+     - Replaced every instance of the legacy phone number `020 8050 2374` (`tel:+442080502374`) with the official London Office number `0203 952 4822` (`tel:+442039524822`). Verified 0 occurrences of `020 8050 2374` remain across all HTML files.
+     - Converted plain-text service bullet items into rich contextual anchor links pointing to `/cold-room-repair-london/`, `/freezer-room-repair-london/`, `/chiller-repair-london/`, `/commercial-fridge-repair-london/`, `/commercial-freezer-repair-london/`, and `/cellar-cooler-repair-london/`.
+     - Normalized all town cross-links and JSON-LD URLs to trailing slashes.
+  3. **Validation**: Passed `npm test` (426 JSON-LD files + 221 asset paths) and `protect_fixed_pages.py check` (12/12 protected files).
+
+## 2026-10-18 — Full Live Plesk `auto-seo.aspx` V4 Pull & Non-Conflicting Workflow Setup
+- Pulled tonight's 20:21 (`08:21 PM`) `auto-seo.aspx` V4 live changes directly from WHUK Plesk FTP (`5.77.41.163`, `/httpdocs`) into the local workspace via `tools/pull_live_plesk_v4.py` and mirrored them to `colddirect-public-html/`:
+  - Downloaded `auto-seo.aspx`, `sitemap.xml` (242 URLs with Priority 1.0 on Cellar, Catering, Cold Room, Commercial Fridge & Freezer), and all live `.html` and `.asp` files (`358` live root/subfolder files mirrored across `483+` total workspace files).
+  - Verified 100% preservation of `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-BLOGHUB -->`, V4 `<title>` / `<meta description>` / `<meta keywords>`, and image `alt` tags.
+  - Updated `protected-pages.json` fingerprints to match `auto-seo.aspx` V4 titles (`Commercial Fridge Repair London | 24/7 Emergency Service & Repairs` and `Fridge Repair & Service London (2-Hr Emergency) | Commercial & Catering`) and `<!-- AUTO-SEO-V4-2026 -->`.
+  - Excluded `auto-seo.aspx` and `sitemap.xml` in `.github/workflows/deploy.yml`, removed `restore-live` overwrites, and disabled conflicting scheduled crons in `.github/workflows/seo-agent.yml`, `.github/workflows/colddirect-daily-seo.yml`, and `.github/workflows/protect-fixed-pages.yml`.
+  - Created root `.cursorrules` and updated `.cursor/rules/colddirect-agent-memory.mdc` with the 4 strict coexistence rules.
+
+
+
 
 

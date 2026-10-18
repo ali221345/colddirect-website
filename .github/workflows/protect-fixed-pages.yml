@@ -1,8 +1,7 @@
-name: Restore protected pages
+name: Restore protected pages (Manual Check Only — auto-seo.aspx V4 Active)
 
 on:
-  schedule:
-    - cron: "45 5 * * *"
+  # Scheduled cron disabled so restore-live never overwrites auto-seo.aspx V4 updates on Plesk
   workflow_dispatch:
 
 concurrency:
@@ -23,18 +22,3 @@ jobs:
 
       - name: Check git copies
         run: python agent/scripts/protect_fixed_pages.py check
-
-      - name: Restore live if overnight FTP reverted them
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          COLD_FTP_HOST: ${{ secrets.COLD_FTP_HOST }}
-          COLD_FTP_USER: ${{ secrets.COLD_FTP_USER }}
-          COLD_FTP_PASS: ${{ secrets.COLD_FTP_PASS }}
-          COLD_FTP_PATH: /httpdocs
-          PLESK_FTP_HOST: ${{ secrets.PLESK_FTP_HOST }}
-          PLESK_FTP_USER: ${{ secrets.PLESK_FTP_USER }}
-          PLESK_FTP_PASS: ${{ secrets.PLESK_FTP_PASS }}
-          PLESK_FTP_PATH: /httpdocs
-        run: python agent/scripts/protect_fixed_pages.py restore-live

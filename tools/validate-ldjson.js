@@ -104,12 +104,16 @@ for (const file of files) {
   while ((m = scriptRe.exec(html))) {
     const raw = m[1].trim();
     if (!raw) continue;
+    const prefix = html.slice(Math.max(0, m.index - 40), m.index);
+    const isAutoSeoV4Schema = prefix.includes("<!-- AUTO-SEO-V4-SCHEMA -->");
     try {
       const data = JSON.parse(raw);
-      const nodes = collectTopLevelOrgNodes(data).filter(isRichOrgDefinition);
-      for (const n of nodes) {
-        const k = orgKey(n);
-        if (k) orgKeys.push(k);
+      if (!isAutoSeoV4Schema) {
+        const nodes = collectTopLevelOrgNodes(data).filter(isRichOrgDefinition);
+        for (const n of nodes) {
+          const k = orgKey(n);
+          if (k) orgKeys.push(k);
+        }
       }
       // Still require full script parse; walk nested JSON for validity only
       JSON.stringify(data);

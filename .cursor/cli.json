@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(*)",
+      "Shell(git *)",
+      "Shell(gh *)",
+      "Shell(python *)",
+      "Shell(python3 *)",
+      "Shell(npm *)",
+      "Shell(node *)",
+      "Read(*)",
+      "Write(*)",
+      "Mcp(*)"
+    ],
+    "deny": []
+  }
+}
