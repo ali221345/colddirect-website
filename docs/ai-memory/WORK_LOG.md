@@ -235,6 +235,15 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
      - Normalized all town cross-links and JSON-LD URLs to trailing slashes.
   3. **Validation**: Passed `npm test` (426 JSON-LD files + 221 asset paths) and `protect_fixed_pages.py check` (12/12 protected files).
 
+## 2026-10-18 — Full Live Plesk `auto-seo.aspx` V4 Pull & Non-Conflicting Workflow Setup
+- Pulled tonight's 20:21 (`08:21 PM`) `auto-seo.aspx` V4 live changes directly from WHUK Plesk FTP (`5.77.41.163`, `/httpdocs`) into the local workspace via `tools/pull_live_plesk_v4.py` and mirrored them to `colddirect-public-html/`:
+  - Downloaded `auto-seo.aspx`, `sitemap.xml` (242 URLs with Priority 1.0 on Cellar, Catering, Cold Room, Commercial Fridge & Freezer), and all live `.html` and `.asp` files (`358` live root/subfolder files mirrored across `483+` total workspace files).
+  - Verified 100% preservation of `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-BLOGHUB -->`, V4 `<title>` / `<meta description>` / `<meta keywords>`, and image `alt` tags.
+  - Updated `protected-pages.json` fingerprints to match `auto-seo.aspx` V4 titles (`Commercial Fridge Repair London | 24/7 Emergency Service & Repairs` and `Fridge Repair & Service London (2-Hr Emergency) | Commercial & Catering`) and `<!-- AUTO-SEO-V4-2026 -->`.
+  - Excluded `auto-seo.aspx` and `sitemap.xml` in `.github/workflows/deploy.yml`, removed `restore-live` overwrites, and disabled conflicting scheduled crons in `.github/workflows/seo-agent.yml`, `.github/workflows/colddirect-daily-seo.yml`, and `.github/workflows/protect-fixed-pages.yml`.
+  - Created root `.cursorrules` and updated `.cursor/rules/colddirect-agent-memory.mdc` with the 4 strict coexistence rules.
+
+
 
 
 
