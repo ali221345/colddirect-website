@@ -243,6 +243,16 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
   - Excluded `auto-seo.aspx` and `sitemap.xml` in `.github/workflows/deploy.yml`, removed `restore-live` overwrites, and disabled conflicting scheduled crons in `.github/workflows/seo-agent.yml`, `.github/workflows/colddirect-daily-seo.yml`, and `.github/workflows/protect-fixed-pages.yml`.
   - Created root `.cursorrules` and updated `.cursor/rules/colddirect-agent-memory.mdc` with the 4 strict coexistence rules.
 
+## 2026-10-18 — Core London Commercial Pages CRO, Body Content Depth & FAQ Accordion Upgrade
+- Merged [PR #69](https://github.com/ali221345/colddirect-website/pull/69) into `main`, pulled the live Plesk `/httpdocs` state via `python tools/pull_live_plesk_v4.py`, and executed the 5 CRO & on-page authority deliverables across `/commercial-fridge-repair-london/`, `/commercial-freezer-repair-london/`, `/cold-room-repair-london/`, `/catering-repair-london/`, `/cellar-cooler-repair-london/`, and `/cellar-cooler-repair-london.asp`:
+  1. **Above-the-Fold Emergency Dispatch Trust Bar (`<!-- CD-CRO-TRUST-BAR -->`)**: Added immediately below the hero section with `60–90 Min London Emergency Response`, `F-Gas Certified Commercial Engineers`, `24/7 Same-Day Repairs — All London Postcodes`, and direct click-to-call CTA buttons (`0203 952 4822` & `07983 759320`).
+  2. **Body Content & Keyword Depth Boost**:
+     - Added the 6-card "Common Commercial Breakdowns We Fix Same-Day" grid (compressors, evaporator fans, digital controller alarms `HA`/`Hi`/`P1`/`P2`/`dEF`, split door gaskets, F-Gas leak detection, condensate drains) + "Commercial Brands We Repair" strip (`Williams`, `Foster`, `True`, `Polar`, `Gram`, `Rational`, `Hoshizaki`, `Liebherr`, `Blizzard`, `Tefcold`) to Commercial Fridge, Commercial Freezer, and Cold Room pages.
+     - Added dedicated H2/H3 trade sections for pub beer cellar cooling (`11–13°C` keg/cask temperature maintenance, remote beer line chillers, back-bar bottle coolers) and commercial catering refrigeration (prep counters, saladettes, blast chillers, undercounter chillers) to the Cellar and Catering pages.
+  3. **Visible On-Page HTML FAQ Accordion (`<!-- CD-CRO-FAQ-ACCORDION -->`)**: Added 5 interactive `<details>/<summary>` trade FAQs per page right above the footer while keeping `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-2026 -->`, `<title>`, `<meta description>`, `auto-seo.aspx`, and `sitemap.xml` 100% untouched.
+  4. **Validation & Live Plesk Deployment**: Passed `npm test` (435 files, 0 errors), `protect_fixed_pages.py check` (12/12 OK), and `verify-production-pages.py` (4/4 PASS), and deployed directly to WHUK Plesk `/httpdocs`.
+
+
 
 
 

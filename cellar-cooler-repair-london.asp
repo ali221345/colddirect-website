@@ -11,7 +11,47 @@
 ]}
 ]}
 </script>
-</head><body><div class='topbar'>24/7 EMERGENCY LONDON - B2B ONLY - Call <a href='tel:07983759320'>07983 759320</a> | <a href='tel:08001123427'>0800 112 3427</a> | <a href='tel:02039524822'>0203 952 4822</a></div><div class='header'><a class='logo' href='/'><span class="text-black font-black" style="color:#000;font-weight:900;font-size:1.875rem">Cold</span><span class="text-teal-500 font-black" style="color:#00A99D;font-weight:900;font-size:1.875rem">Direct</span></a><a class='call-btn' href='tel:07983759320'>Call Now 07983 759320</a></div><div class='hero'><div class='hero-card'><div class='badge'>LONDON - HERE WHEN YOU NEED US</div><h1>Cellar Cooler Repair London</h1><div class="bg-gray-50 py-2 px-4 border-y flex flex-wrap items-center gap-2 svc-tagbar"><span class="text-xs text-gray-400">Services:</span><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-fridge-repair-london.asp">Commercial Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-freezer-repair-london.asp">Commercial Freezer</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="cold-room-repair-london.asp">Cold Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="freezer-room-repair-london.asp">Freezer Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-fridge-repair-london.asp">Walk-in Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-freezer-repair-london.asp">Walk-in Freezer</a></div><div class="flex flex-wrap gap-2" style="margin:8px 0;align-items:center"><a class="call-btn" href="tel:07983759320" style="padding:8px 14px;font-size:13px">07983 759320</a><a class="call-btn booking-btn" href="contact.asp" style="padding:8px 14px;font-size:13px">Request a booking</a></div><p class='sub'>Specialist cellar cooler repair london - Commercial & Catering - Fast Response - All Jobs Come With Warranty - Engineer Provides Price After Diagnosis</p><div class='phones'><a href='tel:07983759320'>📞 07983 759320 (Mobile - 24/7)</a><a href='tel:08001123427'>📞 0800 112 3427 (Freephone)</a><a href='tel:02039524822'>📞 0203 952 4822 (London)</a></div><div class='grid'><div class='feat'><b>⚡ 2-4 Hour</b><br>Emergency Response</div><div class='feat'><b>All Jobs Come With Warranty</b></div><div class='feat'><b>🏢 B2B Only</b><br>Commercial Specialists</div><div class='feat'><b>Engineer Attends, Diagnoses &amp; Provides Price Before Work</b></div></div></div><div class='img-card'><img src="images/cellar-cooler-repair.webp" width="800" height="600" alt="Cellar Cooler Repair London"></div></div><div class="service-seo" style="max-width:900px; margin:20px auto; padding:15px; line-height:1.8;"><h2>Cellar Cooler Repair for London Pubs &amp; Beer Storage</h2><p>A pub cellar is a working storage space, and its cooling needs differ from those of a bottled drinks cabinet. The equipment is intended to manage the room environment around stored beer, with performance affected by deliveries, door use and the heat entering the cellar. ColdDirect provides cellar cooler repair for London pubs, bars and hospitality premises. If the room no longer holds its intended temperature, describe whether the unit still runs, whether airflow has changed and when the problem began. The room&#x27;s specified operating conditions matter; we do not assume that every cellar or drinks installation should use an identical setting or control arrangement.</p><p>The engineer assesses the cellar cooling equipment in relation to its surroundings. Restricted airflow, a blocked condensate route or a control fault may be visible alongside less obvious refrigeration problems. Remote outdoor units can introduce access requirements that should be discussed before attendance, especially at premises with shared roofs or enclosed service yards. Following diagnosis, we explain the proposed repair and provide a price for your approval. The visit concerns the cooling installation; separate dispensing or beer line faults may need a different service. Mention all symptoms when booking so the scope is understood and the appropriate next step can be discussed without confusion.</p><p>For a venue in Camden, Islington, Westminster or Southwark, an interruption can coincide with a delivery or the busiest trading period. Our emergency telephone line is available at any hour to arrange the next available attendance discussion. Provide the address, equipment details and instructions for reaching the cellar safely. Keep ventilation openings accessible and make the person responsible for authorising work available. Follow your supplier&#x27;s product storage guidance while conditions are disrupted. To request help, call 07983 759320. Warranty is included with completed repairs, and any recommended follow-up or access work can be recorded so the manager knows what was resolved and what remains to be arranged.</p><h3>Cellar cooling problems we investigate</h3><ul><li>Reduced air movement from the indoor unit: a fan problem or obstructed coil can limit room circulation, even though the equipment appears to be switched on and making its usual noise.</li><li>Inaccurate room temperature control: sensor behaviour and placement need assessment alongside controller operation, particularly if the unit starts and stops at unexpected times during the trading day.</li><li>Condensate leaks in the cellar: blocked drains or damaged connections may allow water to escape. Identifying the source helps distinguish drainage work from a fault in the cooling circuit.</li><li>Outdoor unit ventilation problems: accumulated debris, an enclosed plant location or a condenser fan issue can make performance deteriorate when surrounding temperatures rise or equipment runs for longer periods.</li><li>Ice forming on the evaporator: restricted airflow and other faults can produce similar visible symptoms. The cause should be assessed before assuming that defrosting alone will restore dependable operation.</li><li>Persistent cooling loss after deliveries: frequent door opening may expose an existing capacity or maintenance issue. Describing the recovery pattern helps the engineer separate normal use from a developing fault.</li></ul></div><div class='trust'><div><b>⭐ 500+</b><br>London Businesses</div><div><b>🔧 Same Day</b><br>Fix Rate 92%</div><div><b>📍 All London</b><br>Zones 1-6 Covered</div></div><div class='cta'><h2>LET'S GET IT SORTED 24/7</h2><p>Commercial refrigeration support across London. Call to discuss your fault and arrange an engineer visit.</p><a href='tel:07983759320'>CALL 07983 759320 NOW</a></div><section class="seo-depth" style="max-width:900px;margin:24px auto;padding:0 16px 8px;line-height:1.7">
+<style id="cd-cro-v4-styles">
+.cd-trust-bar{background:#0a2540;color:#fff;padding:16px 0;border-bottom:3px solid #00a99d}
+.cd-trust-bar .wrap{max-width:1140px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.cd-trust-pills{display:flex;flex-wrap:wrap;gap:12px;margin:0;padding:0;list-style:none}
+.cd-trust-pills li{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700;color:#fff;display:inline-flex;align-items:center;gap:6px}
+.cd-trust-ctas{display:flex;flex-wrap:wrap;gap:10px}
+.cd-trust-ctas a{display:inline-block;padding:9px 16px;border-radius:8px;font-weight:800;font-size:14px;text-decoration:none;transition:opacity .15s}
+.cd-trust-ctas .cta-office{background:#00a99d !important;color:#fff !important}
+.cd-trust-ctas .cta-mobile{background:#facc15 !important;color:#0a2540 !important}
+.cd-cro-section{margin:32px 0;padding:24px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.cd-cro-section h2{margin-top:0;color:#0a2540;font-size:24px}
+.cd-breakdown-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:18px 0}
+.cd-breakdown-card{background:#fff;border:1px solid #cbd5e1;border-left:4px solid #0a2540;border-radius:8px;padding:16px}
+.cd-breakdown-card h3{margin:0 0 8px;font-size:17px;color:#0a2540}
+.cd-breakdown-card p{margin:0;font-size:14.5px;line-height:1.55;color:#334155}
+.cd-brands-strip{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0;padding:0;list-style:none}
+.cd-brands-strip li{background:#fff;border:1px solid #cbd5e1;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px;color:#0a2540}
+.cd-faq-accordion{max-width:960px;margin:32px auto;padding:0 20px}
+.cd-faq-accordion h2{color:#0a2540;margin-bottom:16px}
+.cd-faq-accordion details{background:#fff;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:10px;padding:14px 18px}
+.cd-faq-accordion summary{font-weight:700;font-size:16px;color:#0a2540;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.cd-faq-accordion summary::-webkit-details-marker{display:none}
+.cd-faq-accordion summary::after{content:"+";font-size:20px;font-weight:800;color:#00a99d}
+.cd-faq-accordion details[open] summary::after{content:"−"}
+.cd-faq-accordion details p{margin:10px 0 0;color:#334155;font-size:15px;line-height:1.6}
+</style>
+</head><body><div class='topbar'>24/7 EMERGENCY LONDON - B2B ONLY - Call <a href='tel:07983759320'>07983 759320</a> | <a href='tel:08001123427'>0800 112 3427</a> | <a href='tel:02039524822'>0203 952 4822</a></div><div class='header'><a class='logo' href='/'><span class="text-black font-black" style="color:#000;font-weight:900;font-size:1.875rem">Cold</span><span class="text-teal-500 font-black" style="color:#00A99D;font-weight:900;font-size:1.875rem">Direct</span></a><a class='call-btn' href='tel:07983759320'>Call Now 07983 759320</a></div><div class='hero'><div class='hero-card'><div class='badge'>LONDON - HERE WHEN YOU NEED US</div><h1>Cellar Cooler Repair London</h1><div class="bg-gray-50 py-2 px-4 border-y flex flex-wrap items-center gap-2 svc-tagbar"><span class="text-xs text-gray-400">Services:</span><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-fridge-repair-london.asp">Commercial Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="commercial-freezer-repair-london.asp">Commercial Freezer</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="cold-room-repair-london.asp">Cold Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="freezer-room-repair-london.asp">Freezer Room</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-fridge-repair-london.asp">Walk-in Fridge</a><a class="text-xs bg-white border px-2.5 py-1 rounded-full" href="walk-in-freezer-repair-london.asp">Walk-in Freezer</a></div><div class="flex flex-wrap gap-2" style="margin:8px 0;align-items:center"><a class="call-btn" href="tel:07983759320" style="padding:8px 14px;font-size:13px">07983 759320</a><a class="call-btn booking-btn" href="contact.asp" style="padding:8px 14px;font-size:13px">Request a booking</a></div><p class='sub'>Specialist cellar cooler repair london - Commercial & Catering - Fast Response - All Jobs Come With Warranty - Engineer Provides Price After Diagnosis</p><div class='phones'><a href='tel:07983759320'>📞 07983 759320 (Mobile - 24/7)</a><a href='tel:08001123427'>📞 0800 112 3427 (Freephone)</a><a href='tel:02039524822'>📞 0203 952 4822 (London)</a></div><div class='grid'><div class='feat'><b>⚡ 2-4 Hour</b><br>Emergency Response</div><div class='feat'><b>All Jobs Come With Warranty</b></div><div class='feat'><b>🏢 B2B Only</b><br>Commercial Specialists</div><div class='feat'><b>Engineer Attends, Diagnoses &amp; Provides Price Before Work</b></div></div></div><div class='img-card'><img src="images/cellar-cooler-repair.webp" width="800" height="600" alt="Cellar Cooler Repair London"></div></div>  <!-- CD-CRO-TRUST-BAR -->
+  <section class="cd-trust-bar" aria-label="Emergency Dispatch Trust Guarantees">
+    <div class="wrap">
+      <ul class="cd-trust-pills">
+        <li>&#9889; 60–90 Min London Emergency Response</li>
+        <li>&#10004; F-Gas Certified Commercial Engineers</li>
+        <li>&#128336; 24/7 Same-Day Repairs — All London Postcodes</li>
+      </ul>
+      <div class="cd-trust-ctas">
+        <a class="cta-office" href="tel:+442039524822">London Office: 0203 952 4822</a>
+        <a class="cta-mobile" href="tel:+447983759320">24/7 Mobile: 07983 759320</a>
+      </div>
+    </div>
+  </section>
+<div class="service-seo" style="max-width:900px; margin:20px auto; padding:15px; line-height:1.8;"><h2>Cellar Cooler Repair for London Pubs &amp; Beer Storage</h2><p>A pub cellar is a working storage space, and its cooling needs differ from those of a bottled drinks cabinet. The equipment is intended to manage the room environment around stored beer, with performance affected by deliveries, door use and the heat entering the cellar. ColdDirect provides cellar cooler repair for London pubs, bars and hospitality premises. If the room no longer holds its intended temperature, describe whether the unit still runs, whether airflow has changed and when the problem began. The room&#x27;s specified operating conditions matter; we do not assume that every cellar or drinks installation should use an identical setting or control arrangement.</p><p>The engineer assesses the cellar cooling equipment in relation to its surroundings. Restricted airflow, a blocked condensate route or a control fault may be visible alongside less obvious refrigeration problems. Remote outdoor units can introduce access requirements that should be discussed before attendance, especially at premises with shared roofs or enclosed service yards. Following diagnosis, we explain the proposed repair and provide a price for your approval. The visit concerns the cooling installation; separate dispensing or beer line faults may need a different service. Mention all symptoms when booking so the scope is understood and the appropriate next step can be discussed without confusion.</p><p>For a venue in Camden, Islington, Westminster or Southwark, an interruption can coincide with a delivery or the busiest trading period. Our emergency telephone line is available at any hour to arrange the next available attendance discussion. Provide the address, equipment details and instructions for reaching the cellar safely. Keep ventilation openings accessible and make the person responsible for authorising work available. Follow your supplier&#x27;s product storage guidance while conditions are disrupted. To request help, call 07983 759320. Warranty is included with completed repairs, and any recommended follow-up or access work can be recorded so the manager knows what was resolved and what remains to be arranged.</p><h3>Cellar cooling problems we investigate</h3><ul><li>Reduced air movement from the indoor unit: a fan problem or obstructed coil can limit room circulation, even though the equipment appears to be switched on and making its usual noise.</li><li>Inaccurate room temperature control: sensor behaviour and placement need assessment alongside controller operation, particularly if the unit starts and stops at unexpected times during the trading day.</li><li>Condensate leaks in the cellar: blocked drains or damaged connections may allow water to escape. Identifying the source helps distinguish drainage work from a fault in the cooling circuit.</li><li>Outdoor unit ventilation problems: accumulated debris, an enclosed plant location or a condenser fan issue can make performance deteriorate when surrounding temperatures rise or equipment runs for longer periods.</li><li>Ice forming on the evaporator: restricted airflow and other faults can produce similar visible symptoms. The cause should be assessed before assuming that defrosting alone will restore dependable operation.</li><li>Persistent cooling loss after deliveries: frequent door opening may expose an existing capacity or maintenance issue. Describing the recovery pattern helps the engineer separate normal use from a developing fault.</li></ul></div><div class='trust'><div><b>⭐ 500+</b><br>London Businesses</div><div><b>🔧 Same Day</b><br>Fix Rate 92%</div><div><b>📍 All London</b><br>Zones 1-6 Covered</div></div><div class='cta'><h2>LET'S GET IT SORTED 24/7</h2><p>Commercial refrigeration support across London. Call to discuss your fault and arrange an engineer visit.</p><a href='tel:07983759320'>CALL 07983 759320 NOW</a></div><section class="seo-depth" style="max-width:900px;margin:24px auto;padding:0 16px 8px;line-height:1.7">
 <h2>Same Day Cellar Cooler Repair London for Restaurants, Hotels &amp; Takeaways</h2>
 <p>ColdDirect provides 24/7 same day Cellar Cooler Repair London across all London boroughs. We repair commercial refrigeration for restaurants, hotels, pubs and takeaways, with a fast emergency response when food stock is at risk. An engineer diagnoses on site and gives a clear price before work. Genuine parts are fitted where they match the model. Call 07983 759320, 0800 112 3427 or 0203 952 4822.</p>
 <p>Pub and hotel cellar cooling keeps beer and wines at cellar temperature. We attend remote condensers, cellar evaporators and controllers when the cellar is warm, iced or noisy. This is trade cellar plant, not a home basement fridge. Coverage includes Camden, Islington, Hackney, Southwark and Greater London pubs. Tell us the make, model, serial plate, postcode and whether the site is open, in service or closed. Same-day attendance depends on location and workload and is confirmed when you call. ColdDirect does not repair domestic household fridges or freezers.</p>
@@ -33,4 +73,64 @@
 </ul>
 <p>Related: <a href="cold-room-repair-london.asp">Cold Room Repair</a> | <a href="freezer-room-repair-london.asp">Freezer Room Repair</a> | <a href="commercial-fridge-repair-london.asp">Commercial Fridge Repair</a></p>
 </section>
+<div style='max-width:960px;margin:0 auto;padding:0 16px'>      <!-- CD-CRO-CELLAR-TRADE -->
+      <div class="cd-cro-section">
+        <h2>Pub Beer Cellar Cooling Systems (11–13°C) &amp; Hospitality Catering Refrigeration</h2>
+        <p>Whether your venue runs a traditional cask &amp; keg basement cellar or a full restaurant kitchen upstairs, our F-Gas engineers restore exact temperature control same-day:</p>
+        <div class="cd-breakdown-grid">
+          <div class="cd-breakdown-card">
+            <h3>Maintaining 11–13°C Keg &amp; Cask Temperatures</h3>
+            <p>Calibrating cellar evaporator blowers, clearing hop-dust choked condensers and fixing refrigerant leaks so real ales and lagers never fob at the tap.</p>
+          </div>
+          <div class="cd-breakdown-card">
+            <h3>Remote Beer Line Chillers &amp; Ice Bank Coolers</h3>
+            <p>Repairing agitator motors, circulation pumps, ice-bank thermostats and compressor packs on remote under-counter and cellar python line chillers.</p>
+          </div>
+          <div class="cd-breakdown-card">
+            <h3>Back-Bar Bottle Coolers &amp; Glass Frosters</h3>
+            <p>Same-day fan motor, LED controller and door seal repairs for double and triple hinged/sliding door bar chillers and wine cabinets.</p>
+          </div>
+          <div class="cd-breakdown-card">
+            <h3>Pub Kitchen Prep Counters, Saladettes &amp; Blast Chillers</h3>
+            <p>While on site for your cellar, our engineers can also diagnose and repair commercial catering prep fridges, walk-in cold rooms, undercounter chillers and ice machines.</p>
+          </div>
+        </div>
+        <h3>Cellar &amp; Commercial Brands We Repair Across London</h3>
+        <ul class="cd-brands-strip">
+          <li>Marstair</li>
+          <li>J&amp;E Hall</li>
+          <li>Hubbard</li>
+          <li>Mitsubishi</li>
+          <li>Williams</li>
+          <li>Foster</li>
+          <li>True</li>
+          <li>Polar</li>
+          <li>Gram</li>
+          <li>Hoshizaki</li>
+        </ul>
+      </div></div>
+  <!-- CD-CRO-FAQ-ACCORDION -->
+  <section class="cd-faq-accordion" aria-label="Frequently Asked Questions">
+    <h2>Frequently Asked Questions — Beer Cellar Cooling & Pub Cellar Repair London</h2>
+    <details open>
+      <summary>1. How fast is your emergency callout response across London?</summary>
+      <p>We target a <strong>60–90 minute emergency arrival</strong> across North &amp; Central London (and 2–4 hours across Greater London within the M25) 24 hours a day, 7 days a week. Call <a href="tel:+442039524822">0203 952 4822</a> or <a href="tel:+447983759320">07983 759320</a> with your postcode for immediate dispatch.</p>
+    </details>
+    <details>
+      <summary>2. Are your engineers F-Gas certified and do you provide HACCP paperwork?</summary>
+      <p>Yes. Every Cold Direct engineer holds full UK F-Gas certification for commercial refrigerants (R290, R404A, R448A, R449A, R134a, R410A). Every visit includes calibrated air and core product temperature readings plus a written F-Gas &amp; HACCP service report for your EHO records.</p>
+    </details>
+    <details>
+      <summary>3. What temperature should a pub beer cellar be kept at in London?</summary>
+      <p>Standard UK pub cellars must hold a steady <strong>11–13°C (52–55°F)</strong> for cask conditioned ales and keg storage, while remote glycol/ice-bank line chillers pull draught lager down to 2–6°C at the tap.</p>
+    </details>
+    <details>
+      <summary>4. Do you carry spare parts for same-day first-visit repairs?</summary>
+      <p>Yes. Our vans stock universal and OEM digital controllers (Dixell, Carel, Eliwell), evaporator and condenser fan motors, start relays, capacitors, defrost heaters, filter driers and commercial door gaskets so over 85% of breakdowns are resolved on the first visit.</p>
+    </details>
+    <details>
+      <summary>5. Do you repair domestic household fridges or only commercial equipment?</summary>
+      <p>We are <strong>strictly commercial-only (B2B)</strong>. We repair refrigeration for restaurants, pubs, bars, hotels, supermarkets, dark kitchens, schools, hospitals and food production sites across London. We do not attend domestic residential appliances.</p>
+    </details>
+  </section>
 </body></html>
