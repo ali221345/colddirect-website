@@ -41,7 +41,7 @@ class Page(HTMLParser):
 
 
 def verify(slug):
-    expected = Page((ROOT / slug / "index.html").read_text())
+    expected = Page((ROOT / slug / "index.html").read_text(encoding="utf-8", errors="replace"))
     url = f"{ORIGIN}/{slug}/"
     failure = None
     for attempt in range(3):
@@ -59,7 +59,7 @@ def verify(slug):
             required_phones = expected.phones | {"tel:+447983759320", "tel:08001123427", "tel:+442039524822"}
             if not required_phones <= actual.phones:
                 raise ValueError("missing source telephone links")
-            guards = json.loads((ROOT / "protected-pages.json").read_text())["pages"]
+            guards = json.loads((ROOT / "protected-pages.json").read_text(encoding="utf-8"))["pages"]
             for guard in guards:
                 if guard["url"] == url and guard.get("must_contain") not in body:
                     raise ValueError("protected content missing")
