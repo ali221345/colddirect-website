@@ -28,13 +28,13 @@
     <loc>https://www.colddirect.co.uk/air-conditioning-repair-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/air-conditioning-repairs-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/appliances-repair-london.html</loc>
@@ -206,6 +206,12 @@
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/commercial-blast-freezer-repair-london.html</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.colddirect.co.uk/commercial-catering-repair-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -724,7 +730,7 @@
     <loc>https://www.colddirect.co.uk/air-conditioning-repair-london/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/appliances-repair-london/</loc>
@@ -994,13 +1000,13 @@
     <loc>https://www.colddirect.co.uk/colddirect-public-html/air-conditioning-repair-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/colddirect-public-html/air-conditioning-repairs-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/colddirect-public-html/appliances-repair-london.html</loc>
@@ -1849,6 +1855,12 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.colddirect.co.uk/commercial-catering-repair-london/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
     <loc>https://www.colddirect.co.uk/commercial-chest-freezer-repair-london/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
@@ -2083,6 +2095,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.colddirect.co.uk/display-fridge-repair-london/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.colddirect.co.uk/drinks-fridge-repair/</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
@@ -2194,13 +2212,13 @@
     <loc>https://www.colddirect.co.uk/logs/live-download/air-conditioning-repair-london.html</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/logs/live-download/air-conditioning-repair-london__</loc>
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/logs/live-download/chiller-repair-london.html</loc>
@@ -2339,6 +2357,12 @@
     <lastmod>2026-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.colddirect.co.uk/walk-in-freezer-repair-london/</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.colddirect.co.uk/walk-in-freezer-room-repair-london/</loc>
