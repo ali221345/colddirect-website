@@ -252,6 +252,12 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
   3. **Visible On-Page HTML FAQ Accordion (`<!-- CD-CRO-FAQ-ACCORDION -->`)**: Added 5 interactive `<details>/<summary>` trade FAQs per page right above the footer while keeping `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-2026 -->`, `<title>`, `<meta description>`, `auto-seo.aspx`, and `sitemap.xml` 100% untouched.
   4. **Validation & Live Plesk Deployment**: Passed `npm test` (435 files, 0 errors), `protect_fixed_pages.py check` (12/12 OK), and `verify-production-pages.py` (4/4 PASS), and deployed directly to WHUK Plesk `/httpdocs`.
 
+## 2026-10-19 — Pulled & Synced Live Plesk `auto-seo.aspx` V4.2 Updates
+- Pulled `auto-seo.aspx` V4.2, `sitemap.xml` (498 URLs), and the updated freezer/service `.html` files from WHUK Plesk `/httpdocs` into the local workspace via `python tools/pull_live_plesk_v4.py`.
+- Verified `auto-seo.aspx` V4.2 explicitly separates `commercial-freezer-repair` (`Commercial Freezer Repair London | 24/7 Emergency Freezer Service & Repairs`) and `freezer-repair` (`Freezer Repair London | 24/7 Same-Day Emergency Freezer Service & Repairs`), cleans UTF-8 mojibake on every run, and preserves all Cursor CRO Trust Bar and FAQ Accordion blocks.
+- Verified `protect_fixed_pages.py check` (12/12 OK) and `npm test` (435 files, 0 errors).
+
+
 
 
 
