@@ -1,0 +1,11 @@
+{
+  "latest_backup_file": "colddirect-public-html/backups/colddirect-live-backup-2026-10-19_1658.zip",
+  "timestamp_utc": "2026-10-19T16:58:59Z",
+  "file_count": 531,
+  "size_bytes": 2098788,
+  "size_mb": 2.0,
+  "sha256": "1212c98c3d1f4172f85eb6e7a210f3ea292839fa15dd7545d821d84796f02344",
+  "git_tag": "backup-2026-10-19-1658",
+  "retention_max": 15,
+  "backups_on_disk": 1
+}
