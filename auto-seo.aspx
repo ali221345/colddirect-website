@@ -4,221 +4,265 @@
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
-    protected void Page_Load(object sender, EventArgs e)
+protected void Page_Load(object sender, EventArgs e)
+{
+    if (Request.QueryString["key"] != "cd2026") { Response.StatusCode = 403; Response.Write("403"); return; }
+    string root = Server.MapPath("~/");
+
+    string footerBlock = "\r\n<!-- AUTO-SEO-V4-2026 -->\r\n" +
+        "<div class=\"seo-service-tags\" style=\"font-size:12px;color:#666;padding:12px 15px;text-align:center;border-top:1px solid #eee;margin-top:20px;\">\r\n" +
+        "  <strong>24/7 London Commercial Refrigeration, Cellar &amp; Catering Repair Services:</strong>\r\n" +
+        "  <a href=\"/commercial-fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Fridge Repair London</a> |\r\n" +
+        "  <a href=\"/commercial-freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Freezer Repair London</a> |\r\n" +
+        "  <a href=\"/cold-room-repair-london/\" style=\"color:#555;margin:0 6px;\">Cold Room Repair London</a> |\r\n" +
+        "  <a href=\"/cellar-cooler-repair-london.asp\" style=\"color:#555;margin:0 6px;\">Cellar Repair London</a> |\r\n" +
+        "  <a href=\"/catering-repair-london/\" style=\"color:#555;margin:0 6px;\">Catering Repair London</a> |\r\n" +
+        "  <a href=\"/commercial-catering-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Catering Repair London</a> |\r\n" +
+        "  <a href=\"/air-conditioning-repair-london/\" style=\"color:#555;margin:0 6px;\">Air Conditioning Repair London</a> |\r\n" +
+        "  <a href=\"/fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Fridge Repair London</a> |\r\n" +
+        "  <a href=\"/freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Freezer Repair London</a>\r\n" +
+        "</div>\r\n";
+
+    string scOpen = "<scr" + "ipt type=\"application/ld+json\">";
+    string scClose = "</scr" + "ipt>";
+    string schemaBlock = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n{\r\n" +
+        "  \"@context\": \"https://schema.org\",\r\n" +
+        "  \"@type\": \"HVACBusiness\",\r\n" +
+        "  \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
+        "  \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
+        "  \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
+        "  \"telephone\": \"+442039524822\",\r\n" +
+        "  \"priceRange\": \"\u00A3\u00A3\",\r\n" +
+        "  \"address\": {\r\n" +
+        "    \"@type\": \"PostalAddress\",\r\n" +
+        "    \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
+        "    \"addressLocality\": \"Enfield, London\",\r\n" +
+        "    \"postalCode\": \"N9 0DX\",\r\n" +
+        "    \"addressCountry\": \"GB\"\r\n" +
+        "  },\r\n" +
+        "  \"areaServed\": \"London\"\r\n" +
+        "}\r\n" + scClose + "\r\n";
+
+    List<string> filesList = new List<string>();
+    try { filesList.AddRange(Directory.GetFiles(root, "*.html", SearchOption.TopDirectoryOnly)); } catch { }
+    try
     {
-        if (Request.QueryString["key"] != "cd2026")
+        foreach (string dir in Directory.GetDirectories(root, "*", SearchOption.TopDirectoryOnly))
         {
-            Response.StatusCode = 403;
-            Response.Write("Access Denied");
-            return;
+            string dn = Path.GetFileName(dir).ToLowerInvariant();
+            if (dn.StartsWith(".") || dn.StartsWith("_") || dn.Contains("backup") || dn.Contains("plesk") || dn.Contains("stat") || dn.Contains("log") || dn.Contains("error") || dn == "colddirect-public-html" || dn == "node_modules" || dn == "cgi-bin" || dn == "app_data") continue;
+            try { filesList.AddRange(Directory.GetFiles(dir, "*.html", SearchOption.AllDirectories)); } catch { }
         }
+    }
+    catch { }
 
-        string rootPath = Server.MapPath("~/");
-        string[] files = Directory.GetFiles(rootPath, "*.html", SearchOption.AllDirectories);
+    int updated = 0;
+    List<string> sitemapUrls = new List<string>();
+    sitemapUrls.Add("https://www.colddirect.co.uk/");
 
-        int updated = 0;
-        int scanned = 0;
-        int skipped = 0;
-        List<string> sitemapUrls = new List<string>();
-
-        string masterKeywords = "commercial fridge repair London, commercial fridge repairs, fridge repair London, London fridge repair, commercial freezer repair London, freezer repair London, cold room repair London, walk in cold room repair London, cellar repair London, cellar cooler repair London, beer cellar cooling repair London, commercial catering repair London, catering equipment repair London, cheap fridge repair London, cheap fridge service London, emergency fridge repair service London, 24/7 commercial refrigeration repairs";
-
-        string schemaOpen = "<scr" + "ipt type=\"application/ld+json\">";
-        string schemaClose = "</scr" + "ipt>";
-        string schemaJson = "\n<!-- AUTO-SEO-V4-SCHEMA -->\n" + schemaOpen + "\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"HVACBusiness\",\n  \"@id\": \"https://www.colddirect.co.uk/#business\",\n  \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\n  \"url\": \"https://www.colddirect.co.uk/\",\n  \"telephone\": \"+442039524822\",\n  \"priceRange\": \"££\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"27 Felixstowe Road\",\n    \"addressLocality\": \"Enfield, London\",\n    \"postalCode\": \"N9 0DX\",\n    \"addressCountry\": \"GB\"\n  },\n  \"areaServed\": \"London\"\n}\n" + schemaClose;
-
-        string homepageBlogHub = "\n<!-- AUTO-SEO-V4-BLOGHUB -->\n" +
-            "<section class=\"seo-blog-hub\" style=\"max-width:1140px;margin:30px auto;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-family:sans-serif;\">\n" +
-            "  <h2 style=\"font-size:20px;color:#0f172a;margin-bottom:15px;text-align:center;\">London Commercial Refrigeration, Cellar &amp; Catering Repair Guides</h2>\n" +
-            "  <div style=\"display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;font-size:14px;\">\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>1. Commercial Fridge Not Holding 1–4°C:</strong> Dirty condensers, seized evaporator fans &amp; door gasket checks for trade kitchens. <a href=\"/commercial-fridge-repair-london/\">Read Commercial Fridge Guide &rarr;</a></div>\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>2. Walk-In Cold Room Emergency Checklist:</strong> Iced evaporators, roof condensing unit trips &amp; HACCP stock protection. <a href=\"/cold-room-repair-london/\">Read Cold Room Guide &rarr;</a></div>\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>3. Commercial Freezer Climbing Above -18°C:</strong> Defrost heater diagnostics, controller faults &amp; same-day London recovery. <a href=\"/commercial-freezer-repair-london/\">Read Freezer Guide &rarr;</a></div>\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>4. Pub Beer Cellar Cooler Breakdowns:</strong> Keeping kegs &amp; cellars at 11–13°C across London bars &amp; hospitality venues. <a href=\"/cellar-cooler-repair-london.asp\">Read Cellar Cooling Guide &rarr;</a></div>\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>5. Commercial Catering Fridge &amp; Prep Counters:</strong> Fixing warm saladettes, pass fridges &amp; catering chillers in 60–120 mins. <a href=\"/catering-repair-london/\">Read Catering Repair Guide &rarr;</a></div>\n" +
-            "    <div style=\"padding:12px;background:#fff;border-radius:6px;border:1px solid #e2e8f0;\"><strong>6. Cost-Effective &amp; Cheap Fridge Service London:</strong> How board-level component repairs save trade kitchens from full replacements. <a href=\"/fridge-repair-london/\">Read London Fridge Service Guide &rarr;</a></div>\n" +
-            "  </div>\n" +
-            "</section>";
-
-        foreach (string file in files)
+    foreach (string file in filesList)
+    {
+        try
         {
-            scanned++;
-            try
+            string rel = file.Substring(root.Length).Replace("\\", "/").ToLowerInvariant();
+            if (rel.StartsWith("_") || rel.Contains("backup") || rel.Contains("404") || rel.Contains("colddirect-public-html/") || rel.StartsWith("logs/") || rel.StartsWith("plesk-") || rel.StartsWith("error_docs/") || rel.StartsWith("google")) continue;
+
+            // Build clean sitemap URL list — exclude dishwasher & non-indexable pages
+            if (!rel.Contains("dishwasher") && !rel.Contains("admin") && !rel.Contains("test"))
             {
-                string relPath = file.Substring(rootPath.Length).Replace("\\", "/");
-                string relLower = relPath.ToLowerInvariant();
-
-                if (!relLower.StartsWith("plesk-") && !relLower.Contains("error_docs") && !relLower.Contains("google"))
+                if (rel.EndsWith("/index.html"))
                 {
-                    string cleanUrl = "https://www.colddirect.co.uk/" + relPath.Replace("index.html", "");
-                    sitemapUrls.Add(cleanUrl);
+                    string folderUrl = "https://www.colddirect.co.uk/" + rel.Substring(0, rel.Length - 10);
+                    if (!sitemapUrls.Contains(folderUrl)) sitemapUrls.Add(folderUrl);
                 }
+                else if (!rel.Contains("/") && rel != "index.html")
+                {
+                    string slugUrl = "https://www.colddirect.co.uk/" + rel.Replace(".html", "/");
+                    if (!sitemapUrls.Contains(slugUrl)) sitemapUrls.Add(slugUrl);
+                }
+            }
 
-                string origContent = File.ReadAllText(file, Encoding.UTF8);
-                string content = origContent;
+            if (rel.Contains("dishwasher")) continue;
 
-                // 1. Always clean UTF-8 encoding glitches and lock tags first (even on existing V4 pages)
-                content = content.Replace("<!-- AUTO-SEO-LOCKED -->", "");
-                content = content.Replace("â€”", "—").Replace("â€“", "–").Replace("Â°", "°").Replace("â€™", "’");
+            string html = File.ReadAllText(file, Encoding.UTF8);
+            string orig = html;
+            string name = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+            if (name == "index" && rel.Contains("/"))
+            {
+                string[] parts = rel.Split('/');
+                if (parts.Length >= 2) name = parts[parts.Length - 2];
+            }
 
-                // 2. Always verify & apply exact target Titles and Meta Descriptions
+            // Strip any UTF-8 mojibake (Â£ / Â°)
+            if (html.Contains("\u00C2\u00A3")) html = html.Replace("\u00C2\u00A3", "\u00A3");
+            if (html.Contains("\u00C2\u00B0")) html = html.Replace("\u00C2\u00B0", "\u00B0");
+
+            // Upgrade old V4 blocks cleanly
+            html = Regex.Replace(html, @"<!-- AUTO-SEO-V[234]-2026 -->[\s\S]*?</div>\s*", "");
+            html = Regex.Replace(html, "<!-- AUTO-SEO-V[34]-SCHEMA -->[\\s\\S]*?" + scClose + "\\s*", "");
+
+            if (!html.Contains("<!-- AUTO-SEO-LOCKED -->") && !rel.StartsWith("blog/"))
+            {
                 string newTitle = "";
                 string newDesc = "";
 
-                if (relLower.Contains("cellar"))
-                {
-                    newTitle = "Cellar Repair London | 24/7 Beer Cellar Cooling & Pub Cooler Repairs";
-                    newDesc = "24/7 Cellar Repair London & emergency beer cellar cooling service. Fast 60-min pub & bar cellar cooler repairs across London by F-Gas engineers. Call 0203 952 4822!";
-                }
-                else if (relLower.Contains("catering"))
-                {
-                    newTitle = "Commercial Catering Repair London | 24/7 Catering Equipment & Fridge Service";
-                    newDesc = "Expert Commercial Catering Repair London. Same-day emergency repair service for restaurant catering refrigeration, prep counters & kitchen equipment across London.";
-                }
-                else if (relLower.Contains("cold-room"))
-                {
-                    newTitle = "Cold Room Repair London | 24/7 Walk-In Chiller & Emergency Service";
-                    newDesc = "24/7 Walk-In Cold Room Repair London for restaurants, hotels, butchers & supermarkets. Fast 2-hr emergency response by F-Gas engineers. Call 07983 759320!";
-                }
-                else if (relLower.Contains("commercial-fridge-repair"))
-                {
-                    newTitle = "Commercial Fridge Repair London | 24/7 Emergency Service & Repairs";
-                    newDesc = "24/7 Commercial Fridge Repair London & Emergency Refrigeration Services. Fast 60-min response for restaurants, catering, shops & walk-in fridges. Fixed-rate quotes.";
-                }
-                else if (relLower.Contains("commercial-freezer-repair"))
-                {
-                    newTitle = "Commercial Freezer Repair London | 24/7 Emergency Freezer Service & Repairs";
-                    newDesc = "24/7 Commercial Freezer Repair London & emergency freezer services. Fast same-day walk-in, display & catering freezer repairs across all London postcodes.";
-                }
-                else if (relLower.Contains("freezer-repair"))
-                {
-                    newTitle = "Freezer Repair London | 24/7 Same-Day Emergency Freezer Service & Repairs";
-                    newDesc = "Looking for London Freezer Repair? Fast 24/7 same-day emergency freezer repair service for restaurants, shops & commercial kitchens across London. Call 0203 952 4822!";
-                }
-                else if (relLower.Contains("fridge-repair-london"))
-                {
-                    newTitle = "Fridge Repair & Service London (2-Hr Emergency) | Commercial & Catering";
-                    newDesc = "Fast 24/7 London Fridge Repair & cost-effective commercial fridge service. Same-day emergency repairs for restaurants, pubs, cellar coolers & shops across London.";
-                }
-                else if (relLower == "index.html")
-                {
-                    newTitle = "Commercial Fridge & Freezer Repair London | Cellar, Cold Room & Catering 24/7";
-                    newDesc = "London's #1 Commercial Fridge Repair, Commercial Freezer Repair, Cold Room, Cellar Repair London & Commercial Catering Repair. 24/7 emergency service—call now!";
-                }
-
-                if (!string.IsNullOrEmpty(newTitle))
-                {
-                    if (Regex.IsMatch(content, "<title>.*?</title>", RegexOptions.IgnoreCase | RegexOptions.Singleline))
-                    {
-                        content = Regex.Replace(content, "<title>.*?</title>", "<title>" + newTitle + "</title>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                    }
-
-                    string metaDescTag = "<meta name=\"description\" content=\"" + newDesc + "\" />";
-                    if (Regex.IsMatch(content, "<meta\\s+name=[\"']description[\"'][^>]*>", RegexOptions.IgnoreCase))
-                    {
-                        content = Regex.Replace(content, "<meta\\s+name=[\"']description[\"'][^>]*>", metaDescTag, RegexOptions.IgnoreCase);
-                    }
-                    else if (content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        content = Regex.Replace(content, "</head>", metaDescTag + "\n</head>", RegexOptions.IgnoreCase);
-                    }
-                }
-
-                // 3. Add missing alt attributes to any new images
-                content = Regex.Replace(content, "<img(?![^>]*\\balt=)([^>]*)>", "<img alt=\"Commercial Fridge, Freezer, Cold Room & Catering Repair London - Cold Direct\"$1>", RegexOptions.IgnoreCase);
-
-                // 4. Inject V4 Schema, Blog Hub, and Footer Block if not already present
-                if (!content.Contains("<!-- AUTO-SEO-V4-2026 -->"))
-                {
-                    content = Regex.Replace(content, "<!-- AUTO-SEO-V[23]-2026 -->[\\s\\S]*?</div>", "", RegexOptions.IgnoreCase);
-                    content = Regex.Replace(content, "<!-- AUTO-SEO-V3-SCHEMA -->[\\s\\S]*?</scr" + "ipt>", "", RegexOptions.IgnoreCase);
-
-                    string metaKeywordsTag = "<meta name=\"keywords\" content=\"" + masterKeywords + "\" />";
-                    if (Regex.IsMatch(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", RegexOptions.IgnoreCase))
-                    {
-                        content = Regex.Replace(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", metaKeywordsTag, RegexOptions.IgnoreCase);
-                    }
-                    else if (content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        content = Regex.Replace(content, "</head>", metaKeywordsTag + "\n</head>", RegexOptions.IgnoreCase);
-                    }
-
-                    if (!content.Contains("<!-- AUTO-SEO-V4-SCHEMA -->") && content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        content = Regex.Replace(content, "</head>", schemaJson + "\n</head>", RegexOptions.IgnoreCase);
-                    }
-
-                    if (relLower == "index.html" && !content.Contains("<!-- AUTO-SEO-V4-BLOGHUB -->") && content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        content = Regex.Replace(content, "</body>", homepageBlogHub + "\n</body>", RegexOptions.IgnoreCase);
-                    }
-
-                    string seoTagBlock = "\n<!-- AUTO-SEO-V4-2026 -->\n" +
-                        "<div class=\"seo-service-tags\" style=\"font-size:12px;color:#666;padding:12px 15px;text-align:center;border-top:1px solid #eee;margin-top:20px;\">\n" +
-                        "  <strong>24/7 London Commercial Refrigeration, Cellar &amp; Catering Repair Services:</strong>\n" +
-                        "  <a href=\"/commercial-fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Fridge Repair London</a> |\n" +
-                        "  <a href=\"/commercial-freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Freezer Repair London</a> |\n" +
-                        "  <a href=\"/cold-room-repair-london/\" style=\"color:#555;margin:0 6px;\">Cold Room Repair London</a> |\n" +
-                        "  <a href=\"/cellar-cooler-repair-london.asp\" style=\"color:#555;margin:0 6px;\">Cellar Repair London</a> |\n" +
-                        "  <a href=\"/catering-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Catering Repair London</a> |\n" +
-                        "  <a href=\"/fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Fridge Repair London</a> |\n" +
-                        "  <a href=\"/freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Freezer Repair London</a>\n" +
-                        "</div>";
-
-                    if (content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        content = Regex.Replace(content, "</body>", seoTagBlock + "\n</body>", RegexOptions.IgnoreCase);
-                    }
+                if (rel == "index.html") {
+                    newTitle = "Commercial Fridge & Freezer Repair London | 24/7 Cold Room, Cellar & Catering Engineers";
+                    newDesc = "24/7 emergency commercial fridge repair, commercial freezer repair, cold room, beer cellar cooling, commercial catering & air conditioning repair in London. 60\u201390 min response. Call 0203 952 4822.";
+                } else if (name.Contains("dairy-cabinet")) {
+                    newTitle = "Dairy Cabinet Repair London | 24/7 Multideck & Display Chiller Engineers";
+                    newDesc = "Emergency dairy cabinet repair in London. 24/7 same-day F-Gas engineers for milk multidecks, cheese serve-overs & retail display chillers. 60\u201390 min response. Call 0203 952 4822.";
+                } else if (name.Contains("cellar")) {
+                    newTitle = "Cellar Cooling Repair London | 24/7 Pub & Bar Beer Chiller Engineers";
+                    newDesc = "24/7 emergency beer cellar cooling & pub cellar cooler repair in London. Same-day F-Gas engineers for pubs, bars & hospitality venues. 60\u201390 min response. Call 0203 952 4822.";
+                } else if (name.Contains("blast-freezer") || name.Contains("blast-chiller") || name.Contains("blast-freezing")) {
+                    newTitle = "Blast Freezer & Chiller Repair London | 24/7 Commercial Kitchen Engineers";
+                    newDesc = "24/7 emergency blast chiller & blast freezer repair in London. Same-day F-Gas commercial kitchen engineers for Williams, Foster & Irinox units. Call 0203 952 4822.";
+                } else if (name.Contains("supermarket-freezer")) {
+                    newTitle = "Supermarket Freezer Repair London | 24/7 Commercial Display & Island Engineers";
+                    newDesc = "24/7 emergency supermarket freezer repair in London. Same-day F-Gas engineers for glass-door freezers, chest islands & remote pack systems. Call 0203 952 4822.";
+                } else if (name.Contains("supermarket")) {
+                    newTitle = "Supermarket Fridge & Freezer Repair London | 24/7 Multideck Engineers";
+                    newDesc = "24/7 emergency supermarket fridge & multideck chiller repair in London. Same-day F-Gas engineers for retail display cases & remote packs. Call 0203 952 4822.";
+                } else if (name.Contains("williams-freezer")) {
+                    newTitle = "Williams Freezer Repair London | 24/7 Commercial Kitchen Engineers";
+                    newDesc = "24/7 emergency Williams commercial freezer repair in London. Same-day F-Gas engineers for Williams Jade uprights, undercounters & blast freezers. Call 0203 952 4822.";
+                } else if (name.Contains("williams-fridge") || name == "williams") {
+                    newTitle = "Williams Fridge Repair London | 24/7 Commercial Catering Engineers";
+                    newDesc = "24/7 emergency Williams commercial fridge repair in London. Same-day F-Gas engineers for Williams Jade gastronorm uprights, prep counters & chillers. Call 0203 952 4822.";
+                } else if (name.Contains("liebherr")) {
+                    newTitle = "Liebherr Commercial Fridge Repair London | 24/7 Same-Day Engineers";
+                    newDesc = "24/7 emergency Liebherr commercial fridge & freezer repair in London. Same-day F-Gas engineers for restaurant, hotel, bakery & medical cabinets. Call 0203 952 4822.";
+                } else if (name.Contains("ice-o-matic")) {
+                    newTitle = "Ice-O-Matic Ice Machine Repair London | 24/7 Commercial Engineers";
+                    newDesc = "24/7 emergency Ice-O-Matic commercial ice machine repair in London. Same-day F-Gas engineers for cube & flake ice makers in bars, hotels & restaurants. Call 0203 952 4822.";
+                } else if (name.Contains("hoshizaki")) {
+                    newTitle = "Hoshizaki Ice Machine Repair London | 24/7 Commercial Ice Maker Engineers";
+                    newDesc = "24/7 emergency Hoshizaki commercial ice machine & fridge repair in London. Same-day engineers for KM/IM cube & flake ice makers. Call 0203 952 4822.";
+                } else if (name.Contains("subzero-freezer")) {
+                    newTitle = "Sub-Zero Freezer Repair London | 24/7 Emergency Commercial Engineers";
+                    newDesc = "24/7 emergency commercial Sub-Zero freezer repair in London. Same-day F-Gas engineers for hospitality & commercial venues. Call 0203 952 4822.";
+                } else if (name.Contains("subzero-fridge")) {
+                    newTitle = "Sub-Zero Fridge Repair London | 24/7 Emergency Commercial Engineers";
+                    newDesc = "24/7 emergency commercial Sub-Zero fridge repair in London. Same-day F-Gas engineers for hospitality & commercial kitchens. Call 0203 952 4822.";
+                } else if (name.Contains("foster-freezer")) {
+                    newTitle = "Foster Freezer Repair London | 24/7 Commercial Kitchen Engineers";
+                    newDesc = "24/7 emergency Foster commercial freezer repair in London. Same-day F-Gas engineers for Foster EcoPro uprights, counters & blast freezers. Call 0203 952 4822.";
+                } else if (name.Contains("foster-fridge") || name == "foster") {
+                    newTitle = "Foster Fridge Repair London | 24/7 Commercial Catering Engineers";
+                    newDesc = "24/7 emergency Foster commercial fridge repair in London. Same-day F-Gas engineers for Foster EcoPro cabinets, prep counters & chillers. Call 0203 952 4822.";
+                } else if (name.Contains("true-fridge")) {
+                    newTitle = "True Commercial Fridge Repair London | 24/7 Same-Day Engineers";
+                    newDesc = "24/7 emergency True commercial fridge & freezer repair in London. Same-day F-Gas engineers for True prep tables, undercounters & display chillers. Call 0203 952 4822.";
+                } else if (name.Contains("polar-fridge")) {
+                    newTitle = "Polar Commercial Fridge Repair London | 24/7 Same-Day Engineers";
+                    newDesc = "24/7 emergency Polar commercial fridge & freezer repair in London. Same-day F-Gas engineers for Polar display fridges, prep counters & uprights. Call 0203 952 4822.";
+                } else if (name.Contains("gram-fridge")) {
+                    newTitle = "Gram Commercial Fridge Repair London | 24/7 Same-Day Engineers";
+                    newDesc = "24/7 emergency Gram commercial fridge & freezer repair in London. Same-day F-Gas engineers for Gram Compact & Superior kitchen cabinets. Call 0203 952 4822.";
+                } else if (name.Contains("refrigeration-brands")) {
+                    newTitle = "Commercial Refrigeration Brands Repaired London | 24/7 F-Gas Engineers";
+                    newDesc = "24/7 repair across all commercial refrigeration brands in London: Williams, Foster, True, Polar, Gram, Hoshizaki, Scotsman, Liebherr & Ice-O-Matic. Call 0203 952 4822.";
+                } else if (name == "commercial-fridge-repair-london") {
+                    newTitle = "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers";
+                    newDesc = "Emergency commercial fridge repair in London. 60\u201390 min response, 24/7 F-Gas engineers for restaurants, supermarkets, pubs & commercial kitchens. Call 0203 952 4822.";
+                } else if (name == "fridge-repair-london") {
+                    newTitle = "Fridge Repair London | 24/7 Commercial Refrigeration & Fridge Service";
+                    newDesc = "Fast same-day commercial fridge repair in London. 24/7 emergency F-Gas engineers for display fridges, prep counters, bar chillers & kitchen cabinets. Call 0203 952 4822.";
+                } else if (name == "commercial-freezer-repair-london") {
+                    newTitle = "Commercial Freezer Repair London | 24/7 Walk-In & Kitchen Freezer Engineers";
+                    newDesc = "24/7 emergency commercial freezer repair in London. Fast 60\u201390 min callout for walk-in freezers, chest freezers, blast freezers & restaurant kitchens. Call 0203 952 4822.";
+                } else if (name == "freezer-repair-london") {
+                    newTitle = "Freezer Repair London | 24/7 Same-Day Commercial Freezer Repairs";
+                    newDesc = "Emergency commercial freezer repair across London. 24/7 F-Gas certified engineers fixing upright, undercounter, display & walk-in freezers today. Call 0203 952 4822.";
+                } else if (name.Contains("cold-room")) {
+                    newTitle = "Cold Room Repair London | 24/7 Walk-In Chiller & Freezer Room Engineers";
+                    newDesc = "24/7 walk-in cold room repair in London. Same-day F-Gas engineers for commercial chiller rooms, freezer rooms, compressor & gas leak repairs. Call 0203 952 4822.";
+                } else if (name == "commercial-catering-repair-london") {
+                    newTitle = "Commercial Catering Repair London | 24/7 Kitchen Refrigeration Engineers";
+                    newDesc = "24/7 emergency commercial catering repair in London. Same-day F-Gas engineers for commercial kitchen fridges, prep counters, blast chillers, cold rooms & ice machines. Call 0203 952 4822.";
+                } else if (name == "catering-repair-london" || name.Contains("catering")) {
+                    newTitle = "Catering Repair London | 24/7 Commercial Catering Refrigeration Engineers";
+                    newDesc = "24/7 commercial catering equipment & kitchen refrigeration repair in London. Same-day engineers for restaurants, takeaways, hotels, pubs & dark kitchens. Call 0203 952 4822.";
+                } else if (name == "air-conditioning-repair-london" || name.Contains("air-conditioning")) {
+                    newTitle = "Air Conditioning Repair London | 24/7 Commercial AC & F-Gas Engineers";
+                    newDesc = "24/7 emergency commercial air conditioning repair in London. Same-day F-Gas certified engineers for split systems, ceiling cassettes, VRV/VRF & cellar AC. Call 0203 952 4822.";
+                } else if (name == "ice-machine-repair-london" || name.Contains("ice-machine")) {
+                    newTitle = "Ice Machine Repair London | 24/7 Hoshizaki, Scotsman & Bar Ice Engineers";
+                    newDesc = "24/7 emergency commercial ice machine repair in London. Same-day engineers for Hoshizaki, Scotsman, Ice-O-Matic & Manitowoc cube and flake ice makers. Call 0203 952 4822.";
+                } else if (name == "chiller-repair-london" || name.Contains("chiller")) {
+                    newTitle = "Chiller Repair London | 24/7 Walk-In, Multideck & Display Chiller Engineers";
+                    newDesc = "24/7 commercial chiller repair in London. Fast 60\u201390 min response for walk-in chillers, multideck display chillers, cellar coolers & process chillers. Call 0203 952 4822.";
+                } else if (name == "display-fridge-repair-london" || name.Contains("display-fridge")) {
+                    newTitle = "Display Fridge Repair London | 24/7 Multideck, Serve-Over & Bottle Coolers";
+                    newDesc = "24/7 commercial display fridge repair in London. Same-day F-Gas engineers for supermarket multidecks, deli serve-over counters, patisserie & drinks chillers. Call 0203 952 4822.";
+                } else if (name == "prep-fridge-repair-london" || name.Contains("prep-fridge")) {
+                    newTitle = "Prep Fridge Repair London | 24/7 Saladette, Pizza & Counter Fridge Engineers";
+                    newDesc = "24/7 emergency prep counter & saladette fridge repair in London. Same-day F-Gas engineers for Williams, Foster, True & Polar kitchen counter fridges. Call 0203 952 4822.";
+                } else if (name == "walk-in-freezer-repair-london" || name.Contains("walk-in-freezer")) {
+                    newTitle = "Walk-In Freezer Repair London | 24/7 Emergency Freezer Room Engineers";
+                    newDesc = "24/7 walk-in freezer repair in London. 60\u201390 min response for commercial freezer rooms, defrost faults, compressors & F-Gas leaks. Call 0203 952 4822.";
                 }
 
-                // 5. Save file only if changes were made (preserves all Cursor CRO Trust Bar & FAQ blocks!)
-                if (content != origContent)
+                if (newTitle != "")
                 {
-                    File.WriteAllText(file, content, Encoding.UTF8);
-                    updated++;
+                    if (Regex.IsMatch(html, @"<title>[\s\S]*?</title>", RegexOptions.IgnoreCase))
+                        html = Regex.Replace(html, @"<title>[\s\S]*?</title>", "<title>" + newTitle + "</title>", RegexOptions.IgnoreCase);
+
+                    if (Regex.IsMatch(html, @"<meta\s+name=[""']description[""'][^>]*>", RegexOptions.IgnoreCase))
+                        html = Regex.Replace(html, @"<meta\s+name=[""']description[""'][^>]*>", "<meta name=\"description\" content=\"" + newDesc + "\">", RegexOptions.IgnoreCase);
                 }
             }
-            catch (IOException)
+
+            // Inject Homepage Blog Hub so Google crawls & ranks all blog guides
+            if (rel == "index.html" && !html.Contains("<!-- AUTO-SEO-V4-BLOGHUB -->"))
             {
-                skipped++;
+                string blogHub = "\r\n<!-- AUTO-SEO-V4-BLOGHUB -->\r\n" +
+                    "<section style=\"max-width:1100px;margin:30px auto;padding:20px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;\">\r\n" +
+                    "  <h2 style=\"font-size:22px;margin-bottom:12px;color:#0f172a;\">Commercial Refrigeration &amp; Cold Room Troubleshooting Guides</h2>\r\n" +
+                    "  <div style=\"display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;font-size:14px;\">\r\n" +
+                    "    <a href=\"/blog/commercial-fridge-not-cooling.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; Why Your Commercial Fridge Is Not Cooling (Emergency Checklist)</a>\r\n" +
+                    "    <a href=\"/blog/commercial-fridge-repair-cost-london.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; Commercial Fridge Repair Cost in London (2026 Pricing Guide)</a>\r\n" +
+                    "    <a href=\"/blog/cold-room-temperature-fluctuation.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; Cold Room Temperature Fluctuation: Causes &amp; Fast Fixes</a>\r\n" +
+                    "    <a href=\"/blog/why-commercial-freezer-not-freezing.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; Commercial Freezer Not Freezing? Compressor &amp; Defrost Faults</a>\r\n" +
+                    "    <a href=\"/blog/f-gas-regulations-commercial.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; UK F-Gas Regulations for London Restaurants &amp; Supermarkets</a>\r\n" +
+                    "    <a href=\"/blog/prevent-commercial-fridge-breakdown.html\" style=\"color:#0284c7;text-decoration:none;font-weight:600;\">&rarr; How to Prevent Commercial Fridge &amp; Cellar Cooler Breakdowns</a>\r\n" +
+                    "  </div>\r\n</section>\r\n";
+                if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
+                    html = Regex.Replace(html, @"</body>", blogHub + "</body>", RegexOptions.IgnoreCase);
             }
-            catch
-            {
-                skipped++;
-            }
-        }
 
-        try
-        {
-            if (!sitemapUrls.Contains("https://www.colddirect.co.uk/cellar-cooler-repair-london.asp"))
-                sitemapUrls.Add("https://www.colddirect.co.uk/cellar-cooler-repair-london.asp");
+            // Inject Schema in <head>
+            if (Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
+                html = Regex.Replace(html, @"</head>", schemaBlock + "</head>", RegexOptions.IgnoreCase);
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-            string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            // Inject V4 Footer Links before </body>
+            if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
+                html = Regex.Replace(html, @"</body>", footerBlock + "</body>", RegexOptions.IgnoreCase);
 
-            foreach (string url in sitemapUrls)
-            {
-                string prio = "0.8";
-                string uLow = url.ToLowerInvariant();
-                if (uLow.Contains("commercial-fridge") || uLow.Contains("freezer-repair") || uLow.Contains("cold-room") || uLow.Contains("cellar") || uLow.Contains("catering") || uLow.EndsWith("colddirect.co.uk/"))
-                {
-                    prio = "1.0";
-                }
-
-                sb.AppendLine("  <url>");
-                sb.AppendLine("    <loc>" + url + "</loc>");
-                sb.AppendLine("    <lastmod>" + today + "</lastmod>");
-                sb.AppendLine("    <changefreq>daily</changefreq>");
-                sb.AppendLine("    <priority>" + prio + "</priority>");
-                sb.AppendLine("  </url>");
-            }
-            sb.AppendLine("</urlset>");
-            File.WriteAllText(Path.Combine(rootPath, "sitemap.xml"), sb.ToString(), Encoding.UTF8);
+            if (html != orig) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; }
         }
         catch { }
-
-        Response.Write("<h2>AUTO-SEO V4.2 RANKING PUSH OK | Updated: " + updated + " | Scanned: " + scanned + " | Sitemap URLs: " + sitemapUrls.Count + " | Skipped Locked: " + skipped + "</h2>");
     }
+
+    // Generate clean sitemap.xml dynamically
+    try
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+        string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        foreach (string u in sitemapUrls)
+        {
+            string prio = (u == "https://www.colddirect.co.uk/") ? "1.0" : (u.Contains("-repair-london") ? "0.9" : "0.8");
+            sb.AppendLine("  <url><loc>" + u + "</loc><lastmod>" + today + "</lastmod><changefreq>daily</changefreq><priority>" + prio + "</priority></url>");
+        }
+        sb.AppendLine("</urlset>");
+        File.WriteAllText(Path.Combine(root, "sitemap.xml"), sb.ToString(), new UTF8Encoding(false));
+    }
+    catch { }
+
+    Response.ContentType = "text/plain";
+    Response.Write("AUTO-SEO V4.4 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+}
 </script>

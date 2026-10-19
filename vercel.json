@@ -167,17 +167,17 @@
     },
     {
       "source": "/commercial-dishwasher-repair-london.html",
-      "destination": "/catering-repair-london",
+      "destination": "/commercial-catering-repair-london",
       "permanent": true
     },
     {
       "source": "/commercial-dishwasher-repair-london",
-      "destination": "/catering-repair-london",
+      "destination": "/commercial-catering-repair-london",
       "permanent": true
     },
     {
       "source": "/dishwashers-london",
-      "destination": "/catering-repair-london",
+      "destination": "/commercial-catering-repair-london",
       "permanent": true
     },
     {
