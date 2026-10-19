@@ -54,20 +54,14 @@
                     sitemapUrls.Add(cleanUrl);
                 }
 
-                string content = File.ReadAllText(file, Encoding.UTF8);
+                string origContent = File.ReadAllText(file, Encoding.UTF8);
+                string content = origContent;
 
-                if (content.Contains("<!-- AUTO-SEO-V4-2026 -->"))
-                {
-                    continue;
-                }
-
-                // Clean previous markers and UTF-8 mojibake
+                // 1. Always clean UTF-8 encoding glitches and lock tags first (even on existing V4 pages)
                 content = content.Replace("<!-- AUTO-SEO-LOCKED -->", "");
-                content = content.Replace("â€”", "—").Replace("â€“", "–").Replace("Â°", "°");
-                content = Regex.Replace(content, "<!-- AUTO-SEO-V[23]-2026 -->[\\s\\S]*?</div>", "", RegexOptions.IgnoreCase);
-                content = Regex.Replace(content, "<!-- AUTO-SEO-V3-SCHEMA -->[\\s\\S]*?</scr" + "ipt>", "", RegexOptions.IgnoreCase);
+                content = content.Replace("â€”", "—").Replace("â€“", "–").Replace("Â°", "°").Replace("â€™", "’");
 
-                bool isModified = false;
+                // 2. Always verify & apply exact target Titles and Meta Descriptions
                 string newTitle = "";
                 string newDesc = "";
 
@@ -91,10 +85,15 @@
                     newTitle = "Commercial Fridge Repair London | 24/7 Emergency Service & Repairs";
                     newDesc = "24/7 Commercial Fridge Repair London & Emergency Refrigeration Services. Fast 60-min response for restaurants, catering, shops & walk-in fridges. Fixed-rate quotes.";
                 }
-                else if (relLower.Contains("freezer-repair"))
+                else if (relLower.Contains("commercial-freezer-repair"))
                 {
                     newTitle = "Commercial Freezer Repair London | 24/7 Emergency Freezer Service & Repairs";
                     newDesc = "24/7 Commercial Freezer Repair London & emergency freezer services. Fast same-day walk-in, display & catering freezer repairs across all London postcodes.";
+                }
+                else if (relLower.Contains("freezer-repair"))
+                {
+                    newTitle = "Freezer Repair London | 24/7 Same-Day Emergency Freezer Service & Repairs";
+                    newDesc = "Looking for London Freezer Repair? Fast 24/7 same-day emergency freezer repair service for restaurants, shops & commercial kitchens across London. Call 0203 952 4822!";
                 }
                 else if (relLower.Contains("fridge-repair-london"))
                 {
@@ -112,7 +111,6 @@
                     if (Regex.IsMatch(content, "<title>.*?</title>", RegexOptions.IgnoreCase | RegexOptions.Singleline))
                     {
                         content = Regex.Replace(content, "<title>.*?</title>", "<title>" + newTitle + "</title>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                        isModified = true;
                     }
 
                     string metaDescTag = "<meta name=\"description\" content=\"" + newDesc + "\" />";
@@ -124,57 +122,57 @@
                     {
                         content = Regex.Replace(content, "</head>", metaDescTag + "\n</head>", RegexOptions.IgnoreCase);
                     }
-                    isModified = true;
                 }
 
-                // Inject Master Keywords
-                string metaKeywordsTag = "<meta name=\"keywords\" content=\"" + masterKeywords + "\" />";
-                if (Regex.IsMatch(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", RegexOptions.IgnoreCase))
-                {
-                    content = Regex.Replace(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", metaKeywordsTag, RegexOptions.IgnoreCase);
-                }
-                else if (content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    content = Regex.Replace(content, "</head>", metaKeywordsTag + "\n</head>", RegexOptions.IgnoreCase);
-                }
-
-                // Inject V4 JSON-LD Schema
-                if (!content.Contains("<!-- AUTO-SEO-V4-SCHEMA -->") && content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    content = Regex.Replace(content, "</head>", schemaJson + "\n</head>", RegexOptions.IgnoreCase);
-                    isModified = true;
-                }
-
-                // Add missing alt attributes to images for Google Image & Accessibility SEO
+                // 3. Add missing alt attributes to any new images
                 content = Regex.Replace(content, "<img(?![^>]*\\balt=)([^>]*)>", "<img alt=\"Commercial Fridge, Freezer, Cold Room & Catering Repair London - Cold Direct\"$1>", RegexOptions.IgnoreCase);
 
-                // Inject 6-Article Blog Hub on Homepage
-                if (relLower == "index.html" && !content.Contains("<!-- AUTO-SEO-V4-BLOGHUB -->") && content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
+                // 4. Inject V4 Schema, Blog Hub, and Footer Block if not already present
+                if (!content.Contains("<!-- AUTO-SEO-V4-2026 -->"))
                 {
-                    content = Regex.Replace(content, "</body>", homepageBlogHub + "\n</body>", RegexOptions.IgnoreCase);
-                    isModified = true;
+                    content = Regex.Replace(content, "<!-- AUTO-SEO-V[23]-2026 -->[\\s\\S]*?</div>", "", RegexOptions.IgnoreCase);
+                    content = Regex.Replace(content, "<!-- AUTO-SEO-V3-SCHEMA -->[\\s\\S]*?</scr" + "ipt>", "", RegexOptions.IgnoreCase);
+
+                    string metaKeywordsTag = "<meta name=\"keywords\" content=\"" + masterKeywords + "\" />";
+                    if (Regex.IsMatch(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", RegexOptions.IgnoreCase))
+                    {
+                        content = Regex.Replace(content, "<meta\\s+name=[\"']keywords[\"'][^>]*>", metaKeywordsTag, RegexOptions.IgnoreCase);
+                    }
+                    else if (content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        content = Regex.Replace(content, "</head>", metaKeywordsTag + "\n</head>", RegexOptions.IgnoreCase);
+                    }
+
+                    if (!content.Contains("<!-- AUTO-SEO-V4-SCHEMA -->") && content.IndexOf("</head>", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        content = Regex.Replace(content, "</head>", schemaJson + "\n</head>", RegexOptions.IgnoreCase);
+                    }
+
+                    if (relLower == "index.html" && !content.Contains("<!-- AUTO-SEO-V4-BLOGHUB -->") && content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        content = Regex.Replace(content, "</body>", homepageBlogHub + "\n</body>", RegexOptions.IgnoreCase);
+                    }
+
+                    string seoTagBlock = "\n<!-- AUTO-SEO-V4-2026 -->\n" +
+                        "<div class=\"seo-service-tags\" style=\"font-size:12px;color:#666;padding:12px 15px;text-align:center;border-top:1px solid #eee;margin-top:20px;\">\n" +
+                        "  <strong>24/7 London Commercial Refrigeration, Cellar &amp; Catering Repair Services:</strong>\n" +
+                        "  <a href=\"/commercial-fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Fridge Repair London</a> |\n" +
+                        "  <a href=\"/commercial-freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Freezer Repair London</a> |\n" +
+                        "  <a href=\"/cold-room-repair-london/\" style=\"color:#555;margin:0 6px;\">Cold Room Repair London</a> |\n" +
+                        "  <a href=\"/cellar-cooler-repair-london.asp\" style=\"color:#555;margin:0 6px;\">Cellar Repair London</a> |\n" +
+                        "  <a href=\"/catering-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Catering Repair London</a> |\n" +
+                        "  <a href=\"/fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Fridge Repair London</a> |\n" +
+                        "  <a href=\"/freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Freezer Repair London</a>\n" +
+                        "</div>";
+
+                    if (content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        content = Regex.Replace(content, "</body>", seoTagBlock + "\n</body>", RegexOptions.IgnoreCase);
+                    }
                 }
 
-                // V4 Sitewide Footer Internal Links pointing to exact live URLs
-                string seoTagBlock = "\n<!-- AUTO-SEO-V4-2026 -->\n" +
-                    "<div class=\"seo-service-tags\" style=\"font-size:12px;color:#666;padding:12px 15px;text-align:center;border-top:1px solid #eee;margin-top:20px;\">\n" +
-                    "  <strong>24/7 London Commercial Refrigeration, Cellar &amp; Catering Repair Services:</strong>\n" +
-                    "  <a href=\"/commercial-fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Fridge Repair London</a> |\n" +
-                    "  <a href=\"/commercial-freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Freezer Repair London</a> |\n" +
-                    "  <a href=\"/cold-room-repair-london/\" style=\"color:#555;margin:0 6px;\">Cold Room Repair London</a> |\n" +
-                    "  <a href=\"/cellar-cooler-repair-london.asp\" style=\"color:#555;margin:0 6px;\">Cellar Repair London</a> |\n" +
-                    "  <a href=\"/catering-repair-london/\" style=\"color:#555;margin:0 6px;\">Commercial Catering Repair London</a> |\n" +
-                    "  <a href=\"/fridge-repair-london/\" style=\"color:#555;margin:0 6px;\">Fridge Repair London</a> |\n" +
-                    "  <a href=\"/freezer-repair-london/\" style=\"color:#555;margin:0 6px;\">Freezer Repair London</a>\n" +
-                    "</div>";
-
-                if (content.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    content = Regex.Replace(content, "</body>", seoTagBlock + "\n</body>", RegexOptions.IgnoreCase);
-                    isModified = true;
-                }
-
-                if (isModified)
+                // 5. Save file only if changes were made (preserves all Cursor CRO Trust Bar & FAQ blocks!)
+                if (content != origContent)
                 {
                     File.WriteAllText(file, content, Encoding.UTF8);
                     updated++;
@@ -190,7 +188,6 @@
             }
         }
 
-        // Rebuild Sitemap with exact Cellar & Catering URLs included at Priority 1.0
         try
         {
             if (!sitemapUrls.Contains("https://www.colddirect.co.uk/cellar-cooler-repair-london.asp"))
@@ -222,6 +219,6 @@
         }
         catch { }
 
-        Response.Write("<h2>AUTO-SEO V4 RANKING PUSH OK | Updated: " + updated + " | Scanned: " + scanned + " | Sitemap URLs: " + sitemapUrls.Count + " | Skipped Locked: " + skipped + "</h2>");
+        Response.Write("<h2>AUTO-SEO V4.2 RANKING PUSH OK | Updated: " + updated + " | Scanned: " + scanned + " | Sitemap URLs: " + sitemapUrls.Count + " | Skipped Locked: " + skipped + "</h2>");
     }
 </script>
