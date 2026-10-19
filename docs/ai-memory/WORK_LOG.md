@@ -257,6 +257,15 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - Verified `auto-seo.aspx` V4.2 explicitly separates `commercial-freezer-repair` (`Commercial Freezer Repair London | 24/7 Emergency Freezer Service & Repairs`) and `freezer-repair` (`Freezer Repair London | 24/7 Same-Day Emergency Freezer Service & Repairs`), cleans UTF-8 mojibake on every run, and preserves all Cursor CRO Trust Bar and FAQ Accordion blocks.
 - Verified `protect_fixed_pages.py check` (12/12 OK) and `npm test` (435 files, 0 errors).
 
+## 2026-10-19 — V4.4 Deep GSC Keyword Mining, Dishwasher Exclusion, 18 Money/Brand Page Symptom Clusters & Blog Silo
+- **Dishwasher Exclusion**: Redirected `/commercial-dishwasher-repair-london/` and `/dishwashers-london` (in `.htaccess`, `vercel.json`, and HTML meta/JS redirects) to `/commercial-catering-repair-london/` and excluded `dishwasher` URLs from `sitemap.xml` and `auto-seo.aspx` V4.4 (Cold Direct repairs commercial refrigeration & AC only).
+- **Deep 90-Day GSC Keyword Mining (`2026-07-20` to `2026-10-18`)**: Extracted 710 queries in Positions 2–50 across 5 B2B intent buckets (Urgency/Near-Me, Symptom/Faults, Equipment Types, Brands, B2B Venues).
+- **18 Core Money & Brand Pages Upgraded**: Injected `<!-- CD-GSC-SYMPTOM-CLUSTER -->`, `<!-- CD-CRO-TRUST-BAR -->`, and 5-question `<!-- CD-CRO-FAQ-ACCORDION -->` across all 18 core refrigeration, catering, AC, specialty, and brand pages (`commercial-fridge-repair-london`, `fridge-repair-london`, `commercial-freezer-repair-london`, `freezer-repair-london`, `cold-room-repair-london`, `air-conditioning-repair-london`, `commercial-catering-repair-london`, `catering-repair-london`, `ice-machine-repair-london`, `chiller-repair-london`, `display-fridge-repair-london`, `prep-fridge-repair-london`, `walk-in-freezer-repair-london`, `dairy-cabinet-repair-london`, `williams-freezer-repair-london`, `liebherr-fridge-repair-london`, `ice-o-matic-fridge-repairs`, `refrigeration-brands-repair-london`).
+- **Blog-to-Money-Page Internal Link Silo (`<!-- CD-BLOG-CTA-BOX -->`)**: Injected Emergency Dispatch Callout Box with direct exact-match anchor links across all 15 `/blog/` articles.
+- **Upgraded `auto-seo.aspx` to V4.4 on Live Plesk**: Added high-CTR titles & descriptions for `dairy-cabinet`, `cellar`, `blast-freezer`/`blast-chiller`, `supermarket`, and all commercial brand pages (`williams`, `liebherr`, `ice-o-matic`, `hoshizaki`, `subzero`, `foster`, `true`, `polar`, `gram`, `refrigeration-brands`), excluded non-indexable/dishwasher URLs from `sitemap.xml` (120 clean canonical URLs), triggered live on Plesk (`HTML Updated: 227`), and pulled back locally.
+- **Validation**: `npm test` (440 files scanned, 0 errors) and `protect_fixed_pages.py check` (12/12 OK).
+
+
 
 
 

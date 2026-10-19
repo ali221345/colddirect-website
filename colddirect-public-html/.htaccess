@@ -248,8 +248,8 @@ RewriteRule ^cellar-cooler-repairs-london/?$ /cellar-cooler-repair-london/ [R=30
 RewriteRule ^air-conditioning-repairs-london/?$ /air-conditioning-repairs-london.html [L]
 RewriteRule ^air-conditioning-london\.html$ / [R=301,L]
 RewriteRule ^air-conditioning/?$ / [R=301,L]
-RewriteRule ^dishwashers-london(/|\.html)?$ /catering-repair-london/ [R=301,L]
-RewriteRule ^commercial-dishwasher-repair-london(/|\.html)?$ /catering-repair-london/ [R=301,L]
+RewriteRule ^dishwashers-london(/|\.html)?$ /commercial-catering-repair-london/ [R=301,L]
+RewriteRule ^commercial-dishwasher-repair-london(/|\.html)?$ /commercial-catering-repair-london/ [R=301,L]
 RewriteRule ^commercial-appliance-repairs-london/?$ /commercial-appliances-repair-london/ [R=301,L]
 RewriteRule ^[Ee]mergency-fridge-repair-london\.html$ /fridge-repair-london/ [R=301,L]
 
