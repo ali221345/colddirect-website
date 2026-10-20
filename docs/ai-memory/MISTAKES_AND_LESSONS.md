@@ -182,3 +182,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - **[2026-10-20] FAQPage must appear exactly once per page**; strip BOMs from html (blog pages had them) and verify via Python bytes. A literal keyword check on a title the owner dictated may fail by design (appliances page) - do not 'fix' owner-specified titles.
 
 - **[2026-10-20] Upload guard**: any new FTP upload script must call tools/deploy_guard.should_skip_upload(remote_path) before STOR so editor/AI/secret folders (.vscode/sftp.json holds FTP creds) never reach /httpdocs.
+
+- **[2026-10-20] Preflight before upload**: run `python tools/html_preflight.py` (the upload hooks do it automatically) - checks DOCTYPE/title/description/canonical/closing html and git conflict markers. The strings "=======" and "undefined" are NOT enforced because they appear legitimately in JS/CSS/text.
