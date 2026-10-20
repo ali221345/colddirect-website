@@ -1,5 +1,5 @@
 /*!
- * Cold Direct Interactive SEO Service Popover / Hover Card Engine (V4.5)
+ * Cold Direct Interactive SEO Service Popover / Hover Card Engine (V4.7)
  * Zero-CLS (position: fixed), 250ms hover bridge, desktop hover + mobile tap/focus support.
  */
 (function () {
@@ -128,8 +128,30 @@
     }
   };
 
+  // V4.7: exact-path popover entries for the 9 money-keyword hub pages (checked before the substring catalog)
+  var MONEY_PAGES = {
+    "/fridge-repair-london/": { title: "Fridge Repair London", desc: "Same-day fridge repair & service for trade kitchens, shops, bars & hotels. Fixed-price diagnosis, F-Gas certified. Commercial only." },
+    "/freezer-repair-london/": { title: "Freezer Repair London", desc: "Emergency freezer repair for upright, chest & kitchen freezers: defrost faults, iced evaporators, high-temp alarms, compressor trips." },
+    "/commercial-fridge-repair-london/": { title: "Commercial Fridge Repair London", desc: "24/7 emergency repair for commercial uprights, undercounters, prep counters & display fridges across London. 60–90 min target response." },
+    "/commercial-freezer-repair-london/": { title: "Commercial Freezer Repair London", desc: "Walk-in, chest & blast freezer repair: defrost heaters, compressors, controllers & F-Gas regas. 24/7 same-day engineers." },
+    "/cold-room-repair-london/": { title: "Cold Room Repair London", desc: "24/7 walk-in chiller & freezer room repair: condensing units, expansion valves, Dixell/Carel/Eliwell controllers & F-Gas regas." },
+    "/catering-repair-london/": { title: "Catering Repair London", desc: "Kitchen fridge, chiller & catering refrigeration repair for restaurants, hotels, schools & dark kitchens. 24/7 emergency cover." },
+    "/commercial-appliances-repair-london/": { title: "Commercial Catering Repair London", desc: "Commercial catering & refrigeration appliances repair: cabinets, cold rooms, ice machines & blast chillers. Fixed-price diagnosis." },
+    "/air-conditioning-repair-london/": { title: "Air Conditioning Repair London", desc: "Commercial split, cassette & VRV/VRF AC repair and servicing (Daikin, Mitsubishi). Fault codes, gas leaks & drain faults fixed." },
+    "/cellar-cooler-repair-london/": { title: "Cellar Repair London", desc: "24/7 pub & bar cellar cooler repair for steady keg and cask temperatures. J&E Hall, Marstair & all commercial cellar plant." }
+  };
+
+  function normalizePath(href) {
+    var p = (href || "").toLowerCase().replace(/^https?:\/\/(www\.)?colddirect\.co\.uk/, "").split("#")[0].split("?")[0];
+    if (p.slice(-5) === ".html") p = p.slice(0, -5);
+    if (p.slice(-1) !== "/") p += "/";
+    return p;
+  }
+
   function resolveServiceMeta(href, linkText) {
     var cleanHref = (href || "").toLowerCase();
+    var exact = MONEY_PAGES[normalizePath(href)];
+    if (exact) return exact;
     for (var key in SERVICE_CATALOG) {
       if (Object.prototype.hasOwnProperty.call(SERVICE_CATALOG, key)) {
         if (cleanHref.indexOf(key) !== -1) {

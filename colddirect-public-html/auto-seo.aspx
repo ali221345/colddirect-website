@@ -43,80 +43,92 @@ protected void Page_Load(object sender, EventArgs e)
         "  \"areaServed\": \"London\"\r\n" +
         "}\r\n" + scClose + "\r\n";
 
-    // V4.5 core pages (home + 4 money pages): unified #business node with rating, geo circle & contact points
-    string schemaBlockCore = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n" +
-        "{\r\n" +
-        "  \"@context\": \"https://schema.org\",\r\n" +
-        "  \"@type\": [\r\n" +
-        "    \"HVACBusiness\",\r\n" +
-        "    \"LocalBusiness\"\r\n" +
-        "  ],\r\n" +
-        "  \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
-        "  \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
-        "  \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
-        "  \"image\": \"https://www.colddirect.co.uk/images/logo/colddirect-main.webp\",\r\n" +
-        "  \"telephone\": \"+442039524822\",\r\n" +
-        "  \"contactPoint\": [\r\n" +
+    // V4.7: unified #business node shared by the homepage and the 9 money pages
+    string bizNodeJson =
         "    {\r\n" +
-        "      \"@type\": \"ContactPoint\",\r\n" +
-        "      \"telephone\": \"+448001123427\",\r\n" +
-        "      \"contactType\": \"customer service\",\r\n" +
-        "      \"areaServed\": \"GB\"\r\n" +
-        "    },\r\n" +
-        "    {\r\n" +
-        "      \"@type\": \"ContactPoint\",\r\n" +
-        "      \"telephone\": \"+447983759320\",\r\n" +
-        "      \"contactType\": \"emergency service\",\r\n" +
-        "      \"areaServed\": \"GB\"\r\n" +
-        "    }\r\n" +
-        "  ],\r\n" +
-        "  \"priceRange\": \"\u00A3\u00A3\",\r\n" +
-        "  \"address\": {\r\n" +
-        "    \"@type\": \"PostalAddress\",\r\n" +
-        "    \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
-        "    \"addressLocality\": \"Enfield, London\",\r\n" +
-        "    \"postalCode\": \"N9 0DX\",\r\n" +
-        "    \"addressCountry\": \"GB\"\r\n" +
-        "  },\r\n" +
-        "  \"geo\": {\r\n" +
-        "    \"@type\": \"GeoCoordinates\",\r\n" +
-        "    \"latitude\": \"51.6478\",\r\n" +
-        "    \"longitude\": \"-0.0701\"\r\n" +
-        "  },\r\n" +
-        "  \"areaServed\": [\r\n" +
-        "    \"London\",\r\n" +
-        "    {\r\n" +
-        "      \"@type\": \"GeoCircle\",\r\n" +
-        "      \"geoMidpoint\": {\r\n" +
+        "      \"@type\": [\r\n" +
+        "        \"HVACBusiness\",\r\n" +
+        "        \"LocalBusiness\"\r\n" +
+        "      ],\r\n" +
+        "      \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
+        "      \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
+        "      \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
+        "      \"image\": \"https://www.colddirect.co.uk/images/logo/colddirect-main.webp\",\r\n" +
+        "      \"telephone\": \"+442039524822\",\r\n" +
+        "      \"contactPoint\": [\r\n" +
+        "        {\r\n" +
+        "          \"@type\": \"ContactPoint\",\r\n" +
+        "          \"telephone\": \"+448001123427\",\r\n" +
+        "          \"contactType\": \"customer service\",\r\n" +
+        "          \"areaServed\": \"GB\"\r\n" +
+        "        },\r\n" +
+        "        {\r\n" +
+        "          \"@type\": \"ContactPoint\",\r\n" +
+        "          \"telephone\": \"+447983759320\",\r\n" +
+        "          \"contactType\": \"emergency service\",\r\n" +
+        "          \"areaServed\": \"GB\"\r\n" +
+        "        }\r\n" +
+        "      ],\r\n" +
+        "      \"priceRange\": \"\u00A3\u00A3\",\r\n" +
+        "      \"address\": {\r\n" +
+        "        \"@type\": \"PostalAddress\",\r\n" +
+        "        \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
+        "        \"addressLocality\": \"Enfield, London\",\r\n" +
+        "        \"postalCode\": \"N9 0DX\",\r\n" +
+        "        \"addressCountry\": \"GB\"\r\n" +
+        "      },\r\n" +
+        "      \"geo\": {\r\n" +
         "        \"@type\": \"GeoCoordinates\",\r\n" +
         "        \"latitude\": \"51.6478\",\r\n" +
         "        \"longitude\": \"-0.0701\"\r\n" +
         "      },\r\n" +
-        "      \"geoRadius\": \"40234\"\r\n" +
-        "    }\r\n" +
-        "  ],\r\n" +
-        "  \"aggregateRating\": {\r\n" +
-        "    \"@type\": \"AggregateRating\",\r\n" +
-        "    \"ratingValue\": \"4.9\",\r\n" +
-        "    \"reviewCount\": \"38\",\r\n" +
-        "    \"bestRating\": \"5\"\r\n" +
-        "  },\r\n" +
-        "  \"openingHoursSpecification\": {\r\n" +
-        "    \"@type\": \"OpeningHoursSpecification\",\r\n" +
-        "    \"dayOfWeek\": [\r\n" +
-        "      \"Monday\",\r\n" +
-        "      \"Tuesday\",\r\n" +
-        "      \"Wednesday\",\r\n" +
-        "      \"Thursday\",\r\n" +
-        "      \"Friday\",\r\n" +
-        "      \"Saturday\",\r\n" +
-        "      \"Sunday\"\r\n" +
-        "    ],\r\n" +
-        "    \"opens\": \"00:00\",\r\n" +
-        "    \"closes\": \"23:59\"\r\n" +
-        "  }\r\n" +
-        "}\r\n" +
-        scClose + "\r\n";
+        "      \"areaServed\": [\r\n" +
+        "        \"London\",\r\n" +
+        "        {\r\n" +
+        "          \"@type\": \"GeoCircle\",\r\n" +
+        "          \"geoMidpoint\": {\r\n" +
+        "            \"@type\": \"GeoCoordinates\",\r\n" +
+        "            \"latitude\": \"51.6478\",\r\n" +
+        "            \"longitude\": \"-0.0701\"\r\n" +
+        "          },\r\n" +
+        "          \"geoRadius\": \"40234\"\r\n" +
+        "        }\r\n" +
+        "      ],\r\n" +
+        "      \"aggregateRating\": {\r\n" +
+        "        \"@type\": \"AggregateRating\",\r\n" +
+        "        \"ratingValue\": \"4.9\",\r\n" +
+        "        \"reviewCount\": \"38\",\r\n" +
+        "        \"bestRating\": \"5\"\r\n" +
+        "      },\r\n" +
+        "      \"openingHoursSpecification\": {\r\n" +
+        "        \"@type\": \"OpeningHoursSpecification\",\r\n" +
+        "        \"dayOfWeek\": [\r\n" +
+        "          \"Monday\",\r\n" +
+        "          \"Tuesday\",\r\n" +
+        "          \"Wednesday\",\r\n" +
+        "          \"Thursday\",\r\n" +
+        "          \"Friday\",\r\n" +
+        "          \"Saturday\",\r\n" +
+        "          \"Sunday\"\r\n" +
+        "        ],\r\n" +
+        "        \"opens\": \"00:00\",\r\n" +
+        "        \"closes\": \"23:59\"\r\n" +
+        "      }\r\n" +
+        "    }\r\n";
+
+    string schemaBlockCore = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n{\r\n  \"@context\": \"https://schema.org\",\r\n  \"@graph\": [\r\n" + bizNodeJson + "\r\n  ]\r\n}\r\n" + scClose + "\r\n";
+
+    // V4.7 money pages: [0]=title [1]=meta description [2]=Service name [3]=serviceType [4..]=OfferCatalog keyword variations
+    Dictionary<string, string[]> moneyMeta = new Dictionary<string, string[]>();
+    moneyMeta["fridge-repair-london"] = new string[] { "Fridge Repair & Service London (2-Hr Emergency) | Fixed-Rate Engineers | ColdDirect", "Fridge repair & service London: 2-Hr Emergency, 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers. Commercial only. Call 0203 952 4822.", "Fridge repair London", "Commercial fridge repair", "Fridge repair London", "Fridge repairs London", "Fridge service London", "Emergency fridge repair London", "Commercial fridge repair" };
+    moneyMeta["freezer-repair-london"] = new string[] { "Freezer Repair & Service London (2-Hr Emergency) | 24/7 Fixed-Rate Engineers | ColdDirect", "Freezer repair & service London: 24/7 Emergency, 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Commercial only. Call 0203 952 4822.", "Freezer repair London", "Commercial freezer repair", "Freezer repair London", "Freezer repairs London", "Freezer service London", "Emergency freezer repair London", "Commercial freezer repair" };
+    moneyMeta["commercial-fridge-repair-london"] = new string[] { "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers", "Emergency commercial fridge repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers for kitchens & shops. Call 0203 952 4822.", "Commercial fridge repair London", "Commercial fridge repair", "Commercial fridge repair London", "Commercial fridge repairs", "Commercial fridge service", "Emergency fridge repair", "Fridge services London" };
+    moneyMeta["commercial-freezer-repair-london"] = new string[] { "Commercial Freezer Repair London | 24/7 Emergency Same-Day Engineers", "Emergency commercial freezer repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Walk-in & kitchen freezers. Call 0203 952 4822.", "Commercial freezer repair London", "Commercial freezer repair", "Commercial freezer repair London", "Freezer repairs London", "Commercial freezer service", "Emergency freezer repair", "Freezer services London" };
+    moneyMeta["cold-room-repair-london"] = new string[] { "Cold Room Repair London | 24/7 Walk-In Chiller & Freezer Room Engineers", "24/7 walk-in cold room repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers. Call 0203 952 4822.", "Cold room repair London", "Walk-in cold room repair", "Cold room repair London", "Cold room repairs London", "Cold room service London", "Emergency cold room repair", "Walk-in chiller repair London" };
+    moneyMeta["catering-repair-london"] = new string[] { "Catering Repair & Commercial Catering Repair London | 24/7 Kitchen Fridge & Chiller Engineers", "Catering repair & commercial catering repair London: 24/7 Emergency, 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Call 0203 952 4822.", "Catering repair London", "Commercial catering refrigeration repair", "Catering repair London", "Commercial catering repair", "Catering fridge repair", "Catering refrigeration service London", "Kitchen chiller repair London" };
+    moneyMeta["commercial-appliances-repair-london"] = new string[] { "Commercial Catering & Refrigeration Appliances Repair London | 24/7 Engineers | ColdDirect", "Commercial catering repair & refrigeration appliances repair London: 24/7 Emergency, 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Call 0203 952 4822.", "Commercial catering and refrigeration appliances repair London", "Commercial refrigeration appliances repair", "Commercial catering repair", "Catering refrigeration appliances repair", "Commercial appliances repair London", "Commercial kitchen refrigeration repair", "Emergency commercial appliances repair" };
+    moneyMeta["air-conditioning-repair-london"] = new string[] { "Air Conditioning Repair London | 24/7 Commercial AC, Split & VRV/VRF Engineers", "Air conditioning repair London: 24/7 Emergency, 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified commercial AC, split & VRV/VRF. Call 0203 952 4822.", "Air conditioning repair London", "Commercial air conditioning repair", "Air conditioning repair London", "Commercial air conditioning repair London", "Emergency AC repair near me", "AC servicing London", "VRV VRF repair London" };
+    moneyMeta["cellar-cooler-repair-london"] = new string[] { "Cellar Repair & Beer Cellar Cooler Repair London | 24/7 Pub & Bar Engineers", "Cellar repair London: 24/7 Emergency pub & bar beer cellar cooler repair. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Call 0203 952 4822.", "Cellar repair London", "Cellar cooler repair", "Cellar repair", "Cellar repair London", "Cellar cooler repair London", "Pub & bar cellar cooling repair", "Beer cellar cooler repair London" };
 
 
     List<string> filesList = new List<string>();
@@ -179,7 +191,16 @@ protected void Page_Load(object sender, EventArgs e)
             if (html.Contains("\u00E2\u20AC\u009D")) html = html.Replace("\u00E2\u20AC\u009D", "\u201D");
             if (html.Contains("\u00E2\u20AC\u2122")) html = html.Replace("\u00E2\u20AC\u2122", "\u2019");
             if (html.Contains("\u00C2\u00A3\u00C2\u00A3")) html = html.Replace("\u00C2\u00A3\u00C2\u00A3", "\u00A3\u00A3");
-            bool isCore = (rel == "index.html" || name == "commercial-fridge-repair-london" || name == "fridge-repair-london" || name == "commercial-freezer-repair-london" || name == "cold-room-repair-london");
+            bool isCore = (rel == "index.html" || moneyMeta.ContainsKey(name));
+            // V4.7: keep noindex pages and pages canonicalised to another URL out of sitemap.xml
+            if (rel != "index.html")
+            {
+                string selfUrl = rel.EndsWith("/index.html") ? "https://www.colddirect.co.uk/" + rel.Substring(0, rel.Length - 10) : "https://www.colddirect.co.uk/" + rel.Replace(".html", "/");
+                Match canonMatch = Regex.Match(html, "<link[^>]+rel=[\"']canonical[\"'][^>]*href=[\"']([^\"']+)[\"']", RegexOptions.IgnoreCase);
+                bool noindexPage = Regex.IsMatch(html, "<meta[^>]+name=[\"']robots[\"'][^>]*content=[\"'][^\"']*noindex", RegexOptions.IgnoreCase);
+                bool canonElsewhere = canonMatch.Success && NormUrl(canonMatch.Groups[1].Value) != NormUrl(selfUrl);
+                if (noindexPage || canonElsewhere) sitemapUrls.Remove(selfUrl);
+            }
 
             // Upgrade old V4 blocks cleanly
             html = Regex.Replace(html, @"<!-- AUTO-SEO-V[234]-2026 -->[\s\S]*?</div>\s*", "");
@@ -193,6 +214,9 @@ protected void Page_Load(object sender, EventArgs e)
                 if (rel == "index.html") {
                     newTitle = "Commercial Fridge, Freezer & Cold Room Repair London | 24/7 Emergency | ColdDirect";
                     newDesc = "24/7 emergency commercial fridge, freezer & cold room repair in London. 60\u201390 Min Response, Fixed-Rate Quotes, F-Gas Certified engineers. Call 0203 952 4822.";
+                } else if (moneyMeta.ContainsKey(name)) {
+                    newTitle = moneyMeta[name][0];
+                    newDesc = moneyMeta[name][1];
                 } else if (name.Contains("dairy-cabinet")) {
                     newTitle = "Dairy Cabinet Repair London | 24/7 Multideck & Display Chiller Engineers";
                     newDesc = "Emergency dairy cabinet repair in London. 24/7 same-day F-Gas engineers for milk multidecks, cheese serve-overs & retail display chillers. 60\u201390 min response. Call 0203 952 4822.";
@@ -321,7 +345,7 @@ protected void Page_Load(object sender, EventArgs e)
 
             // Inject Schema in <head>
             if (Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
-                html = Regex.Replace(html, @"</head>", (isCore ? schemaBlockCore : schemaBlock) + "</head>", RegexOptions.IgnoreCase);
+                html = Regex.Replace(html, @"</head>", (rel == "index.html" ? schemaBlockCore : (moneyMeta.ContainsKey(name) ? BuildMoneySchema(name, moneyMeta[name], bizNodeJson, scOpen, scClose) : schemaBlock)) + "</head>", RegexOptions.IgnoreCase);
 
             // Inject V4 Footer Links before </body>
             if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
@@ -350,6 +374,26 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     Response.ContentType = "text/plain";
-    Response.Write("AUTO-SEO V4.5 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+    Response.Write("AUTO-SEO V4.7 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+}
+
+string J(string s) { return s.Replace("\\", "\\\\").Replace("\"", "\\\""); }
+
+string NormUrl(string s) { s = s.ToLowerInvariant().TrimEnd('/'); if (s.EndsWith(".html")) s = s.Substring(0, s.Length - 5); return s; }
+
+string BuildMoneySchema(string slug, string[] m, string bizNodeJson, string scOpen, string scClose)
+{
+    string url = "https://www.colddirect.co.uk/" + slug + "/";
+    StringBuilder sb = new StringBuilder();
+    sb.Append("\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n{\r\n  \"@context\": \"https://schema.org\",\r\n  \"@graph\": [\r\n");
+    sb.Append(bizNodeJson);
+    sb.Append(",\r\n    {\r\n      \"@type\": \"Service\",\r\n      \"@id\": \"" + url + "#service\",\r\n      \"name\": \"" + J(m[2]) + "\",\r\n      \"serviceType\": \"" + J(m[3]) + "\",\r\n      \"url\": \"" + url + "\",\r\n      \"provider\": { \"@id\": \"https://www.colddirect.co.uk/#business\" },\r\n      \"areaServed\": [\"London\", \"Greater London\"],\r\n      \"hoursAvailable\": \"Mo-Su 00:00-23:59\",\r\n      \"hasOfferCatalog\": {\r\n        \"@type\": \"OfferCatalog\",\r\n        \"name\": \"" + J(m[2]) + " - keyword variations\",\r\n        \"itemListElement\": [");
+    for (int i = 4; i < m.Length; i++)
+    {
+        if (i > 4) sb.Append(",");
+        sb.Append("\r\n          { \"@type\": \"Offer\", \"itemOffered\": { \"@type\": \"Service\", \"name\": \"" + J(m[i]) + "\" } }");
+    }
+    sb.Append("\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}\r\n" + scClose + "\r\n");
+    return sb.ToString();
 }
 </script>

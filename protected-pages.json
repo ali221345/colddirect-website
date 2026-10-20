@@ -27,8 +27,8 @@
       "expected_title": "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers",
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 13675,
-      "protected_at": "2026-10-19",
-      "reason": "Synced with auto-seo.aspx V4.4 title and schema."
+      "protected_at": "2026-10-20",
+      "reason": "Synced with auto-seo.aspx V4.7 (title unchanged; V4.7 tech matrix + schema added)."
     },
     {
       "id": "fridge-repair-london",
@@ -39,12 +39,11 @@
         "colddirect-public-html/fridge-repair-london.html",
         "colddirect-public-html/fridge-repair-london/index.html"
       ],
-      "expected_title": "Fridge Repair London | 24/7 Commercial Refrigeration & Fridge Service",
+      "expected_title": "Fridge Repair & Service London (2-Hr Emergency) | Fixed-Rate Engineers | ColdDirect",
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 8074,
-      "protected_at": "2026-10-19",
-      "reason": "Synced with auto-seo.aspx V4.4 title and schema."
+      "protected_at": "2026-10-20",
+      "reason": "Synced with auto-seo.aspx V4.7 exact-match money-keyword title (intentional rewrite requested by owner)."
     }
   ]
 }
-
