@@ -131,6 +131,13 @@ protected void Page_Load(object sender, EventArgs e)
     moneyMeta["cellar-cooler-repair-london"] = new string[] { "Cellar Repair & Beer Cellar Cooler Repair London | 24/7 Pub & Bar Engineers", "Cellar repair London: 24/7 Emergency pub & bar beer cellar cooler repair. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Call 0203 952 4822.", "Cellar repair London", "Cellar cooler repair", "Cellar repair", "Cellar repair London", "Cellar cooler repair London", "Pub & bar cellar cooling repair", "Beer cellar cooler repair London" };
 
 
+    // V4.8: pages with no title/description rule (about, news) must still end up with a non-empty meta description.
+    // Fill-only: an existing non-empty description is NEVER overwritten (owner can edit these pages by hand).
+    Dictionary<string, string> fallbackDesc = new Dictionary<string, string>();
+    fallbackDesc["about"] = "About Cold Direct: London commercial refrigeration experts. 24/7 fridge, freezer, cold room &amp; cellar repair by F-Gas certified engineers. Call 0203 952 4822.";
+    fallbackDesc["news"] = "Cold Direct advice &amp; news: commercial fridge, freezer &amp; cold room repair guides, F-Gas updates and maintenance tips for London. Call 0203 952 4822.";
+
+
     List<string> filesList = new List<string>();
     try { filesList.AddRange(Directory.GetFiles(root, "*.html", SearchOption.TopDirectoryOnly)); } catch { }
     try
@@ -325,6 +332,18 @@ protected void Page_Load(object sender, EventArgs e)
                 }
             }
 
+            // V4.8: fill-only meta description fallback (about/news) - never overwrites, never leaves an empty tag
+            if (fallbackDesc.ContainsKey(name) && !rel.StartsWith("blog/") && !html.Contains("<!-- AUTO-SEO-LOCKED -->"))
+            {
+                bool hasDesc = Regex.IsMatch(html, "<meta[^>]+name=[\"']description[\"'][^>]*content=[\"']\\s*[^\"'\\s]", RegexOptions.IgnoreCase)
+                            || Regex.IsMatch(html, "<meta[^>]+content=[\"']\\s*[^\"'\\s][^>]*name=[\"']description[\"']", RegexOptions.IgnoreCase);
+                if (!hasDesc)
+                {
+                    html = Regex.Replace(html, "<meta[^>]+name=[\"']description[\"'][^>]*>", "", RegexOptions.IgnoreCase);
+                    html = new Regex("</title>", RegexOptions.IgnoreCase).Replace(html, "</title>\r\n  <meta name=\"description\" content=\"" + fallbackDesc[name] + "\">", 1);
+                }
+            }
+
             // Inject Homepage Blog Hub so Google crawls & ranks all blog guides
             if (rel == "index.html" && !html.Contains("<!-- AUTO-SEO-V4-BLOGHUB -->"))
             {
@@ -374,7 +393,7 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     Response.ContentType = "text/plain";
-    Response.Write("AUTO-SEO V4.7 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+    Response.Write("AUTO-SEO V4.8 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
 }
 
 string J(string s) { return s.Replace("\\", "\\\\").Replace("\"", "\\\""); }

@@ -1,11 +1,1 @@
 # Accepted legacy preflight issues. Remove a line once the page is fixed.
-about.html: Missing or empty Meta description
-about/index.html: Missing or empty Meta description
-gsc-analysis-2026-09-19.html: Missing or empty Canonical link
-gsc-analysis-2026-09-19.html: Missing or empty Meta description
-logs/overnight-seo-writer-2026-09-20.html: Missing or empty Canonical link
-logs/overnight-seo-writer-2026-09-20.html: Missing or empty Meta description
-news.html: Missing or empty Meta description
-news/index.html: Missing or empty Meta description
-preview-colddirect-homepage.html: Missing or empty Meta description
-preview-colddirect-homepage/index.html: Missing or empty Meta description

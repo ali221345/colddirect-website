@@ -12,3 +12,6 @@ scripts/__pycache__/
 .vercel
 .env*
 backups/
+# Local analysis output - never track or deploy
+logs/
+gsc-analysis-*.html

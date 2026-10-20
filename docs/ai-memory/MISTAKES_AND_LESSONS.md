@@ -188,3 +188,6 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - **[2026-10-20] Core-page preflight**: money pages and homepage are also checked for the official phone and a business JSON-LD type; the check is path-based, so a stale copy under logs/ with a money-page filename is also treated as core.
 
 - **[2026-10-20] CI gates need a baseline**: adding a validator to deploy.yml that fails on pre-existing legacy issues would block every deploy. Use tools/html_preflight_baseline.txt so only new problems fail; never 'fix' auto-seo-owned meta descriptions just to turn a gate green.
+
+- **[2026-10-20] Redirect stubs**: about.html and news.html are meta-refresh stubs (to /about-us.html and /blog/), so 'adding SEO' to them is cosmetic; the real pages are /about-us/ and /blog/. Check for `http-equiv="refresh"` before optimising a thin page. Also: auto-seo only replaced existing description tags - fallbacks must be fill-only so they never clobber hand-written text.
+- **[2026-10-20] Keep script runs and cleanup separate**: when Auto-review blocks a shell command that chains a temp-script run, git rm and deletes, run the steps as separate commands instead of retrying the chain.

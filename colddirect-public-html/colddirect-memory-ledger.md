@@ -51,3 +51,11 @@
 - auto-seo.aspx V4.7 live: `AUTO-SEO V4.7 RANKING PUSH OK | HTML Updated: 233 | Sitemap URLs: 114`. Per-page @graph: #business + Service/OfferCatalog (5 offers) + single FAQPage.
 - Anti-cannibalisation: commercial-catering-repair-london canonical -> /commercial-appliances-repair-london/ and removed from sitemap by V4.7 logic.
 - Caveats: fridge title changed twice in 2 days (owner request; ~83 chars). Pull live before editing; never touch auto-seo.aspx/sitemap.xml in deploy.
+
+## 2026-10-20 - Guard branch merged (PR #83) + preflight baseline emptied to 0
+- PR #83 merged; CI run 39497022864 green incl. new 'Deploy Guard & HTML/SEO Preflight' step.
+- git rm gsc-analysis-2026-09-19.html + logs/overnight-seo-writer-2026-09-20.html; .gitignore += logs/, gsc-analysis-*.html; deploy.yml excludes logs/** and gsc-analysis-*.html (other already-tracked logs/ files remain tracked but are no longer uploaded).
+- /preview-colddirect-homepage/ (.html + /index.html): added noindex,nofollow (page says PREVIEW ONLY, was live+indexable, self-canonical). Kept, not deleted.
+- /about/ and /news/ (.html + /index.html): added meta descriptions. NOTE: both are meta-refresh redirect stubs (about -> /about-us.html, news -> /blog/; news canonical already /blog/). Real about page is /about-us/ (already has description).
+- auto-seo.aspx V4.8: fill-only description fallback (fallbackDesc: about, news). Fills missing/empty tags, never overwrites non-empty ones, respects AUTO-SEO-LOCKED and blog/. Compile-checked with csc + 7 behaviour tests. Root cause of old gap: auto-seo only REPLACED an existing description tag and only for pages with a title rule.
+- tools/html_preflight_baseline.txt emptied; `html_preflight.py --strict` exit 0 (271 files, 0 issues).

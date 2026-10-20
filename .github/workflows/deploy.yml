@@ -59,6 +59,10 @@ jobs:
             **/plesk-upload/**
             **/_wa_src/**
             **/.vercel/**
+            **/logs/**
+            logs/**
+            **/gsc-analysis-*.html
+            gsc-analysis-*.html
             auto-seo.aspx
             **/auto-seo.aspx
             sitemap.xml
