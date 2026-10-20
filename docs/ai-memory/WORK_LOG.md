@@ -337,3 +337,11 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - deploy.yml and the new nightly workflow use secrets.AUTO_SEO_KEY only (no fallback; empty = hard fail). tools/test_auto_seo.py generates a random key per run and asserts that cd2026, empty, truncated, extended and missing-file cases are all rejected.
 - LESSON: the nightly Plesk Scheduled Task (not readable over FTP) probably still calls auto-seo.aspx with the old key and now gets 403. .github/workflows/auto-seo-nightly.yml (20:21 UTC) takes over; the Plesk task can be deleted or updated whenever convenient.
 - To rotate again: generate a new key, gh secret set AUTO_SEO_KEY, overwrite App_Data/auto-seo.key on Plesk via FTP (no code change needed).
+
+## 2026-10-20 (night) - weekly executive GSC report (tools/gsc_weekly_report.py)
+- Runs FIRST in gsc-weekly-sync.yml (Mon 06:00 UTC + workflow_dispatch; input eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_SUMMARY (local runs: gitignored logs/). Step is continue-on-error; script exits non-zero only for missing/invalid credentials or no accessible property.
+- Windows: newest day with FINAL data (never later than today-2) = end of current 7 days; previous 7 days compared. Property: URL-prefix https://www.colddirect.co.uk/ first (verified), then sc-domain:colddirect.co.uk.
+- Pages are matched by normalised slug (legacy .html/.asp/no-slash merged); "commercial catering" row = commercial-appliances-repair-london + commercial-catering-repair-london.
+- python tools/gsc_weekly_report.py --selftest is offline (synthetic data, also tests API-failure degradation) and runs in CI before the real report.
+- First real data (w/e 2026-10-18): 62 clicks (-5%), 6,870 impressions (-13%), avg pos 31.1; homepage drives most clicks; 9 core pages = 11 clicks; Enfield page 0 impressions (just fixed, Google not re-crawled yet); many strike-distance queries land on / instead of the money pages.
+- PRIVACY: Step Summaries of a PUBLIC repo are world-readable, so traffic/keyword data in the report is public.

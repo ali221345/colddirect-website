@@ -1,6 +1,8 @@
 name: GSC Weekly Sync
 
-# Keeps Google Search Console up to date without manual runs:
+# Keeps Google Search Console up to date and reports on it, without manual runs:
+#   - FIRST: executive SEO performance report (tools/gsc_weekly_report.py): sitewide WoW overview, homepage +
+#     9 core money pages + Enfield, top 25 queries and strike-distance keywords -> Step Summary
 #   - submits https://www.colddirect.co.uk/sitemap.xml
 #   - inspects + pings the homepage, 9 core revenue pages, /commercial-fridge-repair-enfield/
 #     and any service/blog page modified in the last 7 days
@@ -13,7 +15,11 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (build and filter the queue, no Google API calls)'
+        description: 'Dry run (build and filter the queue, no Google API calls; skips the report too)'
+        type: boolean
+        default: false
+      report_only:
+        description: 'Only generate the weekly SEO performance report (skip sitemap submission and URL inspection)'
         type: boolean
         default: false
       lookback_days:
@@ -47,10 +53,24 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --quiet google-auth requests
 
+      - name: Report self-test (offline, no credentials)
+        run: python tools/gsc_weekly_report.py --selftest
+
+      # Executive report first so it is the top block of the Step Summary. Data problems degrade to "no data"
+      # cells; the step only errors on missing/invalid credentials and never blocks the sync below.
+      - name: Weekly SEO performance report
+        if: ${{ inputs.dry_run != true }}
+        continue-on-error: true
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+        run: python tools/gsc_weekly_report.py
+
       - name: Deploy guard self-test
+        if: ${{ inputs.report_only != true }}
         run: python tools/deploy_guard.py
 
       - name: Run GSC weekly sync
+        if: ${{ inputs.report_only != true }}
         env:
           GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
           DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
