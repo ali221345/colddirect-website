@@ -184,3 +184,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - **[2026-10-20] Upload guard**: any new FTP upload script must call tools/deploy_guard.should_skip_upload(remote_path) before STOR so editor/AI/secret folders (.vscode/sftp.json holds FTP creds) never reach /httpdocs.
 
 - **[2026-10-20] Preflight before upload**: run `python tools/html_preflight.py` (the upload hooks do it automatically) - checks DOCTYPE/title/description/canonical/closing html and git conflict markers. The strings "=======" and "undefined" are NOT enforced because they appear legitimately in JS/CSS/text.
+
+- **[2026-10-20] Core-page preflight**: money pages and homepage are also checked for the official phone and a business JSON-LD type; the check is path-based, so a stale copy under logs/ with a money-page filename is also treated as core.

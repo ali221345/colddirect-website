@@ -36,6 +36,89 @@ FORBIDDEN_MARKERS = (
 )
 
 
+import json  # noqa: E402
+
+# All JSON-LD blocks on a page
+JSON_LD_PATTERN = re.compile(
+    r"<script\s+[^>]*type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+# Allowed schema types for core service pages
+VALID_BUSINESS_TYPES = {
+    "LocalBusiness",
+    "HVACBusiness",
+    "HomeAndConstructionBusiness",
+    "ProfessionalService",
+    "Service",
+}
+
+# Money pages (+ homepage) that must carry the official phone and a business schema
+CORE_SLUGS = {
+    "fridge-repair-london", "freezer-repair-london", "commercial-fridge-repair-london",
+    "commercial-freezer-repair-london", "cold-room-repair-london", "catering-repair-london",
+    "commercial-appliances-repair-london", "air-conditioning-repair-london",
+    "cellar-cooler-repair-london",
+}
+_ROOT_DIRS = {"colddirect-website", "colddirect-public-html", "httpdocs"}
+
+
+def is_core_page(path: str) -> bool:
+    """True for the 9 money pages (<slug>.html or <slug>/index.html) and the homepage."""
+    parts = [p for p in str(path).replace("\\", "/").split("/") if p and p != "."]
+    if not parts:
+        return False
+    name = parts[-1]
+    if name == "index.html":
+        parent = parts[-2] if len(parts) > 1 else ""
+        return parent in CORE_SLUGS or parent == "" or parent in _ROOT_DIRS
+    return name.endswith(".html") and name[:-5] in CORE_SLUGS
+
+
+def validate_core_page_schema_and_contact(filepath: str, content: str) -> list[str]:
+    """Check JSON-LD schema and phone number on core revenue (money) pages."""
+    issues: list[str] = []
+
+    # 1. Official phone present (spaces/dashes and +44 prefix tolerated)
+    normalized_digits = re.sub(r"[\s\-]", "", content)
+    if "07983759320" not in normalized_digits and "447983759320" not in normalized_digits:
+        issues.append(f"{filepath}: Missing official contact phone number (07983 759320)")
+
+    # 2. Extract JSON-LD and verify syntax
+    matches = JSON_LD_PATTERN.findall(content)
+    if not matches:
+        issues.append(f"{filepath}: Missing <script type='application/ld+json'> schema block")
+        return issues
+
+    has_valid_business_schema = False
+    for idx, raw_json in enumerate(matches, 1):
+        try:
+            data = json.loads(raw_json.strip())
+        except json.JSONDecodeError as e:
+            issues.append(f"{filepath}: Malformed JSON-LD in block #{idx} ({e.msg} at line {e.lineno})")
+            continue
+
+        # single object, list, or @graph
+        if isinstance(data, list):
+            items = data
+        elif isinstance(data, dict):
+            items = data.get("@graph", [data])
+        else:
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            schema_type = item.get("@type", "")
+            types = {schema_type} if isinstance(schema_type, str) else {x for x in schema_type if isinstance(x, str)}
+            if types & VALID_BUSINESS_TYPES:
+                has_valid_business_schema = True
+
+    if not has_valid_business_schema:
+        issues.append(f"{filepath}: JSON-LD present but missing LocalBusiness/HVACBusiness/Service @type")
+
+    return issues
+
+
 def validate_html_file(filepath: str) -> list[str]:
     """Check one HTML file before upload and return the list of issues."""
     issues: list[str] = []
@@ -69,6 +152,10 @@ def validate_html_file(filepath: str) -> list[str]:
         if marker in content:
             issues.append(f"{filepath}: Contains unresolved Git merge conflict marker ({marker})")
 
+    # 3. Core money pages: official phone + business schema
+    if is_core_page(filepath):
+        issues += validate_core_page_schema_and_contact(filepath, content)
+
     return issues
 
 
@@ -81,6 +168,8 @@ def preflight_ok(local_path, remote_path: str = "") -> bool:
     if not name.lower().endswith(".html") or os.environ.get("CD_SKIP_PREFLIGHT") == "1":
         return True
     issues = validate_html_file(str(local_path))
+    if remote_path and is_core_page(remote_path) and not is_core_page(str(local_path)):
+        issues += validate_core_page_schema_and_contact(str(local_path), open(str(local_path), encoding="utf-8").read())
     for i in issues:
         print("PREFLIGHT BLOCKED:", i)
     return not issues
