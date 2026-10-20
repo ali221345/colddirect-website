@@ -10,6 +10,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "tools"))
+from deploy_guard import should_skip_upload  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 60
 FILES = [
@@ -133,6 +136,9 @@ def diagnose(cfg: dict[str, str]):
 
 def upload(ftp, local: Path, remote: str) -> None:
     remote = remote.replace("\\", "/")
+    if should_skip_upload(remote):
+        print("SKIPPED (deploy guard)", remote)
+        return
     parent, name = os.path.split(remote)
     if parent:
         ftp.cwd(parent)

@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import deploy_to_plesk as d
+from deploy_guard import should_skip_upload
 
 FILES = [
     (ROOT / "index.html", "index.html"),
@@ -39,6 +40,9 @@ def ensure_remote_dir(ftp, base: str, rel: str) -> None:
 
 def upload(ftp, base: str, local: Path, remote: str) -> None:
     remote = remote.replace("\\", "/")
+    if should_skip_upload(remote):
+        print("SKIPPED (deploy guard)", remote)
+        return
     parent = os.path.dirname(remote)
     if parent:
         ensure_remote_dir(ftp, base, parent)
