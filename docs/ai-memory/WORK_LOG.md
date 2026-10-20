@@ -311,3 +311,10 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - **Affected Files / Scope**: index.html,fridge-repair-london,commercial-fridge-repair-london,commercial-freezer-repair-london,cold-room-repair-london,auto-seo.aspx
 - **GSC / Live Status**: Indexing API 11/11 URL_UPDATED 200
 - **Details**: npm test OK; protect_fixed_pages check 0 errors; auto-seo V4.5 trigger OK 233 pages, sitemap 123 URLs; live verified 5 pages
+
+### [2026-10-20 09:37:50 UTC] — V4.7 Top-3 Money Keywords Domination Push
+- **Summary**: 9 money pages (fridge/freezer/commercial fridge/commercial freezer/cold room/catering/commercial appliances/air conditioning/cellar) got exact-match titles, H1/H2s, hero keyword matrix, CD-9-MONEY-TECH-MATRIX-V47 fault-code/OEM-part/F-Gas matrix, and sitewide CD-9-MONEY-KEYWORD-SILO-V47 exact-match internal links (402 files) + homepage silo + 9 hover-card entries. auto-seo.aspx V4.7 deployed (per-page Service+OfferCatalog+FAQPage graph, sitemap excludes noindex/canonical-elsewhere). commercial-catering-repair-london canonicalised to commercial-appliances-repair-london (anti-cannibalisation).
+- **Git Commit**: `b8aaa45`
+- **Affected Files / Scope**: 9 money pages x4 paths, index.html, ~240 silo pages, js/cd-hover-card.js, auto-seo.aspx, protected-pages.json
+- **GSC / Live Status**: Live HTTP 200 on 9 pages + home; auto-seo V4.7 OK (233 html updated, 114 sitemap URLs); npm test 0 JSON-LD errors
+- **Details**: Fridge title changed again within 7-day cooldown on explicit owner request (title ~83 chars, may truncate in SERP). Legacy plural/.asp URLs untouched. 55 BOMs stripped; one mojibake fixed in walk-in-cold-room mirror.
