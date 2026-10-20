@@ -1,0 +1,9 @@
+{
+    "git.openRepositoryInParentFolders": "always",
+    "cursor.agent.yoloMode": true,
+    "cursor.composer.yoloMode": true,
+    "cursor.chat.yoloMode": true,
+    "cursor.general.enableAutoRun": true,
+    "chat.tools.autoApprove": true,
+    "chat.agent.maxRequests": 999
+}

@@ -1,0 +1,33 @@
+# Cold Direct (`colddirect.co.uk`) — Strict Coexistence Rules with Live Plesk `auto-seo.aspx` V4.4 Agent, Permanent Memory Ledger, 24h Update & 48h Backup
+
+A live server-side SEO agent (`auto-seo.aspx` V4.4) runs directly on our WHUK Plesk server (`5.77.41.163`, `/httpdocs`) every night at **20:21 (8:21 PM)** via Plesk Scheduled Tasks. It directly modifies live `.html` files and rebuilds `sitemap.xml` with V4.4 SEO updates.
+
+Every Cursor agent session MUST strictly obey the following rules:
+
+## 0. CRITICAL 100% AUTONOMY, PERMANENT MEMORY LEDGER & ZERO-PROMPT EXECUTION RULE
+1. **Read Memory First (`colddirect-memory.md`)**: Before starting ANY task or making any edit, ALWAYS read `C:\Users\khora\AppData\Local\Cursor\AgentStores\cursor_agent_stores\u420035230\files\colddirect-memory.md` and `colddirect-public-html/colddirect-memory-ledger.md` first so the agent never forgets what has already been done on `colddirect.co.uk`.
+2. **Record Every Single Change (`auto_memory_logger.py`)**: After every SEO update, script run, 24h health check, 48h backup, or file edit, ALWAYS run:
+   `python colddirect-public-html/auto_memory_logger.py --type "<TYPE>" --summary "<SUMMARY>" --files "<FILES>" --gsc "<GSC_STATUS>"`
+   so every change is permanently logged with a UTC timestamp, affected files, Git commit hash, and GSC indexing status.
+3. **NEVER pause for permission (`Pending approval`)**: Execute every task 100% autonomously from start to finish without ever asking the user to click Run or Approve, and NEVER set `request_smart_mode_approval: true`.
+4. **Workspace Boundary Rule (`colddirect-public-html` vs `..\`)**: Because the active Cursor workspace is `colddirect-public-html`, ALWAYS create any new/temporary helper scripts inside `colddirect-public-html/` so Cursor never triggers an outside-workspace approval prompt.
+
+## 1. Automated 24-Hour Update & 48-Hour Full Backup Pipelines
+- **24-Hour Automated Website Update (`daily_24h_update_colddirect.py`)**:
+  - Scheduled daily via Windows Task Scheduler (`ColdDirect-24h-AutoUpdate`) and synced with Plesk's nightly 20:21 `auto-seo.aspx` V4.4 task.
+  - Triggers `https://www.colddirect.co.uk/auto-seo.aspx?key=cd2026`, pulls live Plesk files via `pull_live_plesk_v4.py`, checks `HTTP 200` on all 19 core money/brand pages, pings the Google Search Console Sitemap API, and logs the run in `colddirect-memory.md`.
+- **48-Hour Full Website & Server Backup (`backup_48h_colddirect.py`)**:
+  - Scheduled every 48 hours via Windows Task Scheduler (`ColdDirect-48h-Backup`).
+  - Pulls a complete live snapshot from Plesk `/httpdocs`, creates a compressed `.zip` archive in `colddirect-public-html/backups/colddirect-live-backup-YYYY-MM-DD_HHMM.zip` (keeping the last 15 backups), pushes a verified `backup-YYYY-MM-DD-HHMM` Git tag to GitHub, updates `backup-manifest.json`, and logs the SHA-256 checksum in `colddirect-memory.md`.
+
+## 2. Four Strict Non-Negotiable Rules
+1. **NEVER delete or overwrite `auto-seo.aspx` or `sitemap.xml` without V4.4+ sync**:
+   - Both `auto-seo.aspx` and `sitemap.xml` are excluded in `.github/workflows/deploy.yml` and owned by the live Plesk server.
+2. **NEVER remove V4 SEO blocks**:
+   - NEVER remove or strip `<!-- AUTO-SEO-V4-2026 -->` (footer internal links), `<!-- AUTO-SEO-V4-SCHEMA -->` (JSON-LD `#business` HVACBusiness schema), or `<!-- AUTO-SEO-V4-BLOGHUB -->` (homepage 6-article blog hub on `index.html`).
+3. **NEVER add `<!-- AUTO-SEO-LOCKED -->` unless explicitly instructed**:
+   - Do NOT add `<!-- AUTO-SEO-LOCKED -->` to any file unless the owner explicitly asks to freeze that specific page's `<title>` and `<meta description>`.
+4. **Strict Separation of Responsibilities & Commercial Scope**:
+   - **Commercial Refrigeration & AC Only**: Cold Direct ONLY repairs commercial refrigeration, freezers, cold rooms, walk-in chillers, cellar cooling, ice machines, refrigerated catering equipment, and air conditioning. We DO NOT repair domestic appliances or dishwashers/glasswashers.
+   - **`auto-seo.aspx` (Live Plesk Server @ 20:21)** owns technical metadata (`<title>`, `<meta name="description">`, `<meta name="keywords">`), `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-BLOGHUB -->`, missing image `alt` tags, and `sitemap.xml`.
+   - **Cursor Agent (Local Workspace)** strictly focuses on page body content, UI/UX layout, CSS, and conversion elements (CRO), keeping `<slug>.html`, `<slug>/index.html`, and `colddirect-public-html/` synchronized.

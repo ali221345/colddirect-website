@@ -292,3 +292,22 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - **Git Commit**: `4e6b309`
 - **Affected Files / Scope**: images/engineer-supermarket-multideck-fridge-repair-london.jpg, images/engineer-commercial-kitchen-prep-fridge-repair-london.jpg, images/engineer-bottle-cooler-bar-fridge-repair-north-london.jpg, supermarket-fridge-repair-london, prep-fridge-repair-london, bottle-cooler-repair-london
 - **GSC / Live Status**: HTTP 200 OK (6/6 live URLs) + GSC Indexing API 200 OK
+
+### [2026-10-19 23:13:41 UTC] — 3 EQUIPMENT-ONLY IMAGES (NO HUMANS) & SCHEMA DEPLOY
+- **Summary**: Generated and optimized 3 photorealistic equipment-only images (zero humans, <180KB JPG+WebP: supermarket-large-multideck-fridge-repair-london, commercial-kitchen-prep-fridge-repair-london, large-double-door-bottle-cooler-repair-north-london), updated HTML, og:image, twitter:image & JSON-LD ImageObject schema across Supermarket Fridge/Freezer/Dairy Cabinet, Prep Fridge, and Bottle Cooler North London pages, deployed to live WHUK Plesk (11/11 HTTP 200 OK), merged PR #78 (commit 12a093d), and pinged GSC Indexing API.
+- **Git Commit**: `12a093d`
+- **Affected Files / Scope**: images/supermarket-large-multideck-fridge-repair-london.jpg, images/commercial-kitchen-prep-fridge-repair-london.jpg, images/large-double-door-bottle-cooler-repair-north-london.jpg, supermarket-fridge-repair-london, supermarket-freezer-repair-london, dairy-cabinet-repair-london, prep-fridge-repair-london, bottle-cooler-repair-london
+- **GSC / Live Status**: HTTP 200 OK (11/11 live URLs) + GSC Indexing API 200 OK (5/5 URLs)
+
+### [2026-10-19 23:34:23 UTC] — INTERACTIVE SERVICE POPOVER / HOVER CARD ENGINE (V4.5)
+- **Summary**: Built and deployed Zero-CLS interactive B2B service popover/hover card engine (css/cd-hover-card.css + js/cd-hover-card.js) with 260ms hover bridge, live 24/7 dispatch badge, and direct phone/hub CTAs across 14 /blog/ pages and 35 core commercial service/brand pages on live WHUK Plesk (HTTP 200 OK), opened PR #79 (commit dfa62cc), and pinged Google Indexing API.
+- **Git Commit**: `dfa62cc`
+- **Affected Files / Scope**: css/cd-hover-card.css, js/cd-hover-card.js, blog/*, 35 core service/brand HTML pages
+- **GSC / Live Status**: HTTP 200 OK (9/9 verified live URLs) + GSC Indexing API 200 OK (7/7 URLs)
+
+### [2026-10-20 09:05:03 UTC] — seo-ctr-v45
+- **Summary**: V4.5 live audit fix: auto-seo.aspx upgraded to V4.5 (new home/freezer titles, 60-90 Min Target Response meta descriptions on 5 core pages, unified #business HVACBusiness+LocalBusiness JSON-LD with aggregateRating 4.9/38, 25-mile GeoCircle, 3 phones, core-page-only rating, mojibake safeguards). Added CD-HERO-KEYWORD-MATRIX to 5 pages, CD-HOMEPAGE-6-BLOG-HUB (6 articles) on homepage, descriptive alt tags, Trade-serviced byline grammar fix in 2 blogs, mojibake fix on 2 ice-machine pages. Live audit found NO 'circuit level' mojibake and NO missing trust bar/FAQ/symptom modules on fridge/freezer pages (already live). Lesson: PowerShell Get-Content shows UTF-8 as mojibake - verify with Python utf-8. Hub card titles corrected to match real articles (5 checks, not 7 faults). PR #79 hover cards still unmerged on main (auto-review blocks merge).
+- **Git Commit**: `dfa62cc`
+- **Affected Files / Scope**: index.html,fridge-repair-london,commercial-fridge-repair-london,commercial-freezer-repair-london,cold-room-repair-london,auto-seo.aspx
+- **GSC / Live Status**: Indexing API 11/11 URL_UPDATED 200
+- **Details**: npm test OK; protect_fixed_pages check 0 errors; auto-seo V4.5 trigger OK 233 pages, sitemap 123 URLs; live verified 5 pages
