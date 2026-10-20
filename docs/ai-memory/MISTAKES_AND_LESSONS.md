@@ -186,3 +186,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - **[2026-10-20] Preflight before upload**: run `python tools/html_preflight.py` (the upload hooks do it automatically) - checks DOCTYPE/title/description/canonical/closing html and git conflict markers. The strings "=======" and "undefined" are NOT enforced because they appear legitimately in JS/CSS/text.
 
 - **[2026-10-20] Core-page preflight**: money pages and homepage are also checked for the official phone and a business JSON-LD type; the check is path-based, so a stale copy under logs/ with a money-page filename is also treated as core.
+
+- **[2026-10-20] CI gates need a baseline**: adding a validator to deploy.yml that fails on pre-existing legacy issues would block every deploy. Use tools/html_preflight_baseline.txt so only new problems fail; never 'fix' auto-seo-owned meta descriptions just to turn a gate green.

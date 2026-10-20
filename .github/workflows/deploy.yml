@@ -26,6 +26,11 @@ jobs:
         id: protect
         run: python agent/scripts/protect_fixed_pages.py github-excludes
 
+      - name: Run Deploy Guard & HTML/SEO Preflight Checks
+        run: |
+          python tools/deploy_guard.py
+          python tools/html_preflight.py
+
       - name: FTP deploy httpdocs
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

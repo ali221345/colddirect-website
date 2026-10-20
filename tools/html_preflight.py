@@ -1,7 +1,8 @@
 """Pre-upload HTML sanity check for Cold Direct (SEO-critical tags + merge-conflict markers).
 
 Library: validate_html_file(path) -> list[str] of issues (empty = OK).
-CLI:     python tools/html_preflight.py [paths...]   (default: every root *.html and */index.html)
+CLI:     python tools/html_preflight.py [paths...] [--strict] [--write-baseline]
+         (default: every root *.html; known legacy issues in html_preflight_baseline.txt do not fail)
 """
 from __future__ import annotations
 
@@ -184,11 +185,44 @@ def _default_targets(root: str) -> list[str]:
     return out
 
 
+BASELINE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "html_preflight_baseline.txt")
+
+
+def _load_baseline() -> set[str]:
+    """Known, accepted legacy issues ('<relative/path>: <message>' per line). Empty if file missing."""
+    if not os.path.exists(BASELINE_FILE):
+        return set()
+    with open(BASELINE_FILE, encoding="utf-8") as fh:
+        return {ln.strip() for ln in fh if ln.strip() and not ln.startswith("#")}
+
+
+def _normalise(issue: str, target: str, root: str) -> str:
+    rel = os.path.relpath(os.path.abspath(target), root).replace("\\", "/")
+    return issue.replace(target, rel)
+
+
 if __name__ == "__main__":
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    targets = sys.argv[1:] or _default_targets(root)
-    problems = [i for t in targets for i in validate_html_file(t)]
-    for p in problems:
-        print("ISSUE:", p)
-    print(f"html_preflight: {len(targets)} files checked, {len(problems)} issue(s)")
-    raise SystemExit(1 if problems else 0)
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    strict = "--strict" in sys.argv          # ignore the baseline, report everything
+    write_baseline = "--write-baseline" in sys.argv
+    targets = args or _default_targets(root)
+    found = [_normalise(i, t, root) for t in targets for i in validate_html_file(t)]
+    if write_baseline:
+        with open(BASELINE_FILE, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("# Accepted legacy preflight issues. Remove a line once the page is fixed.\n")
+            fh.write("\n".join(sorted(set(found))) + "\n")
+        print(f"baseline written: {len(set(found))} entries")
+        raise SystemExit(0)
+    baseline = set() if strict else _load_baseline()
+    new = [i for i in found if i not in baseline]
+    known = [i for i in found if i in baseline]
+    for i in known:
+        print("KNOWN (baseline):", i)
+    for i in new:
+        print("ISSUE:", i)
+    if not args:  # stale entries only meaningful on a full scan
+        for i in sorted(baseline - set(found)):
+            print("FIXED (remove from baseline):", i)
+    print(f"html_preflight: {len(targets)} files checked, {len(new)} new issue(s), {len(known)} known")
+    raise SystemExit(1 if new else 0)
