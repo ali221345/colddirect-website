@@ -1,0 +1,53 @@
+name: Nightly auto-seo (live)
+
+# The Plesk Scheduled Task that used to call auto-seo.aspx with the old, publicly visible key can no longer
+# authenticate (the key was rotated and now lives only in the AUTO_SEO_KEY secret + App_Data/auto-seo.key on
+# the server). This workflow keeps the nightly SEO agent running with the new secret.
+# Runs 20:21 UTC (the agent's usual slot) and can be started manually.
+
+on:
+  schedule:
+    - cron: "21 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# never overlap a deploy (same group as deploy.yml); a queued run waits instead of cancelling
+concurrency:
+  group: colddirect-production
+  cancel-in-progress: false
+
+jobs:
+  auto-seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: tools
+          sparse-checkout-cone-mode: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run live auto-seo.aspx and smoke test
+        env:
+          AUTO_SEO_KEY: ${{ secrets.AUTO_SEO_KEY }}
+        run: |
+          if [ -z "${AUTO_SEO_KEY:-}" ]; then
+            echo "::error::Repository secret AUTO_SEO_KEY is not set"
+            exit 1
+          fi
+          BASE="https://www.colddirect.co.uk"
+          resp="$(curl -sS --retry 4 --retry-delay 10 --retry-all-errors --connect-timeout 20 --max-time 180 \
+            -A 'ColdDirect-CI-Nightly/1.0' "${BASE}/auto-seo.aspx?key=${AUTO_SEO_KEY}" || true)"
+          echo "auto-seo response: ${resp:0:200}"
+          if [[ "$resp" != *"AUTO-SEO"* || "$resp" != *"OK"* ]]; then
+            echo "::error::auto-seo.aspx did not return AUTO-SEO ... OK (wrong/missing server key file?)"
+            exit 1
+          fi
+          AUTO_SEO_RESPONSE="$resp" python tools/live_smoke_test.py

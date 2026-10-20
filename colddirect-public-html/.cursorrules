@@ -15,7 +15,7 @@ Every Cursor agent session MUST strictly obey the following rules:
 ## 1. Automated 24-Hour Update & 48-Hour Full Backup Pipelines
 - **24-Hour Automated Website Update (`daily_24h_update_colddirect.py`)**:
   - Scheduled daily via Windows Task Scheduler (`ColdDirect-24h-AutoUpdate`) and synced with Plesk's nightly 20:21 `auto-seo.aspx` V4.4 task.
-  - Triggers `https://www.colddirect.co.uk/auto-seo.aspx?key=cd2026`, pulls live Plesk files via `pull_live_plesk_v4.py`, checks `HTTP 200` on all 19 core money/brand pages, pings the Google Search Console Sitemap API, and logs the run in `colddirect-memory.md`.
+  - Triggers `https://www.colddirect.co.uk/auto-seo.aspx?key=$AUTO_SEO_KEY (secret kept in GitHub secret AUTO_SEO_KEY and server file App_Data/auto-seo.key, never in git)`, pulls live Plesk files via `pull_live_plesk_v4.py`, checks `HTTP 200` on all 19 core money/brand pages, pings the Google Search Console Sitemap API, and logs the run in `colddirect-memory.md`.
 - **48-Hour Full Website & Server Backup (`backup_48h_colddirect.py`)**:
   - Scheduled every 48 hours via Windows Task Scheduler (`ColdDirect-48h-Backup`).
   - Pulls a complete live snapshot from Plesk `/httpdocs`, creates a compressed `.zip` archive in `colddirect-public-html/backups/colddirect-live-backup-YYYY-MM-DD_HHMM.zip` (keeping the last 15 backups), pushes a verified `backup-YYYY-MM-DD-HHMM` Git tag to GitHub, updates `backup-manifest.json`, and logs the SHA-256 checksum in `colddirect-memory.md`.

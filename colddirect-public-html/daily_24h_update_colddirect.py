@@ -2,7 +2,7 @@
 """
 24-Hour Automated Website Update & Health Pipeline for Cold Direct (colddirect.co.uk).
 Runs daily every 24 hours:
-  a) Triggers live `https://www.colddirect.co.uk/auto-seo.aspx?key=cd2026` on WHUK Plesk (`/httpdocs`)
+  a) Triggers live `https://www.colddirect.co.uk/auto-seo.aspx?key=$AUTO_SEO_KEY` on WHUK Plesk (`/httpdocs`)
      to keep all V4.4 titles, schemas, internal links, `lastmod` dates, and `sitemap.xml` fresh.
   b) Runs `pull_live_plesk_v4.py` to keep local workspace and `colddirect-public-html/` 100% synced.
   c) Pings Google Search Console Sitemap API + Indexing API (`request_indexing.py`) and verifies
@@ -11,6 +11,7 @@ Runs daily every 24 hours:
 """
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import urllib.request
@@ -43,7 +44,7 @@ CORE_PAGES_TO_CHECK = [
 
 
 def trigger_live_auto_seo() -> str:
-    url = "https://www.colddirect.co.uk/auto-seo.aspx?key=cd2026"
+    url = "https://www.colddirect.co.uk/auto-seo.aspx?key=" + os.environ["AUTO_SEO_KEY"]  # strict: no hardcoded fallback
     req = urllib.request.Request(url, headers={"User-Agent": "ColdDirect-24h-AutoUpdater/1.0"})
     with urllib.request.urlopen(req, timeout=60) as resp:
         return resp.read().decode("utf-8", errors="replace").strip()

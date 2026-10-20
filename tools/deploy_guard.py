@@ -15,10 +15,12 @@ BLOCKED_PATHS = frozenset({
     ".git", ".github", "node_modules", "__pycache__", ".venv", "venv",
     # sensitive / local config
     ".env", ".env.local", ".gitignore", ".cursorrules", ".DS_Store", "Thumbs.db",
+    # server-side secrets (auto-seo.key lives only on Plesk, uploaded by a dedicated one-off step)
+    "App_Data", "app_data",
 })
 
-# Forbidden extensions (compiled python, logs, backups)
-BLOCKED_EXTENSIONS = frozenset({".pyc", ".pyo", ".log", ".bak"})
+# Forbidden extensions (compiled python, logs, backups, key files)
+BLOCKED_EXTENSIONS = frozenset({".pyc", ".pyo", ".log", ".bak", ".key"})
 
 
 def should_skip_upload(relative_path: str) -> bool:
@@ -28,7 +30,7 @@ def should_skip_upload(relative_path: str) -> bool:
         return False
     if any(part in BLOCKED_PATHS for part in parts):
         return True
-    return parts[-1].endswith(tuple(BLOCKED_EXTENSIONS))
+    return parts[-1].lower().endswith(tuple(BLOCKED_EXTENSIONS))
 
 
 if __name__ == "__main__":
@@ -37,6 +39,7 @@ if __name__ == "__main__":
         "fridge-repair-london/index.html": False,
         ".vscode/sftp.json": True, ".cursor/rules/x.mdc": True, ".git/config": True,
         "node_modules/a/b.js": True, "tools/__pycache__/x.pyc": True, "deploy.log": True,
+        "App_Data/auto-seo.key": True, "app_data/x.txt": True, "secret.KEY": True, "auto-seo.key": True,
         "page.html.bak": True, ".env": True, "sub\\.github\\deploy.yml": True, "": False,
     }
     bad = [p for p, want in cases.items() if should_skip_upload(p) != want]

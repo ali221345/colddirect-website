@@ -15,7 +15,9 @@ import glob
 import hashlib
 import os
 import re
+import secrets
 import shutil
+import string
 import subprocess
 import sys
 import tempfile
@@ -32,18 +34,18 @@ using System; using System.IO; using System.Text; using System.Text.RegularExpre
 using System.Collections.Generic; using System.Collections.Specialized;
 class FakeRequest { public NameValueCollection QueryString = new NameValueCollection(); }
 class FakeResponse { public int StatusCode = 200; public string ContentType = ""; public StringBuilder Out = new StringBuilder(); public void Write(string s) { Out.Append(s); } }
-class FakeServer { public string Root = ""; public string MapPath(string p) { return Root; } }
+class FakeServer { public string Root = ""; public string MapPath(string p) { if (p != null && p.StartsWith("~/") && p.Length > 2) return Path.Combine(Root, p.Substring(2).Replace('/', '\\')); return Root; } }
 class P {
   public FakeRequest Request = new FakeRequest(); public FakeResponse Response = new FakeResponse(); public FakeServer Server = new FakeServer();
 //BODY//
-  public string Run(string root) {
+  public string Run(string root, string key) {
     if (!root.EndsWith("\\")) root += "\\";
-    Server.Root = root; Request.QueryString["key"] = "cd2026";
+    Server.Root = root; if (key != null) Request.QueryString["key"] = key;
     Page_Load(null, null);
     return Response.StatusCode + " " + Response.Out.ToString();
   }
 }
-class T { static int Main(string[] a) { P p = new P(); Console.Write(p.Run(a[0])); return 0; } }
+class T { static int Main(string[] a) { P p = new P(); Console.Write(p.Run(a[0], a.Length > 1 && a[1] != "<none>" ? a[1] : null)); return 0; } }
 """
 
 
@@ -68,8 +70,25 @@ def build(tmp):
     return exe
 
 
+# per-run random key: the real key never appears in the repo, and "cd2026" must be rejected
+TEST_KEY = "".join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
+
+
+def write_key(root, content=TEST_KEY):
+    d = os.path.join(root, "App_Data")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "auto-seo.key"), "w", encoding="ascii", newline="") as f:
+        f.write(content)
+
+
+def call(exe, root, key):
+    return subprocess.run([exe, root, key if key is not None else "<none>"], capture_output=True, text=True, timeout=300).stdout
+
+
 def run(exe, root):
-    out = subprocess.run([exe, root], capture_output=True, text=True, timeout=300).stdout
+    if not os.path.exists(os.path.join(root, "App_Data", "auto-seo.key")):
+        write_key(root)
+    out = call(exe, root, TEST_KEY)
     m = re.search(r"HTML Updated: (\d+) \| Sitemap URLs: (\d+)", out)
     assert m and "AUTO-SEO V4.9" in out and out.startswith("200"), out
     return int(m.group(1)), int(m.group(2))
@@ -180,6 +199,32 @@ def real_tree(exe, tmp):
     print("real tree OK: blog urls in sitemap=%d, enfield present, stubs/preview/brands-plural absent, blog pages untouched" % len(blog_urls))
 
 
+def auth_tests(exe, tmp):
+    root = os.path.join(tmp, "auth")
+    os.makedirs(root)
+    open(os.path.join(root, "index.html"), "w", encoding="utf-8").write(page("Home", "home", BASE))
+    # no key file at all -> fail closed, even with the right-looking key
+    for k in (TEST_KEY, "cd2026", None, ""):
+        out = call(exe, root, k)
+        assert out.startswith("403") and "AUTO-SEO" not in out, "missing key file must reject everything: %r" % out[:40]
+    assert not os.path.exists(os.path.join(root, "sitemap.xml")), "agent ran without a key file"
+    # short key file -> fail closed
+    write_key(root, "cd2026")
+    assert call(exe, root, "cd2026").startswith("403"), "short key file must not authenticate"
+    # proper key file
+    write_key(root)
+    for bad in ("cd2026", "", None, TEST_KEY[:-1], TEST_KEY + "x", TEST_KEY.swapcase() if TEST_KEY.swapcase() != TEST_KEY else TEST_KEY[::-1] + "0"):
+        out = call(exe, root, bad)
+        assert out.startswith("403") and "AUTO-SEO" not in out, "wrong key accepted: %r" % bad
+    assert not os.path.exists(os.path.join(root, "sitemap.xml")), "agent ran with a wrong key"
+    out = call(exe, root, TEST_KEY)
+    assert out.startswith("200") and "AUTO-SEO V4.9" in out and "OK" in out, out[:80]
+    # trailing newline in the key file is tolerated
+    write_key(root, TEST_KEY + "\r\n")
+    assert call(exe, root, TEST_KEY).startswith("200")
+    print("auth OK: no key file / short file / wrong, old (cd2026), empty, truncated, extended keys all rejected; right key accepted")
+
+
 def main():
     if not find_csc():
         print("csc.exe (.NET Framework 4) not found - cannot run behavioural tests on this machine")
@@ -188,6 +233,7 @@ def main():
     try:
         exe = build(tmp)
         print("compiled OK")
+        auth_tests(exe, tmp)
         synthetic(exe, tmp)
         real_tree(exe, tmp)
         print("ALL AUTO-SEO TESTS PASSED")

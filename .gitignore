@@ -15,3 +15,7 @@ backups/
 # Local analysis output - never track or deploy
 logs/
 gsc-analysis-*.html
+
+# auto-seo.aspx server-side secret (lives only on Plesk + local, never in git)
+App_Data/
+*.key

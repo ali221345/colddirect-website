@@ -6,7 +6,12 @@
 <script runat="server">
 protected void Page_Load(object sender, EventArgs e)
 {
-    if (Request.QueryString["key"] != "cd2026") { Response.StatusCode = 403; Response.Write("403"); return; }
+    // V4.9.1: the access key is NOT in source control. It is read from App_Data/auto-seo.key on the server
+    // (never served over HTTP, never in git). Fail closed: missing/short key file = everything is rejected.
+    string expectedKey = "";
+    try { string keyFile = Server.MapPath("~/App_Data/auto-seo.key"); if (File.Exists(keyFile)) expectedKey = File.ReadAllText(keyFile).Trim(); } catch { }
+    string suppliedKey = Request.QueryString["key"] ?? "";
+    if (expectedKey.Length < 24 || !KeysEqual(suppliedKey, expectedKey)) { Response.StatusCode = 403; Response.Write("403"); return; }
     string root = Server.MapPath("~/");
 
     string footerBlock = "\r\n<!-- AUTO-SEO-V4-2026 -->\r\n" +
@@ -426,6 +431,15 @@ protected void Page_Load(object sender, EventArgs e)
 
     Response.ContentType = "text/plain";
     Response.Write("AUTO-SEO V4.9 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+}
+
+// constant-time comparison so the key cannot be guessed through response timing
+bool KeysEqual(string a, string b)
+{
+    int diff = a.Length ^ b.Length;
+    int n = Math.Max(a.Length, b.Length);
+    for (int i = 0; i < n; i++) diff |= (i < a.Length ? a[i] : 0) ^ (i < b.Length ? b[i] : 0);
+    return diff == 0;
 }
 
 string J(string s) { return s.Replace("\\", "\\\\").Replace("\"", "\\\""); }

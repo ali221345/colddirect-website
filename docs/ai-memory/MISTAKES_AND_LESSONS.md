@@ -219,3 +219,11 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - LESSON: deploy_to_plesk.diagnose() (FTPS) hangs on this host - upload with plain tplib.FTP() reading .vscode/sftp.json (script: temp upload_plain.py pattern).
 - LESSON: parallel Write + Shell calls race - run the script only after the Write call has returned.
 - LESSON: auto-seo key cd2026 is visible in the public repo; optional secret AUTO_SEO_KEY is read by deploy.yml if you add it (then also change the key in auto-seo.aspx).
+
+## 2026-10-20 (night) - auto-seo.aspx access key rotated (old public key revoked)
+- The old hard-coded key (visible in the public repo + git history) is REVOKED. New 32-char random key lives ONLY in: GitHub secret AUTO_SEO_KEY, server file /httpdocs/App_Data/auto-seo.key, and a gitignored local copy App_Data/auto-seo.key. Never print, commit or paste it.
+- auto-seo.aspx reads the server file (trim, constant-time compare) and FAILS CLOSED (403) if the file is missing or shorter than 24 chars. IIS answers 404 for /App_Data/*; web.config also denies the .key extension.
+- Guard rails: .gitignore (App_Data/, *.key), 	ools/deploy_guard.py (App_Data + .key blocked for every upload script), deploy.yml excludes App_Data/*.key. The key file is uploaded once, out of band, with plain ftplib (that one-off script bypasses the guard on purpose). The Plesk push webhook does NOT delete untracked server files (verified after push).
+- deploy.yml and the new nightly workflow use secrets.AUTO_SEO_KEY only (no fallback; empty = hard fail). tools/test_auto_seo.py generates a random key per run and asserts that cd2026, empty, truncated, extended and missing-file cases are all rejected.
+- LESSON: the nightly Plesk Scheduled Task (not readable over FTP) probably still calls auto-seo.aspx with the old key and now gets 403. .github/workflows/auto-seo-nightly.yml (20:21 UTC) takes over; the Plesk task can be deleted or updated whenever convenient.
+- To rotate again: generate a new key, gh secret set AUTO_SEO_KEY, overwrite App_Data/auto-seo.key on Plesk via FTP (no code change needed).
