@@ -145,11 +145,14 @@ protected void Page_Load(object sender, EventArgs e)
         foreach (string dir in Directory.GetDirectories(root, "*", SearchOption.TopDirectoryOnly))
         {
             string dn = Path.GetFileName(dir).ToLowerInvariant();
-            if (dn.StartsWith(".") || dn.StartsWith("_") || dn.Contains("backup") || dn.Contains("plesk") || dn.Contains("stat") || dn.Contains("log") || dn.Contains("error") || dn == "colddirect-public-html" || dn == "node_modules" || dn == "cgi-bin" || dn == "app_data") continue;
+            if (dn.StartsWith(".") || dn.StartsWith("_") || dn.Contains("backup") || dn.Contains("plesk") || dn.Contains("stat") || dn.Equals("logs", StringComparison.OrdinalIgnoreCase) || dn.Contains("error") || dn == "colddirect-public-html" || dn == "node_modules" || dn == "cgi-bin" || dn == "app_data") continue;
             try { filesList.AddRange(Directory.GetFiles(dir, "*.html", SearchOption.AllDirectories)); } catch { }
         }
     }
     catch { }
+
+    // V4.9: URLs that web.config 301-redirects to another page must never be sitemap URLs
+    HashSet<string> redirectedSlugs = new HashSet<string>(new string[] { "about", "news", "refrigeration-brands-repairs-london" });
 
     int updated = 0;
     List<string> sitemapUrls = new List<string>();
@@ -208,12 +211,39 @@ protected void Page_Load(object sender, EventArgs e)
                 bool canonElsewhere = canonMatch.Success && NormUrl(canonMatch.Groups[1].Value) != NormUrl(selfUrl);
                 // V4.8: meta-refresh redirect stubs are never sitemap URLs
                 bool refreshStub = Regex.IsMatch(html, "<meta[^>]+http-equiv=[\"']refresh[\"']", RegexOptions.IgnoreCase);
-                if (noindexPage || canonElsewhere || refreshStub) sitemapUrls.Remove(selfUrl);
-            }
+                bool redirectedAway = redirectedSlugs.Contains(name);
+                if (noindexPage || canonElsewhere || refreshStub || redirectedAway) sitemapUrls.Remove(selfUrl);
+            }
+
+            // V4.9: /blog/ articles keep their own layout. No title/description rewrite, no V4 footer/schema/bloghub
+            // injection, no mojibake rewrite. The ONLY write allowed is a fill-only description when it is empty/missing.
+            if (rel.StartsWith("blog/"))
+            {
+                html = orig;
+                bool blogHasDesc = Regex.IsMatch(html, "<meta[^>]+name=[\"']description[\"'][^>]*content=[\"']\\s*[^\"'\\s]", RegexOptions.IgnoreCase)
+                                || Regex.IsMatch(html, "<meta[^>]+content=[\"']\\s*[^\"'\\s][^>]*name=[\"']description[\"']", RegexOptions.IgnoreCase);
+                if (!blogHasDesc && !html.Contains("<!-- AUTO-SEO-LOCKED -->"))
+                {
+                    Match tm = Regex.Match(html, @"<title>([\s\S]*?)</title>", RegexOptions.IgnoreCase);
+                    string tt = tm.Success ? Regex.Replace(tm.Groups[1].Value, @"\s+", " ").Trim() : "";
+                    int bar = tt.IndexOf('|'); if (bar > 10) tt = tt.Substring(0, bar).Trim();
+                    string tail = " Cold Direct commercial refrigeration guide for London. Call 0203 952 4822.";
+                    if (tt.Length > 0)
+                    {
+                        string bd = tt.TrimEnd('.', ' ') + "." + tail;
+                        if (bd.Length > 160) bd = tt.Substring(0, Math.Min(tt.Length, 160 - tail.Length - 1)).TrimEnd('.', ' ', ',') + "." + tail;
+                        bd = bd.Replace("&", "&amp;").Replace("\"", "&quot;");
+                        html = Regex.Replace(html, "<meta[^>]+name=[\"']description[\"'][^>]*>", "", RegexOptions.IgnoreCase);
+                        html = new Regex("</title>", RegexOptions.IgnoreCase).Replace(html, "</title>" + (orig.Contains("\r\n") ? "\r\n" : "\n") + "  <meta name=\"description\" content=\"" + bd + "\">", 1);
+                    }
+                }
+                if (html != orig) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; }
+                continue;
+            }
 
             // Upgrade old V4 blocks cleanly
-            html = Regex.Replace(html, @"<!-- AUTO-SEO-V[234]-2026 -->[\s\S]*?</div>\s*", "");
-            html = Regex.Replace(html, "<!-- AUTO-SEO-V[345]-SCHEMA -->[\\s\\S]*?" + scClose + "\\s*", "");
+            html = Regex.Replace(html, @"\s*<!-- AUTO-SEO-V[234]-2026 -->[\s\S]*?</div>\s*", "");
+            html = Regex.Replace(html, "\\s*<!-- AUTO-SEO-V[345]-SCHEMA -->[\\s\\S]*?" + scClose + "\\s*", "");
 
             if (!html.Contains("<!-- AUTO-SEO-LOCKED -->") && !rel.StartsWith("blog/"))
             {
@@ -366,11 +396,11 @@ protected void Page_Load(object sender, EventArgs e)
 
             // Inject Schema in <head>
             if (Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
-                html = Regex.Replace(html, @"</head>", (rel == "index.html" ? schemaBlockCore : (moneyMeta.ContainsKey(name) ? BuildMoneySchema(name, moneyMeta[name], bizNodeJson, scOpen, scClose) : schemaBlock)) + "</head>", RegexOptions.IgnoreCase);
+                html = Regex.Replace(html, @"\s*</head>", (rel == "index.html" ? schemaBlockCore : (moneyMeta.ContainsKey(name) ? BuildMoneySchema(name, moneyMeta[name], bizNodeJson, scOpen, scClose) : schemaBlock)) + "</head>", RegexOptions.IgnoreCase);
 
             // Inject V4 Footer Links before </body>
             if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
-                html = Regex.Replace(html, @"</body>", footerBlock + "</body>", RegexOptions.IgnoreCase);
+                html = Regex.Replace(html, @"\s*</body>", footerBlock + "</body>", RegexOptions.IgnoreCase);
 
             if (html != orig) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; }
         }
@@ -395,7 +425,7 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     Response.ContentType = "text/plain";
-    Response.Write("AUTO-SEO V4.8 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+    Response.Write("AUTO-SEO V4.9 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
 }
 
 string J(string s) { return s.Replace("\\", "\\\\").Replace("\"", "\\\""); }

@@ -318,3 +318,14 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - **Affected Files / Scope**: 9 money pages x4 paths, index.html, ~240 silo pages, js/cd-hover-card.js, auto-seo.aspx, protected-pages.json
 - **GSC / Live Status**: Live HTTP 200 on 9 pages + home; auto-seo V4.7 OK (233 html updated, 114 sitemap URLs); npm test 0 JSON-LD errors
 - **Details**: Fridge title changed again within 7-day cooldown on explicit owner request (title ~83 chars, may truncate in SERP). Legacy plural/.asp URLs untouched. 55 BOMs stripped; one mojibake fixed in walk-in-cold-room mirror.
+
+## 2026-10-20 (late) - V4.9 end-to-end pass: Enfield, blog sitemap, redirects, idempotent auto-seo, post-deploy CI
+- auto-seo.aspx **V4.9**: dn.Equals("logs") (blog now scanned + in sitemap: hub + 12 articles; duplicate /blog/commercial-freezer-ice-buildup-causes/ stays out via canonical-elsewhere); edirectedSlugs (about, news, refrigeration-brands-repairs-london) never in sitemap; /blog/ pages get NO V4 footer/schema/bloghub/mojibake rewrite, only a fill-only description when empty; removal regexes + injection points now consume surrounding whitespace so the run is idempotent from run 1 (live run 2 = "HTML Updated: 0"); stray \r\r\n removed from the script itself.
+- Tests: python tools/test_auto_seo.py compiles the REAL aspx body with csc (fake Request/Response/Server) and runs synthetic + real-tree idempotency/sitemap tests. Run it after every aspx edit.
+- /commercial-fridge-repair-enfield/ was a live 404 (only .html existed, no folder index, non-slash canonical). Fixed with folder index + slash canonical + contactPoint 07983 759320 (4 copies).
+- web.config + .htaccess: 301 /about/, /about.html, /about/index.html -> /about-us/ and /refrigeration-brands-repairs-london(/|.html|.asp) -> /refrigeration-brands-repair-london/ (plural-only rule; do NOT make the pattern match the singular or it loops). Rules sit at the TOP of the IIS rules so the 'pass through existing .html' rule cannot swallow them.
+- Blog linking: 	ools/blog_related_services.py (idempotent, marker CD-BLOG-RELATED-SERVICES). All 52 article files already had 6-9 contextual core links -> no-op today; CI runs it with --check.
+- deploy.yml: after FTP, sleep 10 -> curl auto-seo (retries) must return AUTO-SEO + OK -> 	ools/live_smoke_test.py (200s, sitemap asserts, 301s, URL count to $GITHUB_STEP_SUMMARY), up to 3 rounds because the Plesk webhook can lag.
+- LESSON: deploy_to_plesk.diagnose() (FTPS) hangs on this host - upload with plain tplib.FTP() reading .vscode/sftp.json (script: temp upload_plain.py pattern).
+- LESSON: parallel Write + Shell calls race - run the script only after the Write call has returned.
+- LESSON: auto-seo key cd2026 is visible in the public repo; optional secret AUTO_SEO_KEY is read by deploy.yml if you add it (then also change the key in auto-seo.aspx).
