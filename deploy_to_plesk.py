@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "tools"))
 from deploy_guard import should_skip_upload  # noqa: E402
+from html_preflight import preflight_ok  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 60
@@ -138,6 +139,9 @@ def upload(ftp, local: Path, remote: str) -> None:
     remote = remote.replace("\\", "/")
     if should_skip_upload(remote):
         print("SKIPPED (deploy guard)", remote)
+        return
+    if not preflight_ok(local, remote):
+        print("SKIPPED (html preflight)", remote)
         return
     parent, name = os.path.split(remote)
     if parent:

@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import deploy_to_plesk as d
 from deploy_guard import should_skip_upload
+from html_preflight import preflight_ok
 
 FILES = [
     (ROOT / "index.html", "index.html"),
@@ -42,6 +43,9 @@ def upload(ftp, base: str, local: Path, remote: str) -> None:
     remote = remote.replace("\\", "/")
     if should_skip_upload(remote):
         print("SKIPPED (deploy guard)", remote)
+        return
+    if not preflight_ok(local, remote):
+        print("SKIPPED (html preflight)", remote)
         return
     parent = os.path.dirname(remote)
     if parent:
