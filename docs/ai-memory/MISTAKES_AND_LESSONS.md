@@ -201,3 +201,10 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 
 - **[2026-10-20] Public repo = public CI logs**: never print service-account emails, project ids or secret-derived strings in workflow output or Step Summaries; sanitise API error bodies.
 - **[2026-10-20] URL Inspection is slow (~7s/call)**: give API jobs a wall-clock budget and a generous job timeout; do not assume sub-second calls.
+
+## 2026-10-20 — Hosting push-webhook overwrites live files (sitemap flapping)
+- GitHub repo has an active **push webhook to daisy.specialservers.com** (the Plesk host). Every push to main makes the host deploy the repo copy over /httpdocs, INCLUDING sitemap.xml (and other files), regardless of deploy.yml excludes.
+- Symptom: live sitemap.xml re-written seconds after each push with the *committed* copy (112 URLs incl. redirect stub /about/), undoing auto-seo V4.8 (111 URLs).
+- Cause: I had committed a sitemap.xml pulled before the stub fix. Fix (e3414d3): re-run auto-seo, pull live, commit ONLY sitemap.xml (root + mirror). Verified: live stays 111 after the push.
+- RULE: before any push to main, the committed sitemap.xml must equal the live one (run auto-seo → pull_live → commit sitemap files). Never commit stale sitemap.xml. Restore whitespace-only html noise with git checkout --pathspec-from-file.
+- Weekly GSC sync (gsc-weekly-sync.yml) warns when /about or /news appear in live sitemap — useful canary.
