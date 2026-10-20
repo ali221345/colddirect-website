@@ -198,3 +198,6 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 
 - **[2026-10-20] CI git look-back**: `HEAD@{7.days.ago}` needs a reflog which fresh CI clones do not have - use `git log --since="N days ago" --name-only --diff-filter=AMR` with `fetch-depth: 0`.
 - **[2026-10-20] Quota-safe API jobs**: cap calls per run well below the daily quota, stop an API on first 429/permission error and report it in the Step Summary; only auth/sitemap failures should fail the job.
+
+- **[2026-10-20] Public repo = public CI logs**: never print service-account emails, project ids or secret-derived strings in workflow output or Step Summaries; sanitise API error bodies.
+- **[2026-10-20] URL Inspection is slow (~7s/call)**: give API jobs a wall-clock budget and a generous job timeout; do not assume sub-second calls.

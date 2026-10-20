@@ -19,6 +19,7 @@ Environment
   LOOKBACK_DAYS         git look-back window (default 7).
   INDEXING_MAX          max Indexing API calls per run (default 80).
   INSPECT_MAX           max URL Inspection calls per run (default 150).
+  TIME_BUDGET_SECONDS   wall-clock budget for API calls (default 1200); remaining URLs are reported as not processed.
 
 Exit code is non-zero ONLY for auth failure or a failed sitemap submission.
 """
@@ -72,6 +73,7 @@ CANON_RE = re.compile(r'<link\s+[^>]*rel=["\']canonical["\'][^>]*href=["\']([^"\
 LOOKBACK_DAYS = int(os.environ.get("LOOKBACK_DAYS", "7") or "7")
 INDEXING_MAX = int(os.environ.get("INDEXING_MAX", "80") or "80")
 INSPECT_MAX = int(os.environ.get("INSPECT_MAX", "150") or "150")
+TIME_BUDGET = int(os.environ.get("TIME_BUDGET_SECONDS", "1200") or "1200")  # URL Inspection takes ~7s per call
 DRY_RUN = os.environ.get("DRY_RUN", "false").strip().lower() in ("1", "true", "yes")
 TABLE_ROWS = 200
 
@@ -205,13 +207,23 @@ def live_check(url: str) -> str:
 # ------------------------------------------------------------------ Google APIs
 class Quota:
     def __init__(self, name: str, cap: int):
-        self.name, self.cap, self.used, self.stopped = name, cap, 0, ""
+        self.name, self.cap, self.used, self.stopped, self.detail = name, cap, 0, "", ""
 
     def can(self) -> bool:
         return not self.stopped and self.used < self.cap
 
     def left(self) -> int:
         return 0 if self.stopped else max(self.cap - self.used, 0)
+
+
+def api_error(r) -> str:
+    """Short, sanitised Google error message (public repo: scrub long numeric ids, never echo credentials)."""
+    try:
+        e = r.json().get("error", {})
+        msg = f'{e.get("status", "")}: {e.get("message", "")}'
+    except Exception:  # noqa: BLE001
+        msg = (r.text or "")[:150]
+    return re.sub(r"\d{6,}", "<id>", msg)[:220]
 
 
 def call(session, method: str, url: str, quota: Quota, **kw):
@@ -222,8 +234,10 @@ def call(session, method: str, url: str, quota: Quota, **kw):
         low = r.text.lower() if r.text else ""
         if r.status_code == 429 or (r.status_code == 403 and any(k in low for k in ("quota", "ratelimit", "resource_exhausted"))):
             quota.stopped = f"quota/rate limit reached (HTTP {r.status_code})"
+            quota.detail = api_error(r)
         elif r.status_code in (401, 403):
             quota.stopped = f"permission denied (HTTP {r.status_code})"
+            quota.detail = api_error(r)
         elif r.status_code >= 500 and attempt == 1:
             time.sleep(3)
             continue
@@ -291,6 +305,7 @@ def publish(session, url: str, quota: Quota) -> str:
 # ------------------------------------------------------------------ main
 def main() -> int:
     started = datetime.now(timezone.utc)
+    t0 = time.time()
     out("# GSC weekly sync")
     out(f"- Run: `{started:%Y-%m-%d %H:%M} UTC` | look-back: **{LOOKBACK_DAYS} days** | mode: **{'DRY RUN' if DRY_RUN else 'LIVE'}**")
     out(f"- Caps this run: Indexing API **{INDEXING_MAX}** (daily quota 200) | URL Inspection **{INSPECT_MAX}** (daily quota 2000)")
@@ -359,6 +374,9 @@ def main() -> int:
     insp_q, idx_q = Quota("inspect", INSPECT_MAX), Quota("indexing", INDEXING_MAX)
     for item in accepted:
         row = dict(item, verdict="-", coverage="-", indexing="-")
+        if session is not None and time.time() - t0 > TIME_BUDGET:
+            for q in (insp_q, idx_q):
+                q.stopped = q.stopped or "wall-clock budget reached"
         if session is not None:
             if insp_q.can():
                 row["verdict"], row["coverage"] = inspect(session, item["url"], insp_q)
@@ -377,6 +395,12 @@ def main() -> int:
     out("## Submitted / checked URLs")
     out(f"- Indexing API calls: **{idx_q.used}/{INDEXING_MAX}**{' - STOPPED: ' + idx_q.stopped if idx_q.stopped else ''}")
     out(f"- URL Inspection calls: **{insp_q.used}/{INSPECT_MAX}**{' - STOPPED: ' + insp_q.stopped if insp_q.stopped else ''}")
+    for q in (idx_q, insp_q):
+        if q.detail:
+            out(f"- {q.name} API said: `{esc(q.detail)}`")
+    if idx_q.stopped.startswith("permission denied"):
+        out("- **Action needed for Indexing API pings**: add the service account as **Owner** of the `https://www.colddirect.co.uk/` property in Search Console "
+            "and enable the *Web Search Indexing API* in its Google Cloud project. Sitemap submission and URL Inspection are unaffected.")
     out()
     out("| # | URL | Group | Index status (GSC) | Indexing API |")
     out("|---|-----|-------|--------------------|--------------|")

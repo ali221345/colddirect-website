@@ -77,3 +77,10 @@
 - Dry run on current repo: 138 candidates (11 priority/113 service/14 blog), 15 skipped (about/news stubs, noindex, canonical-elsewhere, enfield = live 404), 80 accepted, 43 deferred.
 - html_preflight.py now exports is_noindex() and is_redirect_stub().
 - OPEN: /commercial-fridge-repair-enfield/ is a live 404 (priority-queued but never submitted until fixed).
+
+## 2026-10-20 - GSC weekly sync: first live test run + hardening (run 39500957264, success)
+- Test run results: secret GSC_CREDENTIALS_JSON authenticates; sitemap PUT = HTTP 204 (0 errors/0 warnings); URL Inspection worked (80 calls: 56 'Submitted and indexed', 14 'Discovered - currently not indexed', 4 'Alternate page with proper canonical', 3 'URL is unknown to Google', 2 'Google chose different canonical'); Indexing API = HTTP 403 permission denied for the CI service account (workflow stopped after 1 call, run still green).
+- ACTION for owner (Indexing API pings only): add the service account behind GSC_CREDENTIALS_JSON as OWNER of https://www.colddirect.co.uk/ in Search Console and enable 'Web Search Indexing API' in its Google Cloud project. Sitemap + Inspection already work. (Local key C:\Users\khora\gsc-oauth.json is a different account that got 200s earlier.)
+- REPO IS PUBLIC: CI logs + Step Summary are world-readable - never print service-account email, project ids or any secret-derived text. Script scrubs numeric ids from API error messages.
+- Hardening: error detail + owner hint in summary, TIME_BUDGET_SECONDS=1200 (inspection ~7s/call; first run took 9m46s), workflow timeout 30 min. 11 offline unit tests pass (403/429/5xx/cap/main exit code/step summary).
+- ANOMALY found by the workflow's live-sitemap check: at 21:30:14-17 UTC auto-seo.aspx ran (about.html + sitemap.xml rewritten) NOT triggered by me and produced 112 URLs INCLUDING /about/ (stub, noindex). Manual V4.8 run right after gave 111 without /about/. Coincided with the push-deploy run (21:30:12). Under investigation: scheduler vs deploy-linked.
