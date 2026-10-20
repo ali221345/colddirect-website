@@ -195,3 +195,6 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - **[2026-10-20] Substring folder filters**: auto-seo.aspx skips folders with dn.Contains("log") which also matches "blog" - use exact names (dn == "logs"). Always compare the sitemap against expected hub pages after changing sitemap logic.
 - **[2026-10-20] Live pull noise**: after pull_live_plesk_v4.py check `git diff --ignore-blank-lines --name-only`; nightly auto-seo adds blank lines to hundreds of pages - restore whitespace-only diffs instead of committing them.
 - **[2026-10-20] Redirect stubs**: meta-refresh stubs must be noindex + canonical to the real page + excluded from sitemap; preflight now enforces noindex on them.
+
+- **[2026-10-20] CI git look-back**: `HEAD@{7.days.ago}` needs a reflog which fresh CI clones do not have - use `git log --since="N days ago" --name-only --diff-filter=AMR` with `fetch-depth: 0`.
+- **[2026-10-20] Quota-safe API jobs**: cap calls per run well below the daily quota, stop an API on first 429/permission error and report it in the Step Summary; only auth/sitemap failures should fail the job.

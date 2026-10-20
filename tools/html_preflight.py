@@ -120,6 +120,20 @@ def validate_core_page_schema_and_contact(filepath: str, content: str) -> list[s
     return issues
 
 
+NOINDEX_RE = re.compile(r"<meta\s+[^>]*name=[\"\']robots[\"\'][^>]*noindex", re.IGNORECASE)
+REFRESH_RE = re.compile(r"<meta\s+[^>]*http-equiv=[\"\']refresh[\"\']", re.IGNORECASE)
+
+
+def is_noindex(content: str) -> bool:
+    """True if the page carries a robots noindex directive."""
+    return bool(NOINDEX_RE.search(content))
+
+
+def is_redirect_stub(content: str) -> bool:
+    """True if the page is a meta-refresh redirect stub."""
+    return bool(REFRESH_RE.search(content))
+
+
 def validate_html_file(filepath: str) -> list[str]:
     """Check one HTML file before upload and return the list of issues."""
     issues: list[str] = []
@@ -141,10 +155,10 @@ def validate_html_file(filepath: str) -> list[str]:
 
     # 1. Required SEO tags (only full pages that have a <head>)
     if re.search(r"<head[\s>]", content, re.IGNORECASE):
-        noindex = re.search(r"<meta\s+[^>]*name=[\"\']robots[\"\'][^>]*noindex", content, re.IGNORECASE)
+        noindex = is_noindex(content)
         # REDIRECT_STUB: meta-refresh stubs keep a canonical to the real colddirect.co.uk page
         # (checked below like any page) but need no description; they MUST be noindex.
-        stub = re.search(r"<meta\s+[^>]*http-equiv=[\"\']refresh[\"\']", content, re.IGNORECASE)
+        stub = is_redirect_stub(content)
         for name, pattern in REQUIRED_PATTERNS.items():
             if name == "Meta description" and (noindex or stub):
                 continue  # noindex pages and redirect stubs do not need a description

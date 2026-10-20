@@ -1,0 +1,60 @@
+name: GSC Weekly Sync
+
+# Keeps Google Search Console up to date without manual runs:
+#   - submits https://www.colddirect.co.uk/sitemap.xml
+#   - inspects + pings the homepage, 9 core revenue pages, /commercial-fridge-repair-enfield/
+#     and any service/blog page modified in the last 7 days
+# Read-only for the repo and the live site (does NOT touch auto-seo.aspx, sitemap.xml or any HTML).
+# Run summary goes to the Step Summary - nothing is committed back.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # every Monday 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (build and filter the queue, no Google API calls)'
+        type: boolean
+        default: false
+      lookback_days:
+        description: 'Git look-back window in days'
+        type: string
+        default: '7'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gsc-weekly-sync
+  cancel-in-progress: false
+
+jobs:
+  gsc-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (full history for the git look-back)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install --quiet google-auth requests
+
+      - name: Deploy guard self-test
+        run: python tools/deploy_guard.py
+
+      - name: Run GSC weekly sync
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+          DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+          LOOKBACK_DAYS: ${{ inputs.lookback_days || '7' }}
+          INDEXING_MAX: '80'
+          INSPECT_MAX: '150'
+        run: python tools/gsc_weekly_sync.py

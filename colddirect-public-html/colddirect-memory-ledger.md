@@ -68,3 +68,12 @@
 - Live-pull noise: nightly auto-seo adds blank lines to ~388 pages per run (whitespace only) - restored, not committed. Only sitemap.xml real diff.
 - FINDING (not fixed, needs owner decision): auto-seo.aspx skips folders where dn.Contains("log") -> /blog/ and ALL blog articles are never processed nor in sitemap.xml. Fix = dn == "logs" (would start injecting V4 blocks into ~100 blog pages and adding them to the sitemap).
 - FINDING: web.config has the /news -> /blog/ 301 but no /about/ -> /about-us/ rule (only .htaccess has it; live is IIS).
+
+## 2026-10-20 - Weekly GSC sync workflow (.github/workflows/gsc-weekly-sync.yml + tools/gsc_weekly_sync.py)
+- Cron '0 6 * * 1' (Mon 06:00 UTC) + workflow_dispatch (inputs: dry_run, lookback_days). permissions: contents read. Read-only for repo/live site; summary to $GITHUB_STEP_SUMMARY, no commits.
+- Secret used: GSC_CREDENTIALS_JSON (already in repo secrets since 2026-09-15; same name tools/request_indexing.py reads). Service account needs Owner/Full on property https://www.colddirect.co.uk/ (URL-prefix; sc-domain: gave insufficient permission earlier).
+- Steps: PUT sitemap + GET status; queue = homepage, 9 core pages, /commercial-fridge-repair-enfield/, then git-log (--since N days, --diff-filter=AMR) modified service pages, then blog pages. Filters: deploy_guard.should_skip_upload, html_preflight (validate_html_file, is_noindex, is_redirect_stub), canonical-elsewhere, live HTTP must be 200 with no redirect. Caps: Indexing 80/run (daily 200), Inspection 150/run (daily 2000); 429/quota/permission stops that API, never fails the run. Exit 1 only for auth/sitemap-submit failure.
+- git log --since is used instead of HEAD@{7.days.ago}: CI clones have no reflog.
+- Dry run on current repo: 138 candidates (11 priority/113 service/14 blog), 15 skipped (about/news stubs, noindex, canonical-elsewhere, enfield = live 404), 80 accepted, 43 deferred.
+- html_preflight.py now exports is_noindex() and is_redirect_stub().
+- OPEN: /commercial-fridge-repair-enfield/ is a live 404 (priority-queued but never submitted until fixed).
