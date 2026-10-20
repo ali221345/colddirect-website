@@ -43,6 +43,82 @@ protected void Page_Load(object sender, EventArgs e)
         "  \"areaServed\": \"London\"\r\n" +
         "}\r\n" + scClose + "\r\n";
 
+    // V4.5 core pages (home + 4 money pages): unified #business node with rating, geo circle & contact points
+    string schemaBlockCore = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n" +
+        "{\r\n" +
+        "  \"@context\": \"https://schema.org\",\r\n" +
+        "  \"@type\": [\r\n" +
+        "    \"HVACBusiness\",\r\n" +
+        "    \"LocalBusiness\"\r\n" +
+        "  ],\r\n" +
+        "  \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
+        "  \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
+        "  \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
+        "  \"image\": \"https://www.colddirect.co.uk/images/logo/colddirect-main.webp\",\r\n" +
+        "  \"telephone\": \"+442039524822\",\r\n" +
+        "  \"contactPoint\": [\r\n" +
+        "    {\r\n" +
+        "      \"@type\": \"ContactPoint\",\r\n" +
+        "      \"telephone\": \"+448001123427\",\r\n" +
+        "      \"contactType\": \"customer service\",\r\n" +
+        "      \"areaServed\": \"GB\"\r\n" +
+        "    },\r\n" +
+        "    {\r\n" +
+        "      \"@type\": \"ContactPoint\",\r\n" +
+        "      \"telephone\": \"+447983759320\",\r\n" +
+        "      \"contactType\": \"emergency service\",\r\n" +
+        "      \"areaServed\": \"GB\"\r\n" +
+        "    }\r\n" +
+        "  ],\r\n" +
+        "  \"priceRange\": \"\u00A3\u00A3\",\r\n" +
+        "  \"address\": {\r\n" +
+        "    \"@type\": \"PostalAddress\",\r\n" +
+        "    \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
+        "    \"addressLocality\": \"Enfield, London\",\r\n" +
+        "    \"postalCode\": \"N9 0DX\",\r\n" +
+        "    \"addressCountry\": \"GB\"\r\n" +
+        "  },\r\n" +
+        "  \"geo\": {\r\n" +
+        "    \"@type\": \"GeoCoordinates\",\r\n" +
+        "    \"latitude\": \"51.6478\",\r\n" +
+        "    \"longitude\": \"-0.0701\"\r\n" +
+        "  },\r\n" +
+        "  \"areaServed\": [\r\n" +
+        "    \"London\",\r\n" +
+        "    {\r\n" +
+        "      \"@type\": \"GeoCircle\",\r\n" +
+        "      \"geoMidpoint\": {\r\n" +
+        "        \"@type\": \"GeoCoordinates\",\r\n" +
+        "        \"latitude\": \"51.6478\",\r\n" +
+        "        \"longitude\": \"-0.0701\"\r\n" +
+        "      },\r\n" +
+        "      \"geoRadius\": \"40234\"\r\n" +
+        "    }\r\n" +
+        "  ],\r\n" +
+        "  \"aggregateRating\": {\r\n" +
+        "    \"@type\": \"AggregateRating\",\r\n" +
+        "    \"ratingValue\": \"4.9\",\r\n" +
+        "    \"reviewCount\": \"38\",\r\n" +
+        "    \"bestRating\": \"5\"\r\n" +
+        "  },\r\n" +
+        "  \"openingHoursSpecification\": {\r\n" +
+        "    \"@type\": \"OpeningHoursSpecification\",\r\n" +
+        "    \"dayOfWeek\": [\r\n" +
+        "      \"Monday\",\r\n" +
+        "      \"Tuesday\",\r\n" +
+        "      \"Wednesday\",\r\n" +
+        "      \"Thursday\",\r\n" +
+        "      \"Friday\",\r\n" +
+        "      \"Saturday\",\r\n" +
+        "      \"Sunday\"\r\n" +
+        "    ],\r\n" +
+        "    \"opens\": \"00:00\",\r\n" +
+        "    \"closes\": \"23:59\"\r\n" +
+        "  }\r\n" +
+        "}\r\n" +
+        scClose + "\r\n";
+
+
     List<string> filesList = new List<string>();
     try { filesList.AddRange(Directory.GetFiles(root, "*.html", SearchOption.TopDirectoryOnly)); } catch { }
     try
@@ -96,10 +172,18 @@ protected void Page_Load(object sender, EventArgs e)
             // Strip any UTF-8 mojibake (Â£ / Â°)
             if (html.Contains("\u00C2\u00A3")) html = html.Replace("\u00C2\u00A3", "\u00A3");
             if (html.Contains("\u00C2\u00B0")) html = html.Replace("\u00C2\u00B0", "\u00B0");
+            // V4.5: repair double-encoded dashes / quotes
+            if (html.Contains("\u00E2\u20AC\u201D")) html = html.Replace("\u00E2\u20AC\u201D", "\u2014");
+            if (html.Contains("\u00E2\u20AC\u201C")) html = html.Replace("\u00E2\u20AC\u201C", "\u2013");
+            if (html.Contains("\u00E2\u20AC\u0153")) html = html.Replace("\u00E2\u20AC\u0153", "\u201C");
+            if (html.Contains("\u00E2\u20AC\u009D")) html = html.Replace("\u00E2\u20AC\u009D", "\u201D");
+            if (html.Contains("\u00E2\u20AC\u2122")) html = html.Replace("\u00E2\u20AC\u2122", "\u2019");
+            if (html.Contains("\u00C2\u00A3\u00C2\u00A3")) html = html.Replace("\u00C2\u00A3\u00C2\u00A3", "\u00A3\u00A3");
+            bool isCore = (rel == "index.html" || name == "commercial-fridge-repair-london" || name == "fridge-repair-london" || name == "commercial-freezer-repair-london" || name == "cold-room-repair-london");
 
             // Upgrade old V4 blocks cleanly
             html = Regex.Replace(html, @"<!-- AUTO-SEO-V[234]-2026 -->[\s\S]*?</div>\s*", "");
-            html = Regex.Replace(html, "<!-- AUTO-SEO-V[34]-SCHEMA -->[\\s\\S]*?" + scClose + "\\s*", "");
+            html = Regex.Replace(html, "<!-- AUTO-SEO-V[345]-SCHEMA -->[\\s\\S]*?" + scClose + "\\s*", "");
 
             if (!html.Contains("<!-- AUTO-SEO-LOCKED -->") && !rel.StartsWith("blog/"))
             {
@@ -107,8 +191,8 @@ protected void Page_Load(object sender, EventArgs e)
                 string newDesc = "";
 
                 if (rel == "index.html") {
-                    newTitle = "Commercial Fridge & Freezer Repair London | 24/7 Cold Room, Cellar & Catering Engineers";
-                    newDesc = "24/7 emergency commercial fridge repair, commercial freezer repair, cold room, beer cellar cooling, commercial catering & air conditioning repair in London. 60\u201390 min response. Call 0203 952 4822.";
+                    newTitle = "Commercial Fridge, Freezer & Cold Room Repair London | 24/7 Emergency | ColdDirect";
+                    newDesc = "24/7 emergency commercial fridge, freezer & cold room repair in London. 60\u201390 Min Response, Fixed-Rate Quotes, F-Gas Certified engineers. Call 0203 952 4822.";
                 } else if (name.Contains("dairy-cabinet")) {
                     newTitle = "Dairy Cabinet Repair London | 24/7 Multideck & Display Chiller Engineers";
                     newDesc = "Emergency dairy cabinet repair in London. 24/7 same-day F-Gas engineers for milk multidecks, cheese serve-overs & retail display chillers. 60\u201390 min response. Call 0203 952 4822.";
@@ -165,16 +249,19 @@ protected void Page_Load(object sender, EventArgs e)
                     newDesc = "24/7 repair across all commercial refrigeration brands in London: Williams, Foster, True, Polar, Gram, Hoshizaki, Scotsman, Liebherr & Ice-O-Matic. Call 0203 952 4822.";
                 } else if (name == "commercial-fridge-repair-london") {
                     newTitle = "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers";
-                    newDesc = "Emergency commercial fridge repair in London. 60\u201390 min response, 24/7 F-Gas engineers for restaurants, supermarkets, pubs & commercial kitchens. Call 0203 952 4822.";
+                    newDesc = "Emergency commercial fridge repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers for kitchens & shops. Call 0203 952 4822.";
                 } else if (name == "fridge-repair-london") {
                     newTitle = "Fridge Repair London | 24/7 Commercial Refrigeration & Fridge Service";
-                    newDesc = "Fast same-day commercial fridge repair in London. 24/7 emergency F-Gas engineers for display fridges, prep counters, bar chillers & kitchen cabinets. Call 0203 952 4822.";
+                    newDesc = "Same-day fridge repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers for commercial fridges. Call 0203 952 4822.";
                 } else if (name == "commercial-freezer-repair-london") {
-                    newTitle = "Commercial Freezer Repair London | 24/7 Walk-In & Kitchen Freezer Engineers";
-                    newDesc = "24/7 emergency commercial freezer repair in London. Fast 60\u201390 min callout for walk-in freezers, chest freezers, blast freezers & restaurant kitchens. Call 0203 952 4822.";
+                    newTitle = "Commercial Freezer Repair London | 24/7 Emergency Same-Day Engineers";
+                    newDesc = "Emergency commercial freezer repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified. Walk-in & kitchen freezers. Call 0203 952 4822.";
                 } else if (name == "freezer-repair-london") {
                     newTitle = "Freezer Repair London | 24/7 Same-Day Commercial Freezer Repairs";
                     newDesc = "Emergency commercial freezer repair across London. 24/7 F-Gas certified engineers fixing upright, undercounter, display & walk-in freezers today. Call 0203 952 4822.";
+                } else if (name == "cold-room-repair-london") {
+                    newTitle = "Cold Room Repair London | 24/7 Walk-In Chiller & Freezer Room Engineers";
+                    newDesc = "24/7 walk-in cold room repair in London. 60\u201390 Min Target Response, Fixed-Price Diagnosis, F-Gas Certified engineers. Call 0203 952 4822.";
                 } else if (name.Contains("cold-room")) {
                     newTitle = "Cold Room Repair London | 24/7 Walk-In Chiller & Freezer Room Engineers";
                     newDesc = "24/7 walk-in cold room repair in London. Same-day F-Gas engineers for commercial chiller rooms, freezer rooms, compressor & gas leak repairs. Call 0203 952 4822.";
@@ -234,7 +321,7 @@ protected void Page_Load(object sender, EventArgs e)
 
             // Inject Schema in <head>
             if (Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
-                html = Regex.Replace(html, @"</head>", schemaBlock + "</head>", RegexOptions.IgnoreCase);
+                html = Regex.Replace(html, @"</head>", (isCore ? schemaBlockCore : schemaBlock) + "</head>", RegexOptions.IgnoreCase);
 
             // Inject V4 Footer Links before </body>
             if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
@@ -263,6 +350,6 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     Response.ContentType = "text/plain";
-    Response.Write("AUTO-SEO V4.4 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+    Response.Write("AUTO-SEO V4.5 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
 }
 </script>

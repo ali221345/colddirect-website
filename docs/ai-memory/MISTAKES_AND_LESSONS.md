@@ -172,3 +172,7 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - Every HTML or routing edit must keep `<slug>.html`, `<slug>/index.html`, and `colddirect-public-html/` synchronized, and update both `web.config` and `.htaccess`.
 - Always check `protected-pages.json` (`python agent/scripts/protect_fixed_pages.py check`) and `npm test` (`tools/validate-ldjson.js`) before committing to `main`.
 
+
+- **[2026-10-20] Verify encoding with Python, not PowerShell**: PowerShell 5 `Get-Content` renders valid UTF-8 as mojibake (e.g. the CSS minus sign looks like a-circumflex garbage). Always read files via Python `open(..., encoding='utf-8')` or fetch the live HTML with urllib before 'fixing' encoding issues. Also fetch LIVE HTML before acting on an audit - the reported 'circuit level' mojibake and missing trust bar/FAQ modules did not exist live.
+- **[2026-10-20] Match blog hub titles to real articles**: Do not claim '7 faults' etc. when the article has 5 checks. Hub card text must mirror the real H1/H2s.
+
