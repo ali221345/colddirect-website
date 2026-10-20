@@ -206,7 +206,9 @@ protected void Page_Load(object sender, EventArgs e)
                 Match canonMatch = Regex.Match(html, "<link[^>]+rel=[\"']canonical[\"'][^>]*href=[\"']([^\"']+)[\"']", RegexOptions.IgnoreCase);
                 bool noindexPage = Regex.IsMatch(html, "<meta[^>]+name=[\"']robots[\"'][^>]*content=[\"'][^\"']*noindex", RegexOptions.IgnoreCase);
                 bool canonElsewhere = canonMatch.Success && NormUrl(canonMatch.Groups[1].Value) != NormUrl(selfUrl);
-                if (noindexPage || canonElsewhere) sitemapUrls.Remove(selfUrl);
+                // V4.8: meta-refresh redirect stubs are never sitemap URLs
+                bool refreshStub = Regex.IsMatch(html, "<meta[^>]+http-equiv=[\"']refresh[\"']", RegexOptions.IgnoreCase);
+                if (noindexPage || canonElsewhere || refreshStub) sitemapUrls.Remove(selfUrl);
             }
 
             // Upgrade old V4 blocks cleanly

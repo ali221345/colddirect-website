@@ -59,3 +59,12 @@
 - /about/ and /news/ (.html + /index.html): added meta descriptions. NOTE: both are meta-refresh redirect stubs (about -> /about-us.html, news -> /blog/; news canonical already /blog/). Real about page is /about-us/ (already has description).
 - auto-seo.aspx V4.8: fill-only description fallback (fallbackDesc: about, news). Fills missing/empty tags, never overwrites non-empty ones, respects AUTO-SEO-LOCKED and blog/. Compile-checked with csc + 7 behaviour tests. Root cause of old gap: auto-seo only REPLACED an existing description tag and only for pages with a title rule.
 - tools/html_preflight_baseline.txt emptied; `html_preflight.py --strict` exit 0 (271 files, 0 issues).
+
+## 2026-10-20 - Redirect stubs /about/ + /news/ cleaned; auto-seo V4.8 excludes meta-refresh stubs from sitemap
+- about.html + about/index.html: canonical -> https://www.colddirect.co.uk/about-us/ ; news.html + news/index.html: canonical https://www.colddirect.co.uk/blog/ ; all four: <meta name="robots" content="noindex, follow">. Mirror copies (about.html, news.html) updated too.
+- auto-seo.aspx V4.8: `refreshStub` (meta http-equiv=refresh) removes the page from sitemap.xml (also dishwasher stubs). Compile-checked + tested on real pages.
+- tools/html_preflight.py: redirect stubs need no description, canonical to another colddirect.co.uk URL passes, and a stub WITHOUT noindex is now an error; default scan skips logs/.
+- git rm -r --cached logs/ (21 local files kept, ignored via .gitignore).
+- Live-pull noise: nightly auto-seo adds blank lines to ~388 pages per run (whitespace only) - restored, not committed. Only sitemap.xml real diff.
+- FINDING (not fixed, needs owner decision): auto-seo.aspx skips folders where dn.Contains("log") -> /blog/ and ALL blog articles are never processed nor in sitemap.xml. Fix = dn == "logs" (would start injecting V4 blocks into ~100 blog pages and adding them to the sitemap).
+- FINDING: web.config has the /news -> /blog/ 301 but no /about/ -> /about-us/ rule (only .htaccess has it; live is IIS).

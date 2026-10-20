@@ -191,3 +191,7 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 
 - **[2026-10-20] Redirect stubs**: about.html and news.html are meta-refresh stubs (to /about-us.html and /blog/), so 'adding SEO' to them is cosmetic; the real pages are /about-us/ and /blog/. Check for `http-equiv="refresh"` before optimising a thin page. Also: auto-seo only replaced existing description tags - fallbacks must be fill-only so they never clobber hand-written text.
 - **[2026-10-20] Keep script runs and cleanup separate**: when Auto-review blocks a shell command that chains a temp-script run, git rm and deletes, run the steps as separate commands instead of retrying the chain.
+
+- **[2026-10-20] Substring folder filters**: auto-seo.aspx skips folders with dn.Contains("log") which also matches "blog" - use exact names (dn == "logs"). Always compare the sitemap against expected hub pages after changing sitemap logic.
+- **[2026-10-20] Live pull noise**: after pull_live_plesk_v4.py check `git diff --ignore-blank-lines --name-only`; nightly auto-seo adds blank lines to hundreds of pages - restore whitespace-only diffs instead of committing them.
+- **[2026-10-20] Redirect stubs**: meta-refresh stubs must be noindex + canonical to the real page + excluded from sitemap; preflight now enforces noindex on them.
