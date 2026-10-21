@@ -596,3 +596,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-21 22:05 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39683514139 | commit 6db2245
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+## 2026-10-22 - Sitewide British welcome audio + top-right player layout
+- Audit: 10 pages already had `CD-AUDIO-V1` (homepage + 9 money hubs); 127 eligible pages lacked audio; 9 stubs/noindex/no-H1 skipped.
+- New shared MP3 `audio/colddirect-welcome.mp3` (~210 KB, en-GB-SoniaNeural) with the owner's exact welcome script. Tool: `tools/sitewide_welcome_audio.py` (`--generate`/`--inject`/`--check`/`--selftest`). Marker `<!-- CD-AUDIO-SITEWIDE-V1 -->` + AudioObject/Speakable JSON-LD (`#welcome-audio`). Money hubs never receive the sitewide marker.
+- All players (money + sitewide) use the same compact **fixed top-right** CSS (bottom dock on ≤720px). Updated in `tools/generate_seo_audio.py` and reinjected on the 10 hubs. No `<title>`/`<h1>`/meta/canonical/redirect/sitemap changes. `check_locked_state` ALL LOCKS INTACT; protect_fixed_pages 12/12; npm test 0 JSON-LD errors; html_preflight --strict 0; config_parity OK.

@@ -34,6 +34,14 @@
     "hash": "de411f673bcc0a8e051fbb34235c100c875685339d10a4cd37fae7613ed82f72",
     "voice": "en-GB-SoniaNeural"
   },
+  "colddirect-welcome": {
+    "bitrate_kbps": 48,
+    "bytes": 209808,
+    "duration_s": 35.0,
+    "hash": "6289e5856e0e98cd2ffb997ee0684f95d3c13c4d39ced90d520487b5e9a5a017",
+    "kind": "sitewide-welcome",
+    "voice": "en-GB-SoniaNeural"
+  },
   "commercial-appliances-repair-london": {
     "bitrate_kbps": 48,
     "bytes": 156384,
