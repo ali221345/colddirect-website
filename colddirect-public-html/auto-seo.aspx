@@ -193,7 +193,10 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     // V4.9: URLs that web.config 301-redirects to another page must never be sitemap URLs
-    HashSet<string> redirectedSlugs = new HashSet<string>(new string[] { "about", "news", "refrigeration-brands-repairs-london" });
+    HashSet<string> redirectedSlugs = new HashSet<string>(new string[] { "about", "news", "refrigeration-brands-repairs-london",
+        // blog posts 301-redirected by .htaccess (domestic / retired topics): the .html files still exist on disk
+        "smeg-fridge-freezer-control-panel", "samsung-fridge-freezer-not-freezing", "best-ice-cream-makers",
+        "cold-room-troubleshooting", "chiller-not-cooling" });
 
     int updated = 0;
     List<string> sitemapUrls = new List<string>();
