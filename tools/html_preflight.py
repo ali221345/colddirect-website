@@ -134,6 +134,27 @@ def is_redirect_stub(content: str) -> bool:
     return bool(REFRESH_RE.search(content))
 
 
+# Dummy / placeholder phone numbers and example e-mail/domains (e.g. "0207 123 4567", "1234567",
+# "020 123456", phone numbers ending in 0000/9999, someone@example.com).
+DUMMY_CONTACT_RE = re.compile(
+    r"(?:123[\s\-]?4567\b"
+    r"|\b1234567\b"
+    r"|\b0\d{2,4}[\s\-]?123456\b"
+    r"|(?<![\w.])\+?(?:44|0)[\d\s\-]{6,}(?:0000|9999)\b"
+    r"|@(?:[\w\-]+\.)*example\.(?:com|org|net)\b"
+    r"|https?://(?:www\.)?example\.(?:com|org|net)\b)",
+    re.IGNORECASE,
+)
+_NON_LD_SCRIPT_RE = re.compile(r"<script(?![^>]*ld\+json)[^>]*>.*?</script>|<style[^>]*>.*?</style>", re.I | re.S)
+
+
+def find_dummy_contact_issues(filepath: str, content: str) -> list[str]:
+    """Block placeholder contact details (dummy phones / example.com) in deployable HTML."""
+    text = _NON_LD_SCRIPT_RE.sub(" ", content)
+    found = sorted({m.group(0).strip() for m in DUMMY_CONTACT_RE.finditer(text)})
+    return [f"{filepath}: Dummy/placeholder contact detail found ({', '.join(repr(f) for f in found[:3])})"] if found else []
+
+
 def validate_html_file(filepath: str) -> list[str]:
     """Check one HTML file before upload and return the list of issues."""
     issues: list[str] = []
@@ -172,6 +193,9 @@ def validate_html_file(filepath: str) -> list[str]:
     for marker in ("<<<<<<< HEAD", ">>>>>>>"):
         if marker in content:
             issues.append(f"{filepath}: Contains unresolved Git merge conflict marker ({marker})")
+
+    # 2b. Placeholder / dummy contact details must never be deployed
+    issues += find_dummy_contact_issues(filepath, content)
 
     # 3. Core money pages: official phone + business schema
     if is_core_page(filepath):

@@ -366,3 +366,9 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 ## 2026-10-21 - Area/suburb pages audit + sync
 - tools/area_pages_audit.py (--fix/--check, marker CD-AREA-LINKS-V1): 42 area pages in sitemap. Synced 4 copies for all (created 40 missing mirror /index.html, normalised commercial-freezer-repair-north-london/index.html, created .html + mirror for folder-only central/east-london). Orphans (0 inbound): blast-chiller-north, chiller-north, ice-machine-north, commercial-freezer-tottenham, central-london -> linked from /coverage/ and parent hub (hub pages: blast-chiller/chiller/cold-room/ice-machine-repair-london, commercial-fridge-repair-london, commercial-freezer-repair-north-london). Enfield link added on commercial-freezer-repair-north-london.
 - Fixed fake placeholder phone 0207 123 4567 on central/east-london pages -> 0800 112 3427.
+
+## 2026-10-21 - Unique area titles + contact sweep (auto-seo V4.10 areaMeta)
+- auto-seo.aspx: areaMeta dictionary (19 rules: 11 cold-room-*, fridge central/east/north/enfield, freezer north/tottenham, blast-chiller-north, chiller-north) = single source of truth; tools/area_titles_apply.py mirrors titles/descriptions into all HTML copies; tools/title_h1_audit.py --area --check = 0 duplicate groups.
+- tools/contact_sweep.py (--fix/--check): normalised legacy 020 8050 2374 (10 cold-room area pages) -> 0203 952 4822, tel:07983759320 / tel:02039524822 -> international form, injected CD-AREA-CONTACT-V1 block (mobile + 0800 + office + info@colddirect.co.uk) on 36 area pages lacking them.
+- tools/html_preflight.py: new dummy-contact rule (123 4567, 1234567, 123456, 0000/9999 phone runs, example.com) + tools/test_preflight_dummy.py regression test.
+- auto-seo.aspx uploaded by plain FTP before push.
