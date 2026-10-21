@@ -460,3 +460,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - `tools/live_smoke_test.py` imports it (`audio_checks(bodies)`, `AUDIO_ROW`), reuses the HTML it already fetched and appends the row + `SEO audio: ...` failures, so a miss exits non-zero and fires `[LIVE SITE ALERT]`; the row lands in console + `$GITHUB_STEP_SUMMARY`. `tools/site_status.py` prints it as "SEO audio assets (home + 9 money pages)".
 - Offline selftests (`sic.audio_selftest()`, 17 scenarios, shared by both scripts): 10/10 valid ID3, MPEG-sync variant, de-duplication, missing `<audio>`, mismatched contentUrl, missing AudioObject/Speakable, nested `<source>`, HTTP 404, truncated < 10 KB / short Content-Length, HTML soft-404 (text/html and html body under audio/mpeg), wrong Content-Type, bad magic bytes, 301, network failure, page not fetched.
 - Live: IIS serves `/audio/*.mp3` as `audio/mpeg`; all 10 pass. No HTML/`<title>`/`<h1>` touched; only Python tools + this log changed.
+
+## 2026-10-21 03:02 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39536276321 | commit c5c0007
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
