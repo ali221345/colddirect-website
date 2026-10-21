@@ -28,7 +28,7 @@ VOICE, RATE = "en-GB-SoniaNeural", "-4%"
 UPLOAD_DATE = "2026-10-21"
 
 START, END = "<!-- CD-AUDIO-V1 -->", "<!-- /CD-AUDIO-V1 -->"
-BLOCK_RX = re.compile(r"\n?" + re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"\n?")
+BLOCK_RX = re.compile(r"(?:\r?\n)?" + re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"(?:\r?\n)?")
 SPOKEN_PHONE = "zero seven nine eight three, seven five nine, three two zero"
 
 CSS = ("<style>.cd-audio-summary{background:#0a2540;color:#fff;padding:16px 0;border-bottom:3px solid #00a99d}"
@@ -127,7 +127,8 @@ def inject(html, block):
         raise ValueError("no <h1>")
     sec = re.search(r"</section>", html[h1.end():], re.I)
     pos = h1.end() + sec.end() if sec else h1.end()
-    return html[:pos] + "\n" + block + html[pos:]
+    nl = "\r\n" if html.count("\r\n") * 2 > html.count("\n") else "\n"  # keep the file's own line-ending style
+    return html[:pos] + nl + block.replace("\n", nl) + html[pos:]
 
 
 def read(p):

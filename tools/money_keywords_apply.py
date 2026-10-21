@@ -24,7 +24,7 @@ MIRROR = ROOT / "colddirect-public-html"
 ASPX = ROOT / "auto-seo.aspx"
 
 START, END = "<!-- CD-MONEY-V1 -->", "<!-- /CD-MONEY-V1 -->"
-BLOCK_RX = re.compile(re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"\n?")
+BLOCK_RX = re.compile(re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"(?:\r?\n)?")
 LIT = r'"(?:[^"\\]|\\.)*"'
 
 
@@ -140,7 +140,8 @@ def apply_block(html, slug):
     for pat in INSERT_BEFORE:
         m = re.search(pat, html, re.I)
         if m:
-            return html[:m.start()] + money_block(slug) + html[m.start():]
+            nl = "\r\n" if html.count("\r\n") * 2 > html.count("\n") else "\n"  # keep the file's own line-ending style (idempotent on CRLF checkouts)
+            return html[:m.start()] + money_block(slug).replace("\n", nl) + html[m.start():]
     raise ValueError("no insertion point")
 
 

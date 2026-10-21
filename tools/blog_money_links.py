@@ -19,7 +19,7 @@ import money_data as md  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 MIRROR = ROOT / "colddirect-public-html"
 START, END = "<!-- CD-BLOG-MONEY-LINKS-V1 -->", "<!-- /CD-BLOG-MONEY-LINKS-V1 -->"
-BLOCK_RX = re.compile(re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"\n?")
+BLOCK_RX = re.compile(re.escape(START) + r"[\s\S]*?" + re.escape(END) + r"(?:\r?\n)?")
 INSERT_BEFORE = [r"<!-- CD-9-MONEY-KEYWORD-SILO-V47 -->", r"<footer\b", r"</body>"]
 
 BLURB = {
@@ -98,7 +98,8 @@ def apply_text(html, post):
     for pat in INSERT_BEFORE:
         m = re.search(pat, html, re.I)
         if m:
-            return html[:m.start()] + block(post) + html[m.start():]
+            nl = "\r\n" if html.count("\r\n") * 2 > html.count("\n") else "\n"  # keep the file's own line-ending style
+            return html[:m.start()] + block(post).replace("\n", nl) + html[m.start():]
     raise ValueError("no insertion point")
 
 

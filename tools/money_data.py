@@ -132,7 +132,7 @@ MONEY = {
     },
     "cellar-cooler-repair-london": {
         "kw": "Cellar repair London",
-        "title": "Cellar Repair London | Same-Day 24/7 Pub & Bar Cooler Engineers",
+        "title": "Cellar Repair London | Same-Day 24/7 Pub and Bar Cooler Engineers",
         "desc": "Cellar repair London for pubs and bars: same-day 24/7 emergency cellar cooler repairs and service, fixed diagnostic call-out. Call 07983 759320.",
         "offers": ["Same day cellar repair London", "24 hour emergency cellar cooler repair London", "Affordable cellar repair London with fixed diagnostic call-out"],
         "audio": "Cold Direct cellar repair London. Warm beer means lost sales. Our London engineers repair pub and bar cellar coolers with same day emergency visits, twenty four hours a day, seven days a week, for a fixed diagnostic call-out and affordable transparent pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -185,6 +185,9 @@ def selftest():
         assert len(d["title"]) <= 70, (slug, len(d["title"]))
         assert 100 <= len(d["desc"]) <= 160, (slug, len(d["desc"]))
         assert PHONE_DISPLAY in d["desc"], slug
+        # auto-seo.aspx writes title/description raw into the HTML: an '&' (or other escapable char) would make the
+        # repo copy (escaped) and the aspx output (raw) flip-flop every run
+        assert not re.search(r"[&<>\"]", d["title"] + d["desc"]), slug
         assert d["title"] not in seen_t and d["desc"] not in seen_d, slug
         seen_t.add(d["title"]); seen_d.add(d["desc"])
         assert len(d["offers"]) == 3 and len(d["anchors"]) == 2
