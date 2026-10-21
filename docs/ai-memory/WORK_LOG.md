@@ -536,3 +536,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Live audit: 10/10 clean. All HTTP 200, all markers present, 43/43 images carry a descriptive alt, `#business` = `["HVACBusiness","LocalBusiness"]` with `+442039524822` on every page, 2-5 CTR hooks per description.
 - Guards green: `npm test` (460 files, 0 JSON-LD errors), `agent/scripts/protect_fixed_pages.py check` 12/12, `html_preflight --strict` 268 files / 0 issues, `deploy_guard`, `config_parity --selftest`, `live_smoke_test --selftest`, `test_auto_seo` (real tree runs 1-3 updated=0).
 - OPEN FINDING (not changed): 102 of 117 top-level folders with an `index.html` still serve their bare URL as HTTP 200, a duplicate of the `/slug/` canonical (only 15 redirect). Self-referencing slash canonicals mitigate it. A sitewide fix is one generic rule above the pretty-URL rule plus `config_parity.py -g`, but a generic rule would shadow the specific bare-slug redirects lower in `.htaccess` (e.g. `^walk-in-cold-room-repair-london/?$ -> /cold-room-repair-london/`) and create 2-hop chains, so enumerate only the 102 slugs that currently answer 200.
+
+## 2026-10-21 10:40 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39586019083 | commit 715f3d6
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
