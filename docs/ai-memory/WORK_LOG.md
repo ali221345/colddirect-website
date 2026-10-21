@@ -450,3 +450,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Backup artifacts of a public repo are downloadable: bookings/ (customer data), App_Data, *.key and private keys are never archived; config secrets are redacted.
 - A persistent shell may keep GITHUB_STEP_SUMMARY set: tools that write summaries then create stray files in the repo root (caught tmp_summary.md before commit). Check `git status` before every commit.
 - /blog/smeg-fridge-freezer-control-panel/ is intentionally 301-redirected live to the commercial fridge hub (domestic topic); seo_integrity_check skips intentionally redirected pages.
+
+## 2026-10-21 02:50 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39535159709 | commit 8b4e27a
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
