@@ -517,3 +517,6 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - LESSON: XML comments must not contain `--` (web.config marker comments broke the parser). Rewrite-map keys are case-insensitive; map lookups of an unknown map must evaluate to "no match" in the simulator.
 - OPEN (owner decision): `/ice-machine-repairs-london/` is a live sitemap page (kept; .htaccess rule removed). Stray `_backup_index_old.html` is deployed at the root (live 301 -> `/_backup_index_old/` 404; excluded from probes) - delete it from the repo/server when the owner agrees.
 
+## 2026-10-21 10:03 UTC - Autopilot: Deploy to WHUK Plesk - FAILED
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39580824873 | commit 40301ad
+- Metrics: auto-seo + live smoke test=failure; critical live pages=skipped; SEO integrity (live)=skipped
