@@ -6,6 +6,9 @@ Checks (all against the LIVE site, no redirects followed for the 200 checks):
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
+  * robots.txt: HTTP 200 text body (not an HTML error page); neither "User-agent: *" nor Googlebot may be blocked
+    ("Disallow: /"), none of /blog/ and the money-page prefixes may be disallowed, and the exact line
+    "Sitemap: https://www.colddirect.co.uk/sitemap.xml" must be present (table row "🤖 robots.txt")
   * canonical host / protocol: http://colddirect.co.uk/, http://www.colddirect.co.uk/ and https://colddirect.co.uk/
     must each reach https://www.colddirect.co.uk/ (HTTP 200) via permanent 301/308 redirects only, at most 2 hops,
     no loop; a direct 200 (duplicate host) or a temporary 302/307 FAILS. Exact hop chain is printed / summarised.
@@ -76,6 +79,99 @@ def fetch(path, body=False, tries=3):
         except Exception as e:  # network blip - retry
             last = e
     return 0, {}, "ERR %s" % type(last).__name__
+
+
+# ------------------------------------------------------------------ robots.txt health
+ROBOTS_SITEMAP = "https://www.colddirect.co.uk/sitemap.xml"
+# path prefixes that must stay crawlable; every one is tested literally AND as a real page ("<prefix>london/")
+ROBOTS_CRITICAL = ["/blog/", "/commercial-fridge-repair-", "/cold-room-repair-", "/fridge-repair-", "/freezer-repair-",
+                   "/catering-repair-", "/air-conditioning-repair-", "/cellar-cooler-repair-"]
+
+
+def parse_robots(text):
+    """-> (groups, sitemaps). groups = list of (set(lower-case agents), [(directive, value), ...]) where directive is
+    'allow' or 'disallow'. Consecutive User-agent lines share one group (as Google does)."""
+    groups, sitemaps = [], []
+    agents, rules, in_rules = [], [], False
+    for raw in text.splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, _, val = line.partition(":")
+        key, val = key.strip().lower(), val.strip()
+        if key == "user-agent":
+            if in_rules:
+                groups.append((set(agents), rules))
+                agents, rules, in_rules = [], [], False
+            agents.append(val.lower())
+        elif key in ("allow", "disallow"):
+            in_rules = True
+            rules.append((key, val))
+        elif key == "sitemap":
+            sitemaps.append(val)
+    if agents:
+        groups.append((set(agents), rules))
+    return groups, sitemaps
+
+
+def _rule_regex(pattern):
+    return re.compile("^" + re.escape(pattern).replace(r"\*", ".*").replace(r"\$", "$"))
+
+
+def robots_allows(groups, agent, path):
+    """Google semantics: the most specific user-agent group wins (named group beats '*'); the longest matching
+    Allow/Disallow wins, Allow wins a tie; an empty Disallow allows everything."""
+    agent = agent.lower()
+    chosen = [g for g in groups if agent in g[0]] or [g for g in groups if "*" in g[0]]
+    best_len, allowed = -1, True
+    for _, rules in chosen:
+        for kind, val in rules:
+            if val == "":
+                continue
+            if _rule_regex(val).match(path):
+                n = len(val)
+                if n > best_len or (n == best_len and kind == "allow"):
+                    best_len, allowed = n, (kind == "allow")
+    return allowed
+
+
+def check_robots(status, headers, body):
+    """Returns dict(ok, problems[list], summary). Healthy = HTTP 200 text body, '*' and Googlebot may crawl '/' and
+    every critical path, and the exact 'Sitemap: https://www.colddirect.co.uk/sitemap.xml' line is declared."""
+    problems = []
+    ctype = {k.lower(): v for k, v in (headers or {}).items()}.get("content-type", "").lower()
+    text = (body or "").lstrip("\ufeff")
+    if status != 200:
+        problems.append("robots.txt returned HTTP %s" % status)
+    elif not text.strip():
+        problems.append("robots.txt body is empty")
+    elif "html" in ctype or re.search(r"<\s*(html|body|head|!doctype)", text[:1000], re.I):
+        problems.append("robots.txt looks like an HTML page, not a text file")
+    elif not re.search(r"^\s*user-agent\s*:", text, re.I | re.M):
+        problems.append("robots.txt has no User-agent directive")
+    if problems:
+        return {"ok": False, "problems": problems, "summary": "; ".join(problems)}
+    groups, sitemaps = parse_robots(text)
+    for agent, label in (("*", "User-agent: *"), ("googlebot", "Googlebot")):
+        if not robots_allows(groups, agent, "/"):
+            problems.append("blanket 'Disallow: /' blocks %s" % label)
+            continue
+        for prefix in ROBOTS_CRITICAL:
+            for sample in sorted({prefix, prefix if prefix.endswith("/") else prefix + "london/"}):
+                if not robots_allows(groups, agent, sample):
+                    problems.append("%s blocked for %s" % (sample, label))
+    if ROBOTS_SITEMAP not in sitemaps:
+        problems.append("missing 'Sitemap: %s'" % ROBOTS_SITEMAP)
+    if problems:
+        return {"ok": False, "problems": problems, "summary": "; ".join(problems)}
+    return {"ok": True, "problems": [], "summary": "HTTP 200, Googlebot allowed, Sitemap declared"}
+
+
+def robots_check(fetcher=None):
+    code, headers, body = (fetcher or (lambda: fetch("/robots.txt", body=True)))()
+    r = check_robots(code, headers, body)
+    row = ("🤖 robots.txt", r["summary"], r["ok"])
+    return row, ([] if r["ok"] else ["robots.txt: " + r["summary"]])
 
 
 # ------------------------------------------------------------------ canonical host / protocol redirects
@@ -366,8 +462,62 @@ def selftest():
     rows, failures = canonical_checks(first_hop=site(bad))
     assert [ok for _, _, ok in rows] == [True, True, False] and len(failures) == 1 and SW in failures[0], failures
 
+    # ---------------- robots.txt health (no network)
+    LIVE = ("# One shared group: named crawlers must inherit the utility exclusions too.\n"
+            "User-agent: *\nUser-agent: Googlebot\nUser-agent: Bingbot\nUser-agent: GPTBot\n"
+            "Disallow: /agent-status.html\nDisallow: /agent-status/\nDisallow: /image-preview.html\n"
+            "Disallow: /agent-status-full-report.txt\n\nSitemap: https://www.colddirect.co.uk/sitemap.xml\n")
+    TXT = {"Content-Type": "text/plain"}
+    SM = "\nSitemap: https://www.colddirect.co.uk/sitemap.xml\n"
+
+    def rb(body, status=200, headers=TXT):
+        return check_robots(status, headers, body)
+
+    # healthy: the real live file (grouped User-agent lines), case-insensitive directive names, BOM, Allow override
+    r = rb(LIVE)
+    assert r["ok"] and r["summary"] == "HTTP 200, Googlebot allowed, Sitemap declared", r
+    assert rb("USER-AGENT: *\nDISALLOW: /private/\nSITEMAP: https://www.colddirect.co.uk/sitemap.xml\n")["ok"]
+    assert rb("\ufeffUser-agent: *\nDisallow:\n" + SM)["ok"]                      # empty Disallow = allow all
+    assert rb("User-agent: *\nDisallow: /blog/\nAllow: /blog/\n" + SM)["ok"]    # Allow ties/wins
+    # blanket Disallow: / for '*' -> fail
+    r = rb("User-agent: *\nDisallow: /\n" + SM)
+    assert not r["ok"] and "blanket" in r["summary"], r
+    # Googlebot-specific blanket block (while '*' is open) -> fail
+    r = rb("User-agent: *\nDisallow: /agent-status/\n\nUser-agent: Googlebot\nDisallow: /\n" + SM)
+    assert not r["ok"] and "Googlebot" in r["summary"] and "blanket" in r["summary"], r
+    # a Googlebot group REPLACES '*' for Googlebot: '*' blocks /blog/ but Googlebot's own group allows it -> '*' still fails
+    r = rb("User-agent: *\nDisallow: /blog/\n\nUser-agent: Googlebot\nDisallow: /agent-status/\n" + SM)
+    assert not r["ok"] and "/blog/ blocked for User-agent: *" in r["summary"] and "Googlebot" not in r["summary"], r
+    # blocked /blog/ or any money page prefix (also via wildcard / partial prefix) -> fail
+    for bad in ("Disallow: /blog/", "Disallow: /blog", "Disallow: /cold-room-repair-", "Disallow: /commercial-fridge-repair-",
+                "Disallow: /fridge-repair-london/", "Disallow: /*repair-london", "Disallow: /freezer-repair-",
+                "Disallow: /catering-repair-", "Disallow: /air-conditioning-repair-", "Disallow: /cellar-cooler-repair-"):
+        r = rb("User-agent: *\n" + bad + "\n" + SM)
+        assert not r["ok"] and "blocked" in r["summary"], (bad, r)
+    # Sitemap missing / wrong URL / wrong host / http / trailing junk -> fail
+    for sm in ("", "\nSitemap: https://www.colddirect.co.uk/sitemap-old.xml\n", "\nSitemap: http://www.colddirect.co.uk/sitemap.xml\n",
+               "\nSitemap: https://colddirect.co.uk/sitemap.xml\n", "\nSitemap: https://www.colddirect.co.uk/sitemap.xml.gz\n"):
+        r = rb("User-agent: *\nDisallow: /agent-status/\n" + sm)
+        assert not r["ok"] and "missing 'Sitemap" in r["summary"], (sm, r)
+    # HTML error pages / wrong status / empty / not robots -> fail
+    html = "<!DOCTYPE html><html><head><title>404 - File or directory not found.</title></head><body>Not found</body></html>"
+    assert not rb(html, 404, {"Content-Type": "text/html"})["ok"]
+    assert not rb(html, 500, {"Content-Type": "text/html"})["ok"]
+    r = rb(html, 200, {"Content-Type": "text/html"})                              # soft-404: 200 + HTML body
+    assert not r["ok"] and "HTML" in r["summary"], r
+    assert not rb(html, 200, TXT)["ok"]                                           # HTML body even with a text content-type
+    assert not rb("", 200)["ok"] and not rb("   \n", 200)["ok"]
+    assert not rb("hello world", 200)["ok"]
+    assert not check_robots(0, {}, "ERR URLError")["ok"]
+    # glue: row + failure message shape
+    row, fails = robots_check(lambda: (200, TXT, LIVE))
+    assert row == ("🤖 robots.txt", "HTTP 200, Googlebot allowed, Sitemap declared", True) and not fails
+    row, fails = robots_check(lambda: (200, TXT, "User-agent: *\nDisallow: /\n" + SM))
+    assert row[2] is False and fails and fails[0].startswith("robots.txt: "), (row, fails)
+
     print("selftest OK (SSL threshold: fail below %d days, expired/invalid certificates; "
-          "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail)" % SSL_MIN_DAYS)
+          "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail; "
+          "robots.txt: healthy ok, blanket / Googlebot / money-path blocks, bad Sitemap, HTML 404/500 fail)" % SSL_MIN_DAYS)
     return 0
 
 
@@ -417,6 +567,10 @@ def main():
         rows.append(("301 %s -> %s" % (src, dst), "%s %s" % (code, loc.replace(BASE, "") or "-"), ok))
         if not ok:
             failures.append("%s expected 301 to %s, got %s %s" % (src, dst, code, loc))
+
+    robots_row, robots_failures = robots_check()
+    rows.append(robots_row)
+    failures += robots_failures
 
     host_rows, host_failures = canonical_checks()
     rows += host_rows
