@@ -592,3 +592,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Cause: `Nightly auto-seo (live)` was created 2026-10-20 23:47 local and stayed `state=active`, but GitHub never recorded an `event=schedule` run. This repo's cron does work (`Site backup (48h)` scheduled at 08:19 UTC today). The nightly's first 20:21 UTC slot was tonight; GitHub skipped it (known first-window / best-effort cron). Plesk's old 20:21 task is not a substitute after the key rotation (it would 403).
 - Tonight filled by `workflow_dispatch` run 39681986984: `AUTO-SEO V4.9 ... HTML Updated: 0 | Sitemap URLs: 122` at 21:50:48Z. GSC sitemap PUT: lastSubmitted 2026-10-21T21:57:24Z, submitted **122** (was 123), 0 errors. Indexing API still 403 for the CI service account; URL Inspection passed on core pages. No title/H1/meta/redirect edits.
 - Fix (no HTML/redirect change): second cron `51 21 * * *`, `repository_dispatch` type `nightly-auto-seo`, `actions: read` so the skip-gate can see today's successful run, `tools/trigger_nightly_auto_seo.ps1` + Windows task `ColdDirect-Nightly-AutoSEO-Fallback` at 21:40 local. Fallback skips when a success already exists today UTC / in the last 6 hours.
+
+## 2026-10-21 22:05 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39683514139 | commit 6db2245
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
