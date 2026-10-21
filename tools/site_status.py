@@ -90,6 +90,12 @@ def smoke_section(res, lt):
         L.append("  %s sitemap.xml                                       : %d URLs (HTTP %s)" % (mark(r[2]), len(res["urls"]), r[1].split(" ")[0]))
     for r in [r for r in rows if r[0] == getattr(lt, "BLOG_STUB_ROW", None)]:
         L.append("  %s retired blog stubs (301 -> 200)                   : %s" % (mark(r[2]), r[1]))
+    for r in [r for r in rows if r[0] == getattr(lt, "PARITY_ROW", None)]:
+        L.append("  %s .htaccess <-> web.config parity (offline)         : %s" % (mark(r[2]), r[1]))
+    for r in [r for r in rows if r[0] == getattr(lt, "LEGACY_ROW", None)]:
+        L.append("  %s legacy 301s (single hop -> 200, live)             : %s" % (mark(r[2]), r[1]))
+    for r in [r for r in rows if r[0] == getattr(lt, "HEADERS_ROW", None)]:
+        L.append("  %s security + cache headers, MIME types (live)       : %s" % (mark(r[2]), r[1]))
     for r in [r for r in rows if r[0] == getattr(lt, "SITEMAP_ROW", None)]:
         L.append("  %s sitemap coverage + lastmod integrity              : %s" % (mark(r[2]), r[1]))
     if sm_rules:
@@ -345,6 +351,9 @@ def selftest():
              (lt.AUDIO_ROW, "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", True),
              ("HTTP 200 /sitemap.xml (123 URLs)", "200 (90 ms)", True),
              (lt.BLOG_STUB_ROW, "10/10 blog stub URLs (5 slugs x /slash/ + .html) return a single-hop 301 -> 5 destinations HTTP 200", True),
+             (lt.PARITY_ROW, "266 .htaccess rules / 643 URL probes (603 301s) enforced by web.config alone; 220 generated map entries; headers, MIME & caching rules present", True),
+             (lt.LEGACY_ROW, "788 legacy URLs (700 x 301) answer a single-hop 301 -> 200, 800 probes incl. destinations", True),
+             (lt.HEADERS_ROW, "8 responses carry nosniff, SAMEORIGIN, strict Referrer-Policy; asset folders cached, MIME types correct", True),
              (lt.SITEMAP_ROW, "123 URLs: all 23 required URLs present, no duplicates, 123/123 valid lastmod (2026-10-21 to 2026-10-21), all https://www", True),
              ("sitemap contains /blog/", "yes", True), ("sitemap excludes /about/", "absent", True),
              ("301 /about/ -> /about-us/", "301 /about-us/", True),
@@ -360,6 +369,8 @@ def selftest():
     assert "123 URLs (HTTP 200)" in t and "robots.txt" in t and "Canonical host redirects" in t and "2/2 OK" in t, t
     assert "/blog/" in t and "/commercial-fridge-repair-enfield/" in t
     assert "retired blog stubs" in t and "10/10 blog stub URLs" in t, t
+    assert ".htaccess <-> web.config parity" in t and "enforced by web.config alone" in t, t
+    assert "legacy 301s (single hop -> 200, live)" in t and "788 legacy URLs" in t and "security + cache headers" in t and "nosniff" in t, t
     assert "sitemap coverage + lastmod integrity" in t and "all 23 required URLs present" in t and "123 URLs (HTTP 200)" in t, t
     assert "SEO audio assets" in t and "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact" in t, t
     # a failing page and a SLOW page are surfaced; FAILURES listed

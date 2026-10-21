@@ -263,3 +263,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - Backup artifacts of a public repo are downloadable: bookings/ (customer data), App_Data, *.key and private keys are never archived; config secrets are redacted.
 - A persistent shell may keep GITHUB_STEP_SUMMARY set: tools that write summaries then create stray files in the repo root (caught tmp_summary.md before commit). Check `git status` before every commit.
 - /blog/smeg-fridge-freezer-control-panel/ is intentionally 301-redirected live to the commercial fridge hub (domestic topic); seo_integrity_check skips intentionally redirected pages.
+
+- (2026-10-21) The live IIS host also runs an Apache-syntax .htaccess engine that hides web.config gaps: audit with .htaccess disabled (tools/config_parity.py, rename on FTP + restore). Keep generic .html -> slash rules BELOW specific .html rules. Keep .htaccess and web.config redirects in parity (live_smoke_test row 'Config Parity'); regenerate the HtaccessParity map with python tools/config_parity.py -g after editing .htaccess or adding pages. XML comments must not contain --.

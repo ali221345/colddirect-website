@@ -526,6 +526,56 @@ def blog_stub_checks(fetcher=None):
     return (BLOG_STUB_ROW, "FAILING: " + "; ".join(bad), False), ["Blog stub 301: " + b for b in bad]
 
 
+# ------------------------------------------------------------------ .htaccess <-> web.config parity, legacy 301s, security / cache headers
+# The live host is Microsoft-IIS/10.0: web.config must enforce EVERY .htaccess redirect on its own. The logic lives in
+# tools/config_parity.py (offline IIS simulator + live prober); these rows only wrap it for the smoke test / site_status.
+PARITY_ROW = "🧭 Config Parity (.htaccess ⇄ web.config)"
+LEGACY_ROW = "↩️ Legacy 301s (single hop -> 200)"
+HEADERS_ROW = "🛡️ Security & Cache Headers"
+
+
+def parity_checks(root=None):
+    """OFFLINE: every .htaccess redirect / serve rule is answered identically by web.config (IIS simulator on the repo tree),
+    no 2-hop chains / dead targets, generated rewrite map up to date, headers + MIME + asset caching + https/www rule present.
+    A redirect added to only one of the two files fails here. Returns (row, failures)."""
+    import config_parity as cp
+    try:
+        probs, st = cp.offline_problems(root or cp.ROOT)
+    except Exception as e:  # noqa: BLE001  (missing / malformed file must fail loudly, never pass vacuously)
+        return (PARITY_ROW, "FAILING: %s: %s" % (type(e).__name__, e), False), ["Config parity: %s: %s" % (type(e).__name__, e)]
+    if not probs:
+        return (PARITY_ROW, "%(rules)d .htaccess rules / %(probes)d URL probes (%(redirect_probes)d 301s) enforced by web.config alone; "
+                "%(map_entries)d generated map entries; headers, MIME & caching rules present" % st, True), []
+    return (PARITY_ROW, "FAILING: %d problems, e.g. %s" % (len(probs), "; ".join(probs[:3])), False), ["Config parity: " + p for p in probs[:25]]
+
+
+def legacy_301_checks(fetch_url=None, root=None):
+    """LIVE (no redirect following): every legacy URL of .htaccess + every redirect only web.config defines must answer ONE
+    HTTP 301 with the exact https://www.colddirect.co.uk Location, and each destination must answer 200. Returns (row, failures)."""
+    import config_parity as cp
+    try:
+        rows = cp.legacy_rows(root or cp.ROOT)
+    except Exception as e:  # noqa: BLE001
+        return (LEGACY_ROW, "FAILING: cannot derive probes: %s" % e, False), ["Legacy 301: cannot derive probes: %s" % e]
+    kw = {"fetch": fetch_url} if fetch_url else {}
+    probs, n = cp.live_audit(rows, **kw)
+    n301 = sum(1 for r in rows if r["kind"] == "301")
+    if not probs:
+        return (LEGACY_ROW, "%d legacy URLs (%d x 301) answer a single-hop 301 -> 200, %d probes incl. destinations" % (len(rows), n301, n), True), []
+    return (LEGACY_ROW, "FAILING: %d of %d, e.g. %s" % (len(probs), n, "; ".join(probs[:3])), False), ["Legacy 301: " + p for p in probs[:25]]
+
+
+def header_checks(fetch_url=None):
+    """LIVE: X-Content-Type-Options / X-Frame-Options / Referrer-Policy on pages + assets, no X-Powered-By, asset Cache-Control
+    max-age and correct MIME types (css, js, webp, mp3). Returns (row, failures)."""
+    import config_parity as cp
+    kw = {"fetch": fetch_url} if fetch_url else {}
+    probs, n = cp.live_header_checks(**kw)
+    if not probs:
+        return (HEADERS_ROW, "%d responses carry nosniff, SAMEORIGIN, strict Referrer-Policy; asset folders cached, MIME types correct" % n, True), []
+    return (HEADERS_ROW, "FAILING: " + "; ".join(probs[:4]), False), ["Headers: " + p for p in probs[:25]]
+
+
 def looks_like_html(headers, data):
     """True for an HTML document (soft-404 / error page) served where CSS, JS or an image is expected."""
     ct = {k.lower(): v for k, v in (headers or {}).items()}.get("content-type", "").lower()
@@ -1349,6 +1399,92 @@ def selftest():
             assert re.search(r"RewriteRule \^blog/%s\(\\\.html\|/index\\\.html\)\$ %s \[R=301,L\]" % (re.escape(s), re.escape(d)), ht), ".htaccess rule missing: " + s
             assert '"%s"' % s in aspx, "auto-seo.aspx redirectedSlugs missing: " + s
 
+    # .htaccess <-> web.config parity (offline), legacy 301s (live, single hop -> 200), security / cache headers (live)
+    import config_parity as cp_
+    import shutil
+    import tempfile
+    assert cp_.selftest() == 0, "config_parity selftest failed"
+    row, fails = parity_checks()
+    assert row[0] == PARITY_ROW and row[2] and fails == [] and "enforced by web.config alone" in row[1], row   # the real repo is in parity
+    with tempfile.TemporaryDirectory() as td:              # a redirect added to .htaccess only must be caught
+        t = Path(td)
+        shutil.copy(root_dir / "web.config", t / "web.config")
+        base_ht = (root_dir / ".htaccess").read_text(encoding="utf-8")
+        (t / ".htaccess").write_text(base_ht + "RewriteRule ^parity-selftest-only\\.asp$ /fridge-repair-london/ [R=301,L]\n", encoding="utf-8")
+        (t / "fridge-repair-london").mkdir()
+        (t / "fridge-repair-london" / "index.html").write_text("x", encoding="utf-8")
+        needle = "/parity-selftest-only.asp: missing-in-web.config"
+        assert any(needle in p for p in cp_.offline_problems(t)[0]), "redirect only in .htaccess was not detected"
+        row, fails = parity_checks(t)
+        assert not row[2] and fails and all(f.startswith("Config parity: ") for f in fails), row
+        (t / ".htaccess").write_text(base_ht, encoding="utf-8")     # and the opposite: a web.config-only chain / header loss
+        wc_txt = (root_dir / "web.config").read_text(encoding="utf-8")
+        (t / "web.config").write_text(wc_txt.replace('<add name="X-Frame-Options" value="SAMEORIGIN" />', ""), encoding="utf-8")
+        assert any("x-frame-options" in p for p in cp_.offline_problems(t)[0]), "missing security header in web.config not detected"
+    row, fails = parity_checks(Path("/definitely/not/here"))
+    assert not row[2] and fails and "FAILING" in row[1], row           # missing files never pass vacuously
+
+    lrows = cp_.legacy_rows()
+    assert len(lrows) > 500 and sum(1 for r in lrows if r["kind"] == "301") > 400, len(lrows)
+    expected_by_url = {BASE + r["probe"]: r for r in lrows}
+
+    def legacy_site(**over):
+        def f(u):
+            if u in over:
+                return over[u]
+            r = expected_by_url.get(u)
+            if r is not None and r["kind"] == "301":
+                return 301, {"location": r["expected"]}
+            return 200, {}
+        return f
+    row, fails = legacy_301_checks(legacy_site())
+    assert row[0] == LEGACY_ROW and row[2] and fails == [] and "single-hop 301 -> 200" in row[1], row
+    victim = next(r for r in lrows if r["kind"] == "301" and r["probe"].endswith(".asp"))
+    vu = BASE + victim["probe"]
+    for over, needle in (({vu: (200, {})}, "-> 200"),                                               # rule missing on IIS: page answers 200
+                         ({vu: (404, {})}, "-> 404"),
+                         ({vu: (302, {"location": victim["expected"]})}, "-> 302"),                 # temporary redirect
+                         ({vu: (307, {"location": victim["expected"]})}, "-> 307"),
+                         ({vu: (301, {"location": BASE + "/zz-chain-hop/"})}, "/zz-chain-hop/"),   # 2-hop chain / wrong target
+                         ({vu: (301, {})}, "(want 301"),
+                         ({vu: (0, {"error": "timeout"})}, "-> 0"),
+                         ({victim["expected"]: (404, {})}, "301 destination")):                     # destination must answer 200
+        row, fails = legacy_301_checks(legacy_site(**over))
+        assert not row[2] and fails and needle in " | ".join(fails) and all(f.startswith("Legacy 301: ") for f in fails), (needle, row, fails[:2])
+
+    sec = {"x-content-type-options": "nosniff", "x-frame-options": "SAMEORIGIN", "referrer-policy": "strict-origin-when-cross-origin"}
+    assets_h = {"/css/styles.css": {"content-type": "text/css", "cache-control": "max-age=86400"},
+                "/js/main.js": {"content-type": "application/javascript", "cache-control": "public, max-age=86400"},
+                "/images/slider-colour-ac.webp": {"content-type": "image/webp", "cache-control": "max-age=604800"},
+                "/audio/colddirect-home.mp3": {"content-type": "audio/mpeg", "cache-control": "max-age=604800"}}
+
+    def header_site(mod=None):
+        def f(u):
+            p = u.replace(BASE, "")
+            h = dict(sec)
+            h.update(assets_h.get(p, {"content-type": "text/html"}))
+            return mod(p, h) if mod else (200, h)
+        return f
+    row, fails = header_checks(header_site())
+    assert row[0] == HEADERS_ROW and row[2] and fails == [] and row[1].startswith("8 responses"), row
+
+    def drop(path, key):
+        return lambda p, h: (200, {k: v for k, v in h.items() if not (p == path and k == key)})
+
+    def put(path, key, val):
+        return lambda p, h: (200, dict(h, **({key: val} if p == path else {})))
+    for mod, needle in ((drop("/", "x-frame-options"), "/: header x-frame-options"),
+                        (drop("/fridge-repair-london/", "x-content-type-options"), "header x-content-type-options"),
+                        (drop("/blog/", "referrer-policy"), "header referrer-policy"),
+                        (put("/", "x-powered-by", "ASP.NET"), "X-Powered-By still sent"),
+                        (put("/css/styles.css", "cache-control", "no-cache"), "Cache-Control 'no-cache'"),
+                        (drop("/images/slider-colour-ac.webp", "cache-control"), "/images/slider-colour-ac.webp: Cache-Control ''"),
+                        (put("/images/slider-colour-ac.webp", "content-type", "application/octet-stream"), "Content-Type 'application/octet-stream'"),
+                        (put("/audio/colddirect-home.mp3", "content-type", "text/html"), "/audio/colddirect-home.mp3: Content-Type"),
+                        (lambda p, h: (404, {}) if p == "/" else (200, h), "/ -> HTTP 404")):
+        row, fails = header_checks(header_site(mod))
+        assert not row[2] and fails and needle in " | ".join(fails) and all(f.startswith("Headers: ") for f in fails), (needle, row)
+
     # sitemap.xml coverage + lastmod + duplicates + https://www integrity
     import money_data as md_
     assert set(CORE) == set(md_.HUB_ORDER) and len(CORE) == 9, "CORE must mirror the 9 money pages of tools/money_data.py"
@@ -1431,7 +1567,10 @@ def selftest():
     row, fails = sitemap_checks(sm_xml(REQ), blog_fetch2, ["post-a", "post-b"], TODAY)
     assert not row[2] and any("could not be classified" in f for f in fails), (row, fails)
 
-    print("selftest OK (blog stub 301s: 5 slugs x slash/.html single-hop 301 -> 200, 200 / meta-refresh / 302 / 307 / 404 / 2-hop / wrong "
+    print("selftest OK (config parity: .htaccess-only redirect / missing security header / missing files detected, legacy 301s "
+          "single-hop -> 200 vs 200 / 404 / 302 / 307 / 2-hop / wrong Location / dead destination / network error fail, security + cache "
+          "headers and MIME types incl. X-Powered-By, missing nosniff / X-Frame-Options / Referrer-Policy, uncached or mistyped assets fail; "
+          "blog stub 301s: 5 slugs x slash/.html single-hop 301 -> 200, 200 / meta-refresh / 302 / 307 / 404 / 2-hop / wrong "
           "or http:// target / dead destination fail, web.config + .htaccess + auto-seo.aspx consistent; sitemap integrity: required home/9 money/Enfield//blog/ + active blog posts, duplicates, lastmod "
           "ISO-8601 / future / <2020 / missing, http:// and non-www <loc>, malformed XML, redirect-stub warning; "
           "SEO audio assets: %d scenarios incl. 10/10 ID3 valid, missing <audio>, mismatched AudioObject contentUrl, "
@@ -1508,6 +1647,11 @@ def run_all_checks():
     stub_row, stub_failures = blog_stub_checks()                       # 5 retired blog slugs: 301 (slash + .html) -> 200
     rows.append(stub_row)
     failures += stub_failures
+
+    for check in (parity_checks, legacy_301_checks, header_checks):   # .htaccess <-> web.config parity, legacy 301s, headers
+        crow, cfail = check()
+        rows.append(crow)
+        failures += cfail
 
     t = timed_fetch(lambda: fetch("/robots.txt", body=True))
     latencies.append(t["ms"])

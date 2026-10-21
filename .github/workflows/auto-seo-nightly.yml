@@ -59,6 +59,8 @@ jobs:
           python tools/generate_seo_audio.py --selftest
           python tools/blog_money_links.py --selftest
           python tools/seo_integrity_check.py --selftest
+          python tools/config_parity.py --selftest
+          python tools/config_parity.py
 
       - name: Run live auto-seo.aspx and smoke test
         id: live

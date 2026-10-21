@@ -121,7 +121,7 @@ RewriteRule ^fridge-repairs-london(/|\.html|\.asp)?$ /fridge-repair-london/ [R=3
 RewriteRule ^freezer-repairs-london(/|\.html|\.asp)?$ /freezer-repair-london/ [R=301,L]
 RewriteRule ^commercial-fridge-repairs-london(/|\.html|\.asp)?$ /commercial-fridge-repair-london/ [R=301,L]
 RewriteRule ^commercial-freezer-repairs-london(/|\.html|\.asp)?$ /commercial-freezer-repair-london/ [R=301,L]
-RewriteRule ^ice-machine-repairs-london(/|\.html|\.asp)?$ /ice-machine-repair-london/ [R=301,L]
+# NOTE: /ice-machine-repairs-london/ is a LIVE indexed page (own folder, sitemap URL, title owned by auto-seo.aspx): it is NOT redirected.
 RewriteRule ^ice-cream-maker-repairs?-london(/|\.html|\.asp)?$ /ice-cream-machine-repair-london/ [R=301,L]
 RewriteRule ^wine-cooler-repairs-london(/|\.html|\.asp)?$ /wine-cooler-repair-london/ [R=301,L]
 RewriteRule ^bottle-cooler-repairs-london(/|\.html|\.asp)?$ /bottle-cooler-repair-london/ [R=301,L]
@@ -163,7 +163,17 @@ RewriteRule ^blog/commercial-fridge-repair-cost-london$ /blog/commercial-fridge-
 RewriteRule ^blog/commercial-fridge-repair-cost-london/$ /blog/commercial-fridge-repair-cost-london.html [L]
 # Legacy news is an alias of the existing blog, not a separate article.
 RewriteRule ^news(?:/index\.html|/|\.html)?$ https://www.colddirect.co.uk/blog/ [R=301,L]
-RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
+# Retired blog stubs: ONE hop straight to the target (mirrors web.config; must stay above the generic .html rule).
+RewriteRule ^blog/smeg-fridge-freezer-control-panel(\.html|/index\.html)$ /commercial-fridge-repair-london/ [R=301,L]
+RewriteRule ^blog/samsung-fridge-freezer-not-freezing(\.html|/index\.html)$ /commercial-freezer-repair-london/ [R=301,L]
+RewriteRule ^blog/best-ice-cream-makers(\.html|/index\.html)$ /ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^blog/cold-room-troubleshooting(\.html|/index\.html)$ /blog/cold-room-temperature-fluctuation/ [R=301,L]
+RewriteRule ^blog/chiller-not-cooling(\.html|/index\.html)$ /chiller-repair-london/ [R=301,L]
+# Live blog posts: .html and /index.html variants go ONE hop to the slash canonical (never /blog/index/, a 404).
+RewriteRule ^blog/index\.html$ /blog/ [R=301,L]
+RewriteRule ^blog/([^/]+)\.html$ /blog/$1/ [R=301,L]
+RewriteRule ^blog/([^/]+)/index\.html$ /blog/$1/ [R=301,L]
+# All other .html -> slash is the generic rule near the end of this file (below every specific .html rule).
 
 RewriteRule ^ice-cream-machine-repairs-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
 RewriteRule ^ice-cream-repair-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
@@ -215,7 +225,8 @@ RewriteRule ^blog/commercial-freezer-temperature-guide/?$ /blog/commercial-freez
 RewriteRule ^blog/commercial-fridge-not-cooling/?$ /blog/commercial-fridge-not-cooling.html [L]
 RewriteRule ^blog/f-gas-regulations-commercial/?$ /blog/f-gas-regulations-commercial.html [L]
 RewriteRule ^blog/prevent-commercial-fridge-breakdown/?$ /blog/prevent-commercial-fridge-breakdown.html [L]
-RewriteRule ^blog/?(.*)$ / [R=301,L]
+# Unknown blog slugs answer a real 404 (no soft-404 redirect to the homepage); mirrors web.config (IIS 404).
+RewriteRule ^blog/.+$ - [R=404,L]
 
 # Pretty URLs: /slug/ and /slug serve slug.html when that file exists (nginx often 404s these).
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -240,7 +251,6 @@ RewriteRule ^display-fridge-repairs-london/?$ /display-fridge-repair-london/ [R=
 RewriteRule ^chiller-repairs-london\.asp$ /chiller-repairs-london/ [R=301,L]
 RewriteRule ^catering-repair-london\.asp$ /catering-repair-london/ [R=301,L]
 RewriteRule ^chiller-repairs-london/?$ /chiller-repairs-london.html [L]
-RewriteRule ^ice-machine-repairs-london/?$ /ice-machine-repair-london/ [R=301,L]
 RewriteRule ^wine-cooler-repairs-london/?$ /wine-cooler-repair-london/ [R=301,L]
 RewriteRule ^bottle-cooler-repairs-london/?$ /bottle-cooler-repair-london/ [R=301,L]
 RewriteRule ^cellar-cooler-repairs-london/?$ /cellar-cooler-repair-london/ [R=301,L]
@@ -299,6 +309,12 @@ RewriteRule ^hoshizaki-repairs-london/?$ /hoshizaki-ice-machine-repair-london/ [
 RewriteRule ^william-fridge-repair-london/?$ /williams-fridge-repair-london/ [R=301,L]
 RewriteRule ^william-repairs-london/?$ /williams-fridge-repair-london/ [R=301,L]
 RewriteRule ^williams-repairs-london/?$ /williams-fridge-repair-london/ [R=301,L]
+
+# Generic .html -> slash canonical. Keep BELOW every specific .html rule above so a specific target wins (one hop).
+# The pass-through exclusions (google*.html, index.html, services/, liebherr, brands, repair-cost article) sit near the top.
+# <dir>/index.html -> <dir>/ (never /<dir>/index/ which is a 404). Mirrors web.config "htaccess parity" rules.
+RewriteRule ^(.+)/index\.html$ /$1/ [R=301,L]
+RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
 
 # WordPress / PHP fallback (only if no file or directory)
 RewriteCond %{REQUEST_FILENAME} !-f

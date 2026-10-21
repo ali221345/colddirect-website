@@ -39,6 +39,7 @@ jobs:
           python tools/deploy_guard.py
           python tools/html_preflight.py
           python tools/blog_related_services.py --check
+          python tools/config_parity.py
 
       - name: FTP deploy httpdocs
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
