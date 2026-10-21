@@ -11,6 +11,9 @@ Checks (all against the LIVE site, no redirects followed for the 200 checks):
   * response time (time.monotonic, ms) of the homepage, 9 core pages, Enfield page, /blog/, sitemap.xml and robots.txt:
     < 1500 ms healthy; 1500-3000 ms passes with a "⚠️ SLOW" note; > 3000 ms is retried once and FAILS only if the
     retry is also > 3000 ms. Every row shows "(N ms)"; the Step Summary header shows average and max.
+  * critical static assets referenced by the live homepage HTML (same-origin only, max 14, de-duplicated):
+    stylesheets, <script src>, favicon / apple-touch-icon / og:image and the first 3 <img> tags. Each must be
+    HTTP 200, non-empty and not an HTML (soft-404) page. Table row "🎨 Static Assets (Homepage)"; a failure lists the URL.
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
@@ -236,14 +239,17 @@ def check_page_integrity(path, status, headers, body):
     return {"ok": True, "summary": INTEGRITY_OK, "problems": []}
 
 
-def integrity_checks(paths=None, fetcher=None, latencies=None, clock=time.monotonic):
+def integrity_checks(paths=None, fetcher=None, latencies=None, clock=time.monotonic, bodies=None):
     """Fetch every core page (with body, timed) and validate it. Returns (rows, failures).
-    latencies: optional list that receives the response time (ms) of every page."""
+    latencies: optional list that receives the response time (ms) of every page.
+    bodies: optional dict that receives {path: html} so other checks reuse the fetched HTML."""
     fetcher = fetcher or (lambda p: fetch(p, body=True))
     rows, failures = [], []
     for path in (INTEGRITY_PAGES if paths is None else paths):
         t = timed_fetch(lambda: fetcher(path), clock)
         status, headers, body = t["result"]
+        if bodies is not None:
+            bodies[path] = body
         r = check_page_integrity(path, status, headers, body)
         if latencies is not None:
             latencies.append(t["ms"])
@@ -251,6 +257,116 @@ def integrity_checks(paths=None, fetcher=None, latencies=None, clock=time.monoto
         if not r["ok"]:
             failures.append("%s content integrity: %s" % (path, "; ".join(r["problems"])))
     return rows, failures
+
+
+# ------------------------------------------------------------------ critical static assets of the homepage
+ASSET_ROW = "🎨 Static Assets (Homepage)"
+ASSET_MAX = 14             # cap so the smoke test stays fast (4 CSS + 4 JS + icons/og:image + 3 images fit)
+ASSET_IMG_COUNT = 3        # first N <img> tags of the page = logo / hero (above the fold)
+ASSET_MAX_BYTES = 8 * 1024 * 1024
+_HOST = urllib.parse.urlsplit(BASE).netloc.lower()
+
+
+def fetch_asset(url, tries=2):
+    """GET one absolute same-origin URL (no redirects followed). Returns (status, headers, raw bytes)."""
+    for _ in range(tries):
+        req = urllib.request.Request(url, headers={"User-Agent": UA, "Cache-Control": "no-cache"})
+        try:
+            r = OPENER.open(req, timeout=40)
+            return r.status, dict(r.headers), r.read(ASSET_MAX_BYTES)
+        except urllib.error.HTTPError as e:
+            return e.code, dict(e.headers), b""
+        except Exception:  # noqa: BLE001 - network blip, retry once
+            pass
+    return 0, {}, b""
+
+
+def _same_origin(ref, page_url):
+    """Absolute https URL on www.colddirect.co.uk (fragment removed) or None for external / non-http refs."""
+    ref = (ref or "").strip()
+    if not ref or ref.lower().startswith(("data:", "javascript:", "mailto:", "tel:", "about:", "#")):
+        return None
+    full = urllib.parse.urljoin(page_url, ref)
+    parts = urllib.parse.urlsplit(full)
+    if parts.scheme not in ("http", "https") or parts.netloc.lower() != _HOST:
+        return None
+    return urllib.parse.urlunsplit(("https", parts.netloc, parts.path or "/", parts.query, ""))
+
+
+def extract_assets(html, page_url=BASE + "/", limit=ASSET_MAX):
+    """Critical same-origin assets of a page as an ordered, de-duplicated [(kind, url)] list.
+
+    kinds: css (rel=stylesheet), js (<script src>), icon (favicon / apple-touch-icon / og:image),
+    img (the first 3 <img> tags). External hosts (analytics, CDNs, fonts) are ignored.
+    """
+    src = _COMMENT_RE.sub("", html or "")
+    found = {"css": [], "js": [], "icon": [], "img": []}
+    for tag in re.findall(r"<link\b[^>]*>", src, re.I):
+        a = _attrs(tag)
+        rel = a.get("rel", "").lower().split()
+        if "stylesheet" in rel:
+            found["css"].append(a.get("href"))
+        elif any(r in ("icon", "apple-touch-icon", "apple-touch-icon-precomposed") for r in rel):
+            found["icon"].append(a.get("href"))
+    for tag in re.findall(r"<script\b[^>]*>", src, re.I):
+        found["js"].append(_attrs(tag).get("src"))
+    for tag in re.findall(r"<meta\b[^>]*>", src, re.I):
+        a = _attrs(tag)
+        if (a.get("property") or a.get("name") or "").lower() == "og:image":
+            found["icon"].append(a.get("content"))
+    for tag in re.findall(r"<img\b[^>]*>", src, re.I)[:ASSET_IMG_COUNT]:
+        found["img"].append(_attrs(tag).get("src"))
+    out, seen = [], set()
+    for kind in ("css", "js", "icon", "img"):
+        for ref in found[kind]:
+            url = _same_origin(ref, page_url)
+            if url and url not in seen:
+                seen.add(url)
+                out.append((kind, url))
+    return out[:limit]
+
+
+def looks_like_html(headers, data):
+    """True for an HTML document (soft-404 / error page) served where CSS, JS or an image is expected."""
+    ct = {k.lower(): v for k, v in (headers or {}).items()}.get("content-type", "").lower()
+    if "text/html" in ct or "application/xhtml" in ct:
+        return True
+    head = (data or b"")[:1024].lstrip(b"\xef\xbb\xbf \t\r\n").lower()
+    return head.startswith((b"<!doctype html", b"<!doctype", b"<html", b"<head", b"<body", b"<title"))
+
+
+def check_asset(kind, url, fetcher=fetch_asset):
+    """Returns None when healthy, otherwise a short reason."""
+    status, headers, data = fetcher(url)
+    if status != 200:
+        return "HTTP %s" % status
+    if not data:
+        return "empty (0 bytes)"
+    if looks_like_html(headers, data):
+        return "HTML page served instead of %s (soft-404)" % {"css": "CSS", "js": "JavaScript"}.get(kind, "an image")
+    return None
+
+
+def asset_checks(html, fetcher=fetch_asset, page_url=BASE + "/"):
+    """Fetch and validate the homepage's critical assets. Returns (row, failures)."""
+    assets = extract_assets(html, page_url)
+    if not assets:
+        msg = "no same-origin CSS/JS/image assets found in the homepage HTML"
+        return (ASSET_ROW, msg, False), ["Static assets: " + msg]
+    bad = []
+    for kind, url in assets:
+        why = check_asset(kind, url, fetcher)
+        if why:
+            bad.append((url, why))
+    n, kinds = len(assets), {}
+    for kind, _ in assets:
+        kinds[kind] = kinds.get(kind, 0) + 1
+    mix = ", ".join("%d %s" % (kinds[k], lbl) for k, lbl in (("css", "CSS"), ("js", "JS"), ("icon", "icon"), ("img", "image")) if k in kinds)
+    if not bad:
+        return (ASSET_ROW, "%d/%d core CSS/JS/Image assets HTTP 200 & non-empty (%s)" % (n, n, mix), True), []
+    detail = "; ".join("%s -> %s" % (u.replace(BASE, ""), w) for u, w in bad)
+    row = (ASSET_ROW, "%d/%d healthy, FAILING: %s" % (n - len(bad), n, detail), False)
+    return row, ["Static asset %s: %s" % (u, w) for u, w in bad]
 
 
 # ------------------------------------------------------------------ robots.txt health
@@ -859,7 +975,114 @@ def selftest():
     assert latency_summary([200, 400, 3000]) == "average 1200 ms, max 3000 ms (3 requests)", latency_summary([200, 400, 3000])
     assert latency_summary([]) == "n/a"
 
-    print("selftest OK (page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
+    # ---------------- critical static assets of the homepage (no network)
+    HOME_HTML = (
+        '<html><head><link rel="icon" href="/favicon.ico">'
+        '<link rel="apple-touch-icon" href="/images/logo/favicon-512.png">'
+        '<link rel="canonical" href="https://www.colddirect.co.uk/">'
+        '<meta property="og:image" content="https://www.colddirect.co.uk/images/og.jpg">'
+        '<link rel="stylesheet" href="/css/styles.css?v=1"><link rel="stylesheet" href="/css/styles.css?v=1">'
+        '<link rel="stylesheet" href="https://www.colddirect.co.uk/css/pro.css">'
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter">'
+        '<link rel="stylesheet" href="//cdn.example.net/x.css">'
+        '<script async src="https://analytics.ahrefs.com/analytics.js" data-key="k"></script>'
+        '<script src="https://www.googletagmanager.com/gtag/js?id=G-1"></script>'
+        '<script src="https://cdn.jsdelivr.net/npm/x.js"></script><script>var inline=1;</script>'
+        '<script src="/js/main.js"></script><script defer src="/assets/slider.js?v=2"></script>'
+        '<script src="data:text/javascript,1"></script></head><body>'
+        '<!-- <link rel="stylesheet" href="/css/commented-out.css"> -->'
+        '<img src="/images/logo.jpg" alt="logo"><img src="/images/hero.webp" alt="hero">'
+        '<img src="https://www.colddirect.co.uk/images/third.webp"><img src="/images/fourth-ignored.webp">'
+        '<img src="https://img.thirdparty.com/pixel.png"></body></html>')
+    EXPECT = [("css", "https://www.colddirect.co.uk/css/styles.css?v=1"), ("css", "https://www.colddirect.co.uk/css/pro.css"),
+              ("js", "https://www.colddirect.co.uk/js/main.js"), ("js", "https://www.colddirect.co.uk/assets/slider.js?v=2"),
+              ("icon", "https://www.colddirect.co.uk/favicon.ico"),
+              ("icon", "https://www.colddirect.co.uk/images/logo/favicon-512.png"),
+              ("icon", "https://www.colddirect.co.uk/images/og.jpg"),
+              ("img", "https://www.colddirect.co.uk/images/logo.jpg"), ("img", "https://www.colddirect.co.uk/images/hero.webp"),
+              ("img", "https://www.colddirect.co.uk/images/third.webp")]
+    got = extract_assets(HOME_HTML)
+    assert got == EXPECT, got                      # order, dedupe (styles.css once), external/data/commented/4th img ignored
+    assert not any("google" in u or "ahrefs" in u or "jsdelivr" in u or "cdn.example" in u or "thirdparty" in u
+                   or "commented-out" in u or "fourth" in u for _, u in got)
+    # cap: 30 distinct stylesheets -> at most ASSET_MAX assets
+    many = "".join('<link rel="stylesheet" href="/c%d.css">' % i for i in range(30))
+    assert len(extract_assets(many)) == ASSET_MAX == 14
+    # root-relative, absolute and protocol-relative same-origin forms all resolve; apex host / http host are external here
+    fm = extract_assets('<script src="//www.colddirect.co.uk/a.js"></script><script src="http://www.colddirect.co.uk/b.js"></script>'
+                        '<script src="https://colddirect.co.uk/c.js"></script><script src="rel/d.js"></script>')
+    assert [u for _, u in fm] == ["https://www.colddirect.co.uk/a.js", "https://www.colddirect.co.uk/b.js",
+                                  "https://www.colddirect.co.uk/rel/d.js"], fm
+    assert extract_assets("") == [] and extract_assets("<html></html>") == []
+
+    CSS, JS, PNG = b"body{margin:0}", b"console.log(1);", b"\x89PNG\r\n\x1a\n" + b"\x00" * 20
+    SOFT404 = b"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0//EN\"><html><head><title>404 - File or directory not found.</title>"
+
+    def good_fetcher(overrides=None):
+        ov = overrides or {}
+
+        def f(url):
+            if url in ov:
+                return ov[url]
+            if url.split("?")[0].endswith(".css"):
+                return 200, {"Content-Type": "text/css"}, CSS
+            if url.split("?")[0].endswith(".js"):
+                return 200, {"Content-Type": "application/javascript"}, JS
+            return 200, {"Content-Type": "image/png"}, PNG
+        return f
+
+    # healthy: 10/10 with the exact summary wording and no failures
+    row, fails = asset_checks(HOME_HTML, good_fetcher())
+    assert row == (ASSET_ROW, "10/10 core CSS/JS/Image assets HTTP 200 & non-empty (2 CSS, 2 JS, 3 icon, 3 image)", True), row
+    assert fails == []
+    # 404 broken stylesheet -> fail naming the URL
+    U = "https://www.colddirect.co.uk/css/pro.css"
+    row, fails = asset_checks(HOME_HTML, good_fetcher({U: (404, {}, b"")}))
+    assert row[2] is False and "9/10 healthy" in row[1] and "/css/pro.css -> HTTP 404" in row[1], row
+    assert fails == ["Static asset %s: HTTP 404" % U], fails
+    # 0-byte JavaScript -> fail; 500 on an image -> fail; network error (0) -> fail
+    U = "https://www.colddirect.co.uk/js/main.js"
+    row, fails = asset_checks(HOME_HTML, good_fetcher({U: (200, {"Content-Type": "application/javascript"}, b"")}))
+    assert not row[2] and fails == ["Static asset %s: empty (0 bytes)" % U], (row, fails)
+    U = "https://www.colddirect.co.uk/images/hero.webp"
+    assert not asset_checks(HOME_HTML, good_fetcher({U: (500, {}, b"")}))[0][2]
+    assert not asset_checks(HOME_HTML, good_fetcher({U: (0, {}, b"")}))[0][2]
+    # soft-404: HTML served with 200 for a .css, .js and an image (by body sniff AND by Content-Type)
+    for u in ("https://www.colddirect.co.uk/css/styles.css?v=1", "https://www.colddirect.co.uk/assets/slider.js?v=2",
+              "https://www.colddirect.co.uk/images/logo.jpg", "https://www.colddirect.co.uk/favicon.ico"):
+        row, fails = asset_checks(HOME_HTML, good_fetcher({u: (200, {"Content-Type": "text/plain"}, SOFT404)}))
+        assert not row[2] and len(fails) == 1 and "soft-404" in fails[0] and u in fails[0], (u, row, fails)
+        row, fails = asset_checks(HOME_HTML, good_fetcher({u: (200, {"Content-Type": "text/html; charset=utf-8"}, CSS)}))
+        assert not row[2] and "soft-404" in fails[0], (u, fails)
+    assert looks_like_html({}, b"\xef\xbb\xbf  \n<!DOCTYPE html><html>") and looks_like_html({}, b"<HTML><body>")
+    assert not looks_like_html({"Content-Type": "text/css"}, b"/* <html> in a comment */ a{}")
+    assert not looks_like_html({"Content-Type": "application/javascript"}, b"var t='<html>';")
+    # several broken assets are all listed; external third-party assets are never fetched
+    fetched = []
+
+    def spy(url):
+        fetched.append(url)
+        return good_fetcher({"https://www.colddirect.co.uk/css/pro.css": (404, {}, b""),
+                             "https://www.colddirect.co.uk/images/og.jpg": (200, {"Content-Type": "image/jpeg"}, b"")})(url)
+
+    row, fails = asset_checks(HOME_HTML, spy)
+    assert len(fails) == 2 and "8/10 healthy" in row[1] and "og.jpg -> empty" in row[1], (row, fails)
+    assert len(fetched) == 10 and all(u.startswith("https://www.colddirect.co.uk/") for u in fetched), fetched
+    # no extractable assets (e.g. homepage fetch failed) -> fail instead of a vacuous pass
+    row, fails = asset_checks("")
+    assert not row[2] and "no same-origin" in row[1] and fails, (row, fails)
+    # kind-specific wording
+    assert "JavaScript" in check_asset("js", "u", lambda u: (200, {}, SOFT404))
+    assert "CSS" in check_asset("css", "u", lambda u: (200, {}, SOFT404))
+    assert "an image" in check_asset("img", "u", lambda u: (200, {}, SOFT404))
+    assert check_asset("css", "u", lambda u: (200, {"Content-Type": "text/css"}, CSS)) is None
+    # integrity_checks hands the homepage HTML to the asset check
+    bd = {}
+    integrity_checks(paths=["/"], fetcher=lambda p: (200, HDR, home), bodies=bd)
+    assert bd == {"/": home}
+
+    print("selftest OK (static assets: css/js/img extraction + 200 ok; 404 / 0-byte / soft-404 HTML / external ignored; "
+          "page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
           "latency: <1.5 s ok, 1.5-3 s slow warning, >3 s retried once, spike passes, persistent fails; "
           "SSL threshold: fail below %d days, expired/invalid certificates; "
           "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail; "
@@ -894,9 +1117,14 @@ def main():
         if not ok:
             failures.append("%s returned %s" % (path, code))
 
-    page_rows, page_failures = integrity_checks(latencies=latencies)
+    bodies = {}
+    page_rows, page_failures = integrity_checks(latencies=latencies, bodies=bodies)
     rows += page_rows
     failures += page_failures
+
+    asset_row, asset_failures = asset_checks(bodies.get("/", ""))     # reuses the already-fetched homepage HTML
+    rows.append(asset_row)
+    failures += asset_failures
 
     t = timed_fetch(lambda: fetch("/sitemap.xml", body=True))
     code, _, sm = t["result"]
