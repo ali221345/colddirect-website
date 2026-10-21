@@ -4,6 +4,13 @@ name: Nightly auto-seo (live)
 # authenticate (the key was rotated and now lives only in the AUTO_SEO_KEY secret + App_Data/auto-seo.key on
 # the server). This workflow keeps the nightly SEO agent running with the new secret.
 # Runs 20:21 UTC (the agent's usual slot) and can be started manually.
+#
+# Alerting: if the auto-seo trigger or the live smoke test fails, a GitHub Issue titled
+#   "🚨 [LIVE SITE ALERT] ColdDirect Smoke Test / Auto-SEO Failure"
+# is opened (or, if one is already open, gets a short comment) - GitHub e-mails the repository owner.
+# When a later run passes, the issue gets a "Resolved" comment and is closed automatically.
+# Issue text only ever contains the run URL, timestamp, workflow/commit and step outcomes - never secrets,
+# keys, response bodies or log excerpts (this repository is public).
 
 on:
   schedule:
@@ -12,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 # never overlap a deploy (same group as deploy.yml); a queued run waits instead of cancelling
 concurrency:
@@ -35,6 +43,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run live auto-seo.aspx and smoke test
+        id: live
         env:
           AUTO_SEO_KEY: ${{ secrets.AUTO_SEO_KEY }}
         run: |
@@ -51,3 +60,74 @@ jobs:
             exit 1
           fi
           AUTO_SEO_RESPONSE="$resp" python tools/live_smoke_test.py
+
+      # ---- alerting (a problem here must never change the job result, hence continue-on-error)
+      - name: Alert - open or update the live-site issue
+        if: failure()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALERT_TITLE: "🚨 [LIVE SITE ALERT] ColdDirect Smoke Test / Auto-SEO Failure"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          OWNER: ${{ github.repository_owner }}
+          STEP_LIVE: ${{ steps.live.outcome }}
+        run: |
+          set -uo pipefail
+          NOW="$(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 100 --json number,title \
+            --jq 'map(select(.title == env.ALERT_TITLE)) | .[0].number // empty' || true)"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" \
+              --body "Still failing - another failed run at ${NOW}: ${RUN_URL} (workflow: ${WORKFLOW_NAME}, trigger: ${EVENT_NAME}, auto-seo + smoke test step: ${STEP_LIVE})."
+            echo "Updated existing alert issue #${existing}"
+            exit 0
+          fi
+          gh label create "live-site-alert" --repo "$GITHUB_REPOSITORY" --color B60205 \
+            --description "Automatic alert: live site smoke test / auto-seo failure" >/dev/null 2>&1 || true
+          gh label create "high-priority" --repo "$GITHUB_REPOSITORY" --color D93F0B \
+            --description "Needs attention first" >/dev/null 2>&1 || true
+          BODY="${RUNNER_TEMP:-/tmp}/alert-body.md"
+          cat > "$BODY" <<EOF
+          **Priority: HIGH** - the live-site health check failed.
+
+          | | |
+          |---|---|
+          | Failed run | ${RUN_URL} |
+          | Time | ${NOW} |
+          | Workflow | ${WORKFLOW_NAME} (trigger: ${EVENT_NAME}) |
+          | Commit | \`${COMMIT_SHA}\` |
+          | auto-seo trigger + live smoke test step | **${STEP_LIVE}** |
+
+          What failed: the call to \`auto-seo.aspx\` on the live server and/or \`tools/live_smoke_test.py\`.
+          Open the run above and read the log of the step "Run live auto-seo.aspx and smoke test" for details.
+
+          This issue is updated with a comment if the failure repeats and is closed automatically when a later run passes.
+          No secrets, keys or response bodies are ever posted here.
+          EOF
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "$ALERT_TITLE" --body-file "$BODY" \
+            --label live-site-alert --label high-priority --assignee "$OWNER" \
+          || gh issue create --repo "$GITHUB_REPOSITORY" --title "$ALERT_TITLE" --body-file "$BODY" --label live-site-alert \
+          || gh issue create --repo "$GITHUB_REPOSITORY" --title "$ALERT_TITLE" --body-file "$BODY"
+
+      - name: Recovery - close the live-site issue
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALERT_TITLE: "🚨 [LIVE SITE ALERT] ColdDirect Smoke Test / Auto-SEO Failure"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -uo pipefail
+          nums="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 100 --json number,title \
+            --jq '.[] | select(.title == env.ALERT_TITLE) | .number' || true)"
+          for n in $nums; do
+            gh issue comment "$n" --repo "$GITHUB_REPOSITORY" \
+              --body "✅ Resolved: Live smoke test and auto-seo passed on run ${RUN_URL}."
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --reason completed
+            echo "Closed alert issue #${n}"
+          done
