@@ -479,3 +479,8 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-21 08:49 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39571992811 | commit c6e4d9d
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-21 - auto-seo.aspx: redirected blog stubs removed from sitemap.xml (owner approved)
+- Cause: `.htaccess` 301-redirects retired/domestic blog URLs but their `.html` files still exist, so the aspx sitemap builder kept listing them (the new smoke-test row `🗺️ Sitemap Integrity` warned about `/blog/smeg-fridge-freezer-control-panel/`).
+- Fix (auto-seo.aspx only, no HTML/title/h1 touched): `redirectedSlugs` now also holds `smeg-fridge-freezer-control-panel`, `samsung-fridge-freezer-not-freezing`, `best-ice-cream-makers`, `cold-room-troubleshooting`, `chiller-not-cooling` (the blog 301 rules in `.htaccess`). Keep this list in sync when adding a blog 301 to `.htaccess`.
+- Rollout: `python tools/pull_live_plesk_v4.py` first (repo == live), edit, `python tools/upload_plain.py auto-seo.aspx`, ran the live aspx twice (stable: 122 sitemap URLs, was 123), re-pulled live state (sitemap.xml + mirrors committed). Live: Sitemap Integrity PASS with no warning, SEO integrity ALL INTACT.
