@@ -16,6 +16,11 @@ Checks (all against the LIVE site, no redirects followed for the 200 checks):
     HTTP 200, non-empty and not an HTML (soft-404) page. Table row "🎨 Static Assets (Homepage)"; a failure lists the URL.
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
+  * sitemap.xml strict integrity (table row "🗺️ Sitemap Integrity"): parsed as XML (<urlset>); the homepage, the 9
+    money pages, /commercial-fridge-repair-enfield/, /blog/ and every ACTIVE blog post (HTTP 200 + self canonical;
+    redirect stubs such as the smeg post are excluded) must be a <loc>; no duplicate <loc>; every <url> needs exactly
+    one valid ISO-8601 <lastmod> (not in the future [1 day tz tolerance], not before 2020-01-01); every <loc> must be
+    https://www.colddirect.co.uk/... A redirect stub still listed is only a warning in the row.
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
   * robots.txt: HTTP 200 text body (not an HTML error page); neither "User-agent: *" nor Googlebot may be blocked
     ("Disallow: /"), none of /blog/ and the money-page prefixes may be disallowed, and the exact line
@@ -44,7 +49,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 BASE = "https://www.colddirect.co.uk"
 
@@ -338,6 +345,149 @@ def audio_checks(bodies, fetcher=fetch_asset):
     ok, text, problems = sic.audio_check(lambda p: (200, bodies[p]) if bodies.get(p) else (0, ""), fetcher,
                                          base=BASE)
     return (AUDIO_ROW, text, ok), ["SEO audio: " + p for p in problems]
+
+
+# ------------------------------------------------------------------ sitemap.xml coverage + lastmod integrity
+SITEMAP_ROW = "🗺️ Sitemap Integrity"
+SITEMAP_PREFIX = BASE + "/"                      # every <loc> must start with this (https + www)
+SITEMAP_MIN_DATE = datetime(2020, 1, 1).date()   # older <lastmod> = bogus / placeholder date
+SITEMAP_FUTURE_DAYS = 1                          # tolerated clock skew (Plesk runs on UK time, the runner on UTC)
+_LASTMOD_RX = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$")
+_BLOG_HREF_RX = re.compile(r"""href=["'](?:https?://www\.colddirect\.co\.uk)?(/blog/[A-Za-z0-9._-]+/)["']""")
+BLOG_GONE = (301, 302, 307, 308, 404, 410)       # intentional redirect stubs / removed posts
+
+
+def _sm_label(url):
+    return url.replace(BASE, "") or "/"
+
+
+def _short(items, n=5):
+    return ", ".join(items[:n]) + (" (+%d more)" % (len(items) - n) if len(items) > n else "")
+
+
+def parse_lastmod(text):
+    """-> (date, None) for a strict ISO-8601 date / datetime ('YYYY-MM-DD' or 'YYYY-MM-DDThh:mm[:ss[.s]][Z|+hh:mm]'),
+    otherwise (None, reason)."""
+    m = _LASTMOD_RX.match((text or "").strip())
+    if not m:
+        return None, "%r is not ISO-8601 (YYYY-MM-DD or YYYY-MM-DDThh:mm:ss)" % (text or "")
+    try:
+        day = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3))).date()
+    except ValueError:
+        return None, "%r is not a real calendar date" % text
+    if m.group(4) is not None and (int(m.group(4)) > 23 or int(m.group(5)) > 59 or int(m.group(6) or 0) > 59):
+        return None, "%r has an invalid time" % text
+    tz = m.group(7)
+    if tz and tz != "Z" and (int(tz[1:3]) > 14 or int(tz[4:6]) > 59):
+        return None, "%r has an invalid time zone" % text
+    return day, None
+
+
+def classify_blog_posts(index_html, repo_slugs, fetcher):
+    """Which blog posts are 'active' (must be in the sitemap)? Candidates = repo blog/*.html + links on the live /blog/
+    index. Each is fetched live (no redirects followed): HTTP 200 with a self-referencing canonical = active; an
+    intentional 301 stub (e.g. smeg) or a page canonicalised to another post = inactive. Returns (active, inactive, problems)."""
+    cands = {"/blog/%s/" % s for s in repo_slugs} | set(_BLOG_HREF_RX.findall(index_html or ""))
+    cands.discard("/blog/")
+    active, inactive, problems = [], [], []
+    for path in sorted(cands):
+        status, _, body = fetcher(path)
+        if status in BLOG_GONE:
+            inactive.append(path)
+        elif status != 200:
+            problems.append("blog post %s could not be classified (HTTP %s)" % (path, status))
+        else:
+            canon = [_attrs(t).get("href", "") for t in re.findall(r"<link\b[^>]*>", body or "", re.I)
+                     if _attrs(t).get("rel", "").lower() == "canonical"]
+            (active if canon and canon[0].rstrip("/") == (BASE + path).rstrip("/") else inactive).append(path)
+    return active, inactive, problems
+
+
+def required_sitemap_urls(blog_paths=()):
+    """Homepage + 9 money pages + Enfield + /blog/ index + every active blog post (exact canonical URLs)."""
+    return ([SITEMAP_PREFIX] + [BASE + "/%s/" % s for s in CORE] + [BASE + "/commercial-fridge-repair-enfield/", BASE + "/blog/"]
+            + [BASE + p for p in blog_paths])
+
+
+def sitemap_integrity(xml_text, required, today=None, stubs=()):
+    """Strict validation of the live sitemap.xml. required = exact URLs that must be a <loc>; stubs = redirect /
+    canonicalised-away URLs that should not be listed (warning only). Returns {ok, summary, problems, warnings, count}."""
+    today = today or datetime.now(timezone.utc).date()
+    fail = lambda msg: {"ok": False, "summary": msg, "problems": [msg], "warnings": [], "count": 0}  # noqa: E731
+    try:
+        root = ET.fromstring((xml_text or "").encode("utf-8"))
+    except (ET.ParseError, ValueError) as e:
+        return fail("sitemap.xml is not valid XML (%s)" % (str(e)[:80] or "empty"))
+    local = lambda el: el.tag.rsplit("}", 1)[-1]  # noqa: E731
+    if local(root) != "urlset":
+        return fail("sitemap.xml root is <%s>, expected <urlset>" % local(root))
+    entries = [e for e in root if local(e) == "url"]
+    if not entries:
+        return fail("sitemap.xml has no <url> entries")
+    locs, seen, dups, bad_loc, bad_host, bad_lm, dates = [], {}, [], [], [], [], []
+    for i, e in enumerate(entries, 1):
+        loc_els = [c for c in e if local(c) == "loc"]
+        loc = (loc_els[0].text or "").strip() if loc_els else ""
+        label = _sm_label(loc) if loc else "<url> #%d" % i
+        if len(loc_els) != 1 or not loc:
+            bad_loc.append("<url> #%d has %s <loc>" % (i, "no" if not loc else "%d" % len(loc_els)))
+        if loc:
+            locs.append(loc)
+            if not loc.startswith(SITEMAP_PREFIX):
+                bad_host.append(loc)
+            key = loc.lower().rstrip("/")
+            if key in seen:
+                dups.append(loc)
+            seen[key] = True
+        lm = [c for c in e if local(c) == "lastmod"]
+        if len(lm) != 1:
+            bad_lm.append("%s (%s <lastmod>)" % (label, "missing" if not lm else "%d" % len(lm)))
+            continue
+        day, why = parse_lastmod(lm[0].text)
+        if why:
+            bad_lm.append("%s (%s)" % (label, why))
+        elif day < SITEMAP_MIN_DATE:
+            bad_lm.append("%s (%s is older than %s)" % (label, day, SITEMAP_MIN_DATE))
+        elif day > today + timedelta(days=SITEMAP_FUTURE_DAYS):
+            bad_lm.append("%s (%s is in the future)" % (label, day))
+        else:
+            dates.append(day)
+    problems = list(bad_loc)
+    missing = [u for u in required if u not in locs]
+    if missing:
+        problems.append("%d required URL(s) missing from <loc>: %s" % (len(missing), _short([_sm_label(u) for u in missing])))
+    if dups:
+        problems.append("%d duplicate <loc>: %s" % (len(dups), _short([_sm_label(u) for u in dups])))
+    if bad_lm:
+        problems.append("%d <url> without a valid <lastmod>: %s" % (len(bad_lm), _short(bad_lm)))
+    if bad_host:
+        problems.append("%d <loc> not %s...: %s" % (len(bad_host), SITEMAP_PREFIX, _short(bad_host)))
+    warnings = []
+    listed = [s for s in stubs if BASE + s in locs]
+    if listed:
+        warnings.append("redirect/canonicalised URL(s) still listed: " + _short(listed))
+    if problems:
+        return {"ok": False, "summary": "; ".join(problems), "problems": problems, "warnings": warnings, "count": len(locs)}
+    summary = "%d URLs: all %d required URLs present, no duplicates, %d/%d valid lastmod (%s to %s), all https://www" % (
+        len(locs), len(required), len(dates), len(entries), min(dates), max(dates))
+    if warnings:
+        summary += " | ⚠️ " + "; ".join(warnings)
+    return {"ok": True, "summary": summary, "problems": [], "warnings": warnings, "count": len(locs)}
+
+
+def sitemap_checks(xml_text, fetcher=None, repo_slugs=None, today=None):
+    """Discover the active blog posts, then validate the sitemap. Returns (row, failures)."""
+    fetcher = fetcher or (lambda p: fetch(p, body=True))
+    if repo_slugs is None:
+        blog_dir = Path(__file__).resolve().parent.parent / "blog"
+        repo_slugs = sorted(p.stem for p in blog_dir.glob("*.html") if p.stem != "index") if blog_dir.is_dir() else []
+    _, _, idx = fetcher("/blog/")
+    active, inactive, cls_problems = classify_blog_posts(idx, repo_slugs, fetcher)
+    r = sitemap_integrity(xml_text, required_sitemap_urls(active), today, stubs=inactive)
+    problems = r["problems"] + cls_problems
+    ok = r["ok"] and not cls_problems
+    value = r["summary"] if ok else "; ".join(problems)
+    return (SITEMAP_ROW, value, ok), ["Sitemap: " + p for p in problems]
 
 
 def looks_like_html(headers, data):
@@ -1120,7 +1270,91 @@ def selftest():
     row, fails = audio_checks(miss, lambda u: mp3_ok)
     assert not row[2] and "page not fetched" in row[1], row
 
-    print("selftest OK (SEO audio assets: %d scenarios incl. 10/10 ID3 valid, missing <audio>, mismatched AudioObject contentUrl, "
+    # sitemap.xml coverage + lastmod + duplicates + https://www integrity
+    import money_data as md_
+    assert set(CORE) == set(md_.HUB_ORDER) and len(CORE) == 9, "CORE must mirror the 9 money pages of tools/money_data.py"
+    TODAY = datetime(2026, 10, 21).date()
+    BLOGS = ["/blog/post-a/", "/blog/post-b/"]
+    REQ = required_sitemap_urls(BLOGS)
+    assert len(REQ) == 14 and REQ[0] == BASE + "/" and BASE + "/blog/" in REQ and BASE + "/commercial-fridge-repair-enfield/" in REQ
+    assert all(BASE + "/%s/" % s in REQ for s in md_.HUB_ORDER)
+
+    def sm_xml(urls=None, lastmod="2026-10-21", extra="", root="urlset"):
+        body = "".join("<url><loc>%s</loc>%s</url>" % (u, "" if lastmod is None else "<lastmod>%s</lastmod>" % lastmod)
+                       for u in (REQ if urls is None else urls))
+        return ('<?xml version="1.0" encoding="UTF-8"?><%s xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">%s%s</%s>'
+                % (root, body, extra, root))
+
+    def chk(xml, stubs=()):
+        return sitemap_integrity(xml, REQ, TODAY, stubs)
+
+    def bad(xml, *needles, stubs=()):
+        r = chk(xml, stubs)
+        assert not r["ok"] and r["problems"] and all(n in r["summary"] for n in needles), r
+        return r
+
+    r = chk(sm_xml())
+    assert r["ok"] and r["count"] == 14 and r["summary"].startswith("14 URLs: all 14 required URLs present, no duplicates, 14/14 valid lastmod"), r
+    assert chk(sm_xml(REQ + [BASE + "/about-us/", BASE + "/x/"]))["ok"]                 # extra URLs are fine
+    for i, label in ((0, "required URL(s) missing from <loc>: /"), (1, "/commercial-fridge-repair-london/"), (9, "/cellar-cooler-repair-london/"),
+                     (10, "/commercial-fridge-repair-enfield/"), (11, "/blog/"), (12, "/blog/post-a/"), (13, "/blog/post-b/")):
+        bad(sm_xml([u for j, u in enumerate(REQ) if j != i]), "1 required URL(s) missing", label)
+    bad(sm_xml([]), "no <url> entries")
+    w = chk(sm_xml(REQ + [BASE + "/blog/smeg/"]), stubs=["/blog/smeg/", "/blog/gone/"])
+    assert w["ok"] and w["warnings"] and "/blog/smeg/" in w["summary"] and "⚠️" in w["summary"], w   # redirect stub listed = warning only
+    bad(sm_xml(REQ + [REQ[3]]), "1 duplicate <loc>", "/cold-room-repair-london/")                  # exact duplicate
+    bad(sm_xml(REQ + [REQ[11].rstrip("/")]), "duplicate <loc>")                                      # trailing-slash duplicate
+    bad(sm_xml(lastmod=None), "14 <url> without a valid <lastmod>", "(missing <lastmod>)")
+    bad(sm_xml(extra="<url><loc>%s/x/</loc></url>" % BASE), "1 <url> without a valid <lastmod>", "/x/ (missing <lastmod>)")
+    bad(sm_xml(extra="<url><loc>%s/x/</loc><lastmod>2026-10-21</lastmod><lastmod>2026-10-21</lastmod></url>" % BASE), "2 <lastmod>")
+    for lm in ("21-10-2026", "2026-13-40", "2026-02-30", "2026-10-21 10:00:00", "garbage", "", "2026-10-21T25:00:00Z", "2026/10/21",
+               "20261021", "2026-10-21T10", "2026-10-21T10:00:00+99:00", "2026-10-21T10:61:00Z", " 2026-1-21"):
+        bad(sm_xml(lastmod=lm), "without a valid <lastmod>")
+    for lm in ("2026-10-21", "2026-10-21T03:02:49Z", "2026-10-21T03:02:49+01:00", "2026-10-21T03:02:49.123Z", "2026-10-21T03:02",
+               "2020-01-01", "2026-10-22", " 2026-10-21 "):
+        assert chk(sm_xml(lastmod=lm))["ok"], lm                                                    # incl. boundary + 1-day tz tolerance
+    bad(sm_xml(lastmod="2026-10-23"), "is in the future")
+    bad(sm_xml(lastmod="2099-01-01T00:00:00Z"), "is in the future")
+    bad(sm_xml(lastmod="2019-12-31"), "is older than 2020-01-01")
+    for loc in ("http://www.colddirect.co.uk/x/", "https://colddirect.co.uk/y/", "http://colddirect.co.uk/z/",
+                "https://www.colddirect.co.uk.evil.example/", "//www.colddirect.co.uk/x/"):
+        bad(sm_xml(REQ + [loc]), "<loc> not https://www.colddirect.co.uk/", loc)
+    bad(sm_xml(extra="<url><lastmod>2026-10-21</lastmod></url>"), "has no <loc>")
+    bad("<urlset><url><loc>x</url>", "not valid XML")
+    bad("", "not valid XML")
+    bad("not xml at all", "not valid XML")
+    bad(sm_xml(root="sitemapindex"), "expected <urlset>")
+    assert chk(sm_xml().replace(' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"', ""))["ok"]   # namespace optional
+
+    live_pages = {"/blog/post-a/": (200, '<link rel="canonical" href="%s/blog/post-a/">' % BASE),
+                  "/blog/post-b/": (200, '<link href="%s/blog/post-b" rel="canonical" />' % BASE),
+                  "/blog/smeg/": (301, ""), "/blog/dupe/": (200, '<link rel="canonical" href="%s/blog/post-a/">' % BASE),
+                  "/blog/nocanon/": (200, "<html></html>"), "/blog/boom/": (500, ""), "/blog/post-c/": (404, "")}
+
+    def blog_fetch(p):
+        st, body = live_pages.get(p, (404, ""))
+        return st, {}, body
+    index = '<a href="/blog/post-a/">a</a><a href="%s/blog/post-c/">c</a><a href="/blog/boom/">b</a><a href="/blog/">i</a>' % BASE
+    act, inact, probs = classify_blog_posts(index, ["post-a", "post-b", "smeg", "dupe", "nocanon"], blog_fetch)
+    assert act == ["/blog/post-a/", "/blog/post-b/"], act
+    assert inact == ["/blog/dupe/", "/blog/nocanon/", "/blog/post-c/", "/blog/smeg/"], inact
+    assert len(probs) == 1 and "/blog/boom/" in probs[0] and "HTTP 500" in probs[0], probs
+    # end to end wrapper: row shape, warning for a listed redirect stub, failures prefixed "Sitemap:"
+    live_pages["/blog/boom/"] = (404, "")
+    blog_fetch2 = lambda p: (200, {}, index) if p == "/blog/" else blog_fetch(p)  # noqa: E731
+    row, fails = sitemap_checks(sm_xml(REQ + [BASE + "/blog/smeg/"]), blog_fetch2, ["post-a", "post-b", "smeg"], TODAY)
+    assert row[0] == SITEMAP_ROW and row[2] and fails == [] and row[1].startswith("15 URLs: all 14 required") and "/blog/smeg/" in row[1], row
+    row, fails = sitemap_checks(sm_xml([u for u in REQ if not u.endswith("/post-b/")]), blog_fetch2, ["post-a", "post-b", "smeg"], TODAY)
+    assert not row[2] and len(fails) == 1 and fails[0].startswith("Sitemap: 1 required URL(s) missing") and "/blog/post-b/" in fails[0], (row, fails)
+    row, fails = sitemap_checks("", blog_fetch2, ["post-a"], TODAY)          # sitemap not fetched -> fails, never a vacuous pass
+    assert not row[2] and fails and "not valid XML" in fails[0], (row, fails)
+    live_pages["/blog/boom/"] = (500, "")
+    row, fails = sitemap_checks(sm_xml(REQ), blog_fetch2, ["post-a", "post-b"], TODAY)
+    assert not row[2] and any("could not be classified" in f for f in fails), (row, fails)
+
+    print("selftest OK (sitemap integrity: required home/9 money/Enfield//blog/ + active blog posts, duplicates, lastmod "
+          "ISO-8601 / future / <2020 / missing, http:// and non-www <loc>, malformed XML, redirect-stub warning; "
+          "SEO audio assets: %d scenarios incl. 10/10 ID3 valid, missing <audio>, mismatched AudioObject contentUrl, "
           "HTTP 404, truncated <10 KB, HTML soft-404; static assets: css/js/img extraction + 200 ok; 404 / 0-byte / soft-404 HTML / external ignored; "
           "page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
           "latency: <1.5 s ok, 1.5-3 s slow warning, >3 s retried once, spike passes, persistent fails; "
@@ -1179,6 +1413,9 @@ def run_all_checks():
         rows.append(("sitemap excludes " + u.replace(BASE, ""), "absent" if ok else "PRESENT", ok))
         if not ok:
             failures.append("sitemap wrongly contains " + u)
+    sm_row, sm_failures = sitemap_checks(sm if code == 200 else "")   # coverage, duplicates, lastmod, https://www
+    rows.append(sm_row)
+    failures += sm_failures
 
     for src, dst in REDIRECTS:
         code, headers, _ = fetch(src)
