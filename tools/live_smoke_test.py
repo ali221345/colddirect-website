@@ -326,6 +326,20 @@ def extract_assets(html, page_url=BASE + "/", limit=ASSET_MAX):
     return out[:limit]
 
 
+# ------------------------------------------------------------------ spoken SEO audio summaries (homepage + 9 money hubs)
+AUDIO_ROW = "🔊 SEO Audio Assets"    # same string as seo_integrity_check.AUDIO_ROW (asserted in selftest)
+
+
+def audio_checks(bodies, fetcher=fetch_asset):
+    """Verify the <audio> embeds, AudioObject/SpeakableSpecification JSON-LD and the live MP3 files of the homepage
+    and the 9 money pages, reusing the already-fetched HTML in `bodies` {path: html}. The logic lives in
+    seo_integrity_check.py (single source of truth, also run by the 24 h integrity job). Returns (row, failures)."""
+    import seo_integrity_check as sic
+    ok, text, problems = sic.audio_check(lambda p: (200, bodies[p]) if bodies.get(p) else (0, ""), fetcher,
+                                         base=BASE)
+    return (AUDIO_ROW, text, ok), ["SEO audio: " + p for p in problems]
+
+
 def looks_like_html(headers, data):
     """True for an HTML document (soft-404 / error page) served where CSS, JS or an image is expected."""
     ct = {k.lower(): v for k, v in (headers or {}).items()}.get("content-type", "").lower()
@@ -1081,12 +1095,38 @@ def selftest():
     integrity_checks(paths=["/"], fetcher=lambda p: (200, HDR, home), bodies=bd)
     assert bd == {"/": home}
 
-    print("selftest OK (static assets: css/js/img extraction + 200 ok; 404 / 0-byte / soft-404 HTML / external ignored; "
+    # spoken SEO audio: shared scenarios (10/10 ID3 valid, missing <audio>, mismatched contentUrl, 404, truncated,
+    # HTML soft-404, ...) + the live_smoke_test wrapper / row shape
+    import seo_integrity_check as sic
+    import generate_seo_audio as ga
+    assert AUDIO_ROW == sic.AUDIO_ROW
+    n_audio = sic.audio_selftest()
+    a_bodies = {}
+    for a_path, a_stem in sic.audio_targets():
+        a_slug = a_path.strip("/")
+        a_name, a_script = {s: (n, sc) for s, _, n, sc in ga.md.audio_pages()}[a_slug]
+        a_bodies[a_path] = ga.inject("<html><body><h1>H</h1><footer></footer></body></html>",
+                                     ga.audio_block(a_slug, a_stem, a_name, a_script, 27.0))
+    mp3_ok = (200, {"Content-Type": "audio/mpeg", "Content-Length": "20000"}, sic._fake_mp3())
+    row, fails = audio_checks(a_bodies, lambda u: mp3_ok)
+    assert row == (AUDIO_ROW, "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", True) and fails == [], row
+    soft = (200, {"Content-Type": "text/html"}, b"<!DOCTYPE html><html><body>" + b"x" * 20000 + b"</body></html>")
+    row, fails = audio_checks(a_bodies, lambda u: soft if u.endswith("/cold-room-repair-london.mp3") else mp3_ok)
+    assert not row[2] and row[1].startswith("9/10 healthy, FAILING: /cold-room-repair-london/") and len(fails) == 1 and fails[0].startswith("SEO audio:"), row
+    row, fails = audio_checks({}, lambda u: mp3_ok)       # no page HTML fetched -> fail, never a vacuous pass
+    assert not row[2] and len(fails) == 10, (row, fails)
+    miss = dict(a_bodies)
+    miss["/"] = ""
+    row, fails = audio_checks(miss, lambda u: mp3_ok)
+    assert not row[2] and "page not fetched" in row[1], row
+
+    print("selftest OK (SEO audio assets: %d scenarios incl. 10/10 ID3 valid, missing <audio>, mismatched AudioObject contentUrl, "
+          "HTTP 404, truncated <10 KB, HTML soft-404; static assets: css/js/img extraction + 200 ok; 404 / 0-byte / soft-404 HTML / external ignored; "
           "page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
           "latency: <1.5 s ok, 1.5-3 s slow warning, >3 s retried once, spike passes, persistent fails; "
           "SSL threshold: fail below %d days, expired/invalid certificates; "
           "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail; "
-          "robots.txt: healthy ok, blanket / Googlebot / money-path blocks, bad Sitemap, HTML 404/500 fail)" % SSL_MIN_DAYS)
+          "robots.txt: healthy ok, blanket / Googlebot / money-path blocks, bad Sitemap, HTML 404/500 fail)" % (n_audio, SSL_MIN_DAYS))
     return 0
 
 
@@ -1116,6 +1156,10 @@ def run_all_checks():
     asset_row, asset_failures = asset_checks(bodies.get("/", ""))     # reuses the already-fetched homepage HTML
     rows.append(asset_row)
     failures += asset_failures
+
+    audio_row, audio_failures = audio_checks(bodies)                  # homepage + 9 money pages: <audio>, schema, MP3 files
+    rows.append(audio_row)
+    failures += audio_failures
 
     t = timed_fetch(lambda: fetch("/sitemap.xml", body=True))
     code, _, sm = t["result"]

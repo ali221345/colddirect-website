@@ -84,6 +84,8 @@ def smoke_section(res, lt):
         L.append("  %s Slow pages (1.5-3 s)                              : %s" % (WARN, ", ".join(slow)))
     for r in assets:
         L.append("  %s Static assets (homepage)                          : %s" % (mark(r[2]), r[1]))
+    for r in [r for r in rows if r[0] == getattr(lt, "AUDIO_ROW", None)]:
+        L.append("  %s SEO audio assets (home + 9 money pages)          : %s" % (mark(r[2]), r[1]))
     for r in sm:
         L.append("  %s sitemap.xml                                       : %d URLs (HTTP %s)" % (mark(r[2]), len(res["urls"]), r[1].split(" ")[0]))
     if sm_rules:
@@ -336,6 +338,7 @@ def selftest():
     rows = [("HTTP 200 /blog/", "200 (80 ms)", True)]
     rows += [("HTTP 200 " + p, ok_val, True) for p in lt.INTEGRITY_PAGES]
     rows += [(lt.ASSET_ROW, "13/13 core CSS/JS/Image assets HTTP 200 & non-empty (4 CSS, 4 JS, 2 icon, 3 image)", True),
+             (lt.AUDIO_ROW, "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", True),
              ("HTTP 200 /sitemap.xml (123 URLs)", "200 (90 ms)", True),
              ("sitemap contains /blog/", "yes", True), ("sitemap excludes /about/", "absent", True),
              ("301 /about/ -> /about-us/", "301 /about-us/", True),
@@ -350,6 +353,7 @@ def selftest():
     assert p == 0 and "11/11 OK" in t and "average 200 ms, max 300 ms (3 requests)" in t and "13/13 core CSS/JS/Image" in t, t
     assert "123 URLs (HTTP 200)" in t and "robots.txt" in t and "Canonical host redirects" in t and "2/2 OK" in t, t
     assert "/blog/" in t and "/commercial-fridge-repair-enfield/" in t
+    assert "SEO audio assets" in t and "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact" in t, t
     # a failing page and a SLOW page are surfaced; FAILURES listed
     bad = dict(res, rows=[("HTTP 200 /cold-room-repair-london/", "HTTP 200 but canonical missing (90 ms)", False) if r[0] == "HTTP 200 /cold-room-repair-london/"
                           else ("HTTP 200 /", ok_val.replace("120 ms", "1800 ms ⚠️ SLOW"), True) if r[0] == "HTTP 200 /" else r for r in rows],
