@@ -6,6 +6,9 @@ Checks (all against the LIVE site, no redirects followed for the 200 checks):
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
+  * canonical host / protocol: http://colddirect.co.uk/, http://www.colddirect.co.uk/ and https://colddirect.co.uk/
+    must each reach https://www.colddirect.co.uk/ (HTTP 200) via permanent 301/308 redirects only, at most 2 hops,
+    no loop; a direct 200 (duplicate host) or a temporary 302/307 FAILS. Exact hop chain is printed / summarised.
   * TLS certificate of www.colddirect.co.uk and colddirect.co.uk (port 443, 10 s timeout, full verification):
     FAILS if the certificate is invalid, expired or has fewer than 14 days left (days_remaining < 14)
 Writes a Markdown summary (including the live sitemap URL count and SSL status / expiry / days remaining)
@@ -25,6 +28,7 @@ import ssl
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
@@ -72,6 +76,82 @@ def fetch(path, body=False, tries=3):
         except Exception as e:  # network blip - retry
             last = e
     return 0, {}, "ERR %s" % type(last).__name__
+
+
+# ------------------------------------------------------------------ canonical host / protocol redirects
+CANONICAL = "https://www.colddirect.co.uk/"
+CANONICAL_VARIANTS = ["http://colddirect.co.uk/", "http://www.colddirect.co.uk/", "https://colddirect.co.uk/"]
+MAX_REDIRECT_HOPS = 2
+
+
+def fetch_first_hop(url, tries=3):
+    """One request, redirects NOT followed. Returns (status, Location header or '')."""
+    last = None
+    for _ in range(tries):
+        req = urllib.request.Request(url, headers={"User-Agent": UA, "Cache-Control": "no-cache"})
+        try:
+            r = OPENER.open(req, timeout=40)
+            return r.status, ""
+        except urllib.error.HTTPError as e:
+            return e.code, {k.lower(): v for k, v in dict(e.headers).items()}.get("location", "")
+        except Exception as e:  # noqa: BLE001 - network blip, retry
+            last = e
+    return 0, "ERR %s" % type(last).__name__
+
+
+def check_canonical_redirect(start, first_hop=fetch_first_hop, canonical=CANONICAL, max_hops=MAX_REDIRECT_HOPS):
+    """Follow `start` hop by hop and require: only permanent (301/308) redirects, at most `max_hops` of them,
+    no loop, and a final HTTP 200 on the canonical URL. A direct 200 on a non-canonical variant is a failure
+    (duplicate host). Returns dict(start, ok, chain, error); chain looks like
+    'http://colddirect.co.uk/ -> 301 -> https://www.colddirect.co.uk/ (200)'."""
+    chain = [start]
+    parts = [start]
+    cur = start
+    hops = 0
+    error = ""
+    while True:
+        status, loc = first_hop(cur)
+        if status in (301, 308):
+            nxt = urllib.parse.urljoin(cur, loc) if loc else ""
+            parts += ["%d" % status, nxt or "(no Location)"]
+            if not nxt:
+                error = "%d redirect without a Location header" % status
+                break
+            if nxt in chain:
+                error = "redirect loop (%s seen twice)" % nxt
+                break
+            hops += 1
+            if hops > max_hops:
+                error = "more than %d redirect hops" % max_hops
+                break
+            chain.append(nxt)
+            cur = nxt
+            continue
+        if status in (302, 303, 307):
+            parts += ["%d" % status, urllib.parse.urljoin(cur, loc) if loc else "(no Location)"]
+            error = "temporary %d redirect instead of a permanent 301" % status
+            break
+        if status == 200:
+            parts[-1] += " (200)"
+            if hops == 0:
+                error = "returns 200 without redirecting (duplicate host/protocol variant)"
+            elif cur != canonical:
+                error = "lands on %s instead of %s" % (cur, canonical)
+            break
+        parts += ["%s" % (status or loc or "no response")]
+        error = "unexpected status %s" % (status or loc or "no response")
+        break
+    return {"start": start, "ok": not error, "chain": " -> ".join(parts), "error": error}
+
+
+def canonical_checks(variants=None, first_hop=fetch_first_hop):
+    rows, failures = [], []
+    for v in variants or CANONICAL_VARIANTS:
+        r = check_canonical_redirect(v, first_hop=first_hop)
+        rows.append(("Canonical redirect " + v, r["chain"], r["ok"]))
+        if not r["ok"]:
+            failures.append("canonical redirect %s: %s [%s]" % (v, r["error"], r["chain"]))
+    return rows, failures
 
 
 # ------------------------------------------------------------------ SSL / TLS certificate check
@@ -234,7 +314,60 @@ def selftest():
     assert [ok for _, _, ok in rows] == [True, False] and len(failures) == 1 and "b.example" in failures[0], failures
     # nothing secret-looking ever ends up in the text
     assert "BEGIN" not in str(results) and "private" not in str(results).lower()
-    print("selftest OK (SSL threshold: fail below %d days, expired and invalid certificates)" % SSL_MIN_DAYS)
+
+    # ---------------- canonical host / protocol redirect logic (no network)
+    def site(table):
+        """fake first-hop fetcher: url -> (status, location)"""
+        def f(url):
+            return table[url]
+        return f
+
+    H, HW, SW, S = "http://colddirect.co.uk/", "http://www.colddirect.co.uk/", "https://colddirect.co.uk/", CANONICAL
+    # direct 301 to canonical
+    r = check_canonical_redirect(H, first_hop=site({H: (301, S), S: (200, "")}))
+    assert r["ok"] and r["chain"] == "http://colddirect.co.uk/ -> 301 -> https://www.colddirect.co.uk/ (200)", r
+    # 2-hop 301 chain (http apex -> https apex -> https www) and a 308 are fine
+    r = check_canonical_redirect(H, first_hop=site({H: (301, SW), SW: (301, S), S: (200, "")}))
+    assert r["ok"] and r["chain"] == ("http://colddirect.co.uk/ -> 301 -> https://colddirect.co.uk/ -> 301 -> "
+                                      "https://www.colddirect.co.uk/ (200)"), r
+    assert check_canonical_redirect(SW, first_hop=site({SW: (308, S), S: (200, "")}))["ok"]
+    # relative Location header is resolved
+    assert check_canonical_redirect(HW, first_hop=site({HW: (301, "https://www.colddirect.co.uk/"), S: (200, "")}))["ok"]
+    # accidental 200 without redirect (duplicate host) -> FAIL
+    r = check_canonical_redirect(SW, first_hop=site({SW: (200, "")}))
+    assert not r["ok"] and "without redirecting" in r["error"], r
+    # temporary 302 / 307 instead of 301 -> FAIL (also when it is the 2nd hop)
+    r = check_canonical_redirect(H, first_hop=site({H: (302, S)}))
+    assert not r["ok"] and "temporary 302" in r["error"], r
+    r = check_canonical_redirect(H, first_hop=site({H: (301, SW), SW: (307, S)}))
+    assert not r["ok"] and "temporary 307" in r["error"], r
+    # redirect loop -> FAIL
+    r = check_canonical_redirect(H, first_hop=site({H: (301, SW), SW: (301, H)}))
+    assert not r["ok"] and "loop" in r["error"], r
+    r = check_canonical_redirect(S, first_hop=site({S: (301, S)}))
+    assert not r["ok"] and "loop" in r["error"], r
+    # three hops -> FAIL (max 2)
+    X = "https://colddirect.co.uk/x"
+    r = check_canonical_redirect(H, first_hop=site({H: (301, SW), SW: (301, X), X: (301, S), S: (200, "")}))
+    assert not r["ok"] and "more than 2" in r["error"], r
+    # wrong landing page -> FAIL; error status / no response / missing Location -> FAIL
+    r = check_canonical_redirect(H, first_hop=site({H: (301, "https://www.colddirect.co.uk/about-us/"),
+                                                    "https://www.colddirect.co.uk/about-us/": (200, "")}))
+    assert not r["ok"] and "lands on" in r["error"], r
+    assert not check_canonical_redirect(H, first_hop=site({H: (301, S), S: (500, "")}))["ok"]
+    assert not check_canonical_redirect(H, first_hop=site({H: (0, "ERR URLError")}))["ok"]
+    assert not check_canonical_redirect(H, first_hop=site({H: (301, "")}))["ok"]
+    # aggregate: all 3 healthy -> 3 ok rows; one bad variant -> exactly one failure naming it
+    good = {H: (301, S), HW: (301, S), SW: (301, S), S: (200, "")}
+    rows, failures = canonical_checks(first_hop=site(good))
+    assert len(rows) == 3 and all(ok for _, _, ok in rows) and not failures, (rows, failures)
+    bad = dict(good)
+    bad[SW] = (200, "")
+    rows, failures = canonical_checks(first_hop=site(bad))
+    assert [ok for _, _, ok in rows] == [True, True, False] and len(failures) == 1 and SW in failures[0], failures
+
+    print("selftest OK (SSL threshold: fail below %d days, expired/invalid certificates; "
+          "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail)" % SSL_MIN_DAYS)
     return 0
 
 
@@ -284,6 +417,10 @@ def main():
         rows.append(("301 %s -> %s" % (src, dst), "%s %s" % (code, loc.replace(BASE, "") or "-"), ok))
         if not ok:
             failures.append("%s expected 301 to %s, got %s %s" % (src, dst, code, loc))
+
+    host_rows, host_failures = canonical_checks()
+    rows += host_rows
+    failures += host_failures
 
     ssl_rows, ssl_failures, ssl_results = ssl_checks()
     rows += ssl_rows
