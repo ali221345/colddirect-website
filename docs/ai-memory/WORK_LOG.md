@@ -613,3 +613,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Live audit after prior sitewide run: 119/122 sitemap URLs had `<audio>`; missing html-only pages `blast-freezing.html`, `cold-storage.html`, `walk-in-fridge-repair-london.html` (no `/index.html` twin). Mobile CSS still docked bottom on ≤720px — owner required top-right on ALL screens.
 - New tool `tools/top_right_welcome_audio.py`: injects `<!-- CD-TOP-RIGHT-AUDIO -->` immediately after `<body>` with inline `<style id="cd-top-right-audio">` (`position:fixed !important; top/right; never bottom`), `#cd-audio-dock` + `/audio/colddirect-welcome.mp3`, strips `CD-AUDIO-SITEWIDE-V1`, hides legacy `.cd-audio-summary` so only one visible player. 504 HTML files updated (root + mirror). `seo_integrity_check.check_audio_page` prefers hub stem when both welcome + hub MP3 present.
 - No title/H1/meta/canonical/redirect/sitemap edits. Locks intact; protect 12/12; npm test / preflight / parity / deploy_guard OK.
+
+## 2026-10-21 23:42 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39694470611 | commit 3f76c2f
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
