@@ -579,3 +579,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Banner `DO NOT REPEAT — COMPLETED & LOCKED MILESTONES` prepended to this file, `colddirect-public-html/colddirect-memory-ledger.md`, and the user-store `colddirect-memory.md`. Three locks: money pages (PR #81, PR #82, title/H1/meta cooldown until 2026-10-31), trailing-slash 301s (`87e96a0`, `5aad3d0`), and the V4.9 / 24h / 48h / live-audit pipelines.
 - `tools/check_locked_state.py` (`--selftest`, then a real run) prints LOCKED and exits 0 while those artifacts are intact. `.cursorrules` and `.cursor/rules/colddirect-agent-memory.mdc` (`alwaysApply: true`) now require that check before any SEO or redirect edit.
 - Workspace auto-run: `.vscode/settings.json` (YOLO / autoRun on, command denylists empty) and `.cursor/cli.json` (`approvalMode: unrestricted`, `deny: []`). `.vscode/**` excluded from the FTP deploy. `.cursor/mcp.json` was not edited (gitignored Search Console server config). User-level Cursor settings gained the same autoRun keys.
+
+## 2026-10-21 11:13 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39589990233 | commit 44ba8f1
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
