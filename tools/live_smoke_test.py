@@ -490,6 +490,42 @@ def sitemap_checks(xml_text, fetcher=None, repo_slugs=None, today=None):
     return (SITEMAP_ROW, value, ok), ["Sitemap: " + p for p in problems]
 
 
+# ------------------------------------------------------------------ retired blog stubs: real single-hop HTTP 301 -> 200
+BLOG_STUB_ROW = "↪️ Blog Stub 301s"
+BLOG_STUB_REDIRECTS = {      # retired / domestic blog slug -> destination path (web.config + .htaccess + auto-seo.aspx redirectedSlugs)
+    "smeg-fridge-freezer-control-panel": "/commercial-fridge-repair-london/",
+    "samsung-fridge-freezer-not-freezing": "/commercial-freezer-repair-london/",
+    "best-ice-cream-makers": "/ice-cream-machine-repair-london/",
+    "cold-room-troubleshooting": "/blog/cold-room-temperature-fluctuation/",
+    "chiller-not-cooling": "/chiller-repair-london/",
+}
+
+
+def blog_stub_checks(fetcher=None):
+    """Both /blog/<slug>/ and /blog/<slug>.html of the 5 retired blog slugs must answer a TRUE HTTP 301 (no meta refresh,
+    no 200, no 302/404, no second hop) whose Location is the exact https://www.colddirect.co.uk destination, and every
+    destination must itself answer HTTP 200. Returns (row, failures)."""
+    fetcher = fetcher or fetch
+    bad, targets, total = [], {}, 0
+    for slug, dst in BLOG_STUB_REDIRECTS.items():
+        for src in ("/blog/%s/" % slug, "/blog/%s.html" % slug):
+            total += 1
+            code, headers, body = fetcher(src)
+            loc = {k.lower(): v for k, v in (headers or {}).items()}.get("location", "")
+            if code != 301:
+                bad.append("%s -> HTTP %s%s (expected 301)" % (src, code, " meta-refresh" if code == 200 and "refresh" in (body or "").lower() else ""))
+            elif urllib.parse.urljoin(BASE + src, loc) != BASE + dst:
+                bad.append("%s -> 301 to %s (expected %s)" % (src, loc or "-", BASE + dst))
+        if dst not in targets:
+            targets[dst] = fetcher(dst)[0]
+        if targets[dst] != 200:
+            bad.append("destination %s -> HTTP %s (expected 200)" % (dst, targets[dst]))
+    if not bad:
+        return (BLOG_STUB_ROW, "%d/%d blog stub URLs (%d slugs x /slash/ + .html) return a single-hop 301 -> %d destinations HTTP 200"
+                % (total, total, len(BLOG_STUB_REDIRECTS), len(targets)), True), []
+    return (BLOG_STUB_ROW, "FAILING: " + "; ".join(bad), False), ["Blog stub 301: " + b for b in bad]
+
+
 def looks_like_html(headers, data):
     """True for an HTML document (soft-404 / error page) served where CSS, JS or an image is expected."""
     ct = {k.lower(): v for k, v in (headers or {}).items()}.get("content-type", "").lower()
@@ -1270,6 +1306,49 @@ def selftest():
     row, fails = audio_checks(miss, lambda u: mp3_ok)
     assert not row[2] and "page not fetched" in row[1], row
 
+    # retired blog stubs: single-hop 301 -> 200 for /blog/<slug>/ and /blog/<slug>.html
+    def stub_site(**over):
+        resp = {}
+        for s, d in BLOG_STUB_REDIRECTS.items():
+            for src in ("/blog/%s/" % s, "/blog/%s.html" % s):
+                resp[src] = (301, {"Location": BASE + d}, "")
+            resp[d] = (200, {}, "<html></html>")
+        resp.update(over)
+        return lambda p: resp.get(p, (404, {}, ""))
+    assert len(BLOG_STUB_REDIRECTS) == 5
+    row, fails = blog_stub_checks(stub_site())
+    assert row == (BLOG_STUB_ROW, "10/10 blog stub URLs (5 slugs x /slash/ + .html) return a single-hop 301 -> 5 destinations HTTP 200", True) and fails == [], row
+    rel = {"/blog/chiller-not-cooling/": (301, {"location": "/chiller-repair-london/"}, "")}      # relative, lower-case header
+    assert blog_stub_checks(stub_site(**rel))[0][2]
+    S1, S2 = "/blog/smeg-fridge-freezer-control-panel/", "/blog/samsung-fridge-freezer-not-freezing.html"
+    for over, needle in (
+            ({S1: (200, {}, "<html>x</html>")}, "%s -> HTTP 200 (expected 301)" % S1),
+            ({S1: (200, {}, '<meta http-equiv="refresh" content="0;url=/x/">')}, "HTTP 200 meta-refresh"),
+            ({S2: (302, {"Location": BASE + "/commercial-freezer-repair-london/"}, "")}, "%s -> HTTP 302" % S2),
+            ({S2: (307, {"Location": BASE + "/commercial-freezer-repair-london/"}, "")}, "HTTP 307"),
+            ({S1: (404, {}, "")}, "%s -> HTTP 404" % S1),
+            ({S1: (0, {}, "ERR")}, "HTTP 0"),
+            ({S2: (301, {"Location": BASE + "/blog/samsung-fridge-freezer-not-freezing/"}, "")},   # 2-hop chain via the old .html -> slash rule
+             "%s -> 301 to %s/blog/samsung-fridge-freezer-not-freezing/ (expected" % (S2, BASE)),
+            ({S1: (301, {"Location": BASE + "/fridge-repair-london/"}, "")}, "(expected %s/commercial-fridge-repair-london/)" % BASE),
+            ({S1: (301, {"Location": "http://www.colddirect.co.uk/commercial-fridge-repair-london/"}, "")}, "301 to http://"),
+            ({S1: (301, {}, "")}, "301 to - (expected"),
+            ({"/chiller-repair-london/": (404, {}, "")}, "destination /chiller-repair-london/ -> HTTP 404"),
+            ({"/blog/cold-room-temperature-fluctuation/": (500, {}, "")}, "-> HTTP 500 (expected 200)")):
+        row, fails = blog_stub_checks(stub_site(**over))
+        assert not row[2] and fails and needle in row[1] and all(f.startswith("Blog stub 301: ") for f in fails), (needle, row)
+    # the 5 slugs must be configured consistently in web.config, .htaccess and auto-seo.aspx (sitemap exclusion)
+    root_dir = Path(__file__).resolve().parent.parent
+    if (root_dir / "web.config").is_file():
+        wc = (root_dir / "web.config").read_text(encoding="utf-8", errors="replace")
+        ht = (root_dir / ".htaccess").read_text(encoding="utf-8", errors="replace")
+        aspx = (root_dir / "auto-seo.aspx").read_text(encoding="utf-8", errors="replace")
+        for s, d in BLOG_STUB_REDIRECTS.items():
+            assert re.search(r'<match url="\^blog/%s\(\?:/index\\\.html\|\\\.html\|\\\.asp\|/\)\?\$"' % re.escape(s), wc), "web.config rule missing: " + s
+            assert 'url="%s%s"' % (BASE, d) in wc, "web.config target missing: " + s
+            assert re.search(r"RewriteRule \^blog/%s\(\\\.html\|/index\\\.html\)\$ %s \[R=301,L\]" % (re.escape(s), re.escape(d)), ht), ".htaccess rule missing: " + s
+            assert '"%s"' % s in aspx, "auto-seo.aspx redirectedSlugs missing: " + s
+
     # sitemap.xml coverage + lastmod + duplicates + https://www integrity
     import money_data as md_
     assert set(CORE) == set(md_.HUB_ORDER) and len(CORE) == 9, "CORE must mirror the 9 money pages of tools/money_data.py"
@@ -1352,7 +1431,8 @@ def selftest():
     row, fails = sitemap_checks(sm_xml(REQ), blog_fetch2, ["post-a", "post-b"], TODAY)
     assert not row[2] and any("could not be classified" in f for f in fails), (row, fails)
 
-    print("selftest OK (sitemap integrity: required home/9 money/Enfield//blog/ + active blog posts, duplicates, lastmod "
+    print("selftest OK (blog stub 301s: 5 slugs x slash/.html single-hop 301 -> 200, 200 / meta-refresh / 302 / 307 / 404 / 2-hop / wrong "
+          "or http:// target / dead destination fail, web.config + .htaccess + auto-seo.aspx consistent; sitemap integrity: required home/9 money/Enfield//blog/ + active blog posts, duplicates, lastmod "
           "ISO-8601 / future / <2020 / missing, http:// and non-www <loc>, malformed XML, redirect-stub warning; "
           "SEO audio assets: %d scenarios incl. 10/10 ID3 valid, missing <audio>, mismatched AudioObject contentUrl, "
           "HTTP 404, truncated <10 KB, HTML soft-404; static assets: css/js/img extraction + 200 ok; 404 / 0-byte / soft-404 HTML / external ignored; "
@@ -1424,6 +1504,10 @@ def run_all_checks():
         rows.append(("301 %s -> %s" % (src, dst), "%s %s" % (code, loc.replace(BASE, "") or "-"), ok))
         if not ok:
             failures.append("%s expected 301 to %s, got %s %s" % (src, dst, code, loc))
+
+    stub_row, stub_failures = blog_stub_checks()                       # 5 retired blog slugs: 301 (slash + .html) -> 200
+    rows.append(stub_row)
+    failures += stub_failures
 
     t = timed_fetch(lambda: fetch("/robots.txt", body=True))
     latencies.append(t["ms"])

@@ -161,7 +161,7 @@ def synthetic(exe, tmp):
     print("synthetic OK: sitemap=%d urls, run1 updated=%d, run2 updated=0" % (n1, u1))
 
 
-def real_tree(exe, tmp):
+def real_tree(exe, tmp, sync=False):
     root = os.path.join(tmp, "real")
     skip = {"node_modules", ".git", "colddirect-public-html", "logs", "backups", "docs", "tools", "agent", "reports", "seo-audit",
             "scripts", "templates", "images", "css", "js", "public", "app", "mnt", ".github", ".cursor", ".vscode", "_wa_src"}
@@ -176,8 +176,25 @@ def real_tree(exe, tmp):
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 shutil.copyfile(os.path.join(dp, f), dst)
                 n += 1
+    s0 = snapshot(root)
     u1, n1 = run(exe, root)
     s1 = snapshot(root)
+    # DEPLOY DRIFT: Plesk's git deploy resets every page that differs from the repo beyond line endings (CRLF/LF-only
+    # differences are invisible to git with core.autocrlf), so a page whose committed text is not the aspx fixed point
+    # is rewritten by the FIRST auto-seo run after every deploy ("HTML Updated: N"). Fixed point = the aspx output.
+    def norm(b):
+        return b.replace(b"\r\n", b"\n")
+    drift = []
+    for k in sorted(s1):
+        if k.endswith(".html") and s1[k] != s0.get(k):
+            a, b = open(os.path.join(ROOT, k), "rb").read(), open(os.path.join(root, k), "rb").read()
+            if norm(a) != norm(b):
+                i = next((i for i in range(min(len(norm(a)), len(norm(b)))) if norm(a)[i] != norm(b)[i]), min(len(norm(a)), len(norm(b))))
+                drift.append(k)
+                print("  DRIFT %s @%d len %d->%d repo=%r aspx=%r" % (k, i, len(norm(a)), len(norm(b)), norm(a)[i:i + 60], norm(b)[i:i + 60]))
+                if sync:
+                    shutil.copyfile(os.path.join(root, k), os.path.join(ROOT, k))
+                    print("    synced the aspx fixed-point version into the repo working tree:", k)
     u2, n2 = run(exe, root)
     s2 = snapshot(root)
     u3, n3 = run(exe, root)
@@ -185,6 +202,11 @@ def real_tree(exe, tmp):
     print("real tree: %d html files | run1 updated=%d | run2 updated=%d | run3 updated=%d | sitemap=%d urls" % (n, u1, u2, u3, n3))
     changed = [k for k in s1 if s1[k] != s2.get(k)]
     assert u2 == 0 and u3 == 0 and s2 == s3, "NOT IDEMPOTENT: run2 changed %d files, e.g. %s" % (len(changed), changed[:5])
+    if sync:
+        print("real tree: %d drifting page(s) synced; commit them (git normalises the line endings)" % len(drift))
+    else:
+        assert not drift, ("DEPLOY DRIFT: %d page(s) are not at the auto-seo fixed point (the first run after every deploy rewrites "
+                           "them -> 'HTML Updated: %d'): %s. Fix: python tools/test_auto_seo.py --sync, then commit." % (len(drift), len(drift), drift))
     sm = sitemap(root)
     for u in (BASE + "blog/", BASE + "commercial-fridge-repair-enfield/"):
         assert u in sm, "real tree: missing from sitemap: " + u
@@ -196,6 +218,20 @@ def real_tree(exe, tmp):
     for p in glob.glob(os.path.join(root, "blog", "*", "index.html")):
         orig = open(os.path.join(ROOT, os.path.relpath(p, root)), "rb").read()
         assert open(p, "rb").read() == orig, "blog page altered by auto-seo: " + os.path.relpath(p, root)
+    # a Linux / git-blob checkout (every file LF-only, exactly what the CI runner uploads) must not count as "updated" either
+    lf_root = os.path.join(tmp, "real_lf")
+    for dp, _, fs in os.walk(root):
+        for f in fs:
+            if f.endswith(".html"):
+                dst = os.path.join(lf_root, os.path.relpath(os.path.join(dp, f), root))
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                open(dst, "wb").write(norm(open(os.path.join(dp, f), "rb").read()))
+    lf0 = snapshot(lf_root)
+    ulf, _ = run(exe, lf_root)
+    lf1 = snapshot(lf_root)
+    assert ulf == 0 and all(lf1.get(k) == v for k, v in lf0.items() if k.endswith(".html")), \
+        "LF-only checkout was rewritten by the first run (HTML Updated: %d)" % ulf
+    print("real tree LF-only checkout: first run HTML Updated: 0 (no EOL-only rewrites)")
     print("real tree OK: blog urls in sitemap=%d, enfield present, stubs/preview/brands-plural absent, blog pages untouched" % len(blog_urls))
 
 
@@ -235,7 +271,7 @@ def main():
         print("compiled OK")
         auth_tests(exe, tmp)
         synthetic(exe, tmp)
-        real_tree(exe, tmp)
+        real_tree(exe, tmp, sync="--sync" in sys.argv)
         print("ALL AUTO-SEO TESTS PASSED")
         return 0
     finally:

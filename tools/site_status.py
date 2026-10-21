@@ -88,6 +88,8 @@ def smoke_section(res, lt):
         L.append("  %s SEO audio assets (home + 9 money pages)          : %s" % (mark(r[2]), r[1]))
     for r in sm:
         L.append("  %s sitemap.xml                                       : %d URLs (HTTP %s)" % (mark(r[2]), len(res["urls"]), r[1].split(" ")[0]))
+    for r in [r for r in rows if r[0] == getattr(lt, "BLOG_STUB_ROW", None)]:
+        L.append("  %s retired blog stubs (301 -> 200)                   : %s" % (mark(r[2]), r[1]))
     for r in [r for r in rows if r[0] == getattr(lt, "SITEMAP_ROW", None)]:
         L.append("  %s sitemap coverage + lastmod integrity              : %s" % (mark(r[2]), r[1]))
     if sm_rules:
@@ -342,6 +344,7 @@ def selftest():
     rows += [(lt.ASSET_ROW, "13/13 core CSS/JS/Image assets HTTP 200 & non-empty (4 CSS, 4 JS, 2 icon, 3 image)", True),
              (lt.AUDIO_ROW, "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", True),
              ("HTTP 200 /sitemap.xml (123 URLs)", "200 (90 ms)", True),
+             (lt.BLOG_STUB_ROW, "10/10 blog stub URLs (5 slugs x /slash/ + .html) return a single-hop 301 -> 5 destinations HTTP 200", True),
              (lt.SITEMAP_ROW, "123 URLs: all 23 required URLs present, no duplicates, 123/123 valid lastmod (2026-10-21 to 2026-10-21), all https://www", True),
              ("sitemap contains /blog/", "yes", True), ("sitemap excludes /about/", "absent", True),
              ("301 /about/ -> /about-us/", "301 /about-us/", True),
@@ -356,6 +359,7 @@ def selftest():
     assert p == 0 and "11/11 OK" in t and "average 200 ms, max 300 ms (3 requests)" in t and "13/13 core CSS/JS/Image" in t, t
     assert "123 URLs (HTTP 200)" in t and "robots.txt" in t and "Canonical host redirects" in t and "2/2 OK" in t, t
     assert "/blog/" in t and "/commercial-fridge-repair-enfield/" in t
+    assert "retired blog stubs" in t and "10/10 blog stub URLs" in t, t
     assert "sitemap coverage + lastmod integrity" in t and "all 23 required URLs present" in t and "123 URLs (HTTP 200)" in t, t
     assert "SEO audio assets" in t and "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact" in t, t
     # a failing page and a SLOW page are surfaced; FAILURES listed

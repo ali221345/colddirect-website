@@ -199,6 +199,7 @@ protected void Page_Load(object sender, EventArgs e)
         "cold-room-troubleshooting", "chiller-not-cooling" });
 
     int updated = 0;
+    List<string> changedFiles = new List<string>();   // diagnostics: which files were rewritten and where they first differ
     List<string> sitemapUrls = new List<string>();
     sitemapUrls.Add("https://www.colddirect.co.uk/");
 
@@ -281,7 +282,7 @@ protected void Page_Load(object sender, EventArgs e)
                         html = new Regex("</title>", RegexOptions.IgnoreCase).Replace(html, "</title>" + (orig.Contains("\r\n") ? "\r\n" : "\n") + "  <meta name=\"description\" content=\"" + bd + "\">", 1);
                     }
                 }
-                if (html != orig) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; }
+                if (ContentDiffers(orig, html)) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; changedFiles.Add(DescribeDiff(rel, orig, html)); }
                 continue;
             }
 
@@ -464,7 +465,7 @@ protected void Page_Load(object sender, EventArgs e)
             if (Regex.IsMatch(html, @"</body>", RegexOptions.IgnoreCase))
                 html = Regex.Replace(html, @"\s*</body>", footerBlock + "</body>", RegexOptions.IgnoreCase);
 
-            if (html != orig) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; }
+            if (ContentDiffers(orig, html)) { File.WriteAllText(file, html, new UTF8Encoding(false)); updated++; changedFiles.Add(DescribeDiff(rel, orig, html)); }
         }
         catch { }
     }
@@ -487,7 +488,26 @@ protected void Page_Load(object sender, EventArgs e)
     catch { }
 
     Response.ContentType = "text/plain";
-    Response.Write("AUTO-SEO V4.9 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o"));
+    Response.Write("AUTO-SEO V4.9 RANKING PUSH OK | HTML Updated: " + updated + " | Sitemap URLs: " + sitemapUrls.Count + " | Time: " + DateTime.UtcNow.ToString("o")
+        + (changedFiles.Count > 0 ? " | Changed: " + string.Join(" ;; ", changedFiles.ToArray()) : ""));
+}
+
+// A deploy (git checkout / FTP of the LF blobs) only changes line endings of the V4 blocks, which the agent writes with CRLF.
+// That is not a content change: never rewrite a page (nor count it as "HTML Updated") for a CRLF/LF-only difference.
+bool ContentDiffers(string a, string b)
+{
+    if (a == b) return false;
+    return a.Replace("\r\n", "\n") != b.Replace("\r\n", "\n");
+}
+
+// where (and how) two versions of a page first differ - shown in the response when a run rewrites a file
+string DescribeDiff(string rel, string a, string b)
+{
+    int n = Math.Min(a.Length, b.Length), i = 0;
+    while (i < n && a[i] == b[i]) i++;
+    string x = a.Substring(i, Math.Min(48, a.Length - i)).Replace("\r", "\\r").Replace("\n", "\\n");
+    string y = b.Substring(i, Math.Min(48, b.Length - i)).Replace("\r", "\\r").Replace("\n", "\\n");
+    return rel + "@" + i + " [" + x + "] -> [" + y + "] (len " + a.Length + "->" + b.Length + ")";
 }
 
 // constant-time comparison so the key cannot be guessed through response timing

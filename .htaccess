@@ -163,6 +163,12 @@ RewriteRule ^blog/commercial-fridge-repair-cost-london$ /blog/commercial-fridge-
 RewriteRule ^blog/commercial-fridge-repair-cost-london/$ /blog/commercial-fridge-repair-cost-london.html [L]
 # Legacy news is an alias of the existing blog, not a separate article.
 RewriteRule ^news(?:/index\.html|/|\.html)?$ https://www.colddirect.co.uk/blog/ [R=301,L]
+# Retired blog stubs: ONE hop straight to the target (mirrors web.config; must stay above the generic .html rule).
+RewriteRule ^blog/smeg-fridge-freezer-control-panel(\.html|/index\.html)$ /commercial-fridge-repair-london/ [R=301,L]
+RewriteRule ^blog/samsung-fridge-freezer-not-freezing(\.html|/index\.html)$ /commercial-freezer-repair-london/ [R=301,L]
+RewriteRule ^blog/best-ice-cream-makers(\.html|/index\.html)$ /ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^blog/cold-room-troubleshooting(\.html|/index\.html)$ /blog/cold-room-temperature-fluctuation/ [R=301,L]
+RewriteRule ^blog/chiller-not-cooling(\.html|/index\.html)$ /chiller-repair-london/ [R=301,L]
 RewriteRule ^(.*)\.html$ /$1/ [R=301,L]
 
 RewriteRule ^ice-cream-machine-repairs-london/?$ /ice-cream-machine-repair-london/ [R=301,L]
