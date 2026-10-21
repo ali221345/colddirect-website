@@ -54,6 +54,7 @@ PAGES = [
     ("page", "commercial-fridge-repair-north-london", ["enfield"]),
     ("page", "cold-room-repair-north-london", ["enfield"]),
     ("page", "freezer-room-repair-north-london", ["enfield"]),
+    ("page", "commercial-freezer-repair-north-london", ["enfield"]),
     # top commercial catering blog posts
     ("blog", "prevent-commercial-fridge-breakdown", ["appliances"]),
     ("blog", "commercial-freezer-temperature-guide", ["appliances"]),

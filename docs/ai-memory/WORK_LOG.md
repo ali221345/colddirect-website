@@ -362,3 +362,7 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - GSC inspect (tools/gsc_inspect_urls.py): appliances = NEUTRAL / URL is unknown to Google / no crawl; Enfield = NEUTRAL / Not found (404) / last crawl 2026-10-19 (pre-fix 404).
 - tools/internal_link_boost.py: idempotent (marker CD-LINK-BOOST-APPLIANCES/ENFIELD + exact-anchor check) in-body links on index, commercial-fridge, fridge, cold-room, coverage, 3 north-london pages, 2 blogs. Commit 0f65120, deploy + smoke test OK, live pull = no diff.
 - Sitemap PUT 204 + Indexing API notified 15 URLs. Google still needs to recrawl; indexing cannot be forced.
+
+## 2026-10-21 - Area/suburb pages audit + sync
+- tools/area_pages_audit.py (--fix/--check, marker CD-AREA-LINKS-V1): 42 area pages in sitemap. Synced 4 copies for all (created 40 missing mirror /index.html, normalised commercial-freezer-repair-north-london/index.html, created .html + mirror for folder-only central/east-london). Orphans (0 inbound): blast-chiller-north, chiller-north, ice-machine-north, commercial-freezer-tottenham, central-london -> linked from /coverage/ and parent hub (hub pages: blast-chiller/chiller/cold-room/ice-machine-repair-london, commercial-fridge-repair-london, commercial-freezer-repair-north-london). Enfield link added on commercial-freezer-repair-north-london.
+- Fixed fake placeholder phone 0207 123 4567 on central/east-london pages -> 0800 112 3427.

@@ -248,3 +248,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - LESSON: the Auto-review blocks Shell calls that run scripts from %TEMP% or chain many operations - keep helper tools inside the repo (tools/) and run one operation per call.
 
 - (2026-10-21) Regex bug: re.escape(href.rstrip('/')) + '?' made the last letter optional; use '/?' . Check copies are identical before bulk edits (commercial-freezer-repair-north-london/index.html differs in whitespace - skipped). Appliances page already had exact-anchor in-body links from catering/commercial-fridge pages; its 'unknown to Google' status is a crawl-discovery delay, not a link gap.
+
+- (2026-10-21) Legacy folder-only pages (commercial-fridge-repair-central/east-london, commercial-cold-room-repair-london) had fake tel:02071234567 and generic duplicate title (auto-seo generic rule) - always grep for placeholder numbers; TODO: give central/east-london unique titles via auto-seo moneyMeta.
