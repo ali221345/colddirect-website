@@ -12,6 +12,9 @@ What it reports  (latest COMPLETE 7-day window vs the 7 days before it)
   3. Queries                - top 25 queries, plus "strike-distance" keywords (avg position 4.0-15.0, most
                               impressions first) = the queries closest to the top 3
 
+  4. Indexing watchlist     - live URL Inspection (verdict, coverageState, lastCrawlTime) for the pages still
+                              waiting for Google (WATCHLIST); only those NOT yet PASS are re-sent to the Indexing API
+
 Data lag: Search Console final data trails by ~2-3 days. The window ends on the newest date that actually has
 final data (never later than today-2), so partial days are never compared against complete ones.
 
@@ -63,6 +66,26 @@ PAGES: list[tuple[str, list[str]]] = [
     ("Cellar repair London", ["cellar-cooler-repair-london"]),
     ("Enfield HQ page", ["commercial-fridge-repair-enfield"]),
 ]
+
+# Table 4 - pages waiting for Google to (re)crawl / index them. Edit this list when pages reach PASS.
+WATCHLIST: list[str] = [
+    "commercial-appliances-repair-london",
+    "commercial-fridge-repair-enfield",
+    "commercial-fridge-repair-central-london",
+    "blast-chiller-repair-north-london",
+    "chiller-repair-north-london",
+    # North London cold room pages
+    "cold-room-repair-barnet",
+    "cold-room-repair-edgware",
+    "cold-room-repair-finchley",
+    "cold-room-repair-tottenham",
+    "cold-room-repair-wembley",
+    "cold-room-repair-harrow",
+    "cold-room-repair-palmers-green",
+    "cold-room-repair-southgate",
+    "cold-room-repair-wood-green",
+]
+MAX_PINGS = 20  # Indexing API publish default quota is 200/day; this keeps the weekly run far below it
 
 STRIKE_LO, STRIKE_HI = 4.0, 15.0
 TOP_QUERIES = 25
@@ -241,8 +264,83 @@ def window_end(gsc, today: date) -> date:
     return today - timedelta(days=3)
 
 
+# ------------------------------------------------------------------ indexing watchlist (Table 4)
+class Indexer:
+    """URL Inspection + Indexing API. `inspect` / `notify` are the only network entry points (faked in the self-test).
+    Errors are reduced to short sanitised strings; nothing from the credentials is ever returned."""
+
+    def __init__(self, session, site: str) -> None:
+        self.session = session
+        self.site = site
+        self.publish_ok = True
+
+    def inspect(self, url: str) -> dict:
+        try:
+            r = self.session.post("https://searchconsole.googleapis.com/v1/urlInspection/index:inspect",
+                                  json={"inspectionUrl": url, "siteUrl": self.site}, timeout=60)
+        except Exception as exc:  # noqa: BLE001
+            return {"error": "error %s" % type(exc).__name__}
+        if r.status_code != 200:
+            return {"error": "HTTP %s" % r.status_code}
+        x = r.json().get("inspectionResult", {}).get("indexStatusResult", {}) or {}
+        return {"verdict": x.get("verdict", "?"), "coverageState": x.get("coverageState", "?"),
+                "lastCrawlTime": x.get("lastCrawlTime", "")}
+
+    def notify(self, url: str) -> str:
+        if not self.publish_ok:
+            return "skipped (Indexing API unavailable)"
+        try:
+            r = self.session.post("https://indexing.googleapis.com/v3/urlNotifications:publish",
+                                  json={"url": url, "type": "URL_UPDATED"}, timeout=30)
+        except Exception as exc:  # noqa: BLE001
+            self.publish_ok = False
+            return "error %s" % type(exc).__name__
+        if r.status_code == 200:
+            return "notified"
+        self.publish_ok = False  # stop on the first failure (quota / permission) instead of hammering the API
+        return "HTTP %s - stopped" % r.status_code
+
+
+def watchlist_section(watch, site: str) -> tuple[list[str], str]:
+    """Table 4. Inspects every watchlist URL; pings the Indexing API ONLY for those not yet verdict PASS.
+    Returns (markdown lines, one-line headline)."""
+    base = "https://www.colddirect.co.uk"
+    L = ["## 4. Indexing watchlist", "",
+         "Pages waiting for Google to crawl / index them (live URL Inspection every Monday). "
+         "Only URLs that have **not** reached `PASS` / \"Submitted and indexed\" are re-sent to the Indexing API.", "",
+         "| URL | Verdict | Coverage state | Last crawl | Indexing API |", "|---|---|---|---|---|"]
+    indexed = pinged = unknown = 0
+    for slug in WATCHLIST:
+        url = "%s/%s/" % (base, slug)
+        res = watch.inspect(url)
+        if "error" in res:
+            unknown += 1
+            L.append("| `/%s/` | n/a | inspection failed (%s) | - | not pinged |" % (slug, esc(res["error"])))
+            continue
+        verdict = res.get("verdict", "?")
+        crawl = (res.get("lastCrawlTime") or "").replace("T", " ").replace("Z", " UTC") or "never"
+        if verdict == "PASS":
+            indexed += 1
+            ping = "- (indexed)"
+        elif pinged >= MAX_PINGS:
+            ping = "skipped (daily cap)"
+        else:
+            ping = watch.notify(url)
+            if ping == "notified":
+                pinged += 1
+        L.append("| `/%s/` | %s | %s | %s | %s |" % (slug, esc(verdict), esc(res.get("coverageState", "?")), esc(crawl), esc(ping)))
+    L.append("")
+    total = len(WATCHLIST)
+    waiting = total - indexed - unknown
+    L.append("_%d of %d indexed (PASS), %d still waiting, %d could not be inspected. Indexing API notifications sent: %d. "
+             "\"never\" = Google has not crawled the URL yet._" % (indexed, total, waiting, unknown, pinged))
+    L.append("")
+    return L, "Indexing watchlist: %d of %d pages indexed, %d still waiting (%d re-sent to the Indexing API)." % (
+        indexed, total, waiting, pinged)
+
+
 # ------------------------------------------------------------------ report
-def build_report(gsc, today: date, site: str) -> str:
+def build_report(gsc, today: date, site: str, watch=None) -> str:
     end = window_end(gsc, today)
     cs, ce = end - timedelta(days=6), end
     pe = cs - timedelta(days=1)
@@ -411,6 +509,15 @@ def build_report(gsc, today: date, site: str) -> str:
         L.append("_No queries ranked between positions %.1f and %.1f in this window._" % (STRIKE_LO, STRIKE_HI))
     L.append("")
 
+    # ---- 4. indexing watchlist (URL Inspection + conditional Indexing API ping)
+    if watch is not None:
+        try:
+            wl, wl_head = watchlist_section(watch, site)
+            L.extend(wl)
+            head.append(wl_head)
+        except Exception as exc:  # noqa: BLE001 - the performance report must still be delivered
+            errors.append("indexing watchlist: %s" % type(exc).__name__)
+
     if errors:
         L.append("### Data notes")
         L.append("")
@@ -512,6 +619,79 @@ def selftest() -> int:
     assert "## 1. Sitewide overview" in md2 and "Data notes" in md2 and "| Total clicks | 0 | 0 | = 0 |" in md2
     # credentials never appear
     assert "private_key" not in md and "BEGIN" not in md
+
+    # ---- Table 4: indexing watchlist
+    class FakeIndexer:
+        def __init__(self) -> None:
+            self.inspected: list[str] = []
+            self.pinged: list[str] = []
+            self.status = {
+                "commercial-appliances-repair-london": ("NEUTRAL", "URL is unknown to Google", ""),
+                "commercial-fridge-repair-enfield": ("NEUTRAL", "Not found (404)", "2026-10-19T19:27:25Z"),
+                "cold-room-repair-barnet": ("PASS", "Submitted and indexed", "2026-10-20T01:02:03Z"),
+                "cold-room-repair-harrow": ("NEUTRAL", "Alternate page with proper canonical tag", "2026-09-19T23:04:21Z"),
+            }
+
+        def inspect(self, url: str) -> dict:
+            self.inspected.append(url)
+            slug = url.split("colddirect.co.uk/")[1].strip("/")
+            if slug == "cold-room-repair-wembley":
+                return {"error": "HTTP 429"}
+            v, c, t = self.status.get(slug, ("PASS", "Submitted and indexed", "2026-10-18T10:00:00Z"))
+            return {"verdict": v, "coverageState": c, "lastCrawlTime": t}
+
+        def notify(self, url: str) -> str:
+            self.pinged.append(url)
+            return "notified"
+
+    fi = FakeIndexer()
+    md3 = build_report(FakeGsc(end), date(2026, 10, 20), "https://www.colddirect.co.uk/", fi)
+    assert "## 4. Indexing watchlist" in md3 and md3.index("## 4.") > md3.index("### 3b.")
+    assert len(fi.inspected) == len(WATCHLIST) == 14, (len(fi.inspected), len(WATCHLIST))
+    # ONLY the non-PASS URLs are pinged (the failed inspection is not pinged either)
+    assert sorted(u.split("colddirect.co.uk/")[1].strip("/") for u in fi.pinged) == [
+        "cold-room-repair-harrow", "commercial-appliances-repair-london", "commercial-fridge-repair-enfield"], fi.pinged
+    t4 = md3.split("## 4. Indexing watchlist")[1]
+    assert "| `/commercial-appliances-repair-london/` | NEUTRAL | URL is unknown to Google | never | notified |" in t4, t4[:900]
+    assert "| `/cold-room-repair-barnet/` | PASS | Submitted and indexed | 2026-10-20 01:02:03 UTC | - (indexed) |" in t4
+    assert "| `/cold-room-repair-wembley/` | n/a | inspection failed (HTTP 429) | - | not pinged |" in t4
+    assert "10 of 14 indexed (PASS), 3 still waiting, 1 could not be inspected. Indexing API notifications sent: 3." in t4, t4[-400:]
+    assert "Indexing watchlist: 10 of 14 pages indexed" in md3.split("## 1.")[0]
+    # table 4 absent without a watcher, report survives a crashing watcher
+    assert "## 4." not in md
+    class Crash:
+        def inspect(self, url):
+            raise RuntimeError("boom")
+    md4 = build_report(FakeGsc(end), date(2026, 10, 20), "x", Crash())
+    assert "## 1. Sitewide overview" in md4 and "indexing watchlist: RuntimeError" in md4
+    # Indexing API stops after the first failure (quota / permission) and says so
+    class QuotaIndexer(Indexer):
+        def __init__(self) -> None:
+            self.publish_ok = True
+            self.calls = 0
+            class S:
+                def post(s, url, **kw):
+                    class R:
+                        status_code = 429
+                        text = ""
+                    self.calls += 1
+                    return R()
+            self.session = S()
+            self.site = "x"
+    qi = QuotaIndexer()
+    assert qi.notify("u1").startswith("HTTP 429") and qi.notify("u2").startswith("skipped") and qi.calls == 1
+    # pinging is capped at MAX_PINGS
+    class AllWaiting(FakeIndexer):
+        def inspect(self, url):
+            return {"verdict": "NEUTRAL", "coverageState": "Discovered - currently not indexed", "lastCrawlTime": ""}
+    import sys as _s
+    mod = _s.modules[__name__]
+    old_cap, mod.MAX_PINGS = mod.MAX_PINGS, 5
+    aw = AllWaiting()
+    build_report(FakeGsc(end), date(2026, 10, 20), "x", aw)
+    mod.MAX_PINGS = old_cap
+    assert len(aw.pinged) == 5, len(aw.pinged)
+    assert "private_key" not in md3 and "BEGIN" not in md3
     print("selftest OK (%d report lines)" % md.count("\n"))
     return 0
 
@@ -532,7 +712,7 @@ def main() -> int:
     except GscError as exc:
         print("::error::%s" % exc)
         return 1
-    md = build_report(Gsc(session, site), datetime.now(timezone.utc).date(), site)
+    md = build_report(Gsc(session, site), datetime.now(timezone.utc).date(), site, Indexer(session, site))
     emit(md)
     return 0
 
