@@ -1090,19 +1090,10 @@ def selftest():
     return 0
 
 
-def main():
-    if "--selftest" in sys.argv:
-        return selftest()
-    try:  # console may be cp1252 on Windows; the summary lines contain an emoji
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: BLE001
-        pass
-    attempt, max_attempts = 1, 1
-    if "--attempt" in sys.argv:
-        attempt = int(sys.argv[sys.argv.index("--attempt") + 1])
-    if "--max-attempts" in sys.argv:
-        max_attempts = int(sys.argv[sys.argv.index("--max-attempts") + 1])
-
+def run_all_checks():
+    """Run every live (read-only, GET-only) check once. Returns a dict:
+    rows [(name, value, ok)], failures [str], latencies [ms], urls [sitemap <loc>], ssl_results [dict],
+    bodies {path: html}. Used by main() and by the read-only dashboard tools/site_status.py."""
     rows, failures = [], []
     latencies = []                          # response time (ms) of every timed core request
 
@@ -1166,6 +1157,26 @@ def main():
     ssl_rows, ssl_failures, ssl_results = ssl_checks()
     rows += ssl_rows
     failures += ssl_failures
+    return {"rows": rows, "failures": failures, "latencies": latencies, "urls": urls,
+            "ssl_results": ssl_results, "bodies": bodies}
+
+
+def main():
+    if "--selftest" in sys.argv:
+        return selftest()
+    try:  # console may be cp1252 on Windows; the summary lines contain an emoji
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        pass
+    attempt, max_attempts = 1, 1
+    if "--attempt" in sys.argv:
+        attempt = int(sys.argv[sys.argv.index("--attempt") + 1])
+    if "--max-attempts" in sys.argv:
+        max_attempts = int(sys.argv[sys.argv.index("--max-attempts") + 1])
+
+    res = run_all_checks()
+    rows, failures, latencies = res["rows"], res["failures"], res["latencies"]
+    urls, ssl_results = res["urls"], res["ssl_results"]
 
     passed = not failures
     for name, val, ok in rows:
