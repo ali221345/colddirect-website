@@ -320,13 +320,14 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - **Details**: Fridge title changed again within 7-day cooldown on explicit owner request (title ~83 chars, may truncate in SERP). Legacy plural/.asp URLs untouched. 55 BOMs stripped; one mojibake fixed in walk-in-cold-room mirror.
 
 ## 2026-10-20 (late) - V4.9 end-to-end pass: Enfield, blog sitemap, redirects, idempotent auto-seo, post-deploy CI
-- auto-seo.aspx **V4.9**: dn.Equals("logs") (blog now scanned + in sitemap: hub + 12 articles; duplicate /blog/commercial-freezer-ice-buildup-causes/ stays out via canonical-elsewhere); edirectedSlugs (about, news, refrigeration-brands-repairs-london) never in sitemap; /blog/ pages get NO V4 footer/schema/bloghub/mojibake rewrite, only a fill-only description when empty; removal regexes + injection points now consume surrounding whitespace so the run is idempotent from run 1 (live run 2 = "HTML Updated: 0"); stray \r\r\n removed from the script itself.
+- auto-seo.aspx **V4.9**: dn.Equals("logs") (blog now scanned + in sitemap: hub + 12 articles; duplicate /blog/commercial-freezer-ice-buildup-causes/ stays out via canonical-elsewhere); 
+edirectedSlugs (about, news, refrigeration-brands-repairs-london) never in sitemap; /blog/ pages get NO V4 footer/schema/bloghub/mojibake rewrite, only a fill-only description when empty; removal regexes + injection points now consume surrounding whitespace so the run is idempotent from run 1 (live run 2 = "HTML Updated: 0"); stray \r\r\n removed from the script itself.
 - Tests: python tools/test_auto_seo.py compiles the REAL aspx body with csc (fake Request/Response/Server) and runs synthetic + real-tree idempotency/sitemap tests. Run it after every aspx edit.
 - /commercial-fridge-repair-enfield/ was a live 404 (only .html existed, no folder index, non-slash canonical). Fixed with folder index + slash canonical + contactPoint 07983 759320 (4 copies).
 - web.config + .htaccess: 301 /about/, /about.html, /about/index.html -> /about-us/ and /refrigeration-brands-repairs-london(/|.html|.asp) -> /refrigeration-brands-repair-london/ (plural-only rule; do NOT make the pattern match the singular or it loops). Rules sit at the TOP of the IIS rules so the 'pass through existing .html' rule cannot swallow them.
 - Blog linking: 	ools/blog_related_services.py (idempotent, marker CD-BLOG-RELATED-SERVICES). All 52 article files already had 6-9 contextual core links -> no-op today; CI runs it with --check.
 - deploy.yml: after FTP, sleep 10 -> curl auto-seo (retries) must return AUTO-SEO + OK -> 	ools/live_smoke_test.py (200s, sitemap asserts, 301s, URL count to $GITHUB_STEP_SUMMARY), up to 3 rounds because the Plesk webhook can lag.
-- LESSON: deploy_to_plesk.diagnose() (FTPS) hangs on this host - upload with plain tplib.FTP() reading .vscode/sftp.json (script: temp upload_plain.py pattern).
+- LESSON: deploy_to_plesk.diagnose() (FTPS) hangs on this host - upload with plain ^Ltplib.FTP() reading .vscode/sftp.json (script: temp upload_plain.py pattern).
 - LESSON: parallel Write + Shell calls race - run the script only after the Write call has returned.
 - LESSON: auto-seo key cd2026 is visible in the public repo; optional secret AUTO_SEO_KEY is read by deploy.yml if you add it (then also change the key in auto-seo.aspx).
 
@@ -339,7 +340,8 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - To rotate again: generate a new key, gh secret set AUTO_SEO_KEY, overwrite App_Data/auto-seo.key on Plesk via FTP (no code change needed).
 
 ## 2026-10-20 (night) - weekly executive GSC report (tools/gsc_weekly_report.py)
-- Runs FIRST in gsc-weekly-sync.yml (Mon 06:00 UTC + workflow_dispatch; input eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_SUMMARY (local runs: gitignored logs/). Step is continue-on-error; script exits non-zero only for missing/invalid credentials or no accessible property.
+- Runs FIRST in gsc-weekly-sync.yml (Mon 06:00 UTC + workflow_dispatch; input 
+eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_SUMMARY (local runs: gitignored logs/). Step is continue-on-error; script exits non-zero only for missing/invalid credentials or no accessible property.
 - Windows: newest day with FINAL data (never later than today-2) = end of current 7 days; previous 7 days compared. Property: URL-prefix https://www.colddirect.co.uk/ first (verified), then sc-domain:colddirect.co.uk.
 - Pages are matched by normalised slug (legacy .html/.asp/no-slash merged); "commercial catering" row = commercial-appliances-repair-london + commercial-catering-repair-london.
 - python tools/gsc_weekly_report.py --selftest is offline (synthetic data, also tests API-failure degradation) and runs in CI before the real report.
@@ -415,3 +417,7 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - Automation: auto-seo-nightly.yml (24h: auto-seo + smoke test + live pull + html_preflight --strict + seo_integrity_check + GSC ping + alert + report; never rewrites titles/H1), NEW site-backup-48h.yml + tools/backup_site.py (zip + SHA-256 manifest, scrub, no App_Data/*.key/bookings, 90-day artifact), tools/send_job_report.py wired into deploy.yml, auto-seo-nightly.yml, site-backup-48h.yml, gsc-weekly-sync.yml (rolling issue "📊 [ColdDirect Autopilot] Automated Job Reports & SEO Log" + WORK_LOG via Contents API).
 - Checks run green: all new/old --selftest, html_preflight --strict (268 files), deploy_guard, area_pages_audit --check, contact_sweep --check, blog_related_services --check, protect_fixed_pages check, test_auto_seo, npm test (JSON-LD).
 - Lessons: a persistent shell may keep GITHUB_STEP_SUMMARY set -> tools that write summaries create stray files in the repo root (tmp_summary.md was caught before commit); parallel Write+Shell calls race (run scripts in a separate call).
+
+## 2026-10-21 02:18 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39532118422 | commit 12cd8eb
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=failure
