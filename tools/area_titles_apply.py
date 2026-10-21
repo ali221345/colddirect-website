@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Apply the areaMeta title/description rules of auto-seo.aspx to every HTML copy of each area page.
+"""Apply the areaMeta title/description rules of auto-seo.aspx (area pages + de-duplicated service pages)
+to every HTML copy of each page. Titles must be 50-65 chars, descriptions <= 160.
 
 auto-seo.aspx is the single source of truth (areaMeta["slug"] = { title, description }).
 Writes root <slug>.html, root <slug>/index.html, mirror <slug>.html and mirror <slug>/index.html.
@@ -42,9 +43,13 @@ def main():
     meta = load()
     print(f"areaMeta rules: {len(meta)}")
     pending = 0
+    warned = 0
     for slug, (title, desc) in sorted(meta.items()):
-        if len(desc) > 165:
-            print(f"WARN description {len(desc)} chars: {slug}")
+        if len(desc) > 160:
+            print(f"WARN description {len(desc)} chars (>160): {slug}")
+        if not 50 <= len(title) <= 65:
+            print(f"WARN title {len(title)} chars (target 50-65): {slug}")
+            warned += 1
         for name, p in ap.copies(slug).items():
             if not p.exists():
                 continue
@@ -55,7 +60,7 @@ def main():
                 if not check:
                     p.write_bytes(new.encode("utf-8"))
     print(f"files {'to change' if check else 'changed'}: {pending}")
-    return 1 if (check and pending) else 0
+    return 1 if (check and (pending or warned)) else 0
 
 
 if __name__ == "__main__":

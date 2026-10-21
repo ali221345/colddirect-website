@@ -372,3 +372,8 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - tools/contact_sweep.py (--fix/--check): normalised legacy 020 8050 2374 (10 cold-room area pages) -> 0203 952 4822, tel:07983759320 / tel:02039524822 -> international form, injected CD-AREA-CONTACT-V1 block (mobile + 0800 + office + info@colddirect.co.uk) on 36 area pages lacking them.
 - tools/html_preflight.py: new dummy-contact rule (123 4567, 1234567, 123456, 0000/9999 phone runs, example.com) + tools/test_preflight_dummy.py regression test.
 - auto-seo.aspx uploaded by plain FTP before push.
+
+## 2026-10-21 - Title trim + full-site unique titles
+- areaMeta in auto-seo.aspx now 33 rules (19 area + 14 de-duplicated service pages: blast-*, chiller-*, walk-in-chiller-repair, adexa/cabinet/empire/multideck/undercounter/walk-in fridge). All titles 50-65 chars. tools/area_titles_apply.py writes them to all copies (warns outside 50-65).
+- tools/html_preflight.py: site-wide unique <title> and <h1> rule for indexable non-redirect pages (by canonical, full scan only); tests in tools/test_preflight_dummy.py. title_h1_audit.py = 0 duplicates site-wide.
+- NOTE: titles were re-written <7 days after the previous area title change at the owner's explicit request.

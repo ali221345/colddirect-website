@@ -229,6 +229,54 @@ def _default_targets(root: str) -> list[str]:
     return out
 
 
+_TITLE_RE = re.compile(r"<title>(.*?)</title>", re.I | re.S)
+_H1_RE = re.compile(r"<h1[^>]*>(.*?)</h1>", re.I | re.S)
+_CANON_RE = re.compile(r"<link\s+[^>]*rel=[\"']canonical[\"'][^>]*href=[\"']([^\"']+)[\"']", re.I)
+
+
+def _flat(s: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", s)).strip().lower()
+
+
+def collect_page_meta(targets: list[str]) -> dict:
+    """canonical URL -> {'title','h1','file'} for every INDEXABLE, non-redirect page.
+
+    .html and /index.html copies of one page share a canonical and therefore count once.
+    """
+    pages: dict = {}
+    for path in targets:
+        if re.match(r"google[0-9a-f]+\.html$", os.path.basename(path), re.I):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                c = fh.read()
+        except Exception:  # noqa: BLE001
+            continue
+        if not re.search(r"<head[\s>]", c, re.I) or is_noindex(c) or is_redirect_stub(c):
+            continue
+        canon = _CANON_RE.search(c)
+        t = _TITLE_RE.search(c)
+        h = _H1_RE.search(c)
+        key = (canon.group(1).strip().rstrip("/") if canon else path)
+        pages.setdefault(key, {"title": _flat(t.group(1)) if t else "", "h1": _flat(h.group(1)) if h else "", "file": path})
+    return pages
+
+
+def duplicate_title_h1_issues(targets: list[str], root: str = "") -> list[str]:
+    """Full-site rule: every indexable page needs a unique <title> and a unique <h1>."""
+    pages = collect_page_meta(targets)
+    issues: list[str] = []
+    for field, label in (("title", "<title>"), ("h1", "<h1>")):
+        groups: dict = {}
+        for url, m in pages.items():
+            if m[field]:
+                groups.setdefault(m[field], []).append(url.replace("https://www.colddirect.co.uk", "") or "/")
+        for text, urls in sorted(groups.items()):
+            if len(urls) > 1:
+                issues.append(f"site-wide: duplicate {label} {text!r} shared by {len(urls)} pages: {', '.join(sorted(urls))}")
+    return issues
+
+
 BASELINE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "html_preflight_baseline.txt")
 
 
@@ -252,6 +300,8 @@ if __name__ == "__main__":
     write_baseline = "--write-baseline" in sys.argv
     targets = args or _default_targets(root)
     found = [_normalise(i, t, root) for t in targets for i in validate_html_file(t)]
+    if not args:  # full scan only: site-wide uniqueness of <title> and <h1> across indexable pages
+        found += duplicate_title_h1_issues(targets, root)
     if write_baseline:
         with open(BASELINE_FILE, "w", encoding="utf-8", newline="\n") as fh:
             fh.write("# Accepted legacy preflight issues. Remove a line once the page is fixed.\n")

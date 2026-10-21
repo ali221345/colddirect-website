@@ -32,5 +32,31 @@ for s in GOOD:
     if r:
         print("FALSE POSITIVE:", s, r)
         fails += 1
+
+# --- site-wide unique <title>/<h1> rule ---
+import tempfile  # noqa: E402
+
+PAGE = ('<!DOCTYPE html><html><head><title>{t}</title><link rel="canonical" href="https://www.colddirect.co.uk/{c}/">'
+        '{extra}</head><body><h1>{h}</h1></body></html>')
+with tempfile.TemporaryDirectory() as d:
+    def mk(name, t, c, h, extra=""):
+        p = Path(d) / name
+        p.write_text(PAGE.format(t=t, c=c, h=h, extra=extra), encoding="utf-8")
+        return str(p)
+
+    dup = [mk("a.html", "Same Title", "a", "H A"), mk("b.html", "Same Title", "b", "H B")]
+    if not hp.duplicate_title_h1_issues(dup):
+        print("NOT BLOCKED: duplicate title across two pages")
+        fails += 1
+    duph = [mk("c.html", "T C", "c", "Same H"), mk("d.html", "T D", "d", "Same H")]
+    if not hp.duplicate_title_h1_issues(duph):
+        print("NOT BLOCKED: duplicate h1 across two pages")
+        fails += 1
+    ok = [mk("e.html", "Title E", "e", "H E"), mk("e2.html", "Title E", "e", "H E"),  # .html + /index.html copy of one page
+          mk("f.html", "Title E", "f", "H F", '<meta name="robots" content="noindex">')]  # noindex ignored
+    if hp.duplicate_title_h1_issues(ok):
+        print("FALSE POSITIVE: copies / noindex page flagged")
+        fails += 1
+
 print("preflight dummy-contact rule:", "OK" if not fails else f"{fails} FAILURE(S)")
 sys.exit(1 if fails else 0)

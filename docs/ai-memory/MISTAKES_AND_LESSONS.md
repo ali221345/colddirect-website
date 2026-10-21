@@ -252,3 +252,5 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 - (2026-10-21) Legacy folder-only pages (commercial-fridge-repair-central/east-london, commercial-cold-room-repair-london) had fake tel:02071234567 and generic duplicate title (auto-seo generic rule) - always grep for placeholder numbers; TODO: give central/east-london unique titles via auto-seo moneyMeta.
 
 - (2026-10-21) A second 'London office' number (020 8050 2374) lived on 10 suburb pages; keep run tools/contact_sweep.py --check and tools/title_h1_audit.py --area --check before area-page edits. Title rules for area pages live ONLY in auto-seo.aspx areaMeta (then run tools/area_titles_apply.py). Do not call Write and Shell in the same parallel batch when the shell needs the new file (the file may not exist yet).
+
+- (2026-10-21) New pages/titles must be unique site-wide: html_preflight --strict now fails on duplicate <title>/<h1>. Add a rule to auto-seo.aspx areaMeta (50-65 chars) then run tools/area_titles_apply.py. Never chain Remove-Item after a python patch in the same command (a failed patch still deletes the script).
