@@ -3,6 +3,11 @@
 
 Checks (all against the LIVE site, no redirects followed for the 200 checks):
   * HTTP 200 on the homepage, the 9 core money pages, /commercial-fridge-repair-enfield/ and /blog/
+  * live HTML content integrity of the homepage, the 9 core money pages and /commercial-fridge-repair-enfield/:
+    no noindex (X-Robots-Tag header or robots/googlebot meta), exactly one self-referencing canonical
+    (https://www.colddirect.co.uk/<slug>/), non-empty <title> and <h1>, >=1 JSON-LD block and every block parses
+    with json.loads, official phone 07983 759320 present and no dummy 123 4567 / 1234567. A passing row reads
+    "HTTP 200 + Schema + Canonical + Phone OK"; a failing row names the exact failing check(s).
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
@@ -79,6 +84,116 @@ def fetch(path, body=False, tries=3):
         except Exception as e:  # network blip - retry
             last = e
     return 0, {}, "ERR %s" % type(last).__name__
+
+
+# ------------------------------------------------------------------ live HTML content integrity
+# Pages that get the full integrity check: homepage, the 9 core money pages and the Enfield page (not /blog/).
+INTEGRITY_PAGES = [p for p in PAGES if p != "/blog/"]
+INTEGRITY_OK = "HTTP 200 + Schema + Canonical + Phone OK"
+OFFICIAL_PHONE_RE = re.compile(r"(?<!\d)(?:\+44\s?|0)7983\s?759\s?320(?!\d)")   # 07983 759320 / 07983759320 / +447983759320
+DUMMY_PHONE_RE = re.compile(r"123[\s.\-]?4567")                                  # 123 4567 / 1234567 placeholders
+_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+_ATTR_RE = re.compile(r"""([^\s=/>"']+)\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+)""")
+_ROBOTS_NAMES = ("robots", "googlebot", "googlebot-news", "bingbot")
+
+
+def _attrs(tag):
+    out = {}
+    for k, v in _ATTR_RE.findall(tag):
+        out[k.lower()] = v.strip("\"'")
+    return out
+
+
+def _text(fragment):
+    import html as _html
+    return " ".join(_html.unescape(re.sub(r"<[^>]*>", " ", fragment)).split())
+
+
+def _has_noindex(value):
+    return any(tok.strip().lower() in ("noindex", "none") for tok in re.split(r"[,\s]+", value or "") if tok)
+
+
+def check_page_integrity(path, status, headers, body):
+    """Validate one live page. Returns {"ok", "summary", "problems"}.
+
+    Checks: HTTP 200; no noindex (X-Robots-Tag header, robots/googlebot/bingbot meta); exactly the expected
+    self-referencing canonical; non-empty <title> and <h1>; >=1 JSON-LD block and every block parses with json.loads;
+    official mobile 07983 759320 present and no dummy 123 4567 / 1234567 placeholder anywhere in the HTML.
+    """
+    import json
+    problems = []
+    if status != 200:
+        return {"ok": False, "summary": "HTTP %s" % status, "problems": ["HTTP %s instead of 200" % status]}
+    h = {k.lower(): v for k, v in (headers or {}).items()}
+    src = _COMMENT_RE.sub("", body or "")            # ignore commented-out markup
+
+    # 1. noindex (response header + meta tags)
+    if _has_noindex(h.get("x-robots-tag", "")):
+        problems.append("noindex in X-Robots-Tag header (%s)" % h.get("x-robots-tag"))
+    for tag in re.findall(r"<meta\b[^>]*>", src, re.I):
+        a = _attrs(tag)
+        if a.get("name", "").lower() in _ROBOTS_NAMES and _has_noindex(a.get("content", "")):
+            problems.append("noindex in <meta name=%s content=%s>" % (a["name"], a.get("content")))
+
+    # 2. canonical must be present, single and exactly self-referencing
+    expected = BASE + path
+    canon = []
+    for tag in re.findall(r"<link\b[^>]*>", src, re.I):
+        a = _attrs(tag)
+        if "canonical" in a.get("rel", "").lower().split():
+            canon.append(a.get("href", ""))
+    if not canon:
+        problems.append("canonical missing")
+    elif len(set(canon)) > 1:
+        problems.append("multiple conflicting canonicals (%s)" % ", ".join(sorted(set(canon))))
+    elif canon[0] != expected:
+        problems.append("canonical mismatch (got %s, expected %s)" % (canon[0] or "<empty>", expected))
+
+    # 3. title and h1
+    m = re.search(r"<title\b[^>]*>(.*?)</title>", src, re.I | re.S)
+    if not m:
+        problems.append("<title> missing")
+    elif not _text(m.group(1)):
+        problems.append("<title> empty")
+    h1s = re.findall(r"<h1\b[^>]*>(.*?)</h1>", src, re.I | re.S)
+    if not h1s:
+        problems.append("<h1> missing")
+    elif not any(_text(x) for x in h1s):
+        problems.append("<h1> empty")
+
+    # 4. JSON-LD: at least one block, every block must parse
+    blocks = [m2.group(2) for m2 in re.finditer(
+        r"<script\b([^>]*)>(.*?)</script>", src, re.I | re.S) if "application/ld+json" in m2.group(1).lower()]
+    if not blocks:
+        problems.append("JSON-LD schema missing")
+    for i, blk in enumerate(blocks, 1):
+        try:
+            json.loads(blk)
+        except ValueError as e:
+            problems.append("JSON-LD block %d invalid (%s)" % (i, str(e)[:60]))
+
+    # 5. phone numbers (raw HTML, so tel: links and JSON-LD count too)
+    if not OFFICIAL_PHONE_RE.search(body or ""):
+        problems.append("official phone 07983 759320 missing")
+    if DUMMY_PHONE_RE.search(body or ""):
+        problems.append("dummy phone pattern (123 4567 / 1234567) present")
+
+    if problems:
+        return {"ok": False, "summary": "HTTP 200 but " + "; ".join(problems), "problems": problems}
+    return {"ok": True, "summary": INTEGRITY_OK, "problems": []}
+
+
+def integrity_checks(paths=None, fetcher=None):
+    """Fetch every core page (with body) and validate it. Returns (rows, failures)."""
+    fetcher = fetcher or (lambda p: fetch(p, body=True))
+    rows, failures = [], []
+    for path in (INTEGRITY_PAGES if paths is None else paths):
+        status, headers, body = fetcher(path)
+        r = check_page_integrity(path, status, headers, body)
+        rows.append(("HTTP 200 " + path, r["summary"], r["ok"]))
+        if not r["ok"]:
+            failures.append("%s content integrity: %s" % (path, "; ".join(r["problems"])))
+    return rows, failures
 
 
 # ------------------------------------------------------------------ robots.txt health
@@ -515,7 +630,96 @@ def selftest():
     row, fails = robots_check(lambda: (200, TXT, "User-agent: *\nDisallow: /\n" + SM))
     assert row[2] is False and fails and fails[0].startswith("robots.txt: "), (row, fails)
 
-    print("selftest OK (SSL threshold: fail below %d days, expired/invalid certificates; "
+    # ---------------- live HTML content integrity (no network)
+    P = "/cold-room-repair-london/"
+    GOOD = ('<!DOCTYPE html><html><head><title>Cold Room Repair London | Cold Direct</title>'
+            '<meta name="robots" content="index, follow, max-image-preview:large">'
+            '<link rel="canonical" href="https://www.colddirect.co.uk/cold-room-repair-london/">'
+            '<script type="application/ld+json">{"@context":"https://schema.org","@type":"HVACBusiness",'
+            '"telephone":"+447983759320"}</script></head><body><h1>Cold Room Repair London</h1>'
+            '<a href="tel:+447983759320">07983 759320</a></body></html>')
+    HDR = {"Content-Type": "text/html"}
+
+    def pg(body=GOOD, path=P, status=200, headers=HDR):
+        return check_page_integrity(path, status, headers, body)
+
+    r = pg()
+    assert r["ok"] and r["summary"] == "HTTP 200 + Schema + Canonical + Phone OK" and not r["problems"], r
+    # homepage canonical is the bare host with a slash; phone in every accepted spelling
+    home = GOOD.replace("cold-room-repair-london/\">", "\">", 1)
+    assert pg(home, path="/")["ok"]
+    for ph in ("07983 759320", "07983759320", "+447983759320", "+44 7983 759320", "07983 759 320"):
+        assert pg(GOOD.replace("tel:+447983759320", "tel:x").replace("07983 759320", ph).replace(
+            '"+447983759320"', '"x"'))["ok"], ph
+    # commented-out noindex / bad markup is ignored
+    assert pg(GOOD.replace("<body>", '<body><!-- <meta name="robots" content="noindex"> -->'))["ok"]
+    # noindex: meta robots / googlebot (any attribute order, case), 'none', header
+    for meta in ('<meta name="robots" content="noindex, follow">', '<meta content="NOINDEX" name="robots">',
+                 "<meta name='googlebot' content='index,noindex'>", '<meta name="robots" content="none">'):
+        r = pg(GOOD.replace("<link ", meta + "<link ", 1))
+        assert not r["ok"] and "noindex" in r["summary"], (meta, r)
+    r = pg(headers={"X-Robots-Tag": "noindex, nofollow"})
+    assert not r["ok"] and "X-Robots-Tag" in r["summary"], r
+    assert pg(headers={"x-robots-tag": "all"})["ok"]
+    # canonical: missing / wrong page / non-www / http / no trailing slash / empty / conflicting
+    r = pg(GOOD.replace('<link rel="canonical" href="https://www.colddirect.co.uk/cold-room-repair-london/">', ""))
+    assert not r["ok"] and "canonical missing" in r["summary"], r
+    for wrong in ("https://www.colddirect.co.uk/fridge-repair-london/", "https://colddirect.co.uk/cold-room-repair-london/",
+                  "http://www.colddirect.co.uk/cold-room-repair-london/", "https://www.colddirect.co.uk/cold-room-repair-london",
+                  "https://www.colddirect.co.uk/cold-room-repair-london.html", ""):
+        r = pg(GOOD.replace("https://www.colddirect.co.uk/cold-room-repair-london/\"><script", wrong + "\"><script"))
+        assert not r["ok"] and "canonical mismatch" in r["summary"], (wrong, r)
+    r = pg(GOOD.replace("<script", '<link rel="canonical" href="https://www.colddirect.co.uk/">\n<script', 1))
+    assert not r["ok"] and "conflicting" in r["summary"], r
+    assert not pg(GOOD, path="/")["ok"]                                       # page canonical on the wrong URL
+    # title / h1 missing or empty
+    assert "<title> missing" in pg(re.sub(r"<title>.*?</title>", "", GOOD))["summary"]
+    assert "<title> empty" in pg(GOOD.replace("Cold Room Repair London | Cold Direct", " "))["summary"]
+    assert "<h1> missing" in pg(re.sub(r"<h1>.*?</h1>", "", GOOD))["summary"]
+    assert "<h1> empty" in pg(GOOD.replace("<h1>Cold Room Repair London</h1>", "<h1> <span></span> </h1>"))["summary"]
+    # JSON-LD: missing, trailing comma, unquoted key, truncated, one good + one bad block
+    r = pg(re.sub(r"<script.*?</script>", "", GOOD))
+    assert not r["ok"] and "JSON-LD schema missing" in r["summary"], r
+    for broken in ('{"@type":"HVACBusiness",}', '{@type: "HVACBusiness"}', '{"@type":"HVACBusiness"', ""):
+        r = pg(GOOD.replace('{"@context":"https://schema.org","@type":"HVACBusiness",'
+                            '"telephone":"+447983759320"}', broken))
+        assert not r["ok"] and "JSON-LD block 1 invalid" in r["summary"], (broken, r)
+    r = pg(GOOD.replace("</head>", '<script type="application/ld+json">{"a":}</script></head>'))
+    assert not r["ok"] and "JSON-LD block 2 invalid" in r["summary"], r
+    assert pg(GOOD.replace("</head>", '<script>var x = 1;</script></head>'))["ok"]   # non-LD scripts ignored
+    # phone: missing entirely, another number, dummy 123 4567 / 1234567 (also next to the real one)
+    nophone = GOOD.replace("tel:+447983759320", "tel:x").replace("07983 759320", "call us").replace(
+        '"+447983759320"', '"x"')
+    r = pg(nophone)
+    assert not r["ok"] and "phone 07983 759320 missing" in r["summary"], r
+    assert not pg(nophone.replace("call us", "07123 456789"))["ok"]
+    for dummy in ("020 123 4567", "0201234567", "123-4567", "tel:+441234567"):
+        r = pg(GOOD.replace("</body>", dummy + "</body>"))
+        assert not r["ok"] and "dummy phone" in r["summary"], (dummy, r)
+        r = pg(nophone.replace("call us", dummy))
+        assert not r["ok"] and "missing" in r["summary"] and "dummy" in r["summary"], r
+    # non-200 -> fail with the status; network error -> fail
+    assert pg(status=404)["summary"] == "HTTP 404" and not pg(status=500)["ok"] and not pg("", status=0)["ok"]
+    # several problems are all reported
+    r = pg(nophone.replace('<meta name="robots"', '<meta name="robots" content="noindex"><meta name="x"'))
+    assert len(r["problems"]) >= 2, r
+    # aggregate: all good -> rows named "HTTP 200 <path>"; one bad page -> exactly one failure naming it
+    def fake(bad=None):
+        def f(path):
+            body = GOOD.replace("cold-room-repair-london/", path.strip("/") + "/") if path != "/" else home
+            if path == bad:
+                body = body.replace('content="index, follow, max-image-preview:large"', 'content="noindex"')
+            return 200, HDR, body
+        return f
+    rows, failures = integrity_checks(fetcher=fake())
+    assert len(rows) == len(INTEGRITY_PAGES) == 11 and all(ok for _, _, ok in rows) and not failures, (rows, failures)
+    assert rows[0][0] == "HTTP 200 /" and all(v == INTEGRITY_OK for _, v, _ in rows)
+    rows, failures = integrity_checks(fetcher=fake("/fridge-repair-london/"))
+    assert sum(1 for *_, ok in rows if not ok) == 1 and len(failures) == 1, failures
+    assert failures[0].startswith("/fridge-repair-london/ content integrity: noindex"), failures
+
+    print("selftest OK (page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
+          "SSL threshold: fail below %d days, expired/invalid certificates; "
           "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail; "
           "robots.txt: healthy ok, blanket / Googlebot / money-path blocks, bad Sitemap, HTML 404/500 fail)" % SSL_MIN_DAYS)
     return 0
@@ -537,11 +741,17 @@ def main():
     rows, failures = [], []
 
     for path in PAGES:
+        if path in INTEGRITY_PAGES:
+            continue                        # validated below with the full content integrity checks
         code, _, _ = fetch(path)
         ok = code == 200
         rows.append(("HTTP 200 " + path, "200" if ok else str(code), ok))
         if not ok:
             failures.append("%s returned %s" % (path, code))
+
+    page_rows, page_failures = integrity_checks()
+    rows += page_rows
+    failures += page_failures
 
     code, _, sm = fetch("/sitemap.xml", body=True)
     urls = re.findall(r"<loc>\s*(.*?)\s*</loc>", sm) if code == 200 else []
