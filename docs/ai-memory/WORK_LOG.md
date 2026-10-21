@@ -357,3 +357,8 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - LESSON: Service schema is emitted twice per money page (page-local data-cd-schema block + auto-seo V4 block, same @id) - keep moneyMeta offers identical to the local block or they diverge. FAQ schema must be generated from the visible accordion (never hand-edited separately).
 - LESSON: the Auto-review blocks Shell calls that run scripts from %TEMP% or chain many operations - keep helper tools inside the repo (tools/) and run one operation per call.
 - VERIFIED LIVE 2026-10-21: deploy run 39516344946 green (post-deploy auto-seo V4.9 'HTML Updated: 14', smoke test ALL PASSED, 123 sitemap URLs); second auto-seo run = 'HTML Updated: 0' (idempotent); tools/verify_live_pass.py: 8 pages 200 with new title/H1/Service+FAQPage; /blog/best-ice-cream-makers/ and .html -> 301 -> /ice-cream-machine-repair-london/; best-ice-cream not in sitemap. Live-pulled auto-seo output (V4 Service offers, ice-machine variant titles) committed so repo == live.
+
+## 2026-10-21 - Indexing guarantee pass (appliances + Enfield)
+- GSC inspect (tools/gsc_inspect_urls.py): appliances = NEUTRAL / URL is unknown to Google / no crawl; Enfield = NEUTRAL / Not found (404) / last crawl 2026-10-19 (pre-fix 404).
+- tools/internal_link_boost.py: idempotent (marker CD-LINK-BOOST-APPLIANCES/ENFIELD + exact-anchor check) in-body links on index, commercial-fridge, fridge, cold-room, coverage, 3 north-london pages, 2 blogs. Commit 0f65120, deploy + smoke test OK, live pull = no diff.
+- Sitemap PUT 204 + Indexing API notified 15 URLs. Google still needs to recrawl; indexing cannot be forced.
