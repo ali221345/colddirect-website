@@ -98,6 +98,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - html_preflight.py now exports is_noindex() and is_redirect_stub().
 - OPEN: /commercial-fridge-repair-enfield/ is a live 404 (priority-queued but never submitted until fixed).
 
+### [2026-10-22] — 100% sitewide top-right welcome audio live
+- **Summary**: Every sitemap URL now has fixed top-right `<audio controls>` for `/audio/colddirect-welcome.mp3` via `<!-- CD-TOP-RIGHT-AUDIO -->` + inline `<style id="cd-top-right-audio">` (`!important`, never bottom). Tool: `tools/top_right_welcome_audio.py`. Prior gap: 3 html-only pages + mobile bottom dock.
+- **Git Commit**: `3f76c2f` | Deploy run 39694470611 SUCCESS
+- **Live verify**: **122/122** sitemap URLs PASS (`<audio` + `#cd-top-right-audio` + `#cd-audio-dock` + welcome.mp3)
+- **SEO safety**: no title/H1/meta/canonical/redirect/sitemap changes; locks intact; protect 12/12
+
 ## 2026-10-20 - GSC weekly sync: first live test run + hardening (run 39500957264, success)
 - Test run results: secret GSC_CREDENTIALS_JSON authenticates; sitemap PUT = HTTP 204 (0 errors/0 warnings); URL Inspection worked (80 calls: 56 'Submitted and indexed', 14 'Discovered - currently not indexed', 4 'Alternate page with proper canonical', 3 'URL is unknown to Google', 2 'Google chose different canonical'); Indexing API = HTTP 403 permission denied for the CI service account (workflow stopped after 1 call, run still green).
 - ACTION for owner (Indexing API pings only): add the service account behind GSC_CREDENTIALS_JSON as OWNER of https://www.colddirect.co.uk/ in Search Console and enable 'Web Search Indexing API' in its Google Cloud project. Sitemap + Inspection already work. (Local key C:\Users\khora\gsc-oauth.json is a different account that got 200s earlier.)
