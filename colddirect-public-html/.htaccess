@@ -195,6 +195,12 @@ RewriteRule ^chiller-repair-london$ /chiller-repair-london/ [R=301,L]
 RewriteRule ^bottle-cooler-repair$ /bottle-cooler-repair-london/ [R=301,L]
 RewriteRule ^display-fridge-repair$ /display-fridge-repair-london/ [R=301,L]
 
+# Extensionless money/brand hubs: the bare slug is NOT canonical, so send it to the slash
+# folder before the generic pretty-URL rule below serves slug.html with a 200.
+RewriteRule ^fridge-repair-london$ /fridge-repair-london/ [R=301,L]
+RewriteRule ^freezer-repair-london$ /freezer-repair-london/ [R=301,L]
+RewriteRule ^williams-fridge-repair-london$ /williams-fridge-repair-london/ [R=301,L]
+
 # Keep the restored slash canonical out of the old Liebherr HTML alias redirect.
 RewriteRule ^liebherr-fridge-repair-london/$ - [L]
 
