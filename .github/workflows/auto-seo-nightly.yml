@@ -1,11 +1,18 @@
 name: Nightly auto-seo (live)
 
-# The Plesk Scheduled Task that used to call auto-seo.aspx with the old, publicly visible key can no longer
-# authenticate (the key was rotated and now lives only in the AUTO_SEO_KEY secret + App_Data/auto-seo.key on
-# the server). This workflow keeps the nightly SEO agent running with the new secret.
-# Runs 20:21 UTC (the agent's usual slot) and can be started manually.
+# EVERY 24 HOURS (20:21 UTC, the agent's usual slot; also manual): site update + SEO sync + integrity enforcement.
+#   1. calls the live auto-seo.aspx (key lives only in the AUTO_SEO_KEY secret + App_Data/auto-seo.key on the server)
+#      and runs tools/live_smoke_test.py (pages, canonical/schema/phone, latency, assets, sitemap.xml, robots.txt,
+#      redirects, SSL)
+#   2. pulls the LIVE Plesk state (read-only, runner workspace only - never committed) and runs
+#      tools/html_preflight.py --strict on it; reports drift vs main (informational: the V4 agent owns metadata)
+#   3. tools/seo_integrity_check.py (read-only): the optimized titles / meta / og / schema / audio blocks / blog
+#      links must still be live. SEO SAFETY: this job NEVER rewrites <title> or <h1> - it only ENFORCES that the
+#      optimized state is intact (no daily ranking churn). Titles change only by a deliberate commit.
+#   4. pings Google Search Console (sitemap + unindexed watchlist/recently changed URLs) within a small quota
+#   5. posts a report to the rolling "Autopilot" issue + WORK_LOG (tools/send_job_report.py)
 #
-# Alerting: if the auto-seo trigger or the live smoke test fails, a GitHub Issue titled
+# Alerting: if auto-seo, the smoke test, the strict preflight or the integrity check fails, a GitHub Issue titled
 #   "🚨 [LIVE SITE ALERT] ColdDirect Smoke Test / Auto-SEO Failure"
 # is opened (or, if one is already open, gets a short comment) - GitHub e-mails the repository owner.
 # When a later run passes, the issue gets a "Resolved" comment and is closed automatically.
@@ -17,8 +24,9 @@ on:
     - cron: "21 20 * * *"
   workflow_dispatch:
 
+# contents: write is used ONLY by tools/send_job_report.py (WORK_LOG.md entry via the Contents API)
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 # never overlap a deploy (same group as deploy.yml); a queued run waits instead of cancelling
@@ -29,18 +37,28 @@ concurrency:
 jobs:
   auto-seo:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: main
-          sparse-checkout: tools
-          sparse-checkout-cone-mode: true
+          fetch-depth: 100
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install dependencies (GSC ping)
+        run: python -m pip install --quiet google-auth requests
+
+      - name: Offline self-tests (SEO tools)
+        run: |
+          python tools/money_data.py
+          python tools/money_keywords_apply.py --selftest
+          python tools/generate_seo_audio.py --selftest
+          python tools/blog_money_links.py --selftest
+          python tools/seo_integrity_check.py --selftest
 
       - name: Run live auto-seo.aspx and smoke test
         id: live
@@ -61,6 +79,41 @@ jobs:
           fi
           AUTO_SEO_RESPONSE="$resp" python tools/live_smoke_test.py
 
+      # Read-only pull of the live state into the runner workspace (never committed), then the strict preflight.
+      - name: Pull live Plesk state + strict HTML preflight
+        id: preflight
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          python tools/pull_live_plesk_v4.py
+          drift="$(git diff --numstat --ignore-cr-at-eol --ignore-space-at-eol | wc -l | tr -d ' ')"
+          {
+            echo "## Live vs main (informational)"
+            echo ""
+            echo "Files on the live server that differ from \`main\` after the nightly agent: **${drift}** (the V4 agent owns metadata; the next local session syncs them with \`python tools/pull_live_plesk_v4.py\`)."
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          python tools/html_preflight.py --strict
+
+      - name: SEO integrity of the live site (read-only enforcement)
+        id: integrity
+        run: python tools/seo_integrity_check.py
+
+      # Quota-safe: at most 25 Indexing API pings and 60 inspections per day; read-only for the repo and the site.
+      - name: Ping Google Search Console (sitemap + unindexed / recently changed URLs)
+        id: gsc
+        continue-on-error: true
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+          DRY_RUN: "false"
+          LOOKBACK_DAYS: "2"
+          INDEXING_MAX: "25"
+          INSPECT_MAX: "60"
+          TIME_BUDGET_SECONDS: "600"
+        run: python tools/gsc_weekly_sync.py
+
       # ---- alerting (a problem here must never change the job result, hence continue-on-error)
       - name: Alert - open or update the live-site issue
         if: failure()
@@ -75,6 +128,8 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           OWNER: ${{ github.repository_owner }}
           STEP_LIVE: ${{ steps.live.outcome }}
+          STEP_PREFLIGHT: ${{ steps.preflight.outcome }}
+          STEP_INTEGRITY: ${{ steps.integrity.outcome }}
         run: |
           set -uo pipefail
           NOW="$(date -u +'%Y-%m-%d %H:%M:%S UTC')"
@@ -82,7 +137,7 @@ jobs:
             --jq 'map(select(.title == env.ALERT_TITLE)) | .[0].number // empty' || true)"
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" \
-              --body "Still failing - another failed run at ${NOW}: ${RUN_URL} (workflow: ${WORKFLOW_NAME}, trigger: ${EVENT_NAME}, auto-seo + smoke test step: ${STEP_LIVE})."
+              --body "Still failing - another failed run at ${NOW}: ${RUN_URL} (workflow: ${WORKFLOW_NAME}, trigger: ${EVENT_NAME}, auto-seo + smoke test: ${STEP_LIVE}, strict preflight: ${STEP_PREFLIGHT}, SEO integrity: ${STEP_INTEGRITY})."
             echo "Updated existing alert issue #${existing}"
             exit 0
           fi
@@ -92,7 +147,7 @@ jobs:
             --description "Needs attention first" >/dev/null 2>&1 || true
           BODY="${RUNNER_TEMP:-/tmp}/alert-body.md"
           cat > "$BODY" <<EOF
-          **Priority: HIGH** - the live-site health check failed.
+          **Priority: HIGH** - the nightly live-site health check failed.
 
           | | |
           |---|---|
@@ -101,9 +156,11 @@ jobs:
           | Workflow | ${WORKFLOW_NAME} (trigger: ${EVENT_NAME}) |
           | Commit | \`${COMMIT_SHA}\` |
           | auto-seo trigger + live smoke test step | **${STEP_LIVE}** |
+          | Live strict HTML preflight | **${STEP_PREFLIGHT}** |
+          | SEO integrity (titles / meta / schema / audio / blog links) | **${STEP_INTEGRITY}** |
 
-          What failed: the call to \`auto-seo.aspx\` on the live server and/or \`tools/live_smoke_test.py\`.
-          Open the run above and read the log of the step "Run live auto-seo.aspx and smoke test" for details.
+          What failed: the call to \`auto-seo.aspx\`, \`tools/live_smoke_test.py\`, the strict preflight on the live files and/or \`tools/seo_integrity_check.py\`.
+          Open the run above and read the log of the failed step for details.
 
           This issue is updated with a comment if the failure repeats and is closed automatically when a later run passes.
           No secrets, keys or response bodies are ever posted here.
@@ -131,3 +188,20 @@ jobs:
             gh issue close "$n" --repo "$GITHUB_REPOSITORY" --reason completed
             echo "Closed alert issue #${n}"
           done
+
+      # ---- unified job report: ALWAYS runs (success or failure), never changes the job result, no secrets/log text
+      - name: Job report (rolling issue + WORK_LOG)
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          S_LIVE: ${{ steps.live.outcome }}
+          S_PREFLIGHT: ${{ steps.preflight.outcome }}
+          S_INTEGRITY: ${{ steps.integrity.outcome }}
+          S_GSC: ${{ steps.gsc.outcome }}
+        run: |
+          python tools/send_job_report.py --job "24h SEO sync & site update (auto-seo)" --status "$JOB_STATUS" \
+            --metric "auto-seo + smoke test (sitemap/robots/latency/assets)=$S_LIVE" \
+            --metric "live strict preflight=$S_PREFLIGHT" --metric "SEO integrity (no title/H1 rewrite)=$S_INTEGRITY" \
+            --metric "GSC ping=$S_GSC"

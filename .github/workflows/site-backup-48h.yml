@@ -1,0 +1,104 @@
+name: Site backup (48h)
+
+# EVERY 48 HOURS (03:00 UTC on every second day-of-month + manual): full verified snapshot of the LIVE Plesk site.
+#   tools/backup_site.py downloads /httpdocs over PLAIN FTP (HTML/ASP/ASPX incl. auto-seo.aspx, web.config & other
+#   *.config, sitemap.xml, robots.txt, CSS/JS, JSON/XML/TXT config files), scrubs secret values from config files,
+#   never archives App_Data/*.key/private keys/bookings (customer data), writes a timestamped ZIP with a SHA-256
+#   MANIFEST, re-opens the ZIP and re-hashes every member, and fails if critical files are missing.
+#   The ZIP is uploaded as a GitHub Actions artifact kept for 90 days. Nothing is committed or deployed.
+# Public-repo note: artifacts of public repositories can be downloaded by any signed-in GitHub user, hence the scrub.
+# Manual run: Actions -> "Site backup (48h)" -> Run workflow (optional: include images/audio/fonts).
+# Every run (success or failure) posts to the rolling "Autopilot" report issue and WORK_LOG.
+
+on:
+  schedule:
+    - cron: '0 3 */2 * *'
+  workflow_dispatch:
+    inputs:
+      include_media:
+        description: 'Also include images / audio / fonts (much larger archive)'
+        type: boolean
+        default: false
+
+# contents: write is used ONLY by tools/send_job_report.py (WORK_LOG.md entry via the Contents API)
+permissions:
+  contents: write
+  issues: write
+
+# not the production group: a backup only reads from the server and must never block or be blocked by a deploy
+concurrency:
+  group: colddirect-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Backup self-test (offline)
+        run: python tools/backup_site.py --selftest
+
+      - name: Download, scrub, package and verify the live site
+        id: backup
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          INCLUDE_MEDIA: ${{ inputs.include_media && 'true' || 'false' }}
+        run: |
+          extra=""
+          if [ "$INCLUDE_MEDIA" = "true" ]; then extra="--include-media"; fi
+          python tools/backup_site.py --out backup-out $extra
+
+      - name: Re-verify the archive against its SHA-256 manifest
+        id: reverify
+        run: |
+          set -euo pipefail
+          cd backup-out
+          zip="$(ls colddirect-backup-*.zip | head -n1)"
+          unzip -q -o "$zip" -d verify-tmp
+          (cd verify-tmp/httpdocs && sha256sum --quiet -c ../MANIFEST.sha256)
+          rm -rf verify-tmp
+          echo "manifest re-verified: $(wc -l < MANIFEST.sha256) files OK"
+
+      - name: Upload backup artifact (90 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: colddirect-site-backup-${{ github.run_id }}
+          path: |
+            backup-out/colddirect-backup-*.zip
+            backup-out/MANIFEST.json
+            backup-out/MANIFEST.sha256
+            backup-out/backup-summary.json
+          retention-days: 90
+          if-no-files-found: error
+
+      # ---- unified job report: ALWAYS runs (success or failure), never changes the job result, no secrets/log text
+      - name: Job report (rolling issue + WORK_LOG)
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          B_ZIP: ${{ steps.backup.outputs.zip }}
+          B_SHA: ${{ steps.backup.outputs.zip_sha256 }}
+          B_FILES: ${{ steps.backup.outputs.files }}
+          B_HTML: ${{ steps.backup.outputs.html_files }}
+          B_VERIFIED: ${{ steps.backup.outputs.verified }}
+          S_REVERIFY: ${{ steps.reverify.outcome }}
+          ARTIFACT: colddirect-site-backup-${{ github.run_id }}
+        run: |
+          python tools/send_job_report.py --job "48h full site backup" --status "$JOB_STATUS" \
+            --metric "archive=${B_ZIP:-none}" --metric "SHA-256=${B_SHA:-n/a}" \
+            --metric "files=${B_FILES:-0} (${B_HTML:-0} html)" --metric "integrity verified=${B_VERIFIED:-false}" \
+            --metric "manifest re-check=$S_REVERIFY" --metric "artifact (90 days)=$ARTIFACT"

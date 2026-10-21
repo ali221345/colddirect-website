@@ -191,3 +191,12 @@ Bounded specialistphoneimplementation8exacthrefrepairs4fridgeHTMLvariants comple
 
 ## 2026-10-21 - Standing full-autonomy directive (owner decision, permanent)
 Owner pre-authorised all Git/GitHub/FTP-Plesk/GSC/shell actions for all future sessions: no confirmation prompts, end-to-end execution. Guards that remain: html_preflight.py, deploy_guard.py, protected pages, secret protection, V4 coexistence rules, SEO freeze (HTML/titles/auto-seo.aspx rules) until 2026-10-26. Platform auto-review blocks are retried once via the platform approval path, never bypassed.
+
+
+## 2026-10-21 - Master directive: Oct 26 freeze LIFTED by owner; money hubs, audio, blog links, 24h/48h automation, job reports
+- Decision: freeze override is permanent for this upgrade; the no-churn rule (no scheduled title/H1 rewrites) stays. Full text: docs/ai-memory/OWNER_MASTER_PROMPT.md.
+- Decision: single source of truth for the 9 hubs = tools/money_data.py; auto-seo.aspx moneyMeta mirrors it (title, description, +3 modifier OfferCatalog variations), HTML copies mirror it too, so nightly aspx runs agree with the repo (no flip-flop).
+- Decision: "commercial catering repair London" is owned by /commercial-appliances-repair-london/ (title "Commercial Catering Repair London | ..."); /catering-repair-london/ owns "catering repair London" - no overlap, no canonical change.
+- Decision: phone 07983 759320 in meta descriptions (not in titles: keeps titles short and consistent); titles of commercial fridge/freezer unchanged (protected, already optimal).
+- Decision: audio = edge-tts en-GB-SoniaNeural MP3s (~25-30 s, 48 kbps) committed in /audio/ (+mirror); generator is hash-gated so it never re-synthesises unchanged text; JSON-LD lives in the body next to the audio bar so auto-seo's head V4 schema is untouched.
+- Decision: backups are GitHub Actions artifacts (90 days) with a SHA-256 manifest; nothing is committed into the webroot; secrets/App_Data/*.key are excluded and scrubbed.

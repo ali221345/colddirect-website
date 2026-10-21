@@ -1,0 +1,72 @@
+{
+  "air-conditioning-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 149328,
+    "duration_s": 24.9,
+    "hash": "b513f2fdac4555cafba0fe13256c0beda127eccc37812d33485d2455aaadda77",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "catering-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 167472,
+    "duration_s": 27.9,
+    "hash": "b2e642db928f70acf7aceb98d4178d52fa8421e3d406f9ac93f294de9fc72a86",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "cellar-cooler-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 140832,
+    "duration_s": 23.5,
+    "hash": "32b5be414f4a4c71017741b8986331ab5dda0de4a0c7c1de5d7a9657d8da5f8f",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "cold-room-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 143280,
+    "duration_s": 23.9,
+    "hash": "6dc44f20e252207ebc99ffd4350075a303455390360a9a20414fe930b0a28987",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "colddirect-home": {
+    "bitrate_kbps": 48,
+    "bytes": 164448,
+    "duration_s": 27.4,
+    "hash": "de411f673bcc0a8e051fbb34235c100c875685339d10a4cd37fae7613ed82f72",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "commercial-appliances-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 156384,
+    "duration_s": 26.1,
+    "hash": "28f152c6ba8e609ed67c02e6a867f586931af5e115e947cd020f4c190ce0b0b0",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "commercial-freezer-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 144864,
+    "duration_s": 24.1,
+    "hash": "c3420cba0f7eab6ed72234c65951af78128e4df331e34d7e1d29da91f4e1e793",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "commercial-fridge-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 157104,
+    "duration_s": 26.2,
+    "hash": "f6ba8d00eb57f4a602ee00ef403fc8139a322d0fcfb2e0178e6b8ade0061c4c5",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "freezer-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 166032,
+    "duration_s": 27.7,
+    "hash": "bcab783be9aa58832f409040a548ad30d0880f70bd41592a54037df274d13ff0",
+    "voice": "en-GB-SoniaNeural"
+  },
+  "fridge-repair-london": {
+    "bitrate_kbps": 48,
+    "bytes": 184176,
+    "duration_s": 30.7,
+    "hash": "8a647dac1934f405ec6d0bcefdc292c0ca7ba4edb0f7850b1343513deeb17c36",
+    "voice": "en-GB-SoniaNeural"
+  }
+}

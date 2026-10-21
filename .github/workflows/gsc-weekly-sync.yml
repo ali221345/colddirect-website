@@ -27,8 +27,11 @@ on:
         type: string
         default: '7'
 
+# contents: write is used ONLY by tools/send_job_report.py (WORK_LOG.md entry via the Contents API);
+# issues: write lets it post to the rolling "Autopilot" report issue. The sync itself stays read-only.
 permissions:
-  contents: read
+  contents: write
+  issues: write
 
 concurrency:
   group: gsc-weekly-sync
@@ -79,3 +82,17 @@ jobs:
           INSPECT_MAX: '150'
           TIME_BUDGET_SECONDS: '1200'
         run: python tools/gsc_weekly_sync.py
+
+      # ---- unified job report: ALWAYS runs (success or failure), never changes the job result, no secrets/log text
+      - name: Job report (rolling issue + WORK_LOG)
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+          REPORT_ONLY: ${{ inputs.report_only && 'true' || 'false' }}
+        run: |
+          python tools/send_job_report.py --job "GSC Weekly Sync" --status "$JOB_STATUS" \
+            --metric "dry run=$DRY_RUN" --metric "report only=$REPORT_ONLY" \
+            --note "Weekly SEO performance report + watchlist indexing: full tables are in the run's Step Summary / log."

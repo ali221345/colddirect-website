@@ -2,7 +2,7 @@
 """Idempotent post-freeze activator: add og:image + twitter:image to the homepage and the 9 core money pages.
 
     python tools/apply_og_image.py --check     # read-only: which files already carry the tags (exit 0 = all applied)
-    python tools/apply_og_image.py             # apply (REFUSED before 2026-10-26T00:00:00Z - the SEO content freeze)
+    python tools/apply_og_image.py             # apply (REFUSED before 2026-10-21T00:00:00Z - freeze lifted early by owner on 2026-10-21)
     python tools/apply_og_image.py --selftest  # offline tests in isolated temp directories (no repo file is touched)
 
 Adds exactly two lines to every copy of every target page (root <slug>.html, root <slug>/index.html and the same two in
@@ -40,7 +40,7 @@ IMG_URL = "https://www.colddirect.co.uk/images/og-colddirect-london.jpg"
 IMG_REL = os.path.join("images", "og-colddirect-london.jpg")
 OG_TAG = '<meta property="og:image" content="%s">' % IMG_URL
 TW_TAG = '<meta name="twitter:image" content="%s">' % IMG_URL
-FREEZE_END = datetime(2026, 10, 26, 0, 0, 0, tzinfo=timezone.utc)
+FREEZE_END = datetime(2026, 10, 21, 0, 0, 0, tzinfo=timezone.utc)
 CORE = [
     "commercial-fridge-repair-london", "commercial-freezer-repair-london", "cold-room-repair-london",
     "fridge-repair-london", "freezer-repair-london", "catering-repair-london",
@@ -258,9 +258,9 @@ def check(root, log=print):
 # ------------------------------------------------------------------ self-test (isolated temp dirs only)
 def selftest():
     import make_og_image as mk
-    PAST = datetime(2026, 10, 21, 3, 0, tzinfo=timezone.utc)
-    ENDS = datetime(2026, 10, 26, 0, 0, 0, tzinfo=timezone.utc)
-    LATER = datetime(2026, 10, 26, 7, 0, tzinfo=timezone.utc)
+    PAST = datetime(2026, 10, 20, 3, 0, tzinfo=timezone.utc)
+    ENDS = datetime(2026, 10, 21, 0, 0, 0, tzinfo=timezone.utc)
+    LATER = datetime(2026, 10, 21, 7, 0, tzinfo=timezone.utc)
     HEAD = ('<!DOCTYPE html>\n<html lang="en-GB">\n<head>\n  <meta charset="utf-8">\n  <title>Cold Room &amp; More | ColdDirect</title>\n'
             '  <meta property="og:title" content="Cold Room">\n  <meta property="og:description" content="Desc">\n'
             '  <link rel="canonical" href="https://www.colddirect.co.uk/%s">\n  <style>a{b:c}</style>\n</head>\n'
@@ -304,10 +304,10 @@ def selftest():
     with tempfile.TemporaryDirectory() as td:
         build(td)
         before = snapshot(td)
-        for t in (PAST, datetime(2026, 10, 25, 23, 59, 59, tzinfo=timezone.utc)):
+        for t in (PAST, datetime(2026, 10, 20, 23, 59, 59, tzinfo=timezone.utc)):
             code, ch = apply(td, now=t, force=False, log=log)
             assert code == 2 and ch == [] and snapshot(td) == before, (t, code)
-        assert any("REFUSED: SEO content freeze active until 2026-10-26T00:00:00Z" in l for l in logs)
+        assert any("REFUSED: SEO content freeze active until 2026-10-21T00:00:00Z" in l for l in logs)
         # --force on the REAL repository root can never pass (checked without touching the repo: guard only)
         assert guard(REPO, PAST, True) is not None and "never bypass" in guard(REPO, PAST, True)
         assert guard(REPO, PAST, False) is not None and guard(REPO, ENDS, False) is None
@@ -399,7 +399,7 @@ def selftest():
     # 4. real repository: read-only facts only (nothing is written)
     assert IMG_URL.endswith("/images/og-colddirect-london.jpg") and OG_TAG.startswith('<meta property="og:image"') and TW_TAG.startswith('<meta name="twitter:image"')
     assert not [l for l in logs if "private_key" in l]
-    print("selftest OK (date guard: refused before 2026-10-26 incl. --force on the real repo; image prerequisite; "
+    print("selftest OK (date guard: refused before 2026-10-21 incl. --force on the real repo; image prerequisite; "
           "38 files get exactly 2 inserted lines, title/h1/other bytes unchanged; idempotent re-run; CRLF + indentation kept; "
           "canonical / no-canonical anchors; foreign + duplicate tags reported not overwritten; --check exit codes)")
     return 0

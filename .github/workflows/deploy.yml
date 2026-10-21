@@ -7,8 +7,10 @@ on:
 
 # contents: read for checkout; issues: write so the failure alert / recovery steps below can manage the
 # "LIVE SITE ALERT" GitHub Issue (GITHUB_TOKEN only - no extra secrets)
+#   contents: write is used ONLY by tools/send_job_report.py to append the job entry to docs/ai-memory/WORK_LOG.md
+#   through the Contents API (a GITHUB_TOKEN commit never re-triggers this workflow, and docs/** is not deployed)
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -123,6 +125,13 @@ jobs:
         id: verify
         run: python tools/verify-production-pages.py
 
+      # Read-only: the optimized titles/meta/schema/audio/blog links must be live after every deploy.
+      # Informational here (the 24h job enforces it and alerts); its result is included in the job report.
+      - name: SEO integrity of the live site (read-only)
+        id: integrity
+        continue-on-error: true
+        run: python tools/seo_integrity_check.py
+
       # ---- alerting. Issue title is shared with auto-seo-nightly.yml. Text only ever contains the run URL,
       # timestamp, workflow/commit and step outcomes - never secrets, keys, response bodies or log excerpts
       # (public repository). A problem in these steps must never change the job result (continue-on-error).
@@ -197,3 +206,18 @@ jobs:
             gh issue close "$n" --repo "$GITHUB_REPOSITORY" --reason completed
             echo "Closed alert issue #${n}"
           done
+
+      # ---- unified job report: ALWAYS runs (success or failure), never changes the job result, no secrets/log text
+      - name: Job report (rolling issue + WORK_LOG)
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          S_LIVE: ${{ steps.live.outcome }}
+          S_VERIFY: ${{ steps.verify.outcome }}
+          S_INTEGRITY: ${{ steps.integrity.outcome }}
+        run: |
+          python tools/send_job_report.py --job "Deploy to WHUK Plesk" --status "$JOB_STATUS" \
+            --metric "auto-seo + live smoke test=$S_LIVE" --metric "critical live pages=$S_VERIFY" \
+            --metric "SEO integrity (live)=$S_INTEGRITY"
