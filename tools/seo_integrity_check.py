@@ -31,7 +31,9 @@ def fetch(url, method="GET"):
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             body = r.read() if method == "GET" else b""
-            return r.status, dict(r.headers), body.decode("utf-8", "replace")
+            hdr = dict(r.headers)
+            hdr["X-Final-Url"] = r.geturl()
+            return r.status, hdr, body.decode("utf-8", "replace")
     except urllib.error.HTTPError as e:
         return e.code, dict(e.headers), ""
     except Exception as e:  # noqa: BLE001
@@ -153,7 +155,11 @@ def run(fetcher=fetch, base=BASE, slugs=None):
         + ([] if "<!-- AUTO-SEO-V4-BLOGHUB -->" in home else ["V4 bloghub missing"]))
     rec("homepage", hp)
     for path in ["blog/"] + [f"blog/{s}/" for s in (slugs if slugs is not None else blog_slugs())]:
-        st, _, body = fetcher(f"{base}/{path}")
+        st, hdr, body = fetcher(f"{base}/{path}")
+        final = (hdr or {}).get("X-Final-Url", "")
+        if st == 200 and final and final.rstrip("/") != f"{base}/{path}".rstrip("/"):
+            rec(f"blog /{path} (intentionally redirected, skipped)", [])  # e.g. domestic post 301 -> commercial hub
+            continue
         rec(f"blog /{path}", [f"HTTP {st}"] if st != 200 else check_blog(body))
     return rows, fails
 
@@ -225,7 +231,15 @@ def selftest():
     failed = {n for n, pr in rows2 if pr}
     assert "hub /fridge-repair-london/" in failed and "hub /cold-room-repair-london/" in failed
     assert "blog /blog/post-a/" in failed and "audio /audio/freezer-repair-london.mp3" in failed
-    print("seo_integrity_check selftest OK (perfect site passes; 4 simulated losses detected)")
+    def fake3(url, method="GET"):
+        path = url.replace(BASE, "")
+        if path == "/blog/gone/":
+            return 200, {"X-Final-Url": BASE + "/commercial-fridge-repair-london/"}, "<html>hub</html>"
+        return fake(url, method)
+
+    rows3, _ = run(fake3, BASE, ["gone"])
+    assert [pr for n, pr in rows3 if n.startswith("blog /blog/gone")] == [[]]
+    print("seo_integrity_check selftest OK (perfect site passes; 4 simulated losses detected; intentional redirect skipped)")
 
 
 if __name__ == "__main__":
