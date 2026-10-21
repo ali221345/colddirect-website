@@ -532,11 +532,21 @@ def build_report(gsc, today: date, site: str, watch=None) -> str:
 
 
 # ------------------------------------------------------------------ output
-def emit(md: str) -> None:
-    if SUMMARY_PATH:
-        with open(SUMMARY_PATH, "a", encoding="utf-8") as fh:
+def emit(md: str, summary_path: str | None = None) -> None:
+    """Write the report to $GITHUB_STEP_SUMMARY (when set) AND always print the full Markdown to stdout, so
+    `gh run view --log` captures the exact tables and watchlist ping counts (a Step Summary is not in the log)."""
+    summary_path = SUMMARY_PATH if summary_path is None else summary_path
+    try:  # tables contain arrows (▲ ▼); a Windows console may be cp1252
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        pass
+    if summary_path:
+        with open(summary_path, "a", encoding="utf-8") as fh:
             fh.write(md + "\n")
-        print("Weekly SEO report written to the Step Summary (%d lines)." % md.count("\n"))
+        print("::group::Weekly SEO report (full Markdown)")
+        print(md)
+        print("::endgroup::")
+        print("Weekly SEO report written to the Step Summary and printed above (%d lines)." % md.count("\n"))
     else:
         logs = ROOT / "logs"  # gitignored
         logs.mkdir(exist_ok=True)
@@ -692,6 +702,21 @@ def selftest() -> int:
     mod.MAX_PINGS = old_cap
     assert len(aw.pinged) == 5, len(aw.pinged)
     assert "private_key" not in md3 and "BEGIN" not in md3
+    # emit(): with a Step Summary path the FULL report goes to the file AND to stdout (visible in `gh run view --log`)
+    import contextlib
+    import io
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        sp = os.path.join(td, "summary.md")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            emit(md3, sp)                       # md3 = report incl. the Indexing watchlist (Table 4)
+        printed = buf.getvalue()
+        assert md3 in printed, "report missing from stdout"
+        assert "Indexing API notifications sent" in printed and "| Page |" in printed
+        assert open(sp, encoding="utf-8").read() == md3 + "\n"
+        assert "::group::" in printed and "::endgroup::" in printed and "written to the Step Summary" in printed
+        assert "private_key" not in printed and "BEGIN" not in printed
     print("selftest OK (%d report lines)" % md.count("\n"))
     return 0
 
