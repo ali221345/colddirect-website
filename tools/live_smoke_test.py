@@ -8,6 +8,9 @@ Checks (all against the LIVE site, no redirects followed for the 200 checks):
     (https://www.colddirect.co.uk/<slug>/), non-empty <title> and <h1>, >=1 JSON-LD block and every block parses
     with json.loads, official phone 07983 759320 present and no dummy 123 4567 / 1234567. A passing row reads
     "HTTP 200 + Schema + Canonical + Phone OK"; a failing row names the exact failing check(s).
+  * response time (time.monotonic, ms) of the homepage, 9 core pages, Enfield page, /blog/, sitemap.xml and robots.txt:
+    < 1500 ms healthy; 1500-3000 ms passes with a "⚠️ SLOW" note; > 3000 ms is retried once and FAILS only if the
+    retry is also > 3000 ms. Every row shows "(N ms)"; the Step Summary header shows average and max.
   * sitemap.xml is HTTP 200, contains /blog/ and /commercial-fridge-repair-enfield/, and does NOT contain
     /about/, /news/, /preview-colddirect-homepage/, /refrigeration-brands-repairs-london/
   * the 301s from web.config: /about/ -> /about-us/ and /refrigeration-brands-repairs-london/ -> /refrigeration-brands-repair-london/
@@ -84,6 +87,56 @@ def fetch(path, body=False, tries=3):
         except Exception as e:  # network blip - retry
             last = e
     return 0, {}, "ERR %s" % type(last).__name__
+
+
+# ------------------------------------------------------------------ response-time (latency) enforcement
+LAT_SLOW_MS = 1500     # >= this: "SLOW" warning, still PASS
+LAT_FAIL_MS = 3000     # >  this: retry once; if the retry is ALSO > this the smoke test FAILS
+
+
+def timed_fetch(fn, clock=time.monotonic):
+    """Run fn() -> (status, headers, body) and measure it in whole milliseconds with a monotonic clock.
+
+    A response slower than LAT_FAIL_MS is retried exactly once (GitHub runner network jitter); the retry's
+    time is the one that counts. level: ok (<1500) / slow (1500..3000, warning only) / fail (>3000 twice).
+    """
+    def once():
+        t0 = clock()
+        res = fn()
+        return res, int(round((clock() - t0) * 1000))
+
+    res, ms = once()
+    first = None
+    if ms > LAT_FAIL_MS:
+        first = ms
+        res, ms = once()
+    level = "fail" if ms > LAT_FAIL_MS else ("slow" if ms >= LAT_SLOW_MS else "ok")
+    return {"result": res, "ms": ms, "first_ms": first, "level": level}
+
+
+def latency_note(t):
+    """Text appended to a row: ' (245 ms)', ' (1800 ms ⚠️ SLOW)', spike / persistent-slow variants."""
+    ms, first, level = t["ms"], t["first_ms"], t["level"]
+    if level == "fail":
+        return " (%d ms, retry of %d ms also > %d ms ❌ TOO SLOW)" % (ms, first, LAT_FAIL_MS)
+    if first is not None:
+        return " (%d ms%s after a transient %d ms spike, retried)" % (ms, " ⚠️ SLOW" if level == "slow" else "", first)
+    return " (%d ms%s)" % (ms, " ⚠️ SLOW" if level == "slow" else "")
+
+
+def with_latency(row, t, failures, label):
+    """Append the timing to a (name, value, ok) row; a persistent >3000 ms response fails the row and the run."""
+    name, val, ok = row
+    if t["level"] == "fail":
+        failures.append("%s response time %d ms (retry of %d ms also) exceeds %d ms" % (label, t["ms"], t["first_ms"], LAT_FAIL_MS))
+    return (name, val + latency_note(t), ok and t["level"] != "fail")
+
+
+def latency_summary(samples):
+    """One-line Average / Max over the measured pages (ms)."""
+    if not samples:
+        return "n/a"
+    return "average %d ms, max %d ms (%d requests)" % (round(sum(samples) / len(samples)), max(samples), len(samples))
 
 
 # ------------------------------------------------------------------ live HTML content integrity
@@ -183,14 +236,18 @@ def check_page_integrity(path, status, headers, body):
     return {"ok": True, "summary": INTEGRITY_OK, "problems": []}
 
 
-def integrity_checks(paths=None, fetcher=None):
-    """Fetch every core page (with body) and validate it. Returns (rows, failures)."""
+def integrity_checks(paths=None, fetcher=None, latencies=None, clock=time.monotonic):
+    """Fetch every core page (with body, timed) and validate it. Returns (rows, failures).
+    latencies: optional list that receives the response time (ms) of every page."""
     fetcher = fetcher or (lambda p: fetch(p, body=True))
     rows, failures = [], []
     for path in (INTEGRITY_PAGES if paths is None else paths):
-        status, headers, body = fetcher(path)
+        t = timed_fetch(lambda: fetcher(path), clock)
+        status, headers, body = t["result"]
         r = check_page_integrity(path, status, headers, body)
-        rows.append(("HTTP 200 " + path, r["summary"], r["ok"]))
+        if latencies is not None:
+            latencies.append(t["ms"])
+        rows.append(with_latency(("HTTP 200 " + path, r["summary"], r["ok"]), t, failures, path))
         if not r["ok"]:
             failures.append("%s content integrity: %s" % (path, "; ".join(r["problems"])))
     return rows, failures
@@ -711,14 +768,99 @@ def selftest():
                 body = body.replace('content="index, follow, max-image-preview:large"', 'content="noindex"')
             return 200, HDR, body
         return f
-    rows, failures = integrity_checks(fetcher=fake())
+    lat = []
+    rows, failures = integrity_checks(fetcher=fake(), latencies=lat)
     assert len(rows) == len(INTEGRITY_PAGES) == 11 and all(ok for _, _, ok in rows) and not failures, (rows, failures)
-    assert rows[0][0] == "HTTP 200 /" and all(v == INTEGRITY_OK for _, v, _ in rows)
+    assert rows[0][0] == "HTTP 200 /" and all(v.startswith(INTEGRITY_OK + " (") and v.endswith(" ms)") for _, v, _ in rows), rows
+    assert len(lat) == 11
     rows, failures = integrity_checks(fetcher=fake("/fridge-repair-london/"))
     assert sum(1 for *_, ok in rows if not ok) == 1 and len(failures) == 1, failures
     assert failures[0].startswith("/fridge-repair-london/ content integrity: noindex"), failures
 
+    # ---------------- response-time thresholds (fake monotonic clock, no network)
+    def fake_clock(durations_ms):
+        """clock() pairs: every timed call reads the clock twice; the Nth call 'takes' durations_ms[N]."""
+        ticks = []
+        now = 1000.0
+        for d in durations_ms:
+            ticks += [now, now + d / 1000.0]
+            now += 100.0
+        it = iter(ticks)
+        return lambda: next(it)
+
+    calls = []
+
+    def probe(fn=lambda: (200, {}, "x")):
+        def f():
+            calls.append(1)
+            return fn()
+        return f
+
+    # fast (<1.5 s): PASS, single request, plain "(245 ms)" note
+    calls.clear()
+    t = timed_fetch(probe(), fake_clock([245]))
+    assert t["ms"] == 245 and t["level"] == "ok" and t["first_ms"] is None and len(calls) == 1, t
+    assert latency_note(t) == " (245 ms)", latency_note(t)
+    fl = []
+    row = with_latency(("HTTP 200 /", INTEGRITY_OK, True), t, fl, "/")
+    assert row == ("HTTP 200 /", "HTTP 200 + Schema + Canonical + Phone OK (245 ms)", True) and not fl, (row, fl)
+    # boundaries: 1499 ms ok, 1500 ms slow, 3000 ms slow (not a failure), 3001 ms -> retry
+    assert timed_fetch(probe(), fake_clock([1499]))["level"] == "ok"
+    assert timed_fetch(probe(), fake_clock([1500]))["level"] == "slow"
+    calls.clear()
+    t = timed_fetch(probe(), fake_clock([3000]))
+    assert t["level"] == "slow" and len(calls) == 1, t                       # exactly 3.0 s is still only a warning
+    # slow warning (1.5-3 s): PASS (row ok, no failure) with the SLOW marker, no retry
+    calls.clear()
+    t = timed_fetch(probe(), fake_clock([1800]))
+    assert t["ms"] == 1800 and t["level"] == "slow" and len(calls) == 1, t
+    assert latency_note(t) == " (1800 ms ⚠️ SLOW)", latency_note(t)
+    fl = []
+    row = with_latency(("HTTP 200 /x/", "200", True), t, fl, "/x/")
+    assert row[2] is True and "⚠️ SLOW" in row[1] and not fl, (row, fl)
+    # transient spike (>3 s then <1.5 s): retried once, PASS, spike noted
+    calls.clear()
+    t = timed_fetch(probe(), fake_clock([3400, 480]))
+    assert t["ms"] == 480 and t["first_ms"] == 3400 and t["level"] == "ok" and len(calls) == 2, t
+    assert latency_note(t) == " (480 ms after a transient 3400 ms spike, retried)", latency_note(t)
+    fl = []
+    row = with_latency(("HTTP 200 /x/", "200", True), t, fl, "/x/")
+    assert row[2] is True and not fl, (row, fl)
+    # spike then a slow-warning retry: still PASS
+    t = timed_fetch(probe(), fake_clock([5000, 2000]))
+    assert t["level"] == "slow" and "⚠️ SLOW" in latency_note(t) and t["first_ms"] == 5000, t
+    # persistent slow (>3 s on both attempts): retried exactly once, FAIL with failure message
+    calls.clear()
+    t = timed_fetch(probe(), fake_clock([3500, 3300]))
+    assert t["ms"] == 3300 and t["first_ms"] == 3500 and t["level"] == "fail" and len(calls) == 2, t
+    assert "TOO SLOW" in latency_note(t) and "3500" in latency_note(t), latency_note(t)
+    fl = []
+    row = with_latency(("HTTP 200 /x/", "200", True), t, fl, "/x/")
+    assert row[2] is False and len(fl) == 1 and fl[0].startswith("/x/ response time 3300 ms"), (row, fl)
+    # a slow page with a healthy-looking body is not retried more than once (3 calls would be a bug)
+    calls.clear()
+    timed_fetch(probe(), fake_clock([9000, 9000]))
+    assert len(calls) == 2
+    # integration: one persistently slow core page fails the aggregate (and only that page); a spike on another passes
+    seq = {"/": [200], "/cold-room-repair-london/": [3600, 3200], "/fridge-repair-london/": [4000, 400]}
+    clock_durations = []
+    for p in INTEGRITY_PAGES:
+        clock_durations += seq.get(p, [150])
+    lat = []
+    rows, failures = integrity_checks(fetcher=fake(), latencies=lat, clock=fake_clock(clock_durations))
+    bad = [n for n, _, ok in rows if not ok]
+    assert bad == ["HTTP 200 /cold-room-repair-london/"], bad
+    assert len(failures) == 1 and failures[0].startswith("/cold-room-repair-london/ response time 3200 ms"), failures
+    assert len(lat) == 11 and 3200 in lat and 400 in lat and 4000 not in lat, lat
+    # the integrity failure and the latency failure are both reported when a slow page is also broken
+    rows, failures = integrity_checks(fetcher=fake("/"), latencies=[], clock=fake_clock([3500, 3500] + [100] * 10))
+    assert len(failures) == 2 and "response time" in failures[0] and "content integrity" in failures[1], failures
+    # summary metric
+    assert latency_summary([200, 400, 3000]) == "average 1200 ms, max 3000 ms (3 requests)", latency_summary([200, 400, 3000])
+    assert latency_summary([]) == "n/a"
+
     print("selftest OK (page integrity: valid page ok; noindex / canonical / title / h1 / JSON-LD / phone / dummy-phone fail; "
+          "latency: <1.5 s ok, 1.5-3 s slow warning, >3 s retried once, spike passes, persistent fails; "
           "SSL threshold: fail below %d days, expired/invalid certificates; "
           "canonical redirects: 301 / 2-hop ok, 200 / 302 / 307 / loop / 3 hops / wrong target fail; "
           "robots.txt: healthy ok, blanket / Googlebot / money-path blocks, bad Sitemap, HTML 404/500 fail)" % SSL_MIN_DAYS)
@@ -739,24 +881,29 @@ def main():
         max_attempts = int(sys.argv[sys.argv.index("--max-attempts") + 1])
 
     rows, failures = [], []
+    latencies = []                          # response time (ms) of every timed core request
 
     for path in PAGES:
         if path in INTEGRITY_PAGES:
             continue                        # validated below with the full content integrity checks
-        code, _, _ = fetch(path)
+        t = timed_fetch(lambda: fetch(path))
+        code = t["result"][0]
+        latencies.append(t["ms"])
         ok = code == 200
-        rows.append(("HTTP 200 " + path, "200" if ok else str(code), ok))
+        rows.append(with_latency(("HTTP 200 " + path, "200" if ok else str(code), ok), t, failures, path))
         if not ok:
             failures.append("%s returned %s" % (path, code))
 
-    page_rows, page_failures = integrity_checks()
+    page_rows, page_failures = integrity_checks(latencies=latencies)
     rows += page_rows
     failures += page_failures
 
-    code, _, sm = fetch("/sitemap.xml", body=True)
+    t = timed_fetch(lambda: fetch("/sitemap.xml", body=True))
+    code, _, sm = t["result"]
+    latencies.append(t["ms"])
     urls = re.findall(r"<loc>\s*(.*?)\s*</loc>", sm) if code == 200 else []
     ok = code == 200 and len(urls) > 0
-    rows.append(("HTTP 200 /sitemap.xml (%d URLs)" % len(urls), str(code), ok))
+    rows.append(with_latency(("HTTP 200 /sitemap.xml (%d URLs)" % len(urls), str(code), ok), t, failures, "/sitemap.xml"))
     if not ok:
         failures.append("sitemap.xml returned %s with %d urls" % (code, len(urls)))
     for u in MUST_BE_IN_SITEMAP:
@@ -778,8 +925,10 @@ def main():
         if not ok:
             failures.append("%s expected 301 to %s, got %s %s" % (src, dst, code, loc))
 
-    robots_row, robots_failures = robots_check()
-    rows.append(robots_row)
+    t = timed_fetch(lambda: fetch("/robots.txt", body=True))
+    latencies.append(t["ms"])
+    robots_row, robots_failures = robots_check(lambda: t["result"])
+    rows.append(with_latency(robots_row, t, failures, "/robots.txt"))
     failures += robots_failures
 
     host_rows, host_failures = canonical_checks()
@@ -795,6 +944,7 @@ def main():
         print(("PASS " if ok else "FAIL ") + name + "  [" + val + "]")
     for r in ssl_results:
         print(r["line"])
+    print("response times: " + latency_summary(latencies))
     print("live sitemap URL count: %d | attempt %d/%d | %s" % (len(urls), attempt, max_attempts, "ALL PASSED" if passed else "FAILURES: " + "; ".join(failures)))
 
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
@@ -803,6 +953,8 @@ def main():
         with open(summary, "a", encoding="utf-8") as f:
             f.write("## Post-deploy live check %s\n\n" % ("PASSED" if passed else "FAILED"))
             f.write("- **Live sitemap URLs:** %d\n- **Attempt:** %d of %d\n" % (len(urls), attempt, max_attempts))
+            f.write("- **⏱️ Response time:** %s (healthy < %d ms, slow warning %d-%d ms, fail > %d ms after one retry)\n"
+                    % (latency_summary(latencies), LAT_SLOW_MS, LAT_SLOW_MS, LAT_FAIL_MS, LAT_FAIL_MS))
             if resp:
                 f.write("- **auto-seo.aspx:** `%s`\n" % resp.replace("`", "'"))
             for r in ssl_results:
