@@ -100,7 +100,7 @@ jobs:
             sleep 10   # let the Plesk Git webhook finish writing files to /httpdocs
             resp="$(curl -sS --retry 4 --retry-delay 5 --retry-all-errors --connect-timeout 20 --max-time 180 \
               -A 'ColdDirect-CI-PostDeploy/1.0' "${BASE}/auto-seo.aspx?key=${AUTO_SEO_KEY}" || true)"
-            echo "auto-seo response: ${resp:0:200}"
+            echo "auto-seo response: ${resp:0:1500}"
             if [[ "$resp" == *"AUTO-SEO"* && "$resp" == *"OK"* ]]; then
               if AUTO_SEO_RESPONSE="$resp" python tools/live_smoke_test.py --attempt "$attempt" --max-attempts 3; then
                 ok=1

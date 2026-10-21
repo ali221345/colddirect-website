@@ -72,7 +72,7 @@ jobs:
           BASE="https://www.colddirect.co.uk"
           resp="$(curl -sS --retry 4 --retry-delay 10 --retry-all-errors --connect-timeout 20 --max-time 180 \
             -A 'ColdDirect-CI-Nightly/1.0' "${BASE}/auto-seo.aspx?key=${AUTO_SEO_KEY}" || true)"
-          echo "auto-seo response: ${resp:0:200}"
+          echo "auto-seo response: ${resp:0:1500}"
           if [[ "$resp" != *"AUTO-SEO"* || "$resp" != *"OK"* ]]; then
             echo "::error::auto-seo.aspx did not return AUTO-SEO ... OK (wrong/missing server key file?)"
             exit 1

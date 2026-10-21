@@ -164,7 +164,7 @@ def synthetic(exe, tmp):
 def real_tree(exe, tmp, sync=False):
     root = os.path.join(tmp, "real")
     skip = {"node_modules", ".git", "colddirect-public-html", "logs", "backups", "docs", "tools", "agent", "reports", "seo-audit",
-            "scripts", "templates", "images", "css", "js", "public", "app", "mnt", ".github", ".cursor", ".vscode", "_wa_src"}
+            "scripts", "templates", "images", "css", "js", "app", "mnt", ".github", ".cursor", ".vscode", "_wa_src"}
     n = 0
     for dp, dns, fs in os.walk(ROOT):
         rel = os.path.relpath(dp, ROOT)
