@@ -500,3 +500,4 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-21 09:23 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39576409161 | commit e3331a8
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+- Addendum (same day): the first deploy after the preview-page sync still showed `HTML Updated: 1` - the 3rd drift file was `public/brands.html` (tracked, deployed, but the old test harness skipped `public/`). Harness now includes `public/`; the aspx fixed-point version (V4 schema block, +33 lines) is committed. Deploy workflows now log up to 1500 chars of the auto-seo response so `| Changed: <file>@<offset> [old] -> [new]` is visible in Actions. Expected from now on: first auto-seo run after a deploy = `HTML Updated: 0`.
