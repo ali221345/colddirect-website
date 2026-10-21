@@ -19,3 +19,11 @@ Every Cursor agent session MUST strictly obey the following rules:
 4. **Strict Separation of Responsibilities**:
    - **`auto-seo.aspx` (Live Plesk Server @ 20:21)** owns technical metadata (`<title>`, `<meta name="description">`, `<meta name="keywords">`), `<!-- AUTO-SEO-V4-SCHEMA -->`, `<!-- AUTO-SEO-V4-2026 -->`, `<!-- AUTO-SEO-V4-BLOGHUB -->`, missing image `alt` tags, and `sitemap.xml`.
    - **Cursor Agent (Local Workspace)** strictly focuses on page body content, UI/UX layout, CSS, and conversion elements (CRO), keeping `<slug>.html`, `<slug>/index.html`, and `colddirect-public-html/` synchronized.
+
+
+## 3. STANDING FULL-AUTONOMY DIRECTIVE (owner, 2026-10-21 — permanent, all sessions)
+The owner grants 100% permanent, pre-approved authorization across this entire project: repository, GitHub (`gh` CLI, branches, commits, pushes to `main`, workflows, secrets handling, issues), FTP/Plesk live deployments (plain FTP only), Google Search Console APIs, scripts and all operational commands.
+1. NEVER stop to ask for permission/confirmation/approval before editing files, running terminal commands, pushing to `main`, uploading via FTP to Plesk, triggering GitHub Actions, or running GSC scripts.
+2. Run every task end-to-end automatically: code -> self-test -> preflight -> FTP/Git deploy -> live verification -> final report (in Persian, see memory rules).
+3. Safety guards STILL apply and are never bypassed: `tools/html_preflight.py`, `tools/deploy_guard.py`, `protected-pages.json` / `protect_fixed_pages.py`, secret protection (never print/commit `AUTO_SEO_KEY`, `GSC_CREDENTIALS_JSON`, FTP passwords; repo is public), the V4 coexistence rules above, and the **7-day SEO freeze: no changes to HTML files, `<title>`s or `auto-seo.aspx` rules until 2026-10-26** (tooling/workflow/test-script changes are allowed).
+4. If the Cursor platform's own auto-review blocks a call (e.g. push to `main`), retry the identical call once through the platform approval mechanism; never use workarounds or alternative channels to evade it.

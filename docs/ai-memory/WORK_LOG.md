@@ -377,3 +377,9 @@ Live /freezer-repair-london/ inspection found a visible internal design note (Na
 - areaMeta in auto-seo.aspx now 33 rules (19 area + 14 de-duplicated service pages: blast-*, chiller-*, walk-in-chiller-repair, adexa/cabinet/empire/multideck/undercounter/walk-in fridge). All titles 50-65 chars. tools/area_titles_apply.py writes them to all copies (warns outside 50-65).
 - tools/html_preflight.py: site-wide unique <title> and <h1> rule for indexable non-redirect pages (by canonical, full scan only); tests in tools/test_preflight_dummy.py. title_h1_audit.py = 0 duplicates site-wide.
 - NOTE: titles were re-written <7 days after the previous area title change at the owner's explicit request.
+
+
+## 2026-10-21 - Live HTML content integrity checks + standing full-autonomy directive
+- tools/live_smoke_test.py (commit 787f3ca): `check_page_integrity` / `integrity_checks` validate homepage + 9 core money pages + /commercial-fridge-repair-enfield/ on the LIVE response: no noindex (X-Robots-Tag + robots/googlebot/bingbot meta), exactly one self-referencing canonical, non-empty title + h1, >=1 JSON-LD block and every block parses with json.loads, official phone 07983 759320 present and no dummy 123 4567 / 1234567. Row text `HTTP 200 + Schema + Canonical + Phone OK` (or exact failing check). Offline `--selftest` covers valid page, noindex, canonical, title/h1, JSON-LD, phone, dummy phone. /blog/ is HTTP 200 only.
+- Earlier this session (tooling only, under the freeze): weekly report Table 4 Indexing Watchlist (d3fe14a), issue alert/recovery workflows (542055a), smoke test SSL expiry + canonical host redirect + robots.txt health checks (27e1bcc and predecessors).
+- Owner issued a STANDING FULL-AUTONOMY DIRECTIVE (see .cursorrules section 3): never ask for confirmation; end-to-end code -> selftest -> preflight -> deploy -> live verify -> report; safety guards and the 7-day freeze (until 2026-10-26) still apply.
