@@ -608,3 +608,8 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-21 23:25 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
 - Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/39693355702 | commit 24cc0f9
 - Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-22 — 100% pages top-right welcome audio (CD-TOP-RIGHT-AUDIO)
+- Live audit after prior sitewide run: 119/122 sitemap URLs had `<audio>`; missing html-only pages `blast-freezing.html`, `cold-storage.html`, `walk-in-fridge-repair-london.html` (no `/index.html` twin). Mobile CSS still docked bottom on ≤720px — owner required top-right on ALL screens.
+- New tool `tools/top_right_welcome_audio.py`: injects `<!-- CD-TOP-RIGHT-AUDIO -->` immediately after `<body>` with inline `<style id="cd-top-right-audio">` (`position:fixed !important; top/right; never bottom`), `#cd-audio-dock` + `/audio/colddirect-welcome.mp3`, strips `CD-AUDIO-SITEWIDE-V1`, hides legacy `.cd-audio-summary` so only one visible player. 504 HTML files updated (root + mirror). `seo_integrity_check.check_audio_page` prefers hub stem when both welcome + hub MP3 present.
+- No title/H1/meta/canonical/redirect/sitemap edits. Locks intact; protect 12/12; npm test / preflight / parity / deploy_guard OK.

@@ -167,7 +167,13 @@ def check_audio_page(path, html, expected_stem=None, base=BASE):
     probs = []
     embeds = audio_embed_paths(html, page_url)
     paths, speak, bad = audio_schema_info(html, page_url)
-    mp3 = embeds[0] if embeds else None
+    want = f"/audio/{expected_stem}.mp3" if expected_stem else None
+    # Prefer the hub/home stem when present; pages may also embed the sitewide welcome MP3 first.
+    mp3 = None
+    if want and want in embeds:
+        mp3 = want
+    elif embeds:
+        mp3 = embeds[0]
     if not embeds:
         probs.append("no <audio>/<source> with a local /audio/*.mp3 URL")
     if not paths:
@@ -176,8 +182,8 @@ def check_audio_page(path, html, expected_stem=None, base=BASE):
         probs.append(f"AudioObject.contentUrl {paths[0].lstrip('?')} does not match <audio> {mp3}")
     if not speak:
         probs.append("SpeakableSpecification missing")
-    if mp3 and expected_stem and mp3 != f"/audio/{expected_stem}.mp3":
-        probs.append(f"unexpected audio file {mp3} (expected /audio/{expected_stem}.mp3)")
+    if want and embeds and want not in embeds:
+        probs.append(f"unexpected audio file {embeds[0]} (expected {want})")
     return mp3, probs
 
 
