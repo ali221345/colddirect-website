@@ -475,3 +475,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - "Active" blog post = candidate (repo `blog/*.html` + links on the live `/blog/` index) that is live HTTP 200 (no redirects followed) with a self-referencing canonical. 301/404 stubs (smeg) and canonicalised duplicates (`commercial-freezer-ice-buildup-causes` -> `why-commercial-freezer-icing-up`) are not required. An HTTP 5xx / network error on a candidate fails the check (cannot classify).
 - Redirect/canonicalised-away URLs still listed in the sitemap are a WARNING in the row, not a failure. Live finding: `auto-seo.aspx` still lists the 301 stub `/blog/smeg-fridge-freezer-control-panel/` in sitemap.xml (open follow-up: let the aspx skip redirected posts; sitemap.xml/aspx are owned by the live server and were not touched).
 - Live result: 123 URLs, 23 required present, 0 duplicates, 123/123 valid lastmod (2026-10-21), all https://www. No HTML/`<title>`/`<h1>` changed.
+
+## 2026-10-21 08:49 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39571992811 | commit c6e4d9d
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
