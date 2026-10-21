@@ -3,10 +3,20 @@ description: Core operating instructions, memory rules, bilingual reporting (FA/
 alwaysApply: true
 ---
 
+# ⛔ HARD ZERO-PROMPT & ZERO-REPEAT MANDATE (owner, 2026-10-21 — permanent, alwaysApply)
+
+Before any SEO, redirect, or content edit, run `python tools/check_locked_state.py` and read the `DO NOT REPEAT` section at the top of `colddirect-memory.md`, `colddirect-public-html/colddirect-memory-ledger.md`, and `docs/ai-memory/WORK_LOG.md`. A milestone that prints LOCKED is finished. Do not redo it.
+
+1. Never pause to ask the user for confirmation, permission, or branch/merge approval. Do not ask in chat. The owner has already approved the whole pipeline.
+2. Run every task in one continuous pass: edit, test (`npm test`, `python tools/config_parity.py`, `python tools/html_preflight.py --strict`, `python agent/scripts/protect_fixed_pages.py check`), commit, push to `main`, let Deploy to WHUK Plesk publish `/httpdocs`, run `python tools/pull_live_plesk_v4.py`, then log the three memory files above.
+3. Safety guards stay in force: `html_preflight`, `deploy_guard`, protected pages, and secret protection. Never print or commit `AUTO_SEO_KEY`, `GSC_CREDENTIALS_JSON`, FTP passwords, or the Search Console client secret.
+4. Locked through 2026-10-31: do not re-edit `<title>`, `<h1>`, or meta descriptions on the homepage and the 9 money pages. Do not rewrite `.htaccess` or `web.config` redirect rules unless the owner explicitly names that change in the same request.
+5. If the Cursor platform itself blocks one call, do not stop and do not ask what to do. Retry that identical call once through the platform approval path, then continue. Do not open a second upload channel to get around the block.
+
 # Cold Direct Autonomous Multi-Workflow Agent Rules
 
 ## 1. Persistent Memory & Mistake Prevention (Tasks 1 & 9)
-- **Read Memory First**: Before making any edits, read `docs/ai-memory/MISTAKES_AND_LESSONS.md`, `docs/ai-memory/PROJECT_STATE.md`, `docs/ai-memory/WORK_LOG.md`, and `protected-pages.json`.
+- **Read Memory First**: Before making any edits, run `python tools/check_locked_state.py`, then read `docs/ai-memory/MISTAKES_AND_LESSONS.md`, `docs/ai-memory/PROJECT_STATE.md`, `docs/ai-memory/WORK_LOG.md`, and `protected-pages.json`.
 - **Update Memory After Every Task**: Log all completed work, architectural decisions, and lessons learned into `docs/ai-memory/` and the user's persistent store (`C:\Users\khora\AppData\Local\Cursor\AgentStores\cursor_agent_stores\u420035230\files\colddirect-memory.md`).
 - **Never Repeat Past Mistakes**:
   - **Root is Production**: `.github/workflows/deploy.yml` deploys the **repository root** (`./`) to WHUK Plesk `/httpdocs/` and excludes `colddirect-public-html/**`. Always edit the root `<slug>.html` AND `<slug>/index.html`, then sync to `colddirect-public-html/`.
@@ -40,7 +50,7 @@ alwaysApply: true
 The owner grants 100% permanent, pre-approved authorization across this entire project: repository, GitHub (`gh` CLI, branches, commits, pushes to `main`, workflows, secrets handling, issues), FTP/Plesk live deployments (plain FTP only), Google Search Console APIs, scripts and all operational commands.
 1. NEVER stop to ask for permission/confirmation/approval before editing files, running terminal commands, pushing to `main`, uploading via FTP to Plesk, triggering GitHub Actions, or running GSC scripts.
 2. Run every task end-to-end automatically: code -> self-test -> preflight -> FTP/Git deploy -> live verification -> final report (in Persian, see memory rules).
-3. Safety guards STILL apply and are never bypassed: `tools/html_preflight.py`, `tools/deploy_guard.py`, `protected-pages.json` / `protect_fixed_pages.py`, secret protection (never print/commit `AUTO_SEO_KEY`, `GSC_CREDENTIALS_JSON`, FTP passwords; repo is public), the V4 coexistence rules above, and the **7-day SEO freeze: no changes to HTML files, `<title>`s or `auto-seo.aspx` rules until 2026-10-26** (tooling/workflow/test-script changes are allowed).
+3. Safety guards STILL apply and are never bypassed: `tools/html_preflight.py`, `tools/deploy_guard.py`, `protected-pages.json` / `protect_fixed_pages.py`, secret protection (never print/commit `AUTO_SEO_KEY`, `GSC_CREDENTIALS_JSON`, FTP passwords; repo is public), the V4 coexistence rules above, and the indexing cooldown: no `<title>`, `<h1>`, or meta description edits on the homepage and the 9 money pages until 2026-10-31. The earlier full HTML freeze was lifted on 2026-10-21.
 4. If the Cursor platform's own auto-review blocks a call (e.g. push to `main`), retry the identical call once through the platform approval mechanism; never use workarounds or alternative channels to evade it.
 
 

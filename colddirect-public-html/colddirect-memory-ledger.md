@@ -1,3 +1,23 @@
+## ⛔ DO NOT REPEAT — COMPLETED & LOCKED MILESTONES (AS OF OCT 2026)
+
+Read this section first. Then run `python tools/check_locked_state.py`. If a milestone prints LOCKED, skip it. These are finished and live on https://www.colddirect.co.uk/. Rebuilding them wastes a ranking cooldown.
+
+### LOCKED #1 — 9 Money Pages V4.7/V4.9 Domination (PR #81 merged 2026-10-20 09:07 UTC, PR #82 merged 2026-10-20 09:38 UTC)
+Homepage `/` plus the 9 money pages are optimized and were re-audited live on 2026-10-21 (10/10 HTTP 200):
+`/fridge-repair-london/`, `/freezer-repair-london/`, `/commercial-fridge-repair-london/`, `/commercial-freezer-repair-london/`, `/cold-room-repair-london/`, `/catering-repair-london/`, `/commercial-appliances-repair-london/`, `/air-conditioning-repair-london/`, `/cellar-cooler-repair-london/`.
+In place: exact-match titles, CTR meta descriptions, `CD-HERO-KEYWORD-MATRIX`, `CD-9-MONEY-TECH-MATRIX-V47`, `CD-9-MONEY-KEYWORD-SILO-V47`, homepage `CD-HOMEPAGE-6-BLOG-HUB`, descriptive image `alt` text, and `#business` JSON-LD (`HVACBusiness` + `LocalBusiness`).
+**Indexing cooldown is active until 2026-10-31. Do not re-edit `<title>`, `<h1>`, or meta descriptions on these 10 pages.** A title change after that still goes through `tools/money_data.py` only, and only when the owner names the page.
+
+### LOCKED #2 — Single-hop 301 trailing-slash redirects (commits `87e96a0` and `5aad3d0`, deploy 39588254766 passed on attempt 1)
+All 117 top-level directories are classified. 102 bare URLs that answered HTTP 200 now 301 in one hop to their own slash folder (explicit rule per slug in `.htaccess` and `web.config`, root and mirror). 8 already 301'd to their own slash, including fridge, freezer, and williams from `87e96a0`. 7 must stay pointed somewhere else so they do not become a second hop: `about` -> `/about-us/`, `news` -> `/blog/`, `cold-room-repairs-london` and `walk-in-cold-room-repair-london` -> `/cold-room-repair-london/`, `commercial-dishwasher-repair-london` -> `/commercial-catering-repair-london/`, and the three bottle-cooler aliases -> `/bottle-cooler-repair-london/`.
+Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Live smoke test 895 probes, `ALL PASSED` on attempt 1.
+**Do not rewrite `.htaccess` or `web.config` redirect rules unless the owner explicitly asks for a named redirect change.**
+
+### LOCKED #3 — Automated background pipelines
+`auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
+
+---
+
 # Cold Direct Permanent Automated Action & Backup Ledger
 
 ### [2026-10-19 16:58:13 UTC] — 24-HOUR AUTOMATED WEBSITE UPDATE & HEALTH CHECK

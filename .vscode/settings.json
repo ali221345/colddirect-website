@@ -1,0 +1,13 @@
+{
+  "cursor.agent.autoRun": true,
+  "cursor.composer.autoRun": true,
+  "cursor.chat.autoRunCommands": true,
+  "cursor.agent.yoloMode": true,
+  "cursor.composer.yoloMode": true,
+  "cursor.chat.yoloMode": true,
+  "cursor.general.enableAutoRun": true,
+  "chat.tools.autoApprove": true,
+  "cursor.agent.commandDenylist": [],
+  "cursor.composer.commandDenylist": [],
+  "chat.tools.terminal.denyList": []
+}
