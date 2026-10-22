@@ -20,6 +20,10 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 # Cold Direct Permanent Automated Action & Backup Ledger
 
+### [2026-10-22] — NAP / GeoCoordinates pinned to 27 Felixstowe Road, N9 0DX
+- **Summary**: Replaced Enfield Town `51.6478,-0.0701` (and Enfield fridge `51.6515,-0.0786`) with depot `51.6256,-0.0561` on `#business` / HVACBusiness / GeoCircle. Added `geo` to V4 short schema. Contact/coverage Maps query is now `27 Felixstowe Road, Enfield, London N9 0DX`. `auto-seo.aspx` updated so nightly keeps the pin.
+- **SEO safety**: no title/H1/meta/canonical/redirect/sitemap changes; locks intact; protect 12/12
+
 ### [2026-10-19 16:58:13 UTC] — 24-HOUR AUTOMATED WEBSITE UPDATE & HEALTH CHECK
 - **Summary**: Executed daily 24h V4.4 auto-seo refresh on Plesk, synced live files locally, verified HTTP 200 on core money pages, and pinged GSC sitemap.
 - **Git Commit**: `f39c52e`

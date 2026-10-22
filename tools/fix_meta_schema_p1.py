@@ -74,7 +74,7 @@ RICH_BUSINESS = (
     '"areaServed":['
     '{"@type":"AdministrativeArea","name":"North London"},'
     '{"@type":"GeoCircle","geoMidpoint":{"@type":"GeoCoordinates",'
-    '"latitude":"51.6478","longitude":"-0.0701"},"geoRadius":"40233"},'
+    '"latitude":"51.6256","longitude":"-0.0561"},"geoRadius":"40233"},'
     '{"@type":"City","name":"London"}],'
     '"openingHoursSpecification":{"@type":"OpeningHoursSpecification",'
     '"dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],'
@@ -105,12 +105,12 @@ HOMEPAGE_SCHEMA = """{
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": "51.6478",
-    "longitude": "-0.0701"
+    "latitude": "51.6256",
+    "longitude": "-0.0561"
   },
   "areaServed": [
     {"@type": "AdministrativeArea", "name": "North London"},
-    {"@type": "GeoCircle", "geoMidpoint": {"@type": "GeoCoordinates", "latitude": "51.6478", "longitude": "-0.0701"}, "geoRadius": "40233"},
+    {"@type": "GeoCircle", "geoMidpoint": {"@type": "GeoCoordinates", "latitude": "51.6256", "longitude": "-0.0561"}, "geoRadius": "40233"},
     {"@type": "City", "name": "London"},
     {"@type": "City", "name": "Enfield"},
     {"@type": "City", "name": "Barnet"},
@@ -360,7 +360,7 @@ def unify_schema(html: str, filename: str) -> tuple[str, list[str]]:
             block = re.sub(
                 r'"areaServed"\s*:\s*\[[^\]]*\]',
                 '"areaServed":[{"@type":"AdministrativeArea","name":"North London"},'
-                '{"@type":"GeoCircle","geoMidpoint":{"@type":"GeoCoordinates","latitude":"51.6478","longitude":"-0.0701"},'
+                '{"@type":"GeoCircle","geoMidpoint":{"@type":"GeoCoordinates","latitude":"51.6256","longitude":"-0.0561"},'
                 '"geoRadius":"40233"},{"@type":"City","name":"London"}]',
                 block,
                 count=1,

@@ -45,6 +45,11 @@ protected void Page_Load(object sender, EventArgs e)
         "    \"postalCode\": \"N9 0DX\",\r\n" +
         "    \"addressCountry\": \"GB\"\r\n" +
         "  },\r\n" +
+        "  \"geo\": {\r\n" +
+        "    \"@type\": \"GeoCoordinates\",\r\n" +
+        "    \"latitude\": \"51.6256\",\r\n" +
+        "    \"longitude\": \"-0.0561\"\r\n" +
+        "  },\r\n" +
         "  \"areaServed\": \"London\"\r\n" +
         "}\r\n" + scClose + "\r\n";
 
@@ -84,8 +89,8 @@ protected void Page_Load(object sender, EventArgs e)
         "      },\r\n" +
         "      \"geo\": {\r\n" +
         "        \"@type\": \"GeoCoordinates\",\r\n" +
-        "        \"latitude\": \"51.6478\",\r\n" +
-        "        \"longitude\": \"-0.0701\"\r\n" +
+        "        \"latitude\": \"51.6256\",\r\n" +
+        "        \"longitude\": \"-0.0561\"\r\n" +
         "      },\r\n" +
         "      \"areaServed\": [\r\n" +
         "        \"London\",\r\n" +
@@ -93,8 +98,8 @@ protected void Page_Load(object sender, EventArgs e)
         "          \"@type\": \"GeoCircle\",\r\n" +
         "          \"geoMidpoint\": {\r\n" +
         "            \"@type\": \"GeoCoordinates\",\r\n" +
-        "            \"latitude\": \"51.6478\",\r\n" +
-        "            \"longitude\": \"-0.0701\"\r\n" +
+        "            \"latitude\": \"51.6256\",\r\n" +
+        "            \"longitude\": \"-0.0561\"\r\n" +
         "          },\r\n" +
         "          \"geoRadius\": \"40234\"\r\n" +
         "        }\r\n" +
