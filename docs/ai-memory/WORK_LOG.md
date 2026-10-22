@@ -635,3 +635,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-22 (evening) — leftover repo geo sweep (NW10 5SR / Felixstowe Rd)
 - Re-scan: **zero** `NW10 5SR` or `Felixstowe Rd` in production HTML/schema/maps. Brent `NW10` mentions are service-area postcodes, not the office. Live homepage/contact/coverage/fridge already `N9 0DX` + `51.6256`.
 - Cleared the last Enfield Town pin `51.6478,-0.0701` from `_backup_index_old.html` and `tools/tests/liebherr-404` fixtures.
+
+## 2026-10-22 18:55 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39835191729 | commit 1d3ca65
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
