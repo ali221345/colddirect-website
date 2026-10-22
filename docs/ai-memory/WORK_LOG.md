@@ -648,3 +648,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - `<!-- CD-TOP3-RANK-BOOSTER-V5 -->` + `<!-- CD-TOP3-SCHEMA-V5 -->` on homepage + 9 money hubs (4 copies each): H2/H3/table covering repair/repairs/service/services/emergency/same day/24/7/cheap/near me; Service+FAQPage JSON-LD (no `#business` duplicate). Titles/H1/meta untouched.
 - `<!-- CD-INTERNAL-ANCHOR-MESH-V5 -->` on 430 supporting HTML files (root+mirror) with rotated exact/partial anchors into `/slug/` money hubs.
 - `money_data.py` offers expanded; `auto-seo.aspx` moneyMeta OfferCatalog expanded; aspx comment lists body markers to preserve. Locks intact; protect 12/12; npm test 0 JSON-LD errors.
+
+## 2026-10-22 21:15 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39854999305 | commit 80eecdd
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
