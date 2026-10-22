@@ -643,3 +643,8 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-22 20:51 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
 - Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/39850829998 | commit c138357
 - Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-22 — Top-3 rank booster V5 + internal anchor mesh V5
+- `<!-- CD-TOP3-RANK-BOOSTER-V5 -->` + `<!-- CD-TOP3-SCHEMA-V5 -->` on homepage + 9 money hubs (4 copies each): H2/H3/table covering repair/repairs/service/services/emergency/same day/24/7/cheap/near me; Service+FAQPage JSON-LD (no `#business` duplicate). Titles/H1/meta untouched.
+- `<!-- CD-INTERNAL-ANCHOR-MESH-V5 -->` on 430 supporting HTML files (root+mirror) with rotated exact/partial anchors into `/slug/` money hubs.
+- `money_data.py` offers expanded; `auto-seo.aspx` moneyMeta OfferCatalog expanded; aspx comment lists body markers to preserve. Locks intact; protect 12/12; npm test 0 JSON-LD errors.
