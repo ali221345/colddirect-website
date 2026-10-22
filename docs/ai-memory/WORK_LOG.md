@@ -627,3 +627,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Audit: no NW10 5SR / College Park office address. All `postalCode` JSON already `N9 0DX`. Wrong pin was Enfield Town `51.6478,-0.0701` (and Enfield fridge `51.6515,-0.0786`) on `#business` / HVACBusiness / GeoCircle, not the depot.
 - Fix: business + service-radius geo now `51.6256,-0.0561`. V4 short schema gained a `geo` block. Contact/coverage embeds now query `27 Felixstowe Road, Enfield, London N9 0DX`. Borough service maps left as area maps (not office). `auto-seo.aspx` schemaBlock + bizNode updated so nightly does not revert.
 - No title/H1/meta/canonical/redirect/sitemap edits. Locks intact; protect 12/12; npm test 0 JSON-LD errors.
+
+## 2026-10-22 09:38 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39756527892 | commit 05d525e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
