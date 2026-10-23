@@ -32,7 +32,7 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### [2026-10-23c] — Removed dark navy CD-CRO-TRUST-BAR under hero
 - **Summary**: Deleted the full-width dark trust strip (60-90 Min / F-Gas / 24/7 pills + duplicate phone CTAs) from all HTML; disabled re-inject in upgrade_core_cro_pages.py and auto-seo; CSS kill-switch + cache-bust v=20261023c.
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
-- **Git/Deploy**: f2471a\, deploy 9964152521\ success. Live 5/5 verified no trust bar.
+- **Git/Deploy**: ^Af2471a\, deploy ^C9964152521\ success. Live 5/5 verified no trust bar.
 
 # Work log
 
@@ -703,4 +703,8 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 
 ## 2026-10-23 13:51 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39964152521 | commit 1f2471a
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-23 13:55 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/39964801605 | commit 9328c05
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
