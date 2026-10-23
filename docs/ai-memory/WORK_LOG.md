@@ -24,6 +24,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **Git**: `0f614b6` (audio+years) + `1f85399` (integrity align). Deploy `39924845031` success.
 - **Live verify (5/5)**: `/`, `/commercial-fridge-repair-london/`, `/fridge-repair-london/`, `/commercial-freezer-repair-london/`, `/cold-room-repair-london/` → TOPRIGHT=True, no Listen mid-page, no V1 audio tag, no 15y, 30y present.
 
+### [2026-10-23b] — Freezer-visual unify (hero + top-right audio + hide sticky-cta)
+- **Summary**: Matched sitewide above-the-fold to `/commercial-freezer-repair-london/`: audio dock `top:44px; right:16px`, hero order kicker→H1→lead→3 CTAs→image, keyword matrix/TOP3 below hero, hide `.sticky-cta` (keep Book a Consultation FAB), CSS `?v=20261023b`, auto-seo guard against above-hero injects.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
+- **Git/Deploy**: `af8fc9d`, deploy `39957034276` success. Live 10/10 core pages DOM-order match.
+
 # Work log
 
 ## 2026-10-07 — Initial current-state review and memory
