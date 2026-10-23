@@ -8,7 +8,7 @@
 
 MP3s go to /audio/ (root = production, mirrored into colddirect-public-html/audio/).
 Text comes from tools/money_data.py (script + hash in tools/audio_manifest.json: unchanged text => no re-synthesis).
-Injected per page (marker `<!-- CD-AUDIO-V1 -->`): HTML5 <audio controls preload="none">, a transcript <details>,
+Injected per page (marker `<!-- CD-AUDIO-V1 -->`): schema-only AudioObject/Speakable (visible player is CD-TOP-RIGHT-AUDIO),
 and JSON-LD WebPage+SpeakableSpecification and AudioObject. Offline: existing MP3s are reused; nothing breaks.
 """
 import asyncio
@@ -118,15 +118,11 @@ def audio_block(slug, stem, name, script, duration_sec):
          "publisher": {"@id": md.SITE + "/#business"}},
     ]
     ld = json.dumps({"@context": "https://schema.org", "@graph": graph}, indent=2, ensure_ascii=False).replace("</", "<\\/")
+    # Visible UI owned by CD-TOP-RIGHT-AUDIO; keep schema + hidden transcript for Speakable/integrity.
     return "\n".join([
         START,
-        '<section class="cd-audio-summary" aria-label="Audio summary">',
-        CSS,
-        '<div class="cd-audio-wrap">',
-        '<span class="cd-audio-label">Listen · Cold Direct</span>',
-        f'<audio controls preload="none" src="/audio/{stem}.mp3"><source src="/audio/{stem}.mp3" type="audio/mpeg">Your browser does not support audio playback.</audio>',
-        f'<details class="cd-transcript"><summary>Transcript</summary><p class="cd-transcript-text">{md.esc(text)}</p></details>',
-        "</div>",
+        '<section class="cd-audio-summary" aria-hidden="true" hidden>',
+        f'<p class="cd-transcript-text">{md.esc(text)}</p>',
         "</section>",
         '<script type="application/ld+json" data-cd-schema="audio-speakable">',
         ld,
@@ -238,7 +234,8 @@ def selftest():
     types = [n["@type"] for n in j["@graph"]]
     assert types == ["WebPage", "AudioObject"] and j["@graph"][0]["speakable"]["@type"] == "SpeakableSpecification"
     assert j["@graph"][1]["duration"] == "PT42S" and "07983 759320" in j["@graph"][1]["transcript"]
-    assert 'preload="none"' in once and "controls" in once
+    assert 'aria-hidden="true"' in once and 'data-cd-schema="audio-speakable"' in once
+    assert '<audio' not in once  # visible player owned by CD-TOP-RIGHT-AUDIO
     assert SPOKEN_PHONE in md.MONEY["fridge-repair-london"]["audio"]
     print("generate_seo_audio selftest OK")
 

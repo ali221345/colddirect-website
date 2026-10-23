@@ -37,7 +37,11 @@ SITEWIDE_RX = re.compile(
 # Hide the older full/money audio cards so only the top-right welcome player is visible.
 HIDE_LEGACY = (
     "<style id=\"cd-hide-legacy-audio\">"
-    ".cd-audio-summary{display:none !important;visibility:hidden !important;pointer-events:none !important;}"
+    "section.cd-audio-summary,.cd-audio-summary,.cd-audio-summary *{"
+    "display:none !important;visibility:hidden !important;pointer-events:none !important;"
+    "position:absolute !important;width:0 !important;height:0 !important;max-height:0 !important;"
+    "overflow:hidden !important;clip:rect(0,0,0,0) !important;opacity:0 !important;"
+    "}"
     "</style>"
 )
 

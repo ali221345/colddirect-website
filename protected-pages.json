@@ -27,8 +27,8 @@
       "expected_title": "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers",
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 13675,
-      "protected_at": "2026-10-20",
-      "reason": "Synced with auto-seo.aspx V4.7 (title unchanged; V4.7 tech matrix + schema added)."
+      "protected_at": "2026-10-23",
+      "reason": "Synced with auto-seo.aspx V4.7 (title unchanged; V4.7 tech matrix + schema added). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged."
     },
     {
       "id": "fridge-repair-london",
@@ -42,8 +42,8 @@
       "expected_title": "Fridge Repair London | Same-Day 24/7 Emergency Engineers",
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 8074,
-      "protected_at": "2026-10-21",
-      "reason": "Owner master directive 2026-10-21: money keyword hub title/meta/audio/body block (tools/money_data.py + auto-seo.aspx moneyMeta stay in sync)."
+      "protected_at": "2026-10-23",
+      "reason": "Owner master directive 2026-10-21: money keyword hub title/meta/audio/body block (tools/money_data.py + auto-seo.aspx moneyMeta stay in sync). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged."
     }
   ]
 }
