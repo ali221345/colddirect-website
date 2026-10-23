@@ -32,7 +32,13 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### [2026-10-23c] — Removed dark navy CD-CRO-TRUST-BAR under hero
 - **Summary**: Deleted the full-width dark trust strip (60-90 Min / F-Gas / 24/7 pills + duplicate phone CTAs) from all HTML; disabled re-inject in upgrade_core_cro_pages.py and auto-seo; CSS kill-switch + cache-bust v=20261023c.
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
-- **Git/Deploy**: ^Af2471a\, deploy ^C9964152521\ success. Live 5/5 verified no trust bar.
+- **Git/Deploy**: `1f2471a`, deploy `39964152521` success. Live 5/5 verified no trust bar.
+
+### [2026-10-24a] — Fix Services pill + mobile audio overlaps
+- **Summary**: Stripped/hid `.svc-tagbar` (max-height:50px) that spilled onto `07983 759320` / Request a booking / LET'S GET IT SORTED; `CD-HERO-NO-OVERLAP` + header safe-area; `#cd-audio-dock` desktop fixed `top:52px;right:24px`, mobile `<=768px` `position:relative` after header; cache `?v=20261024a`; updated `tools/top_right_welcome_audio.py` inject-after-header.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks OK; protect check OK (no re-baseline needed).
+- **Git/Deploy**: `710de13`, deploy `40038035210` success.
+- **Live**: ice-machine (+ repairs), chiller, blast-chiller, walk-in-fridge — tagbarDOM=False, m768 relative CSS live; 375px geometry: dock below phones, no overlap H1/phones; Services pills gone from hero.
 
 # Work log
 
