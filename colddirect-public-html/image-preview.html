@@ -25,7 +25,7 @@
     th,td{border:1px solid #d7e2ef;padding:8px;text-align:left;font-size:14px}
     @media(max-width:800px){.cols{grid-template-columns:1fr}}
   </style>
-  <link rel="stylesheet" href="/css/pro-images.css">
+  <link rel="stylesheet" href="/css/pro-images.css?v=20261023b">
 </head>
 <body>
 <!-- CD-TOP-RIGHT-AUDIO -->
@@ -34,8 +34,8 @@
 #cd-audio-dock,#cd-audio-dock *{box-sizing:border-box !important;}
 #cd-audio-dock{
   position:fixed !important;
-  top:max(12px, env(safe-area-inset-top, 0px)) !important;
-  right:max(12px, env(safe-area-inset-right, 0px)) !important;
+  top:44px !important;
+  right:16px !important;
   left:auto !important;
   bottom:auto !important;
   z-index:2147483000 !important;
@@ -69,7 +69,7 @@
 }
 @media (max-width:720px){
   #cd-audio-dock{
-    top:max(8px, env(safe-area-inset-top, 0px)) !important;
+    top:max(44px, env(safe-area-inset-top, 0px)) !important;
     right:8px !important;
     left:auto !important;
     bottom:auto !important;
@@ -117,8 +117,8 @@
 }
 </script>
 <!-- /CD-TOP-RIGHT-AUDIO -->
-
-  <div class="wrap">
+<style id="cd-clean-chrome">.sticky-cta{display:none !important;visibility:hidden !important;pointer-events:none !important;height:0 !important;overflow:hidden !important;}.booking-fab{bottom:24px !important;right:16px !important;z-index:2147482000 !important;}@media (max-width:900px){.booking-fab{bottom:24px !important;right:12px !important;}}</style>
+<div class="wrap">
     <h1>Image approval preview</h1>
     <p>Internal review. <strong>ALL approved images are LIVE:</strong> Chiller, Empire, bottle cooler, Polar, Sub-Zero, Williams, Adexa, wine cooler and North London commercial fridge.</p>
     <div class="note">Live files sit in <code>/httpdocs/images/</code> (this repo: <code>colddirect-public-html/images/</code>). There is no Next.js <code>public/images</code> and no <code>npm run build</code> on this site. IIS already sends <code>Cache-Control: no-store</code>. No Cloudflare in front of www.colddirect.co.uk.</div>

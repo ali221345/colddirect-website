@@ -73,3 +73,8 @@ a{color:inherit}
 .seo-article p{margin:0 0 1rem;line-height:1.65}
 .seo-article ul{margin:0 0 1rem;padding-left:1.25rem}
 .seo-article li{margin:0 0 .65rem;line-height:1.6}
+
+
+/* CD-CLEAN-STICKY-HIDE — match freezer visual: only Book a Consultation FAB */
+.sticky-cta{display:none !important;visibility:hidden !important;pointer-events:none !important;}
+@media (max-width:900px){.sticky-cta{display:none !important;}.booking-fab{bottom:24px !important;}}

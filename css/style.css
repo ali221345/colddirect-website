@@ -393,3 +393,8 @@ p, li { font-size: 16px; color: #3d5160; }
   color: #0a2540;
 }
 .contact-block a { font-weight: 700; }
+
+
+/* CD-CLEAN-STICKY-HIDE — match freezer visual: only Book a Consultation FAB */
+.sticky-cta{display:none !important;visibility:hidden !important;pointer-events:none !important;}
+@media (max-width:900px){.sticky-cta{display:none !important;}.booking-fab{bottom:24px !important;}}

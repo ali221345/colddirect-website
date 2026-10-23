@@ -589,3 +589,8 @@ p, li { font-size: 16px; color: #3d5160; }
   .cd-main-header .cd-nav > ul > li > a { display: block; min-height: 44px; padding: 12px 4px; }
   .cd-main-header .cd-nav .dropdown { display: none !important; }
 }
+
+
+/* CD-CLEAN-STICKY-HIDE — match freezer visual: only Book a Consultation FAB */
+.sticky-cta{display:none !important;visibility:hidden !important;pointer-events:none !important;}
+@media (max-width:900px){.sticky-cta{display:none !important;}.booking-fab{bottom:24px !important;}}

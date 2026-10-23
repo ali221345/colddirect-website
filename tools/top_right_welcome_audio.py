@@ -55,8 +55,8 @@ CSS = """<style id="cd-top-right-audio">
 #cd-audio-dock,#cd-audio-dock *{box-sizing:border-box !important;}
 #cd-audio-dock{
   position:fixed !important;
-  top:max(12px, env(safe-area-inset-top, 0px)) !important;
-  right:max(12px, env(safe-area-inset-right, 0px)) !important;
+  top:44px !important;
+  right:16px !important;
   left:auto !important;
   bottom:auto !important;
   z-index:2147483000 !important;
@@ -90,7 +90,7 @@ CSS = """<style id="cd-top-right-audio">
 }
 @media (max-width:720px){
   #cd-audio-dock{
-    top:max(8px, env(safe-area-inset-top, 0px)) !important;
+    top:max(44px, env(safe-area-inset-top, 0px)) !important;
     right:8px !important;
     left:auto !important;
     bottom:auto !important;
