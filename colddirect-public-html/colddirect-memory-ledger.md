@@ -29,6 +29,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
 - **Git/Deploy**: `af8fc9d`, deploy `39957034276` success. Live 10/10 core pages DOM-order match.
 
+### [2026-10-23c] — Removed dark navy CD-CRO-TRUST-BAR under hero
+- **Summary**: Deleted the full-width dark trust strip (60-90 Min / F-Gas / 24/7 pills + duplicate phone CTAs) from all HTML; disabled re-inject in upgrade_core_cro_pages.py and auto-seo; CSS kill-switch + cache-bust v=20261023c.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
+- **Git/Deploy**: f2471a\, deploy 9964152521\ success. Live 5/5 verified no trust bar.
+
 # Cold Direct Permanent Automated Action & Backup Ledger
 
 ### [2026-10-22] — NAP / GeoCoordinates pinned to 27 Felixstowe Road, N9 0DX
