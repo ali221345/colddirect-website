@@ -18,6 +18,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-23] — Top-right welcome audio sole player + 30+ years body copy
+- **Summary**: Unified `CD-TOP-RIGHT-AUDIO` (`/audio/colddirect-welcome.mp3`) as the only visible player sitewide. `CD-AUDIO-V1` is now schema-only (hidden transcript + AudioObject/Speakable). Body/trust copy 15+ years became 30+ years. Updated `seo_integrity_check` / smoke to expect welcome embed + hub schema stem.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; all 3 locks intact; protect check OK.
+- **Git**: `0f614b6` (audio+years) + `1f85399` (integrity align). Deploy `39924845031` success.
+- **Live verify (5/5)**: `/`, `/commercial-fridge-repair-london/`, `/fridge-repair-london/`, `/commercial-freezer-repair-london/`, `/cold-room-repair-london/` → TOPRIGHT=True, no Listen mid-page, no V1 audio tag, no 15y, 30y present.
+
 # Cold Direct Permanent Automated Action & Backup Ledger
 
 ### [2026-10-22] — NAP / GeoCoordinates pinned to 27 Felixstowe Road, N9 0DX
