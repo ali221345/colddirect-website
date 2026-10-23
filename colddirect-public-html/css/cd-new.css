@@ -78,3 +78,7 @@ a{color:inherit}
 /* CD-CLEAN-STICKY-HIDE — match freezer visual: only Book a Consultation FAB */
 .sticky-cta{display:none !important;visibility:hidden !important;pointer-events:none !important;}
 @media (max-width:900px){.sticky-cta{display:none !important;}.booking-fab{bottom:24px !important;}}
+
+
+/* CD-NO-TRUST-BAR — owner 2026-10-23: remove dark navy separator under hero */
+.cd-trust-bar,.cd-trust-bar *{display:none !important;visibility:hidden !important;height:0 !important;max-height:0 !important;overflow:hidden !important;padding:0 !important;margin:0 !important;border:none !important;background:transparent !important;}

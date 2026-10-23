@@ -131,7 +131,8 @@ protected void Page_Load(object sender, EventArgs e)
     // Body markers owned by Cursor tools (never strip / rewrite): CD-TOP3-RANK-BOOSTER-V5, CD-TOP3-SCHEMA-V5,
     // CD-INTERNAL-ANCHOR-MESH-V5, CD-MONEY-V1, CD-AUDIO-V1, CD-TOP-RIGHT-AUDIO, CD-BLOG-MONEY-LINKS-V1.
     // Nightly coexistence: leave those blocks intact so HTML Updated stays 0
-    // CD-VISUAL-FREEZER-LAYOUT: never inject banners/boxes above section.hero
+    // CD-VISUAL-FREEZER-LAYOUT
+    // CD-NO-TRUST-BAR: never re-inject CD-CRO-TRUST-BAR / .cd-trust-bar dark navy strip: never inject banners/boxes above section.hero
     // Do not insert keyword matrices, trust bars, or promo cards inside/above the hero image stack. after the first OfferCatalog sync.
 
     // V4.7 money pages: [0]=title [1]=meta description [2]=Service name [3]=serviceType [4..]=OfferCatalog keyword variations

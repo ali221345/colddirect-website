@@ -42,20 +42,7 @@ CRO_STYLES = """<style id="cd-cro-v4-styles">
 .cd-faq-accordion details p{margin:10px 0 0;color:#334155;font-size:15px;line-height:1.6}
 </style>"""
 
-TRUST_BAR_HTML = """  <!-- CD-CRO-TRUST-BAR -->
-  <section class="cd-trust-bar" aria-label="Emergency Dispatch Trust Guarantees">
-    <div class="wrap">
-      <ul class="cd-trust-pills">
-        <li>&#9889; 60–90 Min London Emergency Response</li>
-        <li>&#10004; F-Gas Certified Commercial Engineers</li>
-        <li>&#128336; 24/7 Same-Day Repairs — All London Postcodes</li>
-      </ul>
-      <div class="cd-trust-ctas">
-        <a class="cta-office" href="tel:+442039524822">London Office: 0203 952 4822</a>
-        <a class="cta-mobile" href="tel:+447983759320">24/7 Mobile: 07983 759320</a>
-      </div>
-    </div>
-  </section>"""
+TRUST_BAR_HTML = ""  # CD-CRO-TRUST-BAR REMOVED 2026-10-23 — dark navy strip deleted per owner
 
 FRIDGE_FREEZER_GRID_HTML = """      <!-- CD-CRO-BREAKDOWN-GRID -->
       <div class="cd-cro-section">
@@ -226,7 +213,7 @@ def inject_standard_page(rel_slug: str, body_block: str, faq_block: str) -> None
         )
 
     # 2. Inject Above-the-Fold Trust Bar right after the hero </section>
-    if "<!-- CD-CRO-TRUST-BAR -->" not in html:
+    if TRUST_BAR_HTML and "<!-- CD-CRO-TRUST-BAR -->" not in html:
         hero_end = html.find("</section>")
         if hero_end != -1:
             insert_pos = hero_end + len("</section>")
@@ -270,7 +257,7 @@ def update_cellar_asp() -> None:
     html = primary.read_text(encoding="utf-8")
     if 'id="cd-cro-v4-styles"' not in html:
         html = html.replace("</head>", CRO_STYLES + "\n</head>", 1)
-    if "<!-- CD-CRO-TRUST-BAR -->" not in html:
+    if TRUST_BAR_HTML and "<!-- CD-CRO-TRUST-BAR -->" not in html:
         # Insert after hero div
         marker = '<div class="service-seo"'
         if marker in html:
