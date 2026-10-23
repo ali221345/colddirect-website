@@ -55,8 +55,8 @@ CSS = """<style id="cd-top-right-audio">
 #cd-audio-dock,#cd-audio-dock *{box-sizing:border-box !important;}
 #cd-audio-dock{
   position:fixed !important;
-  top:44px !important;
-  right:16px !important;
+  top:52px !important;
+  right:24px !important;
   left:auto !important;
   bottom:auto !important;
   z-index:2147483000 !important;
@@ -88,13 +88,18 @@ CSS = """<style id="cd-top-right-audio">
 #cd-audio-dock .cd-transcript-text{
   margin:6px 0 0 !important;font-weight:400 !important;font-size:11.5px !important;line-height:1.5 !important;opacity:.95 !important;
 }
-@media (max-width:720px){
+@media (max-width:768px){
   #cd-audio-dock{
-    top:max(44px, env(safe-area-inset-top, 0px)) !important;
-    right:8px !important;
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
     left:auto !important;
     bottom:auto !important;
-    width:min(280px, calc(100vw - 16px)) !important;
+    width:calc(100% - 24px) !important;
+    max-width:320px !important;
+    margin:8px 12px 8px auto !important;
+    z-index:20 !important;
+    float:none !important;
   }
 }
 </style>"""
@@ -197,11 +202,20 @@ def inject(html: str, block: str) -> str:
         html,
         flags=re.I,
     )
+    nl = "\r\n" if html.count("\r\n") * 2 > html.count("\n") else "\n"
+    insert = nl + block.replace("\n", nl)
+    # Prefer after header so mobile relative audio sits under phone numbers/logo.
+    for pat in (
+        r'(<!--#include virtual="/includes/header-nav\.inc" -->)',
+        r"(</header>)",
+        r'(<header class="site">[\s\S]*?</header>)',
+    ):
+        hm = re.search(pat, html, re.I)
+        if hm:
+            return html[: hm.end()] + insert + html[hm.end() :]
     m = re.search(r"<body([^>]*)>", html, re.I)
     if not m:
         raise ValueError("no <body>")
-    nl = "\r\n" if html.count("\r\n") * 2 > html.count("\n") else "\n"
-    insert = nl + block.replace("\n", nl)
     return html[: m.end()] + insert + html[m.end() :]
 
 
@@ -261,15 +275,24 @@ def check() -> int:
 
 
 def selftest() -> None:
-    page = "<html><head><title>T</title></head><body class=\"x\">\n<header>nav</header><h1>H</h1></body></html>"
+    page = (
+        '<html><head><title>T</title></head><body class="x">\n'
+        '<!--#include virtual="/includes/header-nav.inc" --><h1>H</h1></body></html>'
+    )
     blk = block_for(ROOT / "about-us" / "index.html", 40)
     once = inject(page, blk)
     assert inject(once, blk) == once
-    assert once.index(START) > once.lower().index("<body")
-    assert once.index(START) < once.index("<header")
+    assert once.index(START) > once.index("header-nav.inc")
+    assert "max-width:768px" in once
+    assert "position:relative !important" in once
+    assert "top:52px" in once
     assert 'id="cd-top-right-audio"' in once and "!important" in once
     assert "bottom:auto !important" in once
     assert "colddirect-welcome.mp3" in once
+    # Fallback: after </header> when SSI include is absent
+    page2 = '<html><body><header class="site">nav</header><h1>H</h1></body></html>'
+    once2 = inject(page2, blk)
+    assert once2.index(START) > once2.index("</header>")
     # sitewide marker stripped
     dirty = page.replace("<body class=\"x\">", "<body class=\"x\"><!-- CD-AUDIO-SITEWIDE-V1 -->old<!-- /CD-AUDIO-SITEWIDE-V1 -->")
     clean = inject(dirty, blk)

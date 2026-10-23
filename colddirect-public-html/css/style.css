@@ -402,3 +402,10 @@ p, li { font-size: 16px; color: #3d5160; }
 
 /* CD-NO-TRUST-BAR — owner 2026-10-23: remove dark navy separator under hero */
 .cd-trust-bar,.cd-trust-bar *{display:none !important;visibility:hidden !important;height:0 !important;max-height:0 !important;overflow:hidden !important;padding:0 !important;margin:0 !important;border:none !important;background:transparent !important;}
+
+
+/* CD-HERO-NO-OVERLAP 20261024a — hide legacy Services pill strip; blackbox auto-height */
+.svc-tagbar{display:none !important;visibility:hidden !important;height:0 !important;max-height:0 !important;overflow:hidden !important;margin:0 !important;padding:0 !important;}
+.blackbox{position:relative !important;height:auto !important;min-height:0 !important;overflow:visible !important;}
+.blackbox h1,.blackbox p,.blackbox .flex{position:relative !important;height:auto !important;min-height:0 !important;}
+.cd-topbar,.cd-main-header,header.site,.site-header{padding-top:max(8px, env(safe-area-inset-top, 0px)) !important;}

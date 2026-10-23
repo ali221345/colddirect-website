@@ -26,7 +26,7 @@
     .seo-article ul{margin:0 0 1rem;padding-left:1.25rem}
     .seo-article li{margin:0 0 0.65rem;line-height:1.6}
   </style>
-  <link rel="stylesheet" href="/css/styles.css?v=logo11">
+  <link rel="stylesheet" href="/css/styles.css?v=20261024a">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -80,8 +80,9 @@
     ]
   }
   </script>
-  <link rel="stylesheet" href="/css/pro-images.css">
+  <link rel="stylesheet" href="/css/pro-images.css?v=20261024a">
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="aF2QAG4nyfpmUc9/7KOpOQ" async></script>
+<style id="cd-hero-no-overlap">/* CD-HERO-NO-OVERLAP 20261024a */.blackbox,.blackbox *{box-sizing:border-box !important;}.blackbox{position:relative !important;height:auto !important;min-height:0 !important;overflow:visible !important;display:block !important;}.blackbox h1,.blackbox p,.blackbox .flex{position:relative !important;height:auto !important;min-height:0 !important;margin-top:10px !important;}.blackbox h1{margin-top:0 !important;}.svc-tagbar{display:none !important;visibility:hidden !important;height:0 !important;max-height:0 !important;overflow:hidden !important;margin:0 !important;padding:0 !important;}/* CD-HEADER-SAFE 20261024a */.cd-topbar,.cd-main-header,header.site,.site-header{padding-top:max(8px, env(safe-area-inset-top, 0px)) !important;}.cd-logo img,.cd-main-header .cd-logo img,header.site .brand{max-height:68px !important;height:auto !important;}</style>
 </head>
 <body class="theme-freezerrepair">
   <!--#include virtual="/includes/header-nav.inc" -->
