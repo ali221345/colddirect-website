@@ -11,11 +11,12 @@ It never writes to the site and never rewrites titles/H1s. It verifies, for the 
   (so the nightly aspx run cannot flip titles).
 
 SEO AUDIO ASSETS (also imported by tools/live_smoke_test.py, so every post-deploy run enforces it too):
-  for the homepage + the 9 hubs (10 targets) the live HTML must contain an <audio>/<source> with a local
-  /audio/*.mp3 URL, a JSON-LD AudioObject whose contentUrl is that same URL and a SpeakableSpecification;
-  every de-duplicated MP3 is then fetched and must be HTTP 200, Content-Type audio/mpeg|audio/mp3 (never the
-  IIS text/html soft-404), > 10 000 bytes, complete (Content-Length == body) and start with an ID3 tag or an
-  MPEG sync frame (0xFF 0xEx). Row: "🔊 SEO Audio Assets".
+  for the homepage + the 9 hubs (10 targets) the live HTML must contain the visible CD-TOP-RIGHT-AUDIO
+  player (/audio/colddirect-welcome.mp3), a CD-AUDIO-V1 JSON-LD AudioObject whose contentUrl is the hub
+  stem MP3, and a SpeakableSpecification; every de-duplicated MP3 (welcome + hub stems) is then fetched
+  and must be HTTP 200, Content-Type audio/mpeg|audio/mp3 (never the IIS text/html soft-404), > 10 000
+  bytes, complete (Content-Length == body) and start with an ID3 tag or an MPEG sync frame (0xFF 0xEx).
+  Row: "🔊 SEO Audio Assets".
 """
 import html as htmllib
 import json
@@ -38,6 +39,7 @@ AUDIO_ROW = "🔊 SEO Audio Assets"
 AUDIO_MIN_BYTES = 10000
 AUDIO_MAX_BYTES = 8 * 1024 * 1024
 AUDIO_TYPES = ("audio/mpeg", "audio/mp3")
+WELCOME_MP3 = "/audio/colddirect-welcome.mp3"
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -162,28 +164,36 @@ def audio_schema_info(html, page_url):
 
 
 def check_audio_page(path, html, expected_stem=None, base=BASE):
-    """(mp3 path or None, [problems]) for one page's HTML."""
+    """(primary mp3 path or None, [problems]) for one page's HTML.
+
+    Visible player is CD-TOP-RIGHT-AUDIO (colddirect-welcome.mp3). Hub/home stem remains in
+    CD-AUDIO-V1 AudioObject.contentUrl for schema integrity (schema-only, not a second player).
+    Returns the hub stem path when present in schema (so audio_check fetches it), else welcome.
+    """
     page_url = base + path
     probs = []
     embeds = audio_embed_paths(html, page_url)
     paths, speak, bad = audio_schema_info(html, page_url)
     want = f"/audio/{expected_stem}.mp3" if expected_stem else None
-    # Prefer the hub/home stem when present; pages may also embed the sitewide welcome MP3 first.
-    mp3 = None
-    if want and want in embeds:
-        mp3 = want
-    elif embeds:
-        mp3 = embeds[0]
     if not embeds:
         probs.append("no <audio>/<source> with a local /audio/*.mp3 URL")
+    elif WELCOME_MP3 not in embeds and (not want or want not in embeds):
+        probs.append(f"missing welcome/hub <audio> embed (got {embeds[:3]})")
     if not paths:
         probs.append("AudioObject JSON-LD missing" + (" (invalid JSON-LD present)" if bad else ""))
-    elif mp3 and mp3 not in paths:
-        probs.append(f"AudioObject.contentUrl {paths[0].lstrip('?')} does not match <audio> {mp3}")
+    if want and paths and want not in paths:
+        probs.append(f"hub AudioObject.contentUrl missing (expected {want}, got {paths[:3]})")
     if not speak:
         probs.append("SpeakableSpecification missing")
-    if want and embeds and want not in embeds:
-        probs.append(f"unexpected audio file {embeds[0]} (expected {want})")
+    # Prefer hub stem for fetch (schema), always ensure welcome is also checked by audio_check.
+    if want and want in paths:
+        mp3 = want
+    elif WELCOME_MP3 in embeds or WELCOME_MP3 in paths:
+        mp3 = WELCOME_MP3
+    elif embeds:
+        mp3 = embeds[0]
+    else:
+        mp3 = None
     return mp3, probs
 
 
@@ -223,6 +233,8 @@ def audio_check(get_html, get_bin, targets=None, base=BASE):
         per_page.append((path, mp3, probs))
         if mp3 and mp3 not in urls:
             urls.append(mp3)
+        if WELCOME_MP3 not in urls and html and WELCOME_MP3 in (html or ""):
+            urls.append(WELCOME_MP3)
     verdict = {u: verify_mp3(base + u, get_bin) for u in urls}          # each unique MP3 fetched exactly once
     problems, healthy = [], 0
     for path, mp3, probs in per_page:
@@ -363,14 +375,24 @@ def audio_selftest():
     import generate_seo_audio as ga
     targets = audio_targets()
     assert len(targets) == 10 and targets[0] == ("/", "colddirect-home")
+    # Visible player is sitewide welcome; hub stem stays in CD-AUDIO-V1 schema only.
+    welcome = (
+        '<!-- CD-TOP-RIGHT-AUDIO -->'
+        f'<audio controls preload="none" src="{WELCOME_MP3}">'
+        f'<source src="{WELCOME_MP3}" type="audio/mpeg"></audio>'
+        '<!-- /CD-TOP-RIGHT-AUDIO -->'
+    )
     skeleton = "<html><head></head><body><section><h1>H</h1></section><footer>f</footer></body></html>"
     scripts = {s: (n, sc) for s, _, n, sc in ga.md.audio_pages()}
     pages = {}
     for path, stem in targets:
         slug = path.strip("/")
         name, script = scripts[slug]
-        pages[path] = ga.inject(skeleton, ga.audio_block(slug, stem, name, script, 27.0))
+        html = ga.inject(skeleton, ga.audio_block(slug, stem, name, script, 27.0))
+        html = html.replace("<body>", "<body>" + welcome, 1)
+        pages[path] = html
     mp3 = {f"{BASE}/audio/{stem}.mp3": (200, {"Content-Type": "audio/mpeg", "Content-Length": "20000"}, _fake_mp3()) for _, stem in targets}
+    mp3[f"{BASE}{WELCOME_MP3}"] = (200, {"Content-Type": "audio/mpeg", "Content-Length": "20000"}, _fake_mp3())
     calls = []
 
     def run_case(pages_=None, mp3_=None):
@@ -387,33 +409,33 @@ def audio_selftest():
         d[f"{BASE}/audio/{url_stem}.mp3"] = kw.get("resp")
         return d
 
-    # 1. 10/10 valid MP3s (ID3 header) + matching AudioObject + Speakable; each unique MP3 fetched once
+    # 1. 10/10 pages healthy; hub stems + welcome fetched (11 unique URLs)
     ok, txt, probs = run_case()
     assert ok and probs == [] and txt == "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", txt
-    assert len(calls) == 10 == len(set(calls)), "MP3s must be de-duplicated and fetched once"
+    assert len(calls) == 11 == len(set(calls)), f"expected 10 hubs + welcome, got {len(calls)} {calls}"
     # MPEG sync frame instead of ID3 is also valid
     sync = sub("cold-room-repair-london", resp=(200, {"Content-Type": "audio/mp3", "Content-Length": "20000"}, _fake_mp3(head=b"")))
     sync[f"{BASE}/audio/cold-room-repair-london.mp3"] = (200, {"Content-Type": "audio/mp3"}, b"\xff\xfb\x90\x00" + b"\x00" * 19996)
     assert run_case(mp3_=sync)[0]
-    # two pages sharing one MP3 -> still a single fetch
+    # two pages sharing one hub MP3 -> still de-duplicated (welcome always present)
     shared = dict(pages)
     shared["/freezer-repair-london/"] = pages["/fridge-repair-london/"]
     run_case(shared)
-    assert len(calls) == len(set(calls)) and len(calls) <= 9
+    assert len(calls) == len(set(calls)) and len(calls) <= 10
 
     def must_fail(res, *needles):
         ok_, t_, p_ = res
         assert not ok_ and p_ and all(n in t_ for n in needles), (t_, p_)
 
-    # 2. missing <audio> tag
+    # 2. missing visible <audio> tag (strip welcome player)
     broken = dict(pages)
     broken["/cold-room-repair-london/"] = re.sub(r"<audio\b[\s\S]*?</audio>", "", pages["/cold-room-repair-london/"])
     must_fail(run_case(broken), "/cold-room-repair-london/", "no <audio>", "9/10 healthy")
-    # 3. AudioObject.contentUrl mismatch
+    # 3. hub AudioObject.contentUrl mismatch
     broken = dict(pages)
     broken["/fridge-repair-london/"] = pages["/fridge-repair-london/"].replace(
         f'"contentUrl": "{BASE}/audio/fridge-repair-london.mp3"', f'"contentUrl": "{BASE}/audio/other.mp3"')
-    must_fail(run_case(broken), "/fridge-repair-london/", "does not match")
+    must_fail(run_case(broken), "/fridge-repair-london/", "hub AudioObject.contentUrl missing")
     # missing AudioObject / missing Speakable / invalid JSON-LD
     for needle, repl, expect in (('"AudioObject"', '"CreativeWork"', "AudioObject JSON-LD missing"),
                                  ('"SpeakableSpecification"', '"Thing"', "SpeakableSpecification missing")):
@@ -422,7 +444,7 @@ def audio_selftest():
         must_fail(run_case(broken), expect)
     # <source> inside <audio> is accepted when <audio> has no src
     nested = dict(pages)
-    nested["/"] = re.sub(r'<audio controls preload="none" src="[^"]*">', '<audio controls preload="none">', pages["/"])
+    nested["/"] = re.sub(r'<audio controls preload="none" src="[^"]*">', '<audio controls preload="none">', pages["/"], count=1)
     assert run_case(nested)[0]
     # 4. HTTP 404 on the MP3
     d = dict(mp3)
@@ -456,13 +478,21 @@ def selftest():
                 '<meta name="twitter:image" content="i">\n<!-- AUTO-SEO-V4-SCHEMA --></head><body><section><h1>H</h1></section>\n'
                 '<section class="cd-faq-accordion"></section><!-- AUTO-SEO-V4-2026 -->'
                 '<a href="tel:+447983759320">c</a><footer>f</footer></body></html>')
+    welcome = (
+        '<!-- CD-TOP-RIGHT-AUDIO -->'
+        f'<audio controls preload="none" src="{WELCOME_MP3}">'
+        f'<source src="{WELCOME_MP3}" type="audio/mpeg"></audio>'
+        '<!-- /CD-TOP-RIGHT-AUDIO -->'
+    )
     pages = {}
     for slug in md.HUB_ORDER:
         h = mk.apply_html(skeleton, slug)
         h = ga.inject(h, ga.audio_block(slug, slug, "n", md.MONEY[slug]["audio"], 27.0))
+        h = h.replace("<body>", "<body>" + welcome, 1)
         pages[f"/{slug}/"] = h
     home = ga.inject(skeleton.replace("<!-- AUTO-SEO-V4-2026 -->", "<!-- AUTO-SEO-V4-2026 --><!-- AUTO-SEO-V4-BLOGHUB -->"),
                      ga.audio_block("", "colddirect-home", "n", md.HOME_AUDIO["script"], 27.0))
+    home = home.replace("<body>", "<body>" + welcome, 1)
     pages["/"] = home
     pages["/blog/"] = bl.apply_text("<html><body><footer></footer></body></html>", "")
     pages["/blog/post-a/"] = bl.apply_text("<html><body><footer></footer></body></html>", "post-a")

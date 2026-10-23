@@ -1337,12 +1337,19 @@ def selftest():
     import generate_seo_audio as ga
     assert AUDIO_ROW == sic.AUDIO_ROW
     n_audio = sic.audio_selftest()
+    welcome = (
+        '<!-- CD-TOP-RIGHT-AUDIO -->'
+        f'<audio controls preload="none" src="{sic.WELCOME_MP3}">'
+        f'<source src="{sic.WELCOME_MP3}" type="audio/mpeg"></audio>'
+        '<!-- /CD-TOP-RIGHT-AUDIO -->'
+    )
     a_bodies = {}
     for a_path, a_stem in sic.audio_targets():
         a_slug = a_path.strip("/")
         a_name, a_script = {s: (n, sc) for s, _, n, sc in ga.md.audio_pages()}[a_slug]
-        a_bodies[a_path] = ga.inject("<html><body><h1>H</h1><footer></footer></body></html>",
-                                     ga.audio_block(a_slug, a_stem, a_name, a_script, 27.0))
+        html = ga.inject("<html><body><h1>H</h1><footer></footer></body></html>",
+                         ga.audio_block(a_slug, a_stem, a_name, a_script, 27.0))
+        a_bodies[a_path] = html.replace("<body>", "<body>" + welcome, 1)
     mp3_ok = (200, {"Content-Type": "audio/mpeg", "Content-Length": "20000"}, sic._fake_mp3())
     row, fails = audio_checks(a_bodies, lambda u: mp3_ok)
     assert row == (AUDIO_ROW, "10/10 MP3 audio summaries HTTP 200, audio/mpeg & AudioObject schema intact", True) and fails == [], row
