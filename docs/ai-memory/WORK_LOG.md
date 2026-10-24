@@ -18,6 +18,17 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24g] — Voice bar: real symptom diagnosis + mobile mic/overflow fix (homepage only)
+- **Vault** (`colddirect-voice-vault.aspx`, UTF-8 BOM, `ResponseEncoding="utf-8"` only; `CodePage` + `ResponseEncoding` together = runtime 500): rule-based symptom engine (appliance + noise / warm / leak / trip / ice / error code / ice machine / top-3 general) in English + colloquial Persian. The "describe the make / error code" brush-off is gone. Gemini prompt forbids brush-offs; when a key exists, a brush-off reply is rejected and the engine answers instead. Live-tested 10 sentences (incl. "fridge freezer ... too noisy", Persian): 0 brush-offs, 0 mojibake; off-origin 403 with text.
+- **Widget**: continuous + interim Web Speech, auto-restart on mobile `onend`, 3.5s silence submit, SPEAK→STOP toggle, no getUserMedia when SR exists (iOS conflict), MediaRecorder chunks sent on `onstop`. Mobile: 100vw/border-box, compact buttons ≤480px, input 16px (stops iOS zoom → right-edge clipping). 360px live: LISTEN/toggle/input inside viewport, scrollWidth 360.
+- **SEO**: title/H1/meta/V4 untouched; only homepage script version bumped to `v4`.
+
+### [2026-10-24f] — Homepage-only Voice AI top bar (test, no site rollout)
+- **Summary**: Injected compact 44px sticky Voice AI bar on root `index.html` only. Widget: Speak / Listen / Ask, 3 English chips, engineer diagnosis card, tel:07983759320, email, Helpful + 5-star, UK IP Shield (`CD-UK-IP-2026-994821-VOICE-AI`). Vaults: `/api/colddirect-voice-vault.php`, `/api/colddirect-voice-vault.js`, and live IIS `/colddirect-voice-vault.aspx` (PHP POST is 405 on this host). Domain lock 403 off-origin. Gemini key not present; fallback Head Engineer copy + Web Speech used until `App_Data/gemini-voice.key` is set.
+- **SEO safety**: homepage title/H1/meta/canonical/V4 blocks untouched; other pages unchanged; locks intact; protect check OK.
+- **Git**: `d1407c6` (widget + PHP/Node) + `a020be8` (ASPX vault). FTP uploaded before/during push.
+- **Live**: `/` has script; `/fridge-repair-london/` does not; ASPX POST from `https://www.colddirect.co.uk` returns diagnosis JSON; evil origin 403.
+
 ### [2026-10-23] — Top-right welcome audio sole player + 30+ years body copy
 - **Summary**: Unified `CD-TOP-RIGHT-AUDIO` (`/audio/colddirect-welcome.mp3`) as the only visible player sitewide. `CD-AUDIO-V1` is now schema-only (hidden transcript + AudioObject/Speakable). Body/trust copy 15+ years became 30+ years. Updated `seo_integrity_check` / smoke to expect welcome embed + hub schema stem.
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; all 3 locks intact; protect check OK.

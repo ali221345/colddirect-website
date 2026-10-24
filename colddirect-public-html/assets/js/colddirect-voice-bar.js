@@ -26,7 +26,11 @@
     "Cold Room Ice-Up"
   ];
   var MAX_MS = 60000;
+  var SILENCE_MS = 3500;
+  var NO_SPEECH_MS = 9000;
   var PACE = 0.95;
+  var SPEAK_LABEL = "🎤 SPEAK";
+  var STOP_LABEL = "⏹ STOP";
 
   var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn;
   var cardEls = {};
@@ -38,8 +42,12 @@
   var recTimer = null;
   var recognition = null;
   var liveText = "";
+  var baseText = "";
+  var sessionText = "";
+  var silenceTimer = null;
   var recording = false;
   var lastSpoken = "";
+  var lastLang = "en";
   var lastAudio = null;
   var playing = false;
   var playSource = null;
@@ -164,21 +172,22 @@
     }
   }
 
-  function speakFallback(text) {
+  function speakFallback(text, lang) {
     if (!text || !window.speechSynthesis) return false;
     try {
       window.speechSynthesis.cancel();
+      var code = String(lang || lastLang || "en").slice(0, 2).toLowerCase();
       var u = new SpeechSynthesisUtterance(text);
       u.rate = PACE;
       u.pitch = 0.92;
       var voices = window.speechSynthesis.getVoices() || [];
-      var male = voices.filter(function (v) {
-        var n = (v.name || "").toLowerCase();
-        return /male|daniel|george|david|arthur|puck|uk english/.test(n);
+      var same = voices.filter(function (v) { return String(v.lang || "").slice(0, 2).toLowerCase() === code; });
+      var male = same.filter(function (v) {
+        return /male|daniel|george|david|arthur|oliver|reed|rocky|farid|dariush|puck/i.test(v.name || "");
       });
-      var en = voices.filter(function (v) { return /^en(-|_|$)/i.test(v.lang || ""); });
-      u.voice = male[0] || en[0] || voices[0] || null;
-      u.lang = (u.voice && u.voice.lang) || "en-GB";
+      var gb = same.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
+      u.voice = male[0] || gb[0] || same[0] || null;
+      u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN" }[code] || "en-GB");
       u.onend = function () {
         playing = false;
         listenBtn.classList.remove("is-on");
@@ -206,7 +215,7 @@
       return;
     }
     if (lastSpoken) {
-      if (!speakFallback(lastSpoken)) setStatus("Ask a question first, then tap LISTEN.");
+      if (!speakFallback(lastSpoken, lastLang)) setStatus("Ask a question first, then tap LISTEN.");
       return;
     }
     setStatus("Ask a question first, then tap LISTEN.");
@@ -225,6 +234,7 @@
     cardEls.spoken.textContent = data.spoken || "";
     cardEls.box.hidden = false;
     lastSpoken = data.spoken || data.summary || "";
+    lastLang = data.language || "en";
     lastAudio = data.audio && data.audio.data ? data.audio : null;
   }
 
@@ -289,7 +299,7 @@
       if (data.audio && data.audio.data) {
         playBytes(b64ToBytes(data.audio.data), data.audio.mime);
       } else if (data.spoken) {
-        speakFallback(data.spoken);
+        speakFallback(data.spoken, data.language);
       }
     }).catch(function (err) {
       setStatus(err && err.message ? err.message : "Diagnosis unavailable. Call 07983 759320.");
@@ -302,8 +312,12 @@
     recording = false;
     speakBtn.classList.remove("is-on");
     speakBtn.setAttribute("aria-pressed", "false");
+    speakBtn.textContent = SPEAK_LABEL;
     if (recTimer) { clearTimeout(recTimer); recTimer = null; }
-    try { if (recognition) recognition.stop(); } catch (e) {}
+    if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
+    var r = recognition;
+    recognition = null;
+    try { if (r) { r.onend = null; r.stop(); } } catch (e) {}
     try { if (recorder && recorder.state === "recording") recorder.stop(); } catch (e2) {}
     if (recStream) {
       recStream.getTracks().forEach(function (t) { t.stop(); });
@@ -311,36 +325,103 @@
     }
   }
 
+  function armSilence(ms) {
+    if (silenceTimer) clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(function () {
+      if (!recording) return;
+      if (liveText) finishRec();
+      else {
+        stopRec();
+        setStatus("I didn't catch that — tap SPEAK and try again, or type the fault.");
+      }
+    }, ms);
+  }
+
+  function joinText(a, b) {
+    a = String(a || "").trim();
+    b = String(b || "").trim();
+    if (!a) return b;
+    if (!b) return a;
+    if (b.toLowerCase().indexOf(a.toLowerCase()) === 0) return b;
+    return a + " " + b;
+  }
+
+  function sessionTranscript(results) {
+    var pieces = [];
+    for (var i = 0; i < results.length; i++) {
+      var t = String(results[i][0] && results[i][0].transcript || "").trim();
+      if (!t) continue;
+      var prev = pieces.length ? pieces[pieces.length - 1] : "";
+      if (prev && t.toLowerCase().indexOf(prev.toLowerCase()) === 0) pieces[pieces.length - 1] = t;
+      else if (prev && prev.toLowerCase().indexOf(t.toLowerCase()) === 0) continue;
+      else pieces.push(t);
+    }
+    return pieces.join(" ");
+  }
+
+  function startRecognition(SR) {
+    var rec = new SR();
+    rec.lang = navigator.language || "en-GB";
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    sessionText = "";
+    rec.onresult = function (ev) {
+      sessionText = sessionTranscript(ev.results);
+      liveText = joinText(baseText, sessionText);
+      if (liveText) {
+        input.value = liveText;
+        setStatus("Listening… pause for 3 seconds or tap STOP when you're done.");
+      }
+      armSilence(SILENCE_MS);
+    };
+    rec.onerror = function (ev) {
+      var err = ev && ev.error;
+      if (err === "not-allowed" || err === "service-not-allowed") {
+        stopRec();
+        setStatus("Microphone blocked — allow the mic or type the fault.");
+      }
+    };
+    rec.onend = function () {
+      if (!recording || recognition !== rec) return;
+      baseText = joinText(baseText, sessionText);
+      sessionText = "";
+      try { rec.start(); } catch (e) {
+        try { startRecognition(SR); } catch (e2) { if (liveText) finishRec(); else stopRec(); }
+      }
+    };
+    recognition = rec;
+    rec.start();
+  }
+
   function startRec() {
     unlockAudio();
     openDrawer();
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e0) {}
+    stopPlayback();
     liveText = "";
+    baseText = "";
+    sessionText = "";
     recChunks = [];
     recording = true;
     speakBtn.classList.add("is-on");
     speakBtn.setAttribute("aria-pressed", "true");
-    setStatus("Listening… speak your fault now.");
+    speakBtn.textContent = STOP_LABEL;
+    setStatus("Listening… describe the fault, then pause or tap STOP.");
+    recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
 
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SR) {
       try {
-        recognition = new SR();
-        recognition.lang = navigator.language || "en-GB";
-        recognition.interimResults = true;
-        recognition.continuous = true;
-        recognition.onresult = function (ev) {
-          var s = "";
-          for (var i = 0; i < ev.results.length; i++) s += ev.results[i][0].transcript + " ";
-          liveText = s.trim();
-          if (liveText) input.value = liveText;
-        };
-        recognition.start();
+        startRecognition(SR);
+        armSilence(NO_SPEECH_MS);
+        return;
       } catch (e) { recognition = null; }
     }
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      if (!SR) setStatus("Microphone not available — type the fault instead.");
-      recTimer = setTimeout(function () { finishRec(); }, MAX_MS);
+      stopRec();
+      setStatus("Microphone not available — type the fault instead.");
       return;
     }
 
@@ -359,16 +440,11 @@
         }
         recChunks = [];
         recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) recChunks.push(ev.data); };
-        recorder.onstop = function () { /* handled in finishRec */ };
-        recorder.start();
+        recorder.start(1000);
       }
-      recTimer = setTimeout(function () { finishRec(); }, MAX_MS);
     }).catch(function () {
+      stopRec();
       setStatus("Microphone blocked — type the fault or allow the mic.");
-      if (!liveText) {
-        recording = false;
-        speakBtn.classList.remove("is-on");
-      }
     });
   }
 
@@ -389,19 +465,28 @@
     if (!recording && !recorder) return;
     var text = liveText || String(input.value || "").trim();
     var rec = recorder;
-    stopRec();
-    setStatus("Sending to the Head Engineer…");
+    recorder = null;
 
     function send(audio) { ask(text, audio); }
 
-    if (rec && recChunks.length) {
-      var blob = new Blob(recChunks, { type: rec.mimeType || "audio/webm" });
+    function sendChunks() {
+      if (!recChunks.length) { send(null); return; }
+      var blob = new Blob(recChunks, { type: (rec && rec.mimeType) || "audio/webm" });
       recChunks = [];
       blobToB64(blob).then(function (b64) {
         send(b64 ? { data: b64, mime: blob.type || "audio/webm" } : null);
       });
+    }
+
+    if (rec && rec.state === "recording" && !text) {
+      rec.onstop = sendChunks;
+      try { rec.stop(); } catch (e) { sendChunks(); }
+      stopRec();
+      setStatus("Sending to the Head Engineer…");
       return;
     }
+    stopRec();
+    setStatus("Sending to the Head Engineer…");
     send(null);
   }
 
@@ -467,7 +552,7 @@
       "#cd-voice-drawer{display:none;max-height:min(70vh,560px);overflow:auto;background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 12px 12px;}",
       "#cd-voice-root.is-open #cd-voice-drawer{display:block;}",
       "#cd-voice-askrow{display:flex;gap:6px;}",
-      "#cd-voice-input{flex:1;min-width:0;height:36px;border:1px solid #334155;border-radius:8px;background:#0b1120;color:#f8fafc;padding:0 10px;font:400 13px/1.3 system-ui,sans-serif;}",
+      "#cd-voice-input{flex:1;min-width:0;height:36px;border:1px solid #334155;border-radius:8px;background:#0b1120;color:#f8fafc;padding:0 10px;font:400 16px/1.3 system-ui,sans-serif;}",
       "#cd-voice-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}",
       "#cd-voice-root .cd-voice-chip{height:28px;padding:0 10px;border:1px solid #334155;border-radius:999px;background:#111827;color:#cbd5e1;font:600 11px/1 system-ui,sans-serif;cursor:pointer;}",
       "#cd-voice-status{min-height:16px;margin:2px 0 8px;color:#7dd3fc;font:500 11px/1.3 system-ui,sans-serif;}",
@@ -492,7 +577,14 @@
       "#cd-voice-ip-box{max-width:420px;background:#0b1120;color:#e2e8f0;border:1px solid #334155;border-radius:12px;padding:16px;}",
       "#cd-voice-ip-box h2{margin:0 0 8px;font-size:16px;}",
       "#cd-voice-ip-box p{margin:0 0 10px;font:400 13px/1.45 system-ui,sans-serif;}",
-      "#cd-voice-root.is-busy #cd-voice-dot{background:#fbbf24;}"
+      "#cd-voice-root.is-busy #cd-voice-dot{background:#fbbf24;}",
+      "#cd-voice-root,#cd-voice-bar,#cd-voice-drawer{width:100%;max-width:100vw;box-sizing:border-box;overflow-x:hidden;}",
+      "#cd-voice-root button.cd-voice-btn#cd-voice-speak.is-on{background:#dc2626;border-color:#f87171;color:#fff;}",
+      "#cd-voice-askrow,#cd-voice-card,#cd-voice-chips,#cd-voice-ctas,#cd-voice-fb{max-width:100%;min-width:0;}",
+      "#cd-voice-card p,#cd-voice-card li,#cd-voice-spoken,#cd-voice-legal{overflow-wrap:anywhere;word-break:break-word;}",
+      "#cd-voice-card li{color:#e2e8f0 !important;opacity:1 !important;}",
+      "@media (max-width:480px){#cd-voice-bar{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));gap:6px;}#cd-voice-title{font-size:10px;}#cd-voice-controls{gap:4px;}#cd-voice-root button.cd-voice-btn{padding:0 6px;font-size:9.5px;letter-spacing:0;}#cd-voice-root button.cd-voice-tog{width:26px;}#cd-voice-input{font-size:16px;}#cd-voice-drawer{padding:8px max(8px,env(safe-area-inset-right,0px)) 10px max(8px,env(safe-area-inset-left,0px));}}",
+      "@media (max-width:360px){#cd-voice-dot{display:none;}#cd-voice-title{font-size:9.5px;}}"
     ].join("");
   }
 

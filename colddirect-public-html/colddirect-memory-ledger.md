@@ -18,6 +18,14 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24g] — Voice bar: symptom engine + mobile mic fix
+- Vault answers the actual symptom (noise/warm/leak/trip/ice/code/general top-3) in EN/FA, never "describe the make". Mic: continuous, 3.5s silence, STOP button; mobile 100vw + 16px input. Never combine `CodePage` with `ResponseEncoding` in the ASPX directive (500).
+
+### [2026-10-24f] — Homepage-only Voice AI top bar (test, no site rollout)
+- **Summary**: Compact 44px Voice AI bar on root `index.html` only. Speak/Listen/Ask, 3 chips, diagnosis card, 07983 759320, Helpful + stars, UK IP Shield. Live vault is IIS `colddirect-voice-vault.aspx` (PHP POST 405 on this host). Domain lock 403. Gemini/Puck waits for `App_Data/gemini-voice.key`.
+- **SEO safety**: title/H1/meta/V4 untouched; other pages unchanged.
+- **Git**: `d1407c6` + `a020be8`.
+
 ### [2026-10-23] — Top-right welcome audio sole player + 30+ years body copy
 - **Summary**: Unified `CD-TOP-RIGHT-AUDIO` (`/audio/colddirect-welcome.mp3`) as the only visible player sitewide. `CD-AUDIO-V1` is now schema-only (hidden transcript + AudioObject/Speakable). Body/trust copy 15+ years became 30+ years. Updated `seo_integrity_check` / smoke to expect welcome embed + hub schema stem.
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; all 3 locks intact; protect check OK.
