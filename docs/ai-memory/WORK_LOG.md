@@ -52,6 +52,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; protect OK.
 - **Git/Deploy**: `ba3cc9f`, deploy `40076881572` success. Live curl 5/5 clean.
 
+### [2026-10-24d] — Homepage: delete static fridge above rolling carousel
+- **Summary**: Removed the static `commercial-refrigeration-kitchen-20261014.webp` `<img>` inside `section.hero` on root + mirror `index.html` so `#home-slider` sits directly under the 3 CTA buttons. Service pages keep their hero images. Documented `CD-HOME-NO-STATIC-HERO-IMG` in `auto-seo.aspx`.
+- **SEO safety**: title/H1/meta untouched; protect N/A for homepage; locks OK.
+- **Git/Deploy**: `134340e`, deploy `40078732981` success. Live: `static_img_in_hero=False`, slider present, freezer hero img intact.
+
 # Work log
 
 ## 2026-10-07 — Initial current-state review and memory
