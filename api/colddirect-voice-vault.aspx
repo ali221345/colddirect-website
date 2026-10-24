@@ -747,7 +747,38 @@ List<string> TtsChunks(string text, int max)
     return chunks;
 }
 
-// Google Translate speech stream. Has no Persian voice (HTTP 400 for fa), so fa only works through Puck or Azure.
+// Persian has no Google voice (HTTP 400 for fa), so it is read by the Urdu voice (same letters, close
+// vocabulary) and, failing that, by the Arabic voice after mapping the Persian-only letters.
+string PersianToArabic(string s)
+{
+    StringBuilder b = new StringBuilder(s.Length + 16);
+    foreach (char c in s)
+    {
+        switch (c)
+        {
+            case '\u06A9': b.Append('\u0643'); break;
+            case '\u06CC': b.Append('\u064A'); break;
+            case '\u06AF': b.Append('\u0643'); break;
+            case '\u0686': b.Append("\u062A\u0634"); break;
+            case '\u067E': b.Append('\u0628'); break;
+            case '\u0698': b.Append('\u0632'); break;
+            case '\u200C': b.Append(' '); break;
+            default: b.Append(c); break;
+        }
+    }
+    return b.ToString();
+}
+
+string[] PersianBridgeTts(string text)
+{
+    string plain = (text ?? "").Replace('\u200C', ' ');
+    string[] r = null;
+    try { r = TranslateTts("ur", plain); } catch { r = null; }
+    if (r != null) return r;
+    try { r = TranslateTts("ar", PersianToArabic(plain)); } catch { r = null; }
+    return r;
+}
+
 string[] TranslateTts(string lang, string text)
 {
     if (string.IsNullOrEmpty(text) || lang == "fa") return null;
@@ -780,6 +811,12 @@ string[] Speak(string key, string lang, string text, out string voice)
     if (r != null) { voice = "Puck"; return r; }
     try { r = AzureTts(lang, text); } catch { r = null; }
     if (r != null) { voice = "azure-neural"; return r; }
+    if (lang == "fa")
+    {
+        r = PersianBridgeTts(text);
+        if (r != null) { voice = "cloud-neural-fallback-fa"; return r; }
+        return null;
+    }
     try { r = TranslateTts(lang, text); } catch { r = null; }
     if (r != null) { voice = "cloud-neural-fallback"; return r; }
     return null;
@@ -843,7 +880,9 @@ protected void Page_Load(object sender, EventArgs e)
     if (mode == "tts")
     {
         string say = text.Length > 2500 ? text.Substring(0, 2500) : text;
-        string lang = Str(req, "language").ToLowerInvariant();
+        string lang = Str(req, "language", "lang").ToLowerInvariant();
+        if (lang == "") lang = (Request.QueryString["lang"] ?? "").ToLowerInvariant();
+        if (lang.StartsWith("pes") || lang.StartsWith("prs") || lang.StartsWith("per") || lang.StartsWith("far")) lang = "fa";
         if (lang.Length > 2) lang = lang.Substring(0, 2);
         if (lang == "") lang = DetectLang(say)[0];
         string v;

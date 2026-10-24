@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25b] — Free keyless Persian voice (bridge), homepage `?v=8`
+- In `colddirect-voice-vault.aspx`, `Speak()` for `fa` (and `pes` / `prs` / `fa-IR` / auto-detected): Puck → Azure (if a key exists) → `PersianBridgeTts`. That reads the Persian text with the Google `translate_tts` **Urdu** voice (`tl=ur`: same letters پ چ گ ژ ک ی, close vocabulary; ZWNJ → space), then falls back to `tl=ar` with `PersianToArabic` (ک→ك, ی→ي, گ→ك, چ→تش, پ→ب, ژ→ز). The response says `voice:"cloud-neural-fallback-fa"`.
+- Live result: 5/5 PASS (fa, pes, fa-IR, auto, plus a 633-char answer), 180KB / 574KB MP3, 22.6s / 71.7s, 0 decode errors, 0.6–1.6s. Test: `logs/fa_tts_live_test.py`.
+- The Edge `Sec-MS-GEC` read-aloud route was declined again (it means copying Microsoft's anti-abuse token). A clean free alternative for natural Persian is client-side **Piper WASM** (`fa_IR` models, MIT/open, ~60MB one-time download).
+
 ### [2026-10-25a] — Voice bar: server-side TTS chain + iOS audio unlock (homepage `?v=7`)
 - **Vault `mode=tts`** (POST; `?mode=tts` query is accepted too) returns `{ok, voice, audio_mime, audio_base64}`. Chain: Gemini Puck (`gemini-2.5-flash-preview-tts` → `gemini-2.5-pro-preview-tts`; a 429 parks the model in `HttpRuntime.Cache` until Google's retryDelay, max 6h, so skipping costs ~0.1s) → **Azure Speech** (official, `App_Data/azure-speech.key`: line 1 region, line 2 key; male neural voices such as `fa-IR-FaridNeural`) → **Google Translate `translate_tts` stream** (≤180-char sentence chunks, MP3 concatenated; voice `cloud-neural-fallback`).
 - **FACT: `translate_tts` has NO Persian** (HTTP 400 for fa / fa-IR / pes / prs / fa-AF, with both tw-ob and gtx). en / tr / ar / ur work (0.4–1.2s live, MP3s decode clean). **Persian audio therefore needs Puck (Gemini billing) or an Azure key.** The Edge "Read Aloud" endpoint was NOT used: it now needs an obfuscated anti-abuse token (`edge_tts/drm.py` v2), and copying that would mean circumventing a protection.

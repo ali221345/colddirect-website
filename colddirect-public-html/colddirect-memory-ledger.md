@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25b] — Free Persian voice: Urdu/Arabic `translate_tts` bridge (homepage `?v=8`)
+- Persian `mode=tts` never returns ok:false any more (`voice:"cloud-neural-fallback-fa"`). Verified live 5/5. Edge `Sec-MS-GEC` was not used.
+
 ### [2026-10-25a] — TTS chain Puck → Azure → Google Translate (homepage `?v=7`)
 - Google `translate_tts` has no Persian (400). en/tr/ar etc. now always get audio. Persian needs Gemini billing or an Azure Speech key (`tools/upload_azure_speech_key_ftp.py`). iOS: one primed `window.__cdVoicePlayer` + a "▶ Listen Answer" button.
 
