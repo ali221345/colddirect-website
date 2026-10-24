@@ -762,3 +762,8 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-24 08:16 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40077235149 | commit a617d67
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-24 09:03 UTC — GSC daily report (Search Console unavailable)
+- Cursor automation still has no Search Console MCP or `GSC_CREDENTIALS_JSON`. Did not invent 28-day totals, tables, or movers. Requested windows: 26 Sep–23 Oct vs 29 Aug–25 Sep.
+- Property `https://www.colddirect.co.uk/` last reached for sitemap/inspect by nightly auto-seo dispatch `40036927205` (23 Oct 23:04 UTC): 122 submitted / 0 indexed; money pages PASS. Weekly Sync performance report still last 20 Oct (`39512458941`, 7-day only, not copied).
+- Wrote `GSC-DAILY-REPORT.md` and `logs/gsc_daily_2026-10-24.md`. No HTML, title, or indexing changes.
