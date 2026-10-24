@@ -1,0 +1,8 @@
+# ColdDirect Voice Vault — deny static download of the Node handler.
+# This is not a public-site redirect rule.
+<Files "colddirect-voice-vault.js">
+  Require all denied
+</Files>
+<IfModule mod_headers.c>
+  Header set X-CD-IP "CD-UK-IP-2026-994821-VOICE-AI"
+</IfModule>
