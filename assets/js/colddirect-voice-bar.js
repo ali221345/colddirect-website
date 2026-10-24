@@ -172,21 +172,43 @@
     }
   }
 
+  var UK_MALE_PREFS = [
+    /Google UK English Male/i,
+    /Microsoft Ryan Online \(Natural\)/i,
+    /Microsoft Thomas Online \(Natural\)/i,
+    /Microsoft Alfie Online \(Natural\)/i,
+    /Microsoft Oliver Online \(Natural\)/i,
+    /Microsoft George/i,
+    /^Daniel/i,
+    /Arthur|Oliver|Reed|Rocky/i
+  ];
+
+  function pickVoice(code) {
+    var voices = window.speechSynthesis.getVoices() || [];
+    var same = voices.filter(function (v) { return String(v.lang || "").slice(0, 2).toLowerCase() === code; });
+    var notFemale = function (v) { return !/female|woman|libby|sonia|maisie|hazel|susan|kate|serena|martha|fiona|karen|moira|samantha/i.test(v.name || ""); };
+    if (code === "en") {
+      var gb = same.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
+      for (var i = 0; i < UK_MALE_PREFS.length; i++) {
+        for (var j = 0; j < gb.length; j++) if (UK_MALE_PREFS[i].test(gb[j].name || "")) return gb[j];
+      }
+      var natural = gb.filter(function (v) { return /natural|neural|online/i.test(v.name || "") && notFemale(v); });
+      return natural[0] || gb.filter(notFemale)[0] || gb[0] || same[0] || null;
+    }
+    var male = same.filter(function (v) { return /\bmale\b|farid|dariush|hamed|puck/i.test(v.name || "") && notFemale(v); });
+    var natural2 = same.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
+    return male[0] || natural2[0] || same[0] || null;
+  }
+
   function speakFallback(text, lang) {
     if (!text || !window.speechSynthesis) return false;
     try {
       window.speechSynthesis.cancel();
       var code = String(lang || lastLang || "en").slice(0, 2).toLowerCase();
       var u = new SpeechSynthesisUtterance(text);
-      u.rate = PACE;
-      u.pitch = 0.92;
-      var voices = window.speechSynthesis.getVoices() || [];
-      var same = voices.filter(function (v) { return String(v.lang || "").slice(0, 2).toLowerCase() === code; });
-      var male = same.filter(function (v) {
-        return /male|daniel|george|david|arthur|oliver|reed|rocky|farid|dariush|puck/i.test(v.name || "");
-      });
-      var gb = same.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
-      u.voice = male[0] || gb[0] || same[0] || null;
+      u.rate = 0.94;
+      u.pitch = 0.96;
+      u.voice = pickVoice(code);
       u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN" }[code] || "en-GB");
       u.onend = function () {
         playing = false;

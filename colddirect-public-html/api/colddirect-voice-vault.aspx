@@ -72,7 +72,8 @@ string SystemPrompt()
         + "Noise/clicking/buzzing: evaporator or condenser fan blade hitting ice, worn fan motor bearings, compressor start relay clicking; tell them to open the door and check if the noise stops (inside evaporator fan), and to call before the fan or compressor seizes. "
         + "Warm/not cooling: blocked condenser coil or filter, failed door gasket, iced evaporator, refrigerant leak or failing compressor. Leaking/water: blocked condensate drain line or overflowing drip tray. Tripping/no power: compressor or fan motor shorting to earth, burned plug or contactor, control board failure. "
         + "If the customer only says they have a problem, give the top 3 causes (condenser blockage causing poor cooling, evaporator fan icing causing noise or warm cabinet, thermostat/sensor or compressor relay failure) and how to check each right now. "
-        + "Spoken answer: one short friendly intro ('Hello mate, Head Engineer at ColdDirect here with thirty years of experience'), then IMMEDIATELY the diagnosis and quick checks in natural everyday speech, spell phone numbers and error codes phonetically, suggest calling 07983 759320, and finish by kindly asking for a Like or a 5-star review. "
+        + "ENGLISH TONE: talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
+        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. Persian replies keep their own warm Tehrani style. "
         + "Commercial refrigeration and catering only. Return STRICT JSON: {\"language\":\"en\",\"languageLabel\":\"English\",\"spoken\":\"...\",\"summary\":\"...\",\"cause\":\"...\",\"checks\":[\"...\",\"...\",\"...\"]}";
 }
 
@@ -122,10 +123,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "پره‌ی فن اواپراتور به یخ می‌خوره، بلبرینگ موتور فن خورده شده (وزوز و غرش)، یا رله‌ی استارت کمپرسور خرابه (تیک‌تیک).",
                 "در رو باز کن؛ اگه صدا قطع شد، فن اواپراتور داخلیه.|پشت پنل داخلی رو برای یخ دور فن ببین و پشت دستگاه گوش بده ببین تیک کمپرسوره یا نه.|قبل از اینکه فن یا کمپرسور بگیره با 07983 759320 تماس بگیر." }
             : new string[] {
-                "Right, so your " + a + " has got noisy. Nine times out of ten that's one of three things. First, the evaporator fan blade inside is catching a build-up of ice, which gives you a scraping or ticking sound. Second, a fan motor bearing is wearing out, which gives a constant hum, buzz or grinding. Third, the compressor start relay is clicking in and out, which you hear as a click every few minutes while the compressor fails to start. Here's a quick check you can do now: open the door and listen. If the noise stops when the door opens, it's the inside evaporator fan, because most fans cut out with the door open. If it carries on, it's the condenser fan or the compressor at the back or underneath. Please don't leave it running like that for days, because a dragging fan or a struggling compressor can seize, and then you lose the whole cabinet.",
-                "Noise on a " + a + " usually comes from the evaporator fan hitting ice, worn fan motor bearings, or the compressor start relay clicking.",
-                "Evaporator fan blade catching ice, worn fan-motor bearings (hum or grind), or a failing compressor start relay (repeated clicking).",
-                "Open the door: if the noise stops, it is the inside evaporator fan.|Check behind the inside back panel for ice around the fan, and listen at the back for the condenser fan or a clicking compressor.|Call 07983 759320 before the fan or compressor seizes." };
+                "if your " + a + "'s making a racket or buzzing away, nine times out of ten the evaporator fan at the back's clipping a bit of ice buildup... or the little start relay on the compressor's clicking away, trying to kick in. If it's more of a steady hum or a grind, that's usually a fan motor bearing on its way out. Here's a quick one for you. Pop the door open for a second... if the noise stops straight away, it's definitely that inside fan hitting ice. If it carries on, it's the fan or the compressor round the back or underneath. Don't leave it running like that for days, mate, a dodgy fan or a struggling compressor can seize up, and then you've lost the whole cabinet.",
+                "Noisy " + a + "? Nine times out of ten the evaporator fan's clipping ice, a fan motor bearing's worn out, or the compressor start relay's clicking away trying to kick in.",
+                "Evaporator fan clipping ice (scraping or ticking), a worn fan motor bearing (hum or grind), or a dodgy compressor start relay (clicking every few minutes).",
+                "Pop the door open for a second. If the noise stops straight away, it's the inside fan hitting ice.|Have a peek at the back wall inside for ice round the fan, and listen round the back for a clicking compressor.|Give us a bell on 07983 759320 before the motor burns out." };
         case "warm":
             return fa ? new string[] {
                 "حالا اینکه " + a + " خوب سرد نمی‌کنه. مقصرهای همیشگی به ترتیب: اول کندانسور گرفته، همون شبکه‌ی رادیاتوری پشت یا بالا یا پایین دستگاه. وقتی پُر از گردوخاک و چربی آشپزخونه بشه، دستگاه نمی‌تونه گرما رو بیرون بده و دیگه سرد نمی‌کنه. دوم لاستیک در که پاره شده یا شُل شده و هوای گرم میاد تو. سوم اواپراتور داخل یخ زده و هوای سرد نمی‌چرخه. آخری هم که جدی‌تره، نشتی گاز یا کمپرسوری که داره از کار میفته. تست سریع: کندانسور رو با چراغ‌قوه نگاه کن، اگه پر از خاکه دستگاه رو خاموش کن و با برس تمیزش کن. یه تیکه کاغذ لای در بذار و در رو ببند؛ اگه راحت بیرون اومد، لاستیک آب‌بندی نمی‌کنه. دیواره‌ی پشتی داخل رو ببین برفک سنگین داره یا نه. اگه کمپرسور ساکته و داغه، یا یکسره کار می‌کنه و باز سرد نیست، دیگه کار تکنسینه.",
@@ -133,10 +134,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "کندانسور یا فیلتر هوا پر از خاک و چربی، لاستیک در که آب‌بندی نمی‌کنه، اواپراتور یخ‌زده، یا کمبود گاز و کمپرسور ضعیف.",
                 "دستگاه رو خاموش کن و کندانسور و فیلتر هوا رو با برس تمیز کن.|تست کاغذ رو دور تا دور لاستیک در انجام بده.|اگه یکسره کار می‌کنه یا کمپرسور ساکت و داغه، مواد رو جابه‌جا کن و به 07983 759320 زنگ بزن." }
             : new string[] {
-                "Now, the " + a + " running warm. The usual suspects, in order: first, a blocked condenser coil, that's the radiator-style grille at the back, top or bottom. Once it's furred up with dust and kitchen grease, the unit can't get rid of heat, so it runs hot and stops cooling. Second, a split or loose door gasket letting warm air in. Third, the evaporator icing up inside so the cold air can't circulate. And last, the serious one, a refrigerant leak or a compressor on its way out. Quick checks: shine a torch on the condenser; if it's thick with dust, switch off and brush it clean. Close the door on a sheet of paper; if it slides out easily, the gasket isn't sealing. Look for heavy frost on the inside back wall. If the compressor is silent and hot, or it runs non-stop and still isn't cold, that's one for an engineer.",
-                "A warm " + a + " is usually a blocked condenser, a failed door gasket, an iced-up evaporator, or a refrigerant or compressor fault.",
-                "Condenser coil or air filter blocked with dust and grease, door gasket not sealing, evaporator iced up, or low refrigerant / failing compressor.",
-                "Switch off and brush the condenser coil and air filter clean.|Do the paper test on the door gasket all the way round.|If it runs non-stop or the compressor is silent and hot, move the stock and call 07983 759320." };
+                "if your " + a + "'s gone warm and isn't holding temp, first thing... don't let your stock spoil, get anything important into another fridge. Usually, the condenser coil underneath is choked up with kitchen grease and dust so it can't breathe, or the fan motor's packed up. Have a quick feel down by the grille... if it's baking hot or dead silent, that's your culprit. Switch it off and give that coil a good brush. Next, shut the door on a sheet of paper. If it slides out easy, the door seal's had it and warm air's sneaking in. And have a peek at the back wall inside, if it's iced right up, the cold air can't get round. If the compressor's silent and hot, or it's running non-stop and still not cold, you've probably got a gas leak or a compressor on the blink, and that's one for us.",
+                "Warm " + a + "? Usually the condenser's choked up with grease and dust, the fan motor's packed up, the door seal's had it, or there's a gas or compressor problem.",
+                "Condenser coil choked with grease and dust, a packed-up condenser fan, a door seal letting warm air in, the evaporator iced right up, or low gas / a compressor on the blink.",
+                "Feel down by the grille. Baking hot or dead silent? Switch off and brush the condenser clean.|Shut the door on a sheet of paper all the way round. If it slides out easy, the seal's gone.|If it's running non-stop or the compressor's silent and hot, move your stock and ring 07983 759320." };
         case "leak":
             return fa ? new string[] {
                 "آب ریختن از " + a + " تقریباً همیشه یعنی آب برفک‌زدایی راه در رو نداره. هر بار که دستگاه دیفراست می‌کنه، آب از یه لوله‌ی درین می‌ره تو سینی پایین که خودش بخار می‌شه. اگه این لوله با خرده‌غذا یا یخ بسته بشه، آب تو کابین سرریز می‌کنه و از زیر در می‌زنه بیرون. یا سینی پایین ترک خورده یا پر شده. تست سریع: پایین دیواره‌ی پشتی داخل یه سوراخ کوچیک درین هست؛ اگه دورش آب یا یخ جمع شده، گرفته. می‌تونی آروم با آب ولرم بشوریش. بعد سینی پایین دستگاه رو بکش بیرون ببین پره یا ترک داره.",
@@ -144,10 +145,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "لوله‌ی درین با خرده‌غذا یا یخ گرفته، سینی آب ترک داره یا سرریز کرده، یا هیتر درین فریزر سوخته.",
                 "سوراخ درین پایین دیواره‌ی پشتی رو پیدا کن و آروم با آب ولرم بشور.|سینی زیر دستگاه رو برای سرریز یا ترک چک کن.|اگه دوباره یخ زد یا باز آب داد، به 07983 759320 زنگ بزن." }
             : new string[] {
-                "Water on the floor from a " + a + " is nearly always the defrost water not getting away. Every time it defrosts, the water runs down a drain line into a drip tray that normally evaporates it. If that drain line gets blocked with food debris or ice, the water overflows inside the cabinet and runs out under the door. Or the drip tray underneath is cracked or overflowing. Quick checks: look at the bottom of the inside back wall for a small drain hole; if there's water or ice sitting around it, it's blocked, and you can gently flush it with warm water. Then pull out the drip tray underneath and see if it's full or cracked.",
-                "Leaks on a " + a + " are almost always a blocked condensate drain line or an overflowing drip tray.",
-                "Drain line blocked with debris or ice, a cracked or overflowing drip tray, or a failed drain-line heater on freezers.",
-                "Find the drain hole at the base of the inside back wall and flush it gently with warm water.|Check the drip tray underneath for overflow or cracks.|If it refreezes or keeps flooding, call 07983 759320." };
+                "water on the floor from a " + a + " is nearly always the defrost water not getting away. Every time it defrosts, the water runs down a little drain into a tray underneath, and normally it just evaporates off. But if that drain gets blocked up solid with bits of food or ice, the water backs up inside and comes out under the door. Have a look at the bottom of the back wall inside, there's a small drain hole... if there's water or ice sat round it, it's blocked. Give it a gentle flush with warm water. Then pull out the tray underneath and check it's not full or cracked. And get a towel down in the meantime, nobody wants a slip in the kitchen.",
+                "Leaking " + a + "? Nearly always the drain's blocked up solid or the drip tray underneath is overflowing.",
+                "Drain line blocked up with food bits or ice, a cracked or overflowing drip tray, or on freezers a drain heater that's packed up.",
+                "Find the little drain hole at the bottom of the back wall inside and flush it gently with warm water.|Pull out the tray underneath and check it's not full or cracked.|If it ices up again or keeps flooding, give us a bell on 07983 759320." };
         case "trip":
             return fa ? new string[] {
                 "اینکه " + a + " برق رو می‌پرونه یا روشن نمی‌شه باید با احتیاط بررسی بشه، اول ایمنی. اگه فیوز یا کلید محافظ جان رو می‌زنه، رایج‌ترین دلیل اینه که کمپرسور یا موتور فن اتصال بدنه داره، معمولاً بعد از اینکه آب رفته توش. بعدش دوشاخه، سیم یا کنتاکتور سوخته. سومی هم برد کنترل یا منبع تغذیه‌ی خراب. تست سریع: دوشاخه رو بکش و دوشاخه و سیم رو برای جای سوختگی یا بوی پلاستیک داغ نگاه کن. یه پریز دیگه امتحان کن. اگه درست همون لحظه‌ای که کمپرسور روشن می‌شه برق می‌پره، به احتمال زیاد خود کمپرسور یا سیم‌کشیشه. لطفاً هی کلید رو بالا نزن، چون هر بار فشار به کمپرسور و سیم‌کشی میاد.",
@@ -155,10 +156,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "اتصال بدنه‌ی کمپرسور یا موتور فن، دوشاخه و سیم یا کنتاکتور سوخته، یا خرابی برد کنترل و منبع تغذیه.",
                 "دوشاخه رو بکش و دوشاخه و سیم رو برای سوختگی چک کن.|یه پریز دیگه امتحان کن و ببین درست موقع روشن شدن کمپرسور برق می‌پره یا نه.|دیگه کلید رو بالا نزن و به 07983 759320 زنگ بزن." }
             : new string[] {
-                "Tripping the power or not switching on needs a bit of care, so safety first. If the " + a + " trips the RCD or blows the fuse, the most common cause is the compressor or a fan motor shorting to earth, often after water has got into it. Next is a burned plug, flex or contactor. Third is a failed control board or power supply. Quick checks: unplug it and look at the plug and lead for scorch marks or a hot plastic smell. Try it on a different socket. If it trips the moment the compressor kicks in, that's very likely the compressor or its wiring. And please don't keep resetting the breaker, because every trip stresses the compressor and the wiring.",
-                "A " + a + " that trips the power or won't switch on is usually a compressor or fan motor shorting to earth, a burned plug or contactor, or a failed control board.",
-                "Compressor or fan-motor earth fault, burned plug, flex or contactor, or a control-board / power-supply failure.",
-                "Unplug it and check the plug and lead for scorch marks.|Try a different socket and note if it trips the moment the compressor starts.|Stop resetting the breaker and call 07983 759320." };
+                "if your " + a + " keeps tripping the power or won't switch on at all, safety first, yeah? Nine times out of ten the compressor or a fan motor's shorting to earth, usually after a bit of water's got where it shouldn't. Next up is a burnt plug, a dodgy lead or a knackered contactor... and now and then it's the control board that's packed up. Pull the plug out and give it a quick look. Any scorch marks, or a hot plastic smell, and that's your answer. Try it on another socket. If it trips the second the compressor kicks in, it's almost certainly the compressor or its wiring. And please, don't keep flicking the breaker back on, every trip gives the compressor and the wiring a proper hammering.",
+                "Tripping the power or won't switch on? Usually the compressor or a fan motor's shorting to earth, a burnt plug or contactor, or the control board's packed up.",
+                "Compressor or fan motor shorting to earth, a burnt plug, dodgy lead or knackered contactor, or a control board / power supply on the blink.",
+                "Pull the plug and give the plug and lead a quick look for scorch marks or a hot plastic smell.|Try another socket, and notice if it trips the second the compressor kicks in.|Stop flicking the breaker back on and ring 07983 759320." };
         case "ice":
             return fa ? new string[] {
                 "یخ و برفک سنگین داخل " + a + " یعنی سیکل برفک‌زدایی درست کار نمی‌کنه یا هوای گرم و مرطوب داره میاد تو. یا هیتر، تایمر یا سنسور دیفراست خراب شده، یا لاستیک در هوا می‌ده. یخ رو با چاقو از روی کویل نکَن، این‌جوری کویل سوراخ می‌شه و گاز خالی می‌شه. دستگاه رو خاموش کن، مواد رو جابه‌جا کن، در رو باز بذار تا آب بشه. اگه ظرف یکی دو روز دوباره یخ بست، دیگه قطعاً مشکل دیفراسته.",
@@ -166,10 +167,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "هیتر، تایمر یا سنسور دیفراست خراب، لاستیک در که هوا می‌ده، یا در که زیاد باز می‌مونه.",
                 "یخ رو با چیز تیز نکَن.|دستگاه رو خاموش کن و بذار کامل آب بشه، بعد ببین دوباره یخ می‌زنه یا نه.|اگه دوباره یخ زد با 07983 759320 تماس بگیر." }
             : new string[] {
-                "Heavy ice building up inside the " + a + " means the defrost isn't doing its job, or warm, moist air is getting in. Either the defrost heater, timer or probe has failed, or the door gasket is letting air through. Please don't chip the ice off the coil with a knife, that's exactly how coils get punctured and lose their gas. Switch it off, move the stock, leave the door open and let it thaw fully. If it ices up again within a day or two, it's a defrost fault for sure.",
-                "Ice build-up in a " + a + " is usually a failed defrost cycle or moist air getting in past the door.",
-                "Failed defrost heater, timer or probe, a leaking door gasket, or the door being left open.",
-                "Don't chip the ice off with anything sharp.|Switch off, let it thaw fully, then watch whether it ices again within a day or two.|If it ices up again, call 07983 759320." };
+                "if your " + a + "'s iced right up inside, the defrost isn't doing its job, or damp, warm air's sneaking in. Either the defrost heater, timer or probe's on the blink, or the door seal's letting air past. Whatever you do, don't go chipping the ice off with a knife... that's exactly how coils get punctured and lose their gas. Switch it off, move your stock, leave the door open and let it thaw right out. If it ices up again in a day or two, it's a defrost fault, no question.",
+                "Iced-up " + a + "? The defrost's on the blink, or damp air's sneaking in past the door seal.",
+                "Defrost heater, timer or probe on the blink, a door seal letting air past, or the door getting left open.",
+                "Don't chip the ice off with anything sharp, you'll puncture the coil.|Switch off, let it thaw right out, then watch if it ices up again in a day or two.|If it does, ring 07983 759320 and we'll sort the defrost." };
         case "noice":
             return fa ? new string[] {
                 "اگه یخساز یخ نمی‌ده، اول آب و رسوب و دفع گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر ورودی نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یه لایه یخ نازک و ناهماهنگ می‌زنه و دیگه رهاش نمی‌کنه. اگه فیلتر آب چند ماهه عوض نشده، این خیلی رایجه.",
@@ -177,10 +178,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "شیر آب بسته، فیلتر ورودی گرفته، رسوب آهک، کندانسور کثیف یا سوییچ مخزن که فکر می‌کنه مخزن پره.",
                 "ببین آب به دستگاه می‌رسه و فیلتر نگرفته.|اگه ورقه‌ی یخ نازک و ناهماهنگه و نمی‌افته، رسوبه.|کندانسور رو تمیز کن و اگه درست نشد به 07983 759320 زنگ بزن." }
             : new string[] {
-                "If the ice machine isn't making ice, we nearly always start with water, scale and heat, not a new machine. Check the water tap is open, the inlet filter isn't clogged, the bin switch isn't stuck, and the condenser is clean. A scaled-up evaporator freezes a thin, patchy skin of ice and then won't harvest it. If the water filter is months overdue, that's a very common fault in London pubs and restaurants.",
-                "No ice usually means water supply, scale on the evaporator, a dirty condenser, or a harvest or bin switch fault.",
-                "Closed water tap, blocked inlet filter, limescale, a dirty condenser, or a bin switch that thinks the bin is full.",
-                "Confirm water is reaching the machine and the filter isn't blocked.|Look for a thin, patchy ice sheet that won't drop, that's scale.|Clean the condenser, and call 07983 759320 if it still won't harvest." };
+                "when an ice machine stops dropping cubes, it's almost always a scaled-up water float switch, a blocked spray bar, or the condenser's running way too hot. First, check the water tap's actually on and the inlet filter isn't clogged. Then have a look at the ice sheet... if it's thin and patchy and just won't drop, that's limescale, mate. Give the condenser a clean as well, and make sure the bin switch isn't stuck, thinking the bin's already full. If the water filter's months overdue, that's a classic in London pubs and restaurants.",
+                "Ice machine not dropping cubes? Almost always a scaled-up float switch, a blocked spray bar, or a condenser running way too hot.",
+                "Scaled-up water float switch, blocked spray bar, limescale on the evaporator, a hot dirty condenser, or a stuck bin switch.",
+                "Check the water tap's on and the inlet filter isn't clogged.|Thin, patchy ice sheet that won't drop? That's limescale.|Clean the condenser, and if it still won't drop cubes, ring 07983 759320." };
         case "code":
             return fa ? new string[] {
                 "گفتی دستگاه کد " + codeFa + " نشون می‌ده. روی بیشتر کنترلرهای صنعتی مثل فاستر، ویلیامز، دیکسل، کارل و الیول، این مدل کدها معمولاً یعنی خرابی سنسور یا آلارم دمای بالا. یعنی یا کابین واقعاً گرم شده، یا سنسور شُل شده، یخ زده یا سوخته. اول کندانسور رو تمیز کن، لاستیک در رو چک کن و ببین مواد جلوی دریچه‌ی برگشت هوا رو نگرفته باشه. بعد با یه دماسنج جدا دمای واقعی رو بگیر؛ اگه دما خوبه ولی کد هست، سنسوره.",
@@ -188,10 +189,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "کابین واقعاً گرم شده (کندانسور، لاستیک در، جریان هوا) یا سنسور هوا یا اواپراتور خراب یا شل شده.",
                 "کندانسور رو تمیز کن و لاستیک در رو چک کن.|با یه دماسنج جدا دمای واقعی رو بگیر.|اگه دما بالای ۸ درجه است یا کد پاک نمی‌شه، به 07983 759320 زنگ بزن." }
             : new string[] {
-                "You mentioned the code " + SpellCode(code.Substring(0, 1), code.Substring(1)) + ". On most commercial controllers, Foster, Williams, Dixell, Carel and Eliwell, a code like that points to either a probe fault or a high-temperature alarm. So either the cabinet really has gone warm, or the sensor is loose, iced up or failed. Start by cleaning the condenser, checking the door gasket, and making sure stock isn't blocking the return air. Then check the real temperature with a separate thermometer. If the temperature is fine but the code is still showing, it's the probe itself.",
-                "Code " + code + " on most commercial controllers means a high-temperature alarm or a probe fault.",
-                "The cabinet has genuinely warmed up (condenser, gasket, airflow), or the air or evaporator probe is loose, iced or failed.",
-                "Clean the condenser and check the door gasket.|Check the real temperature with a separate thermometer.|If it's above 8°C or the code won't clear, call 07983 759320." };
+                "you've got " + SpellCode(code.Substring(0, 1), code.Substring(1)) + " showing, yeah? On most commercial controllers, Foster, Williams, Dixell, Carel, Eliwell, that kind of code means either a probe's playing up, or it's a high-temp alarm. So either the cabinet's genuinely gone warm, or the sensor's come loose, iced up or packed in. Give the condenser a clean, check the door seal, and make sure your stock isn't blocking the air vent at the back. Then pop a separate thermometer in... if the temp's fine but the code's still flashing, it's the probe itself, and that's a quick fix.",
+                "Code " + code + "? On most commercial controllers that's a probe playing up or a high-temp alarm.",
+                "The cabinet's genuinely gone warm (condenser, door seal, blocked airflow), or the air or evaporator probe has come loose, iced up or packed in.",
+                "Give the condenser a clean and check the door seal.|Pop a separate thermometer in and check the real temp.|If it's over 8°C or the code won't clear, ring 07983 759320." };
         default:
             return fa ? new string[] {
                 "اگه " + a + " اذیتت می‌کنه، این سه تا خرابی رو از همه بیشتر می‌بینم و همین الان می‌تونی چکشون کنی. یک: کندانسور از گردوخاک گرفته و داغ می‌کنه، که باعث می‌شه دستگاه خوب سرد نکنه و پشتش داغ باشه. دستگاه رو خاموش کن و با برس تمیزش کن. دو: فن اواپراتور داخل یخ زده، که یا صدا می‌ده یا کابین گرم می‌شه. در رو باز کن و گوش بده، و دیواره‌ی پشتی داخل رو برای برفک سنگین نگاه کن. سه: ترموستات، سنسور دما یا رله‌ی کمپرسور خراب شده. اگه نمایشگر دمای اشتباه نشون می‌ده، یا هر چند دقیقه یه تیک می‌شنوی ولی کمپرسور روشن نمی‌شه، مقصر همینه.",
@@ -199,10 +200,46 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "کندانسور گرفته که خنک‌کاری رو ضعیف می‌کنه، فن اواپراتور یخ‌زده که صدا یا گرمی کابین میاره، یا خرابی ترموستات و سنسور و رله‌ی کمپرسور.",
                 "دستگاه رو خاموش کن و کندانسور رو با برس تمیز کن.|در رو باز کن و گوش بده، و دیواره‌ی پشتی رو برای برفک ببین.|دمای نمایشگر رو با یه دماسنج جدا مقایسه کن و اگه کمپرسور فقط تیک می‌زنه به 07983 759320 زنگ بزن." }
             : new string[] {
-                "If your " + a + " is playing up, here are the three faults I see most often, and you can check all of them right now. Number one, the condenser overheating because it's blocked with dust. That gives you poor cooling and a hot back to the unit, so switch it off and brush it clean. Number two, the evaporator fan icing up inside, which gives you either a noise or a warm cabinet. Open the door and listen, and look for heavy frost on the inside back wall. Number three, the thermostat, the temperature sensor or the compressor relay failing. If the display shows the wrong temperature, or you hear a click every few minutes but the compressor never actually runs, that's your culprit.",
-                "The three most common " + a + " breakdowns: a blocked, overheating condenser; an iced-up evaporator fan; or a failed thermostat, sensor or compressor relay.",
-                "Condenser blockage causing poor cooling, evaporator fan icing causing noise or a warm cabinet, or thermostat / sensor / compressor-relay failure.",
-                "Switch off and brush the condenser clean.|Open the door and listen, and check the inside back wall for heavy frost.|Compare the display with a separate thermometer, and if the compressor only clicks, call 07983 759320." };
+                "when a " + a + " starts playing up out of nowhere, it usually comes down to three classic things. Number one... the condenser's choked up with dust, so it overheats, the cooling goes weak, and the back of the unit feels hot. Switch it off and give it a good brush. Number two... the evaporator fan inside's iced right up, so you get a racket or a warm cabinet. Pop the door open, have a listen, and look for heavy frost on the back wall. Number three... a dodgy thermostat, temperature probe or compressor relay. If the display's showing the wrong temp, or you hear a click every few minutes but the compressor never kicks in, that's your culprit.",
+                "Three classic " + a + " faults: a condenser choked up with dust, an evaporator fan iced right up, or a dodgy thermostat, probe or compressor relay.",
+                "Choked-up condenser giving weak cooling, an iced-up evaporator fan giving a racket or a warm cabinet, or a dodgy thermostat, probe or compressor relay.",
+                "Switch off and give the condenser a good brush.|Pop the door open, have a listen, and look for heavy frost on the back wall.|Check the display against a separate thermometer, and if the compressor just clicks, ring 07983 759320." };
+    }
+}
+
+string EnIntro(string sym)
+{
+    switch (sym)
+    {
+        case "noise": return "Alright mate, don't panic! Head Engineer at ColdDirect here, thirty years on the tools. ";
+        case "warm": return "Alright mate, Head Engineer at ColdDirect here, with thirty years in the game. ";
+        case "noice": return "Alright mate, don't worry! Head Engineer at ColdDirect here, thirty years fixing catering kit. ";
+        case "code": return "Alright mate, easy one here! Head Engineer at ColdDirect, thirty years on the tools. ";
+        case "ice": return "Alright mate, don't panic! Head Engineer at ColdDirect here, thirty years on the tools. ";
+        case "general": return "Alright mate, you're in safe hands! I'm the Head Engineer at ColdDirect, with thirty years fixing commercial cooling across London. ";
+        default: return "Alright mate, don't stress! I'm the Head Engineer here at ColdDirect... been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you. ";
+    }
+}
+
+string EnLead(string sym)
+{
+    if (sym == "general") return "Tell you what, ";
+    if (sym == "leak" || sym == "trip") return "Right, ";
+    return "Look, ";
+}
+
+string EnUrgency(string sym)
+{
+    switch (sym)
+    {
+        case "noise": return "before the motor burns out";
+        case "warm": return "before your stock spoils";
+        case "leak": return "before it turns into a proper flood";
+        case "trip": return "and we'll get it safe and running again";
+        case "ice": return "before that ice chokes the coil";
+        case "noice": return "and we'll get those cubes dropping again";
+        case "code": return "and we'll get that code cleared";
+        default: return "and we'll get it sorted for you";
     }
 }
 
@@ -240,12 +277,13 @@ string FallbackJson(string text)
 
     bool fosterE1 = code == "E1" && Has(q, "foster|فاستر");
 
+    string first = syms[0];
     string intro = lc == "fa"
         ? "سلام رفیق، سرمهندس کلد دایرکت‌ام، سی ساله تو لندن یخچال و فریزر صنعتی و تجهیزات کترینگ درست می‌کنم. "
-        : "Hello mate, Head Engineer at ColdDirect here, with thirty years of experience on commercial fridges, freezers and catering kit across London. ";
+        : EnIntro(first);
     string outro = lc == "fa"
         ? " اگه خواستی همین امروز یه تکنسین بفرستیم، زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر. اگه کمکت کرد، لطفاً دکمه‌ی لایک رو بزن یا پنج ستاره بده، خیلی کمک می‌کنه کلد دایرکت رشد کنه. قربونت."
-        : " If you'd like one of our London engineers out today, give us a ring on oh seven nine eight three, seven five nine, three two oh. And if that helped, I'd really appreciate it if you tap the Like button or leave us a five-star review. It genuinely helps ColdDirect grow. Cheers.";
+        : " Give us a bell on zero seven nine eight three, seven five nine, three two zero, " + EnUrgency(first) + "... and if this tip helped you out, smash that Like button or drop us a quick five-star review. Cheers!";
 
     StringBuilder spoken = new StringBuilder(intro);
     string summary = "", cause = "";
@@ -257,9 +295,17 @@ string FallbackJson(string text)
         {
             b[0] = lc == "fa"
                 ? "گفتی فاستر کد " + codeFa + " نشون می‌ده. روی کنترلرهای فاستر این معمولاً آلارم دمای بالا یا خرابی سنسوره: یا کابین از محدوده‌ی امن گرم‌تر شده، یا سنسور هوا شل شده، یخ زده یا سوخته. کندانسور بالای دستگاه رو برای گردوخاک ببین، لاستیک در رو چک کن و ببین مواد جلوی برگشت هوا رو نگرفته. اگه دمای مواد از هشت درجه بالاتر رفته، همون روز میایم."
-                : "You mentioned a Foster showing " + SpellCode("E", "1") + ". On Foster controllers that's usually a high-temperature or probe alarm: the cabinet has climbed above the safe band, or the air probe is loose, iced or failed. Feel the top condenser for thick dust, check the door gasket is sucking shut, and make sure stock isn't blocking the return air. If food is above eight degrees Celsius, we should be with you the same day.";
+                : "that " + SpellCode("E", "1") + " flashing on your Foster controller just means the cabinet air probe has gone open-circuit or come loose... basically, the controller can't read the temperature anymore. Pop the door open and find the little probe up near the evaporator fan. Check it's clipped in properly and the wire isn't chewed, pinched or pulled out. Switch it off at the wall for a minute, then back on, sometimes that's enough to clear it. If it comes straight back, the probe needs swapping, it's a quick job. In the meantime, pop a separate thermometer in and make sure your food's still under eight degrees.";
+            if (lc != "fa")
+            {
+                b[1] = "Foster E1? The cabinet air probe has gone open-circuit or come loose, so the controller can't read the temperature.";
+                b[2] = "Cabinet air probe open-circuit, unclipped, or a chewed or pulled-out probe wire.";
+                b[3] = "Pop the door open and check the air probe near the evaporator fan is clipped in and the wire's intact.|Switch off at the wall for a minute and back on to see if it clears.|If E1 comes straight back, ring 07983 759320 for a quick probe swap.";
+            }
         }
-        spoken.Append(i > 0 ? " " : "").Append(b[0]);
+        string piece = b[0];
+        if (lc != "fa") piece = (i == 0 ? EnLead(syms[i]) : "And on top of that, ") + piece;
+        spoken.Append(i > 0 ? " " : "").Append(piece);
         if (i == 0) { summary = b[1]; cause = b[2]; }
         else { summary += " " + b[1]; cause += " " + b[2]; }
         string[] cs = b[3].Split('|');

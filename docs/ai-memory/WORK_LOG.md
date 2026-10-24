@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24h] — Voice bar: warm London-mate English persona + softer browser voice (homepage only)
+- **Vault**: every English template (noise / warm / leak / trip / ice / ice machine / code / Foster E1 / general) rewritten in warm everyday British ("Alright mate, don't panic!", "on the blink", "iced right up", "give us a bell"). Intro and urgency line are picked per symptom (`EnIntro`, `EnLead`, `EnUrgency`); outro = phone as words + "smash that Like button or drop us a quick five-star review, cheers!". Foster E1 = air probe open-circuit/loose (owner wording). Gemini prompt has an ENGLISH TONE rule. Persian text unchanged.
+- **Widget**: `pickVoice()` ranks UK male voices (Google UK English Male → MS Ryan/Thomas/Alfie/Oliver Natural → MS George → Daniel); the old `/male/` regex also matched "Female", now excluded. Browser TTS rate 0.94, pitch 0.96. Gemini audio still 0.95x.
+- Homepage script `?v=5`. Live: 10/10 samples warm, 0 brush-offs, off-origin 403.
+
 ### [2026-10-24g] — Voice bar: real symptom diagnosis + mobile mic/overflow fix (homepage only)
 - **Vault** (`colddirect-voice-vault.aspx`, UTF-8 BOM, `ResponseEncoding="utf-8"` only; `CodePage` + `ResponseEncoding` together = runtime 500): rule-based symptom engine (appliance + noise / warm / leak / trip / ice / error code / ice machine / top-3 general) in English + colloquial Persian. The "describe the make / error code" brush-off is gone. Gemini prompt forbids brush-offs; when a key exists, a brush-off reply is rejected and the engine answers instead. Live-tested 10 sentences (incl. "fridge freezer ... too noisy", Persian): 0 brush-offs, 0 mojibake; off-origin 403 with text.
 - **Widget**: continuous + interim Web Speech, auto-restart on mobile `onend`, 3.5s silence submit, SPEAK→STOP toggle, no getUserMedia when SR exists (iOS conflict), MediaRecorder chunks sent on `onstop`. Mobile: 100vw/border-box, compact buttons ≤480px, input 16px (stops iOS zoom → right-edge clipping). 360px live: LISTEN/toggle/input inside viewport, scrollWidth 360.

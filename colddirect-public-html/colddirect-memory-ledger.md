@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24h] — Voice bar warm British persona
+- English vault replies now sound like a friendly London engineer, with a per-symptom intro and urgency line. Browser voice prefers UK male natural voices, rate 0.94, pitch 0.96. Script `?v=5`. Persian untouched.
+
 ### [2026-10-24g] — Voice bar: symptom engine + mobile mic fix
 - Vault answers the actual symptom (noise/warm/leak/trip/ice/code/general top-3) in EN/FA, never "describe the make". Mic: continuous, 3.5s silence, STOP button; mobile 100vw + 16px input. Never combine `CodePage` with `ResponseEncoding` in the ASPX directive (500).
 
