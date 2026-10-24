@@ -42,6 +42,10 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - Desktop 240px @48px; mobile 175×48 relative under header; transcript hidden on mobile.
 - Commit `89084dc`, deploy `40039278302` OK. Locks intact.
 
+### [2026-10-24c] — Clean layout sync + Dispatch popover off
+- Disabled `cd-hover-card.js` Dispatch Active popover; cold-room 30+ years; compact audio kept.
+- Commit `ba3cc9f`, deploy `40076881572` OK. Locks intact.
+
 # Cold Direct Permanent Automated Action & Backup Ledger
 
 ### [2026-10-22] — NAP / GeoCoordinates pinned to 27 Felixstowe Road, N9 0DX

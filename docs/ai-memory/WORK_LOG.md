@@ -46,6 +46,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **Git/Deploy**: `89084dc`, deploy `40039278302` success.
 - **Live 375px homepage**: position=relative, 175×48, ovMenu/ovLogo/ovH1=false; CSS markers live on 6 money/core URLs.
 
+### [2026-10-24c] — Sync clean layout + kill Dispatch Active popover
+- **Diagnosis**: Live `/`, `/fridge-repair-london/`, `/cold-room-repair-london/` already had clean static HTML (welcome audio, no trust bar, no mid Listen, no 15+). The visible “🟢 24/7 London Dispatch Active — 60–90 Min” came from `js/cd-hover-card.js` popover, not the old HTML strip.
+- **Fix**: Early-return disable + CSS hide for `#cd-hover-popover`; cache-bust `?v=20261024c`; reinforce `cd-clean-chrome`; add `30+ years` on cold-room body; re-apply compact top-right audio.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; protect OK.
+- **Git/Deploy**: `ba3cc9f`, deploy `40076881572` success. Live curl 5/5 clean.
+
 # Work log
 
 ## 2026-10-07 — Initial current-state review and memory
