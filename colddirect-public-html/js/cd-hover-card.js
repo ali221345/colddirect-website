@@ -5,6 +5,10 @@
 (function () {
   "use strict";
 
+  // Owner 2026-10-24: disable Dispatch Active / 60–90 Min hover popover sitewide.
+  // Keep file so existing <script src="/js/cd-hover-card.js"> tags stay 200 OK.
+  return;
+
   var SERVICE_CATALOG = {
     "commercial-fridge-repair": {
       title: "Commercial Fridge Repair London",

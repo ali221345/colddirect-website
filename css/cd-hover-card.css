@@ -1,4 +1,6 @@
 /* Cold Direct Interactive SEO Service Popover / Hover Card Engine (CLS = 0) */
+/* Owner 2026-10-24: hard-disable floating Dispatch Active popover */
+#cd-hover-popover,.cd-popover-card{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important;height:0 !important;max-height:0 !important;overflow:hidden !important;}
 .cd-popover-card {
   position: fixed;
   top: 0;
