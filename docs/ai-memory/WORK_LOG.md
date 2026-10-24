@@ -57,6 +57,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **SEO safety**: title/H1/meta untouched; protect N/A for homepage; locks OK.
 - **Git/Deploy**: `134340e`, deploy `40078732981` success. Live: `static_img_in_hero=False`, slider present, freezer hero img intact.
 
+### [2026-10-24e] — freezer-repair-london: single kitchen hero image
+- **Summary**: Deleted top frosted walk-in doorway image; placed `freezer-repair-london-foster-real.jpg` once under the 3 CTAs; removed duplicate below keyword matrix. Audited other 8 money hubs — already 1 image each.
+- **SEO safety**: title/H1/meta untouched; locks OK; protect OK.
+- **Git/Deploy**: `662a6af`, deploy `40080124395` success. Live: hero=foster-real only; frosted gone; after-matrix imgs=[].
+
 # Work log
 
 ## 2026-10-07 — Initial current-state review and memory
