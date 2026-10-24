@@ -18,6 +18,14 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25a] — Voice bar: server-side TTS chain + iOS audio unlock (homepage `?v=7`)
+- **Vault `mode=tts`** (POST; `?mode=tts` query is accepted too) returns `{ok, voice, audio_mime, audio_base64}`. Chain: Gemini Puck (`gemini-2.5-flash-preview-tts` → `gemini-2.5-pro-preview-tts`; a 429 parks the model in `HttpRuntime.Cache` until Google's retryDelay, max 6h, so skipping costs ~0.1s) → **Azure Speech** (official, `App_Data/azure-speech.key`: line 1 region, line 2 key; male neural voices such as `fa-IR-FaridNeural`) → **Google Translate `translate_tts` stream** (≤180-char sentence chunks, MP3 concatenated; voice `cloud-neural-fallback`).
+- **FACT: `translate_tts` has NO Persian** (HTTP 400 for fa / fa-IR / pes / prs / fa-AF, with both tw-ob and gtx). en / tr / ar / ur work (0.4–1.2s live, MP3s decode clean). **Persian audio therefore needs Puck (Gemini billing) or an Azure key.** The Edge "Read Aloud" endpoint was NOT used: it now needs an obfuscated anti-abuse token (`edge_tts/drm.py` v2), and copying that would mean circumventing a protection.
+- .NET: `Referer` must be set through `req.Referer`, not `Headers[...]` (it threw an ArgumentException). The response carries `detail` (exception type + HTTP status, no secrets) when no voice is found.
+- **Widget:** one reusable `window.__cdVoicePlayer` (HTMLAudioElement) is primed with a silent WAV data URI on every tap (SPEAK / STOP & SEND / Ask / Enter / chips / LISTEN pending), and all playback goes through it (AudioContext only as a fallback). A new "▶ Listen Answer" button on the card replays. The widget reads both `audio_base64` and the legacy `audio.data`.
+- Live browser test: a typed Turkish question → Turkish card → Turkish MP3 auto-played through the primed element within ~2.7s, while Gemini TTS was 429.
+- `tools/upload_azure_speech_key_ftp.py` + git-ignored placeholder `App_Data/azure-speech.key` (it refuses the placeholder).
+
 ### [2026-10-24k] — Voice bar: real multi-language voice input (MediaRecorder → Gemini audio), homepage `?v=6`
 - **Bug:** browser SpeechRecognition used one fixed locale, so Persian/Turkish speech came out as garbled English and the reply was in English.
 - **Widget:** SpeechRecognition removed. SPEAK records with getUserMedia + MediaRecorder (webm/opus, mp4/aac on iOS); the button becomes `⏹ STOP & SEND`; an AnalyserNode RMS meter auto-sends after 3s of silence (9s with no speech cancels; 60s max). The base64 audio goes to the vault as `mode:"diagnose"`. The card and the transcript (in the input box) show immediately; Puck comes from a second `mode:"tts"` call. If neither Puck nor a browser voice exists for that language, the status says the answer is written below.

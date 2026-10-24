@@ -112,6 +112,32 @@
     return out;
   }
 
+  var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
+
+  function player() {
+    if (!window.__cdVoicePlayer) {
+      var a = new Audio();
+      a.setAttribute("playsinline", "true");
+      a.setAttribute("webkit-playsinline", "true");
+      a.preload = "auto";
+      window.__cdVoicePlayer = a;
+    }
+    playEl = window.__cdVoicePlayer;
+    return playEl;
+  }
+
+  // iOS only lets an element play later (after a fetch) if it already played inside a tap.
+  function primePlayer() {
+    unlockAudio();
+    var a = player();
+    if (playing) return;
+    try {
+      a.src = SILENT_WAV;
+      var p = a.play();
+      if (p && p.catch) p.catch(function () {});
+    } catch (e) {}
+  }
+
   function stopPlayback() {
     playing = false;
     listenBtn.classList.remove("is-on");
@@ -133,41 +159,31 @@
     var blob = new Blob([bytes], { type: type });
     var url = URL.createObjectURL(blob);
 
-    function viaElement() {
-      if (!playEl) {
-        playEl = new Audio();
-        playEl.setAttribute("playsinline", "true");
-        playEl.preload = "auto";
-      }
-      playEl.src = url;
-      playEl.playbackRate = PACE;
-      var p = playEl.play();
-      if (p && p.catch) p.catch(function () { setStatus("Tap LISTEN again to hear the diagnosis."); });
-      playEl.onended = function () {
-        playing = false;
-        listenBtn.classList.remove("is-on");
-        listenBtn.setAttribute("aria-pressed", "false");
-        URL.revokeObjectURL(url);
-      };
+    function done() {
+      playing = false;
+      listenBtn.classList.remove("is-on");
+      listenBtn.setAttribute("aria-pressed", "false");
+      URL.revokeObjectURL(url);
     }
 
-    if (audioCtx) {
+    var el = player();
+    el.onended = done;
+    el.src = url;
+    el.playbackRate = PACE;
+    var p = el.play();
+    if (p && p.catch) p.catch(function () { viaContext(); });
+
+    function viaContext() {
+      if (!audioCtx) { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); return; }
       audioCtx.decodeAudioData(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), function (buf) {
         var src = audioCtx.createBufferSource();
         src.buffer = buf;
         src.playbackRate.value = PACE;
         src.connect(audioCtx.destination);
         playSource = src;
-        src.onended = function () {
-          playing = false;
-          listenBtn.classList.remove("is-on");
-          listenBtn.setAttribute("aria-pressed", "false");
-          URL.revokeObjectURL(url);
-        };
+        src.onended = done;
         src.start(0);
-      }, function () { viaElement(); });
-    } else {
-      viaElement();
+      }, function () { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); });
     }
   }
 
@@ -237,6 +253,7 @@
       return;
     }
     if (voicePending) {
+      primePlayer();
       setStatus("Puck voice is on its way — it will play in a moment.");
       return;
     }
@@ -311,9 +328,10 @@
       if (seq !== askSeq) return;
       voicePending = false;
       setStatus(langStatus(data));
-      if (v && v.audio && v.audio.data) {
-        lastAudio = v.audio;
-        playBytes(b64ToBytes(v.audio.data), v.audio.mime);
+      var got = v && v.audio_base64 ? { data: v.audio_base64, mime: v.audio_mime } : (v && v.audio && v.audio.data ? v.audio : null);
+      if (got) {
+        lastAudio = got;
+        playBytes(b64ToBytes(got.data), got.mime);
       } else {
         voiceFallback(data);
       }
@@ -616,6 +634,7 @@
       "#cd-voice-askrow,#cd-voice-card,#cd-voice-chips,#cd-voice-ctas,#cd-voice-fb{max-width:100%;min-width:0;}",
       "#cd-voice-card p,#cd-voice-card li,#cd-voice-spoken,#cd-voice-legal{overflow-wrap:anywhere;word-break:break-word;}",
       "#cd-voice-card li{color:#e2e8f0 !important;opacity:1 !important;}",
+      "#cd-voice-root button.cd-voice-btn#cd-voice-replay{height:32px;margin:0 0 8px;padding:0 12px;font-size:12px;background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
       "@media (max-width:480px){#cd-voice-bar{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));gap:6px;}#cd-voice-title{font-size:10px;}#cd-voice-controls{gap:4px;}#cd-voice-root button.cd-voice-btn{padding:0 6px;font-size:9.5px;letter-spacing:0;}#cd-voice-root button.cd-voice-tog{width:26px;}#cd-voice-input{font-size:16px;}#cd-voice-drawer{padding:8px max(8px,env(safe-area-inset-right,0px)) 10px max(8px,env(safe-area-inset-left,0px));}}",
       "@media (max-width:360px){#cd-voice-dot{display:none;}#cd-voice-title{font-size:9.5px;}}"
     ].join("");
@@ -652,6 +671,7 @@
           "<p><strong>Quick checks</strong></p>" +
           '<ul id="cd-voice-checks"></ul>' +
           '<p id="cd-voice-spoken"></p>' +
+          '<button type="button" class="cd-voice-btn" id="cd-voice-replay">▶ Listen Answer</button>' +
           '<div id="cd-voice-ctas">' +
             '<a class="call" href="' + PHONE_HREF + '">Call ' + PHONE_DISPLAY + "</a>" +
             '<a class="mail" href="' + MAIL_HREF + '">Email info@colddirect.co.uk</a>' +
@@ -711,15 +731,17 @@
       spoken: $("#cd-voice-spoken", root)
     };
 
-    speakBtn.addEventListener("click", toggleSpeak);
+    speakBtn.addEventListener("click", function () { primePlayer(); toggleSpeak(); });
     listenBtn.addEventListener("click", playDiagnosis);
+    $("#cd-voice-replay", root).addEventListener("click", function () { if (playing) stopPlayback(); playDiagnosis(); });
     toggleBtn.addEventListener("click", toggleDrawer);
-    $("#cd-voice-ask", root).addEventListener("click", function () { ask(input.value); });
+    $("#cd-voice-ask", root).addEventListener("click", function () { primePlayer(); ask(input.value); });
     input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") { e.preventDefault(); ask(input.value); }
+      if (e.key === "Enter") { e.preventDefault(); primePlayer(); ask(input.value); }
     });
     root.querySelectorAll(".cd-voice-chip").forEach(function (b) {
       b.addEventListener("click", function () {
+        primePlayer();
         input.value = b.getAttribute("data-chip") || b.textContent;
         ask(input.value);
       });

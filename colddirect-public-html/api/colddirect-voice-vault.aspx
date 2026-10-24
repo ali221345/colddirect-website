@@ -572,14 +572,66 @@ byte[] PcmToWav(byte[] pcm, int rate)
     }
 }
 
-// Returns {"mime":"audio/wav","data":"<base64>"} or null.
-string GeminiTts(string key, string spoken)
+const string BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+
+byte[] HttpBytes(string method, string url, string contentType, byte[] body, Dictionary<string, string> headers, int timeoutMs)
 {
-    if (string.IsNullOrEmpty(spoken)) return null;
+    try
+    {
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+        req.Method = method;
+        req.Timeout = timeoutMs;
+        req.UserAgent = BROWSER_UA;
+        if (headers != null)
+            foreach (KeyValuePair<string, string> h in headers)
+            {
+                if (h.Key == "Referer") req.Referer = h.Value;
+                else req.Headers[h.Key] = h.Value;
+            }
+        if (body != null)
+        {
+            req.ContentType = contentType;
+            req.ContentLength = body.Length;
+            using (Stream s = req.GetRequestStream()) s.Write(body, 0, body.Length);
+        }
+        using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+        using (Stream rs = resp.GetResponseStream())
+        using (MemoryStream ms = new MemoryStream())
+        {
+            rs.CopyTo(ms);
+            return ms.ToArray();
+        }
+    }
+    catch (Exception ex)
+    {
+        string status = "";
+        WebException we = ex as WebException;
+        if (we != null && we.Response is HttpWebResponse) status = " HTTP " + (int)((HttpWebResponse)we.Response).StatusCode;
+        ttsDiag = ex.GetType().Name + status + ": " + ex.Message;
+        return null;
+    }
+}
+
+string ttsDiag = "";
+
+// Returns {mime, base64} or null. A 429 parks that model until Google's retryDelay (max 6h) so visitors never wait on it.
+string[] GeminiTtsModel(string key, string model, string spoken)
+{
+    string parked = "cd-tts-429-" + model;
+    if (HttpRuntime.Cache[parked] != null) return null;
     string line = "Speak in the same language as the text below, with natural native pronunciation, as a warm, relaxed, friendly London male engineer chatting to a cafe owner over a cup of tea. Calm, unhurried pace, natural little pauses at commas and dots, never robotic. Read this exactly:\n\n" + spoken;
     string body = "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + Esc(line) + "\"}]}],\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Puck\"}}}}}";
-    string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=" + Uri.EscapeDataString(key);
-    string raw = HttpJson(url, body, 60000);
+    string url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + Uri.EscapeDataString(key);
+    string raw = HttpJson(url, body, 60000) ?? "";
+    if (raw.IndexOf("RESOURCE_EXHAUSTED", StringComparison.Ordinal) >= 0 || Regex.IsMatch(raw, "\"code\"\\s*:\\s*429"))
+    {
+        int secs = 1800;
+        Match rd = Regex.Match(raw, "\"retryDelay\"\\s*:\\s*\"(\\d+)");
+        if (rd.Success) secs = Math.Max(60, Math.Min(int.Parse(rd.Groups[1].Value), 6 * 3600));
+        HttpRuntime.Cache.Insert(parked, "1", null, DateTime.UtcNow.AddSeconds(secs), System.Web.Caching.Cache.NoSlidingExpiration);
+        return null;
+    }
     int at = raw.IndexOf("\"inlineData\"", StringComparison.Ordinal);
     if (at < 0) at = raw.IndexOf("\"inline_data\"", StringComparison.Ordinal);
     if (at < 0) return null;
@@ -594,7 +646,143 @@ string GeminiTts(string key, string spoken)
         Match r = Regex.Match(mime, "rate=(\\d+)");
         bin = PcmToWav(bin, r.Success ? int.Parse(r.Groups[1].Value) : 24000);
     }
-    return "{\"mime\":\"audio/wav\",\"data\":\"" + Convert.ToBase64String(bin) + "\"}";
+    return new string[] { "audio/wav", Convert.ToBase64String(bin) };
+}
+
+string[] GeminiTts(string key, string spoken)
+{
+    if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(spoken)) return null;
+    foreach (string model in new string[] { "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts" })
+    {
+        string[] r = GeminiTtsModel(key, model, spoken);
+        if (r != null) return r;
+    }
+    return null;
+}
+
+// App_Data/azure-speech.key: line 1 = region (e.g. uksouth), line 2 = key. Official Azure Speech, free tier 500k chars/month.
+string[] LoadAzure()
+{
+    try
+    {
+        string file = Server.MapPath("~/App_Data/azure-speech.key");
+        if (!File.Exists(file)) return null;
+        string[] parts = File.ReadAllText(file).Split(new char[] { '\r', '\n', '|' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2 || parts[0].IndexOf("PASTE", StringComparison.OrdinalIgnoreCase) >= 0 || parts[1].IndexOf("PASTE", StringComparison.OrdinalIgnoreCase) >= 0) return null;
+        return new string[] { parts[0].Trim().ToLowerInvariant(), parts[1].Trim() };
+    }
+    catch { return null; }
+}
+
+string AzureVoice(string lang)
+{
+    switch (lang)
+    {
+        case "fa": return "fa-IR-FaridNeural";
+        case "en": return "en-GB-RyanNeural";
+        case "tr": return "tr-TR-AhmetNeural";
+        case "ar": return "ar-SA-HamedNeural";
+        case "es": return "es-ES-AlvaroNeural";
+        case "hi": return "hi-IN-MadhurNeural";
+        case "ur": return "ur-PK-AsadNeural";
+        case "pl": return "pl-PL-MarekNeural";
+        case "ro": return "ro-RO-EmilNeural";
+        case "de": return "de-DE-ConradNeural";
+        case "fr": return "fr-FR-HenriNeural";
+        case "it": return "it-IT-DiegoNeural";
+        case "pt": return "pt-PT-DuarteNeural";
+        case "ru": return "ru-RU-DmitryNeural";
+        case "uk": return "uk-UA-OstapNeural";
+        case "bn": return "bn-BD-PradeepNeural";
+        case "pa": return "pa-IN-OjasNeural";
+        case "zh": return "zh-CN-YunxiNeural";
+        default: return "en-GB-RyanNeural";
+    }
+}
+
+string[] AzureTts(string lang, string text)
+{
+    string[] az = LoadAzure();
+    if (az == null || string.IsNullOrEmpty(text)) return null;
+    string voice = AzureVoice(lang);
+    string xmlLang = voice.Substring(0, 5);
+    string ssml = "<speak version='1.0' xml:lang='" + xmlLang + "'><voice name='" + voice + "'><prosody rate='-6%'>" + System.Security.SecurityElement.Escape(text) + "</prosody></voice></speak>";
+    Dictionary<string, string> h = new Dictionary<string, string>();
+    h["Ocp-Apim-Subscription-Key"] = az[1];
+    h["X-Microsoft-OutputFormat"] = "audio-24khz-48kbitrate-mono-mp3";
+    byte[] mp3 = HttpBytes("POST", "https://" + az[0] + ".tts.speech.microsoft.com/cognitiveservices/v1", "application/ssml+xml", Encoding.UTF8.GetBytes(ssml), h, 30000);
+    if (mp3 == null || mp3.Length < 500) return null;
+    return new string[] { "audio/mpeg", Convert.ToBase64String(mp3) };
+}
+
+List<string> TtsChunks(string text, int max)
+{
+    List<string> chunks = new List<string>();
+    string clean = Regex.Replace(text ?? "", "\\s+", " ").Trim();
+    string[] sentences = Regex.Split(clean, "(?<=[.!?\u061F\u06D4\u2026])\\s+");
+    StringBuilder cur = new StringBuilder();
+    foreach (string s0 in sentences)
+    {
+        List<string> pieces = new List<string>();
+        if (s0.Length <= max) pieces.Add(s0);
+        else
+        {
+            StringBuilder p = new StringBuilder();
+            foreach (string w in Regex.Split(s0, "(?<=[,;:\u060C])\\s+|\\s+"))
+            {
+                if (p.Length > 0 && p.Length + 1 + w.Length > max) { pieces.Add(p.ToString()); p.Length = 0; }
+                if (p.Length > 0) p.Append(' ');
+                p.Append(w.Length > max ? w.Substring(0, max) : w);
+            }
+            if (p.Length > 0) pieces.Add(p.ToString());
+        }
+        foreach (string piece in pieces)
+        {
+            if (cur.Length > 0 && cur.Length + 1 + piece.Length > max) { chunks.Add(cur.ToString()); cur.Length = 0; }
+            if (cur.Length > 0) cur.Append(' ');
+            cur.Append(piece);
+        }
+    }
+    if (cur.Length > 0) chunks.Add(cur.ToString());
+    return chunks;
+}
+
+// Google Translate speech stream. Has no Persian voice (HTTP 400 for fa), so fa only works through Puck or Azure.
+string[] TranslateTts(string lang, string text)
+{
+    if (string.IsNullOrEmpty(text) || lang == "fa") return null;
+    string tl = lang == "en" || lang == "" ? "en-GB" : lang;
+    List<string> chunks = TtsChunks(text, 180);
+    if (chunks.Count == 0 || chunks.Count > 30) return null;
+    Dictionary<string, string> h = new Dictionary<string, string>();
+    h["Referer"] = "https://translate.google.com/";
+    using (MemoryStream all = new MemoryStream())
+    {
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            string url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + Uri.EscapeDataString(tl)
+                + "&total=" + chunks.Count + "&idx=" + i + "&textlen=" + chunks[i].Length + "&q=" + Uri.EscapeDataString(chunks[i]);
+            byte[] part = HttpBytes("GET", url, null, null, h, 15000) ?? HttpBytes("GET", url, null, null, h, 15000);
+            if (part == null || part.Length < 200) return null;
+            all.Write(part, 0, part.Length);
+        }
+        return new string[] { "audio/mpeg", Convert.ToBase64String(all.ToArray()) };
+    }
+}
+
+// Puck (Gemini) first, then official Azure neural, then the Google Translate stream.
+string[] Speak(string key, string lang, string text, out string voice)
+{
+    voice = "none";
+    if (string.IsNullOrEmpty(text)) return null;
+    string[] r = null;
+    try { r = GeminiTts(key, text); } catch { r = null; }
+    if (r != null) { voice = "Puck"; return r; }
+    try { r = AzureTts(lang, text); } catch { r = null; }
+    if (r != null) { voice = "azure-neural"; return r; }
+    try { r = TranslateTts(lang, text); } catch { r = null; }
+    if (r != null) { voice = "cloud-neural-fallback"; return r; }
+    return null;
 }
 
 protected void Page_Load(object sender, EventArgs e)
@@ -640,7 +828,7 @@ protected void Page_Load(object sender, EventArgs e)
         rawJson = sr.ReadToEnd();
     Dictionary<string, object> req = null;
     try { req = Obj(Json().DeserializeObject(rawJson)); } catch { req = null; }
-    string mode = Str(req, "mode").ToLowerInvariant();
+    string mode = (Str(req, "mode") != "" ? Str(req, "mode") : (Request.QueryString["mode"] ?? "")).Trim().ToLowerInvariant();
     string text = Str(req, "text");
     if (text.Length > 2000) text = text.Substring(0, 2000);
     string audioIn = Regex.Replace(Str(req, "audio"), "\\s+", "");
@@ -655,15 +843,19 @@ protected void Page_Load(object sender, EventArgs e)
     if (mode == "tts")
     {
         string say = text.Length > 2500 ? text.Substring(0, 2500) : text;
-        string tts = null;
-        if (key != "" && say != "")
-        {
-            try { tts = GeminiTts(key, say); } catch { tts = null; }
-        }
-        string v = key == "" ? "browser-no-key" : (tts != null ? "Puck" : "browser-tts-failed");
-        string outJson = "{\"ok\":" + (tts != null ? "true" : "false") + ",\"voice\":\"" + v + "\",\"watermark\":\"" + MARK + "\"}";
-        if (tts != null) outJson = AddField(outJson, "audio", tts);
-        Response.Write(outJson);
+        string lang = Str(req, "language").ToLowerInvariant();
+        if (lang.Length > 2) lang = lang.Substring(0, 2);
+        if (lang == "") lang = DetectLang(say)[0];
+        string v;
+        string[] spoken = Speak(key, lang, say, out v);
+        Dictionary<string, object> o = new Dictionary<string, object>();
+        o["ok"] = spoken != null;
+        o["voice"] = spoken != null ? v : "none";
+        o["language"] = lang;
+        if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; }
+        else { o["error"] = "No voice available for this language right now."; o["detail"] = ttsDiag; }
+        o["watermark"] = MARK;
+        Response.Write(Json().Serialize(o));
         return;
     }
 
@@ -694,10 +886,10 @@ protected void Page_Load(object sender, EventArgs e)
     string voice = key == "" ? "browser-no-key" : "pending";
     if (mode != "diagnose" && key != "")
     {
-        string audio = null;
-        try { audio = GeminiTts(key, JsonField(result, "spoken")); } catch { audio = null; }
-        voice = audio != null ? "Puck" : "browser-tts-failed";
-        if (audio != null) result = AddField(result, "audio", audio);
+        string v;
+        string[] spoken = Speak(key, JsonField(result, "language"), JsonField(result, "spoken"), out v);
+        voice = spoken != null ? v : "browser-tts-failed";
+        if (spoken != null) result = AddField(result, "audio", "{\"mime\":\"" + spoken[0] + "\",\"data\":\"" + spoken[1] + "\"}");
     }
     result = AddField(result, "voice", "\"" + voice + "\"");
     Response.Write(result);

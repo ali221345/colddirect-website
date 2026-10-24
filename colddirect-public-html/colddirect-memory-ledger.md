@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25a] — TTS chain Puck → Azure → Google Translate (homepage `?v=7`)
+- Google `translate_tts` has no Persian (400). en/tr/ar etc. now always get audio. Persian needs Gemini billing or an Azure Speech key (`tools/upload_azure_speech_key_ftp.py`). iOS: one primed `window.__cdVoicePlayer` + a "▶ Listen Answer" button.
+
 ### [2026-10-24k] — Multi-language voice input (homepage `?v=6`)
 - SPEAK records real audio (MediaRecorder; 3s silence auto-send; STOP & SEND). Gemini transcribes and detects the language, then answers 100% in it (fa/en/tr verified). Text first, then Puck via `mode:"tts"`. Gemini free tier = 10 Puck/day; enable billing for production.
 
