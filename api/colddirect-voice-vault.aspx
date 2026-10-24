@@ -77,7 +77,10 @@ string SystemPrompt()
         + "Warm/not cooling: blocked condenser coil or filter, failed door gasket, iced evaporator, refrigerant leak or failing compressor. Leaking/water: blocked condensate drain line or overflowing drip tray. Tripping/no power: compressor or fan motor shorting to earth, burned plug or contactor, control board failure. "
         + "If the customer only says they have a problem, give the top 3 causes (condenser blockage causing poor cooling, evaporator fan icing causing noise or warm cabinet, thermostat/sensor or compressor relay failure) and how to check each right now. "
         + "ENGLISH TONE: talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
-        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. Persian replies keep their own warm Tehrani style. "
+        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. Persian replies use a warm colloquial Tehrani accent (accent only, you live and work in London). "
+        + "Keep 'spoken' under 130 words, one flowing paragraph, no lists or line breaks. 'summary' must name the likely cause, never just repeat the symptom. "
+        + "PHONE IS FIXED: English must say exactly 'zero seven nine eight three, seven five nine, three two zero'; Persian must say exactly 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'. Never invent or shorten any other number. "
+        + "ColdDirect works in London only; never mention Tehran, Iran or any other city as where you work. Persian must also end by asking for a Like or five stars, e.g. 'اگه کمکت کرد، لطفاً لایک کن یا پنج ستاره بده، قربونت!'. "
         + "Commercial refrigeration and catering only. Return STRICT JSON: {\"language\":\"en\",\"languageLabel\":\"English\",\"spoken\":\"...\",\"summary\":\"...\",\"cause\":\"...\",\"checks\":[\"...\",\"...\",\"...\"]}";
 }
 
@@ -375,6 +378,10 @@ string ParseModelJson(string text)
     string block = m.Value;
     if (block.IndexOf("\"spoken\"") < 0) return null;
     if (Regex.IsMatch(block, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
+    string spoken = JsonField(block, "spoken");
+    if (!Regex.IsMatch(spoken, "seven,? five,? nine|هفت،? پنج،? نه|759", RegexOptions.IgnoreCase)) return null;
+    if (Regex.IsMatch(spoken, "tehran|iran\\b|تهران|ایران|فلان", RegexOptions.IgnoreCase)) return null;
+    if (Regex.IsMatch(spoken, "[\u0600-\u06FF][A-Za-z]|[A-Za-z][\u0600-\u06FF]")) return null;
     if (block.IndexOf("\"watermark\"") < 0)
         block = AddField(AddField(block, "watermark", "\"" + MARK + "\""), "source", "\"gemini\"");
     return block;
@@ -384,12 +391,14 @@ string GeminiDiagnose(string key, string text)
 {
     string prompt = Esc(SystemPrompt());
     string user = Esc(text);
-    string body = "{\"systemInstruction\":{\"parts\":[{\"text\":\"" + prompt + "\"}]},\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + user + "\"}]}],\"generationConfig\":{\"temperature\":0.35,\"responseMimeType\":\"application/json\"}}";
-    string[] models = new string[] { "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-flash-lite" };
+    // gemini-2.x text models return 404 for new keys; 3.8-flash needs ~45s even on low thinking, so it is backup only.
+    string[] models = new string[] { "gemini-3.5-flash-lite", "gemini-3.8-flash" };
     foreach (string model in models)
     {
+        string thinking = model == "gemini-3.8-flash" ? ",\"thinkingConfig\":{\"thinkingLevel\":\"low\"}" : "";
+        string body = "{\"systemInstruction\":{\"parts\":[{\"text\":\"" + prompt + "\"}]},\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + user + "\"}]}],\"generationConfig\":{\"temperature\":0.35,\"responseMimeType\":\"application/json\"" + thinking + "}}";
         string url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + Uri.EscapeDataString(key);
-        string raw = HttpJson(url, body, 28000);
+        string raw = HttpJson(url, body, model == "gemini-3.8-flash" ? 50000 : 20000);
         string parsed = ParseModelJson(ExtractText(raw));
         if (!string.IsNullOrEmpty(parsed)) return parsed;
     }

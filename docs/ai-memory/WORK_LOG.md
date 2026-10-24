@@ -18,6 +18,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24j] — Gemini key installed live; vault switched to current Gemini models
+- Owner's key is in the git-ignored `App_Data/gemini-voice.key` and uploaded with `tools/upload_gemini_key_ftp.py` → live `source=gemini`, `voice=Puck` (WAV ~2.4 MB), `/App_Data/` 404, off-origin 403.
+- New keys get 404 on `gemini-2.5-flash`, `gemini-2.0-flash` and `gemini-2.5-flash-lite`. Text now uses `gemini-3.5-flash-lite` (~1.5s), with `gemini-3.8-flash` + `thinkingLevel:low` as backup (~45s; `minimal` = 400). TTS `gemini-2.5-flash-preview-tts` still works. A full reply takes ~20–25s, mostly TTS.
+- Gemini guardrails in `ParseModelJson`: reject if spoken lacks the real phone (seven five nine / هفت پنج نه), mentions Tehran/Iran/«فلان», or mixes Latin and Persian letters in a word → built-in engine answers. Prompt: spoken < 130 words, summary must name the cause, exact phone wording, London only, Persian Like/5-star ask. (Before this fix, a Persian reply invented "صفر نهصد و نود و نه، فلان فلان" and claimed Tehran.)
+- Owner pasted the key in chat → recommend rotating it in Google AI Studio, then re-run the uploader.
+
 ### [2026-10-24i] — Gemini key slot + one-click key uploader + Puck TTS in the ASPX vault
 - The ASPX vault had NO Puck step (only the PHP and Node vaults did, and they don't run on IIS). Added `GeminiTts()` (`gemini-2.5-flash-preview-tts`, voice Puck, PCM → WAV) and an `AddField()` JSON helper (`TrimEnd('}')` strips nested braces). Every response now carries `"voice"`: `Puck` / `browser-no-key` / `browser-tts-failed`. `LoadKey()` ignores the `PASTE...` placeholder.
 - Local `App_Data/gemini-voice.key` placeholder created. It is git-ignored (`App_Data/`, `*.key`) and deploy-excluded. Live `/App_Data/*` returns 404.

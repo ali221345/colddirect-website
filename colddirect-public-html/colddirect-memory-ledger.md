@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24j] — Gemini + Puck live on homepage voice bar
+- Key uploaded. Text model `gemini-3.5-flash-lite` (2.x models are 404 for new keys), TTS Puck. The vault rejects Gemini replies with a wrong phone, Tehran/Iran, or mixed-script words.
+
 ### [2026-10-24i] — Gemini key uploader + Puck TTS in ASPX vault
 - Paste the key into git-ignored `App_Data/gemini-voice.key`, then run `python tools/upload_gemini_key_ftp.py` (uploads only that file and verifies `voice=Puck`). The vault now does Puck TTS itself.
 

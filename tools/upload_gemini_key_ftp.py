@@ -36,8 +36,6 @@ def read_key():
         fail(f"paste your Gemini API key into {KEY_FILE.relative_to(ROOT)} first")
     if re.search(r"\s", key):
         fail("the key file must contain the key on a single line with no spaces")
-    if not key.startswith("AIza"):
-        print("WARNING: key does not start with 'AIza' - continuing, Google will tell us if it is wrong")
     return key
 
 
