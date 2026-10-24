@@ -16,6 +16,7 @@
   var MAIL_HREF = "mailto:info@colddirect.co.uk";
   var LICENSE_HREF = "mailto:info@colddirect.co.uk?subject=Official%20B2B%20License%20Request%20-%20ColdDirect%20Voice%20AI";
   var ENDPOINTS = [
+    "/colddirect-voice-vault.aspx",
     "/api/colddirect-voice-vault.php",
     "/api/colddirect-voice-vault.js"
   ];
