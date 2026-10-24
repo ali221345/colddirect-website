@@ -134,6 +134,8 @@ protected void Page_Load(object sender, EventArgs e)
     // CD-VISUAL-FREEZER-LAYOUT
     // CD-NO-TRUST-BAR: never re-inject CD-CRO-TRUST-BAR / .cd-trust-bar dark navy strip: never inject banners/boxes above section.hero
     // Do not insert keyword matrices, trust bars, or promo cards inside/above the hero image stack. after the first OfferCatalog sync.
+    // CD-HOME-NO-STATIC-HERO-IMG: on index.html (homepage) never inject a static <img>/<figure> into section.hero —
+    // the rolling #home-slider carousel must stay the first visual under the CTA row.
 
     // V4.7 money pages: [0]=title [1]=meta description [2]=Service name [3]=serviceType [4..]=OfferCatalog keyword variations
     Dictionary<string, string[]> moneyMeta = new Dictionary<string, string[]>();
