@@ -32,7 +32,15 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### [2026-10-23c] — Removed dark navy CD-CRO-TRUST-BAR under hero
 - **Summary**: Deleted the full-width dark trust strip (60-90 Min / F-Gas / 24/7 pills + duplicate phone CTAs) from all HTML; disabled re-inject in upgrade_core_cro_pages.py and auto-seo; CSS kill-switch + cache-bust v=20261023c.
 - **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks intact.
-- **Git/Deploy**: f2471a\, deploy 9964152521\ success. Live 5/5 verified no trust bar.
+- **Git/Deploy**: `1f2471a`, deploy `39964152521` success. Live 5/5 verified no trust bar.
+
+### [2026-10-24a] — Services pill + mobile audio overlap fix
+- Stripped/hid `.svc-tagbar`; mobile audio relative under header; desktop fixed `top:52px;right:24px`; cache `v=20261024a`.
+- Commit `710de13`, deploy `40038035210` OK. Locks intact.
+
+### [2026-10-24b] — Compact mobile audio dock
+- Desktop 240px @48px; mobile 175×48 relative under header; transcript hidden on mobile.
+- Commit `89084dc`, deploy `40039278302` OK. Locks intact.
 
 # Cold Direct Permanent Automated Action & Backup Ledger
 

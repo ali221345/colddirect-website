@@ -40,6 +40,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 - **Git/Deploy**: `710de13`, deploy `40038035210` success.
 - **Live**: ice-machine (+ repairs), chiller, blast-chiller, walk-in-fridge — tagbarDOM=False, m768 relative CSS live; 375px geometry: dock below phones, no overlap H1/phones; Services pills gone from hero.
 
+### [2026-10-24b] — Compact mobile `#cd-audio-dock` (clear Menu / logo / H1)
+- **Summary**: Desktop dock `top:48px;right:16px;width:240px;padding:6px 10px;z-index:9999`. Mobile `<=768px`: relative 175px pill, `max-height:48px`, label 10px, audio 26px, transcript `details` hidden. Applied via `tools/top_right_welcome_audio.py` to 504 HTML files.
+- **SEO safety**: title/H1/meta/canonical/redirects/sitemap 122 untouched; locks OK; protect check OK (no re-baseline).
+- **Git/Deploy**: `89084dc`, deploy `40039278302` success.
+- **Live 375px homepage**: position=relative, 175×48, ovMenu/ovLogo/ovH1=false; CSS markers live on 6 money/core URLs.
+
 # Work log
 
 ## 2026-10-07 — Initial current-state review and memory
