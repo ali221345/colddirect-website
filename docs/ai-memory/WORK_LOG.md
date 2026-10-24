@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24i] — Gemini key slot + one-click key uploader + Puck TTS in the ASPX vault
+- The ASPX vault had NO Puck step (only the PHP and Node vaults did, and they don't run on IIS). Added `GeminiTts()` (`gemini-2.5-flash-preview-tts`, voice Puck, PCM → WAV) and an `AddField()` JSON helper (`TrimEnd('}')` strips nested braces). Every response now carries `"voice"`: `Puck` / `browser-no-key` / `browser-tts-failed`. `LoadKey()` ignores the `PASTE...` placeholder.
+- Local `App_Data/gemini-voice.key` placeholder created. It is git-ignored (`App_Data/`, `*.key`) and deploy-excluded. Live `/App_Data/*` returns 404.
+- `tools/upload_gemini_key_ftp.py`: validates the key with Google (never prints it), plain-FTP uploads ONLY `/httpdocs/App_Data/gemini-voice.key`, checks the key URL is not public, then POSTs to the live vault and requires `voice=Puck` + RIFF audio (saves `logs/puck_voice_test.wav`). Owner still has to paste the key and run it.
+
 ### [2026-10-24h] — Voice bar: warm London-mate English persona + softer browser voice (homepage only)
 - **Vault**: every English template (noise / warm / leak / trip / ice / ice machine / code / Foster E1 / general) rewritten in warm everyday British ("Alright mate, don't panic!", "on the blink", "iced right up", "give us a bell"). Intro and urgency line are picked per symptom (`EnIntro`, `EnLead`, `EnUrgency`); outro = phone as words + "smash that Like button or drop us a quick five-star review, cheers!". Foster E1 = air probe open-circuit/loose (owner wording). Gemini prompt has an ENGLISH TONE rule. Persian text unchanged.
 - **Widget**: `pickVoice()` ranks UK male voices (Google UK English Male → MS Ryan/Thomas/Alfie/Oliver Natural → MS George → Daniel); the old `/male/` regex also matched "Female", now excluded. Browser TTS rate 0.94, pitch 0.96. Gemini audio still 0.95x.

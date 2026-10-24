@@ -58,7 +58,11 @@ string LoadKey()
         string env = Environment.GetEnvironmentVariable("GEMINI_API_KEY") ?? Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? "";
         if (!string.IsNullOrEmpty(env)) return env.Trim();
         string file = Server.MapPath("~/App_Data/gemini-voice.key");
-        if (File.Exists(file)) return File.ReadAllText(file).Trim();
+        if (File.Exists(file))
+        {
+            string k = File.ReadAllText(file).Trim();
+            return k.IndexOf("PASTE", StringComparison.OrdinalIgnoreCase) >= 0 ? "" : k;
+        }
     }
     catch { }
     return "";
@@ -372,7 +376,7 @@ string ParseModelJson(string text)
     if (block.IndexOf("\"spoken\"") < 0) return null;
     if (Regex.IsMatch(block, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
     if (block.IndexOf("\"watermark\"") < 0)
-        block = block.TrimEnd().TrimEnd('}') + ",\"watermark\":\"" + MARK + "\",\"source\":\"gemini\"}";
+        block = AddField(AddField(block, "watermark", "\"" + MARK + "\""), "source", "\"gemini\"");
     return block;
 }
 
@@ -392,8 +396,65 @@ string GeminiDiagnose(string key, string text)
     return null;
 }
 
+string AddField(string json, string name, string rawValue)
+{
+    string t = json.TrimEnd();
+    if (t.EndsWith("}")) t = t.Substring(0, t.Length - 1);
+    return t + ",\"" + name + "\":" + rawValue + "}";
+}
+
+string QuotedValueAfter(string raw, string name, int from)
+{
+    int i = raw.IndexOf("\"" + name + "\"", from, StringComparison.Ordinal);
+    if (i < 0) return null;
+    int q1 = raw.IndexOf('"', raw.IndexOf(':', i) + 1);
+    if (q1 < 0) return null;
+    int q2 = raw.IndexOf('"', q1 + 1);
+    return q2 < 0 ? null : raw.Substring(q1 + 1, q2 - q1 - 1);
+}
+
+byte[] PcmToWav(byte[] pcm, int rate)
+{
+    using (MemoryStream ms = new MemoryStream(pcm.Length + 44))
+    using (BinaryWriter w = new BinaryWriter(ms))
+    {
+        w.Write(Encoding.ASCII.GetBytes("RIFF")); w.Write(36 + pcm.Length);
+        w.Write(Encoding.ASCII.GetBytes("WAVEfmt ")); w.Write(16); w.Write((short)1); w.Write((short)1);
+        w.Write(rate); w.Write(rate * 2); w.Write((short)2); w.Write((short)16);
+        w.Write(Encoding.ASCII.GetBytes("data")); w.Write(pcm.Length); w.Write(pcm);
+        w.Flush();
+        return ms.ToArray();
+    }
+}
+
+// Returns {"mime":"audio/wav","data":"<base64>"} or null.
+string GeminiTts(string key, string spoken)
+{
+    if (string.IsNullOrEmpty(spoken)) return null;
+    string line = "Speak as a warm, relaxed, friendly London male engineer chatting to a cafe owner over a cup of tea. Calm, unhurried pace, natural little pauses at commas and dots, never robotic. Read this exactly:\n\n" + spoken;
+    string body = "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + Esc(line) + "\"}]}],\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Puck\"}}}}}";
+    string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=" + Uri.EscapeDataString(key);
+    string raw = HttpJson(url, body, 60000);
+    int at = raw.IndexOf("\"inlineData\"", StringComparison.Ordinal);
+    if (at < 0) at = raw.IndexOf("\"inline_data\"", StringComparison.Ordinal);
+    if (at < 0) return null;
+    string mime = QuotedValueAfter(raw, "mimeType", at) ?? QuotedValueAfter(raw, "mime_type", at) ?? "audio/L16;rate=24000";
+    string b64 = QuotedValueAfter(raw, "data", at);
+    if (string.IsNullOrEmpty(b64)) return null;
+    byte[] bin;
+    try { bin = Convert.FromBase64String(b64); } catch { return null; }
+    if (bin.Length == 0) return null;
+    if (mime.IndexOf("wav", StringComparison.OrdinalIgnoreCase) < 0)
+    {
+        Match r = Regex.Match(mime, "rate=(\\d+)");
+        bin = PcmToWav(bin, r.Success ? int.Parse(r.Groups[1].Value) : 24000);
+    }
+    return "{\"mime\":\"audio/wav\",\"data\":\"" + Convert.ToBase64String(bin) + "\"}";
+}
+
 protected void Page_Load(object sender, EventArgs e)
 {
+    Server.ScriptTimeout = 120;
     Response.TrySkipIisCustomErrors = true;
     Response.ContentEncoding = Encoding.UTF8;
     Response.Cache.SetCacheability(HttpCacheability.NoCache);
@@ -451,6 +512,16 @@ protected void Page_Load(object sender, EventArgs e)
         try { result = GeminiDiagnose(key, text); } catch { result = null; }
     }
     if (string.IsNullOrEmpty(result)) result = FallbackJson(text);
+
+    string voice = "browser-no-key";
+    if (key != "")
+    {
+        string audio = null;
+        try { audio = GeminiTts(key, JsonField(result, "spoken")); } catch { audio = null; }
+        voice = audio != null ? "Puck" : "browser-tts-failed";
+        if (audio != null) result = AddField(result, "audio", audio);
+    }
+    result = AddField(result, "voice", "\"" + voice + "\"");
 
     Response.ContentType = "application/json";
     Response.Write(result);

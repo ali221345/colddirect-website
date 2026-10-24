@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24i] — Gemini key uploader + Puck TTS in ASPX vault
+- Paste the key into git-ignored `App_Data/gemini-voice.key`, then run `python tools/upload_gemini_key_ftp.py` (uploads only that file and verifies `voice=Puck`). The vault now does Puck TTS itself.
+
 ### [2026-10-24h] — Voice bar warm British persona
 - English vault replies now sound like a friendly London engineer, with a per-symptom intro and urgency line. Browser voice prefers UK male natural voices, rate 0.94, pitch 0.96. Script `?v=5`. Persian untouched.
 
