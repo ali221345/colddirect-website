@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24k] — Multi-language voice input (homepage `?v=6`)
+- SPEAK records real audio (MediaRecorder; 3s silence auto-send; STOP & SEND). Gemini transcribes and detects the language, then answers 100% in it (fa/en/tr verified). Text first, then Puck via `mode:"tts"`. Gemini free tier = 10 Puck/day; enable billing for production.
+
 ### [2026-10-24j] — Gemini + Puck live on homepage voice bar
 - Key uploaded. Text model `gemini-3.5-flash-lite` (2.x models are 404 for new keys), TTS Puck. The vault rejects Gemini replies with a wrong phone, Tehran/Iran, or mixed-script words.
 

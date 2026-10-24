@@ -18,6 +18,14 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-24k] — Voice bar: real multi-language voice input (MediaRecorder → Gemini audio), homepage `?v=6`
+- **Bug:** browser SpeechRecognition used one fixed locale, so Persian/Turkish speech came out as garbled English and the reply was in English.
+- **Widget:** SpeechRecognition removed. SPEAK records with getUserMedia + MediaRecorder (webm/opus, mp4/aac on iOS); the button becomes `⏹ STOP & SEND`; an AnalyserNode RMS meter auto-sends after 3s of silence (9s with no speech cancels; 60s max). The base64 audio goes to the vault as `mode:"diagnose"`. The card and the transcript (in the input box) show immediately; Puck comes from a second `mode:"tts"` call. If neither Puck nor a browser voice exists for that language, the status says the answer is written below.
+- **Vault:** `JavaScriptSerializer` (needs `<%@ Assembly Name="System.Web.Extensions..." %>`) replaces regex JSON. Gemini (`gemini-3.5-flash-lite`, temperature 0.2) gets `inlineData` audio and returns transcript / language_code / language_name / summary / likely_cause / quick_checks / spoken_script, all in the spoken language. The aggressive rejections (phone, Tehran, mixed script) are removed: only empty or brush-off answers are rejected, and a missing phone line is appended for en/fa only. Audio-only failure returns 502 with a retry message (never an English fallback). `mode:"tts"` returns Puck only; a missing mode keeps the old inline-audio behaviour (`upload_gemini_key_ftp.py`, cached v5 clients).
+- **Live tests** (edge-tts neural voices → ffmpeg webm/mp4 → vault): Persian webm → fa transcript + 100% Persian answer (5–6s); English mp4 → en; Turkish webm → tr with Turkish number words. Browser test (getUserMedia swapped for the Persian clip on the live page): auto-send on silence, Persian transcript in the input, Persian badge and card. Off-origin 403.
+- **LIMIT:** the Gemini free tier allows only **10 TTS (Puck) requests/day/project**. It was used up by testing, so Persian Puck audio could not be heard today. Enable billing in Google AI Studio for production Puck.
+- Temporary test clip `/assets/js/_cd_voice_test_fa.mp3` was deleted from the server (404).
+
 ### [2026-10-24j] — Gemini key installed live; vault switched to current Gemini models
 - Owner's key is in the git-ignored `App_Data/gemini-voice.key` and uploaded with `tools/upload_gemini_key_ftp.py` → live `source=gemini`, `voice=Puck` (WAV ~2.4 MB), `/App_Data/` 404, off-origin 403.
 - New keys get 404 on `gemini-2.5-flash`, `gemini-2.0-flash` and `gemini-2.5-flash-lite`. Text now uses `gemini-3.5-flash-lite` (~1.5s), with `gemini-3.8-flash` + `thinkingLevel:low` as backup (~45s; `minimal` = 400). TTS `gemini-2.5-flash-preview-tts` still works. A full reply takes ~20–25s, mostly TTS.

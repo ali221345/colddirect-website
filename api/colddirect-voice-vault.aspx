@@ -1,10 +1,13 @@
 ﻿<%@ Page Language="C#" EnableSessionState="false" ValidateRequest="false" ResponseEncoding="utf-8" %>
+<%@ Assembly Name="System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Text" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
+<%@ Import Namespace="System.Collections" %>
 <%@ Import Namespace="System.Collections.Generic" %>
+<%@ Import Namespace="System.Web.Script.Serialization" %>
 <script runat="server">
 const string MARK = "CD-UK-IP-2026-994821-VOICE-AI";
 const string DENY = "UK IP VIOLATION: Commercial License Required from ColdDirect.co.uk";
@@ -71,17 +74,20 @@ string LoadKey()
 string SystemPrompt()
 {
     return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX, with 30 years of hands-on commercial refrigeration and catering-equipment experience across London. "
-        + "CRITICAL LANGUAGE LOCK - ZERO MIXING: detect the exact language of the customer. English -> 100% warm conversational British English, never any Farsi. Persian -> 100% warm everyday colloquial Tehran spoken Persian, no bookish words. Any other language -> reply only in that language. "
+        + "STEP 1 - TRANSCRIBE AND DETECT: if the customer sent an audio recording, first write down exactly what they said, in the native script of the language they actually spoke (Persian in Persian script, Arabic in Arabic script, Turkish with Turkish letters, and so on), and identify that language from the speech itself, never from the browser or from these instructions. If they typed, the typed text is the transcript. "
+        + "STEP 2 - CRITICAL LANGUAGE LOCK, ZERO MIXING: summary, likely_cause, quick_checks and spoken_script must be 100% in that exact same language and script. English -> warm conversational London British English. Persian (Farsi) -> warm everyday colloquial Tehrani spoken Persian (تهرانی محاوره‌ای و صمیمی، بدون کلمات کتابی), mention you are in London. Any other language (Turkish, Arabic, Kurdish, Spanish, Hindi, Polish, Urdu, Romanian, etc.) -> answer only in that language, never English. "
         + "NEVER reply with a brush-off such as 'tell me the make or error code' or 'describe the problem'. ALWAYS answer the exact words the customer used with a specific technical diagnosis. "
         + "Noise/clicking/buzzing: evaporator or condenser fan blade hitting ice, worn fan motor bearings, compressor start relay clicking; tell them to open the door and check if the noise stops (inside evaporator fan), and to call before the fan or compressor seizes. "
         + "Warm/not cooling: blocked condenser coil or filter, failed door gasket, iced evaporator, refrigerant leak or failing compressor. Leaking/water: blocked condensate drain line or overflowing drip tray. Tripping/no power: compressor or fan motor shorting to earth, burned plug or contactor, control board failure. "
         + "If the customer only says they have a problem, give the top 3 causes (condenser blockage causing poor cooling, evaporator fan icing causing noise or warm cabinet, thermostat/sensor or compressor relay failure) and how to check each right now. "
-        + "ENGLISH TONE: talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
+        + "ENGLISH TONE (English replies only; never put English words or slang into any other language, use that language's own everyday expressions instead): talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
         + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. Persian replies use a warm colloquial Tehrani accent (accent only, you live and work in London). "
-        + "Keep 'spoken' under 130 words, one flowing paragraph, no lists or line breaks. 'summary' must name the likely cause, never just repeat the symptom. "
-        + "PHONE IS FIXED: English must say exactly 'zero seven nine eight three, seven five nine, three two zero'; Persian must say exactly 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'. Never invent or shorten any other number. "
-        + "ColdDirect works in London only; never mention Tehran, Iran or any other city as where you work. Persian must also end by asking for a Like or five stars, e.g. 'اگه کمکت کرد، لطفاً لایک کن یا پنج ستاره بده، قربونت!'. "
-        + "Commercial refrigeration and catering only. Return STRICT JSON: {\"language\":\"en\",\"languageLabel\":\"English\",\"spoken\":\"...\",\"summary\":\"...\",\"cause\":\"...\",\"checks\":[\"...\",\"...\",\"...\"]}";
+        + "In every language: open warmly as the Head Engineer at ColdDirect with thirty years in London, give the specific diagnosis and one or two hands-on checks, and end by asking them to tap the Like button or give five stars right here on this page (never call it a video). "
+        + "Keep spoken_script under 130 words, one flowing paragraph, no lists or line breaks. summary must name the likely cause, never just repeat the symptom. "
+        + "PHONE IS FIXED, 07983 759320: English says 'zero seven nine eight three, seven five nine, three two zero'; Persian says 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'; other languages say the same digits one by one in their own number words. Never invent, shorten or change the number. "
+        + "Never use filler words, stammers or self-corrections. Persian opens exactly with 'سلام رفیق، اصلاً نگران نباش! سرمهندس کلد دایرکت‌ام، سی ساله تو لندن یخچال و فریزر صنعتی و تجهیزات کترینگ درست می‌کنم.' then goes straight to the diagnosis. "
+        + "ColdDirect works in London only; never claim to work in Tehran, Iran or any other city. Persian ends with e.g. 'اگه کمکت کرد، لطفاً لایک کن یا پنج ستاره بده، قربونت!'. "
+        + "Commercial refrigeration and catering only. Return STRICT JSON only, with exactly these keys: {\"transcript\":\"exact words the customer said, in their own script\",\"language_code\":\"ISO 639-1 code such as fa, en, tr, ar, ku, es, hi, pl\",\"language_name\":\"English name of that language, e.g. Persian\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
 
 string[] DetectLang(string text)
@@ -363,43 +369,173 @@ string HttpJson(string url, string payload, int timeoutMs)
     }
 }
 
-string ExtractText(string gemini)
+JavaScriptSerializer Json()
 {
-    Match m = Regex.Match(gemini ?? "", "\"text\"\\s*:\\s*\"((?:\\\\.|[^\"])*)\"");
-    if (!m.Success) return "";
-    try { return Regex.Unescape(m.Groups[1].Value); } catch { return ""; }
+    JavaScriptSerializer s = new JavaScriptSerializer();
+    s.MaxJsonLength = int.MaxValue;
+    s.RecursionLimit = 64;
+    return s;
 }
 
+Dictionary<string, object> Obj(object o) { return o as Dictionary<string, object>; }
+
+string Str(Dictionary<string, object> d, params string[] keys)
+{
+    if (d == null) return "";
+    foreach (string k in keys)
+    {
+        object v;
+        if (d.TryGetValue(k, out v) && v != null)
+        {
+            string s = Convert.ToString(v).Trim();
+            if (s != "") return s;
+        }
+    }
+    return "";
+}
+
+List<string> StrList(Dictionary<string, object> d, params string[] keys)
+{
+    List<string> list = new List<string>();
+    if (d == null) return list;
+    foreach (string k in keys)
+    {
+        object v;
+        if (!d.TryGetValue(k, out v) || v == null) continue;
+        IList items = v as IList;
+        if (items == null) continue;
+        foreach (object it in items)
+        {
+            string s = Convert.ToString(it ?? "").Trim();
+            if (s != "" && list.Count < 5) list.Add(s);
+        }
+        if (list.Count > 0) break;
+    }
+    return list;
+}
+
+string ModelText(string raw)
+{
+    try
+    {
+        Dictionary<string, object> d = Obj(Json().DeserializeObject(raw));
+        IList cands = d["candidates"] as IList;
+        IList parts = Obj(Obj(cands[0])["content"])["parts"] as IList;
+        StringBuilder sb = new StringBuilder();
+        foreach (object p in parts)
+        {
+            Dictionary<string, object> pd = Obj(p);
+            if (pd == null) continue;
+            object th;
+            if (pd.TryGetValue("thought", out th) && th is bool && (bool)th) continue;
+            sb.Append(Str(pd, "text"));
+        }
+        return sb.ToString();
+    }
+    catch { return ""; }
+}
+
+string LabelFor(string code, string name)
+{
+    if (name != "") return name;
+    switch (code)
+    {
+        case "fa": return "Persian";
+        case "en": return "English";
+        case "tr": return "Turkish";
+        case "ar": return "Arabic";
+        case "es": return "Spanish";
+        default: return code == "" ? "Detected" : code;
+    }
+}
+
+// Accepts any language. Only an empty or brush-off answer is rejected; a missing phone line is appended, never rejected.
 string ParseModelJson(string text)
 {
     if (string.IsNullOrEmpty(text)) return null;
     Match m = Regex.Match(text, "\\{[\\s\\S]*\\}");
     if (!m.Success) return null;
-    string block = m.Value;
-    if (block.IndexOf("\"spoken\"") < 0) return null;
-    if (Regex.IsMatch(block, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
-    string spoken = JsonField(block, "spoken");
-    if (!Regex.IsMatch(spoken, "seven,? five,? nine|هفت،? پنج،? نه|759", RegexOptions.IgnoreCase)) return null;
-    if (Regex.IsMatch(spoken, "tehran|iran\\b|تهران|ایران|فلان", RegexOptions.IgnoreCase)) return null;
-    if (Regex.IsMatch(spoken, "[\u0600-\u06FF][A-Za-z]|[A-Za-z][\u0600-\u06FF]")) return null;
-    if (block.IndexOf("\"watermark\"") < 0)
-        block = AddField(AddField(block, "watermark", "\"" + MARK + "\""), "source", "\"gemini\"");
-    return block;
+    Dictionary<string, object> d;
+    try { d = Obj(Json().DeserializeObject(m.Value)); } catch { return null; }
+    if (d == null) return null;
+
+    string spoken = Str(d, "spoken_script", "spoken");
+    string summary = Str(d, "summary");
+    if (spoken == "" && summary == "") return null;
+    if (spoken == "") spoken = summary;
+    if (Regex.IsMatch(spoken, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
+
+    string code = Str(d, "language_code", "language").ToLowerInvariant();
+    if (code.Length > 2 && code.IndexOf('-') == 2) code = code.Substring(0, 2);
+    string label = LabelFor(code, Str(d, "language_name", "languageLabel"));
+
+    if (!Regex.IsMatch(spoken, "759|seven,? five,? nine|هفت،? پنج،? نه|۷۵۹", RegexOptions.IgnoreCase))
+    {
+        if (code == "fa") spoken += " زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.";
+        else if (code == "en") spoken += " Give us a bell on zero seven nine eight three, seven five nine, three two zero.";
+    }
+
+    Dictionary<string, object> o = new Dictionary<string, object>();
+    o["ok"] = true;
+    o["language"] = code == "" ? "en" : code;
+    o["languageLabel"] = label;
+    o["transcript"] = Str(d, "transcript");
+    o["spoken"] = spoken;
+    o["summary"] = summary == "" ? spoken : summary;
+    o["cause"] = Str(d, "likely_cause", "cause");
+    o["checks"] = StrList(d, "quick_checks", "checks");
+    o["watermark"] = MARK;
+    o["source"] = "gemini";
+    return Json().Serialize(o);
 }
 
-string GeminiDiagnose(string key, string text)
+string GeminiDiagnose(string key, string text, string audioB64, string mime)
 {
-    string prompt = Esc(SystemPrompt());
-    string user = Esc(text);
+    List<object> parts = new List<object>();
+    bool hasAudio = !string.IsNullOrEmpty(audioB64);
+    string instr = hasAudio
+        ? "The customer's question is in the attached audio recording. Transcribe it exactly in the native script of the language they actually spoke, detect that language from the speech, then answer 100% in that same language." + (text != "" ? " They also typed: " + text : "")
+        : text;
+    Dictionary<string, object> tp = new Dictionary<string, object>();
+    tp["text"] = instr;
+    parts.Add(tp);
+    if (hasAudio)
+    {
+        Dictionary<string, object> inline = new Dictionary<string, object>();
+        inline["mimeType"] = mime;
+        inline["data"] = audioB64;
+        Dictionary<string, object> ap = new Dictionary<string, object>();
+        ap["inlineData"] = inline;
+        parts.Add(ap);
+    }
+    Dictionary<string, object> sysPart = new Dictionary<string, object>();
+    sysPart["text"] = SystemPrompt();
+    Dictionary<string, object> sys = new Dictionary<string, object>();
+    sys["parts"] = new object[] { sysPart };
+    Dictionary<string, object> content = new Dictionary<string, object>();
+    content["role"] = "user";
+    content["parts"] = parts;
+
     // gemini-2.x text models return 404 for new keys; 3.8-flash needs ~45s even on low thinking, so it is backup only.
     string[] models = new string[] { "gemini-3.5-flash-lite", "gemini-3.8-flash" };
     foreach (string model in models)
     {
-        string thinking = model == "gemini-3.8-flash" ? ",\"thinkingConfig\":{\"thinkingLevel\":\"low\"}" : "";
-        string body = "{\"systemInstruction\":{\"parts\":[{\"text\":\"" + prompt + "\"}]},\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + user + "\"}]}],\"generationConfig\":{\"temperature\":0.35,\"responseMimeType\":\"application/json\"" + thinking + "}}";
+        Dictionary<string, object> gc = new Dictionary<string, object>();
+        gc["temperature"] = 0.2;
+        gc["responseMimeType"] = "application/json";
+        if (model == "gemini-3.8-flash")
+        {
+            Dictionary<string, object> tc = new Dictionary<string, object>();
+            tc["thinkingLevel"] = "low";
+            gc["thinkingConfig"] = tc;
+        }
+        Dictionary<string, object> body = new Dictionary<string, object>();
+        body["systemInstruction"] = sys;
+        body["contents"] = new object[] { content };
+        body["generationConfig"] = gc;
         string url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + Uri.EscapeDataString(key);
-        string raw = HttpJson(url, body, model == "gemini-3.8-flash" ? 50000 : 20000);
-        string parsed = ParseModelJson(ExtractText(raw));
+        string raw = HttpJson(url, Json().Serialize(body), model == "gemini-3.8-flash" ? 50000 : 25000);
+        string parsed = ParseModelJson(ModelText(raw));
         if (!string.IsNullOrEmpty(parsed)) return parsed;
     }
     return null;
@@ -440,7 +576,7 @@ byte[] PcmToWav(byte[] pcm, int rate)
 string GeminiTts(string key, string spoken)
 {
     if (string.IsNullOrEmpty(spoken)) return null;
-    string line = "Speak as a warm, relaxed, friendly London male engineer chatting to a cafe owner over a cup of tea. Calm, unhurried pace, natural little pauses at commas and dots, never robotic. Read this exactly:\n\n" + spoken;
+    string line = "Speak in the same language as the text below, with natural native pronunciation, as a warm, relaxed, friendly London male engineer chatting to a cafe owner over a cup of tea. Calm, unhurried pace, natural little pauses at commas and dots, never robotic. Read this exactly:\n\n" + spoken;
     string body = "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + Esc(line) + "\"}]}],\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Puck\"}}}}}";
     string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=" + Uri.EscapeDataString(key);
     string raw = HttpJson(url, body, 60000);
@@ -502,28 +638,61 @@ protected void Page_Load(object sender, EventArgs e)
     string rawJson = "";
     using (StreamReader sr = new StreamReader(Request.InputStream, Encoding.UTF8))
         rawJson = sr.ReadToEnd();
-    string text = (JsonField(rawJson, "text") ?? "").Trim();
+    Dictionary<string, object> req = null;
+    try { req = Obj(Json().DeserializeObject(rawJson)); } catch { req = null; }
+    string mode = Str(req, "mode").ToLowerInvariant();
+    string text = Str(req, "text");
     if (text.Length > 2000) text = text.Substring(0, 2000);
-    bool hasAudio = rawJson.IndexOf("\"audio\"") >= 0;
-    if (text == "" && !hasAudio)
+    string audioIn = Regex.Replace(Str(req, "audio"), "\\s+", "");
+    if (audioIn.Length > 8000000) audioIn = "";
+    string mime = Str(req, "mime").ToLowerInvariant();
+    int semi = mime.IndexOf(';');
+    if (semi >= 0) mime = mime.Substring(0, semi).Trim();
+    if (!Regex.IsMatch(mime, "^audio/[a-z0-9.+-]{2,30}$")) mime = "audio/webm";
+    string key = LoadKey();
+    Response.ContentType = "application/json";
+
+    if (mode == "tts")
     {
-        Response.StatusCode = 400;
-        Response.ContentType = "application/json";
-        Response.Write("{\"ok\":false,\"error\":\"Type a fault or speak, then try again.\",\"watermark\":\"" + MARK + "\"}");
-        Response.End();
+        string say = text.Length > 2500 ? text.Substring(0, 2500) : text;
+        string tts = null;
+        if (key != "" && say != "")
+        {
+            try { tts = GeminiTts(key, say); } catch { tts = null; }
+        }
+        string v = key == "" ? "browser-no-key" : (tts != null ? "Puck" : "browser-tts-failed");
+        string outJson = "{\"ok\":" + (tts != null ? "true" : "false") + ",\"voice\":\"" + v + "\",\"watermark\":\"" + MARK + "\"}";
+        if (tts != null) outJson = AddField(outJson, "audio", tts);
+        Response.Write(outJson);
         return;
     }
 
-    string key = LoadKey();
-    string result = null;
-    if (key != "" && text != "")
+    if (text == "" && audioIn == "")
     {
-        try { result = GeminiDiagnose(key, text); } catch { result = null; }
+        Response.StatusCode = 400;
+        Response.Write("{\"ok\":false,\"error\":\"Type a fault or speak, then try again.\",\"watermark\":\"" + MARK + "\"}");
+        return;
     }
-    if (string.IsNullOrEmpty(result)) result = FallbackJson(text);
 
-    string voice = "browser-no-key";
+    string result = null;
     if (key != "")
+    {
+        try { result = GeminiDiagnose(key, text, audioIn, mime); } catch { result = null; }
+    }
+    if (string.IsNullOrEmpty(result))
+    {
+        if (text == "")
+        {
+            Response.StatusCode = 502;
+            Response.Write("{\"ok\":false,\"error\":\"Sorry, I couldn't make out that recording. Tap SPEAK and try again, or type the fault.\",\"watermark\":\"" + MARK + "\"}");
+            return;
+        }
+        result = FallbackJson(text);
+    }
+
+    // mode "diagnose" (current widget) returns text now and fetches Puck with a second mode "tts" call.
+    string voice = key == "" ? "browser-no-key" : "pending";
+    if (mode != "diagnose" && key != "")
     {
         string audio = null;
         try { audio = GeminiTts(key, JsonField(result, "spoken")); } catch { audio = null; }
@@ -531,8 +700,6 @@ protected void Page_Load(object sender, EventArgs e)
         if (audio != null) result = AddField(result, "audio", audio);
     }
     result = AddField(result, "voice", "\"" + voice + "\"");
-
-    Response.ContentType = "application/json";
     Response.Write(result);
 }
 </script>
