@@ -18,6 +18,10 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25k] — Voice same-language I/O (`?v=20261025c`)
+- Owner: Persian speech was getting English answers. Root cause: SpeechRecognition used `navigator.language` (en-GB), `instantDiagnose`/FAST_KB were English-only, and audio was discarded if any transcript existed.
+- Fix: prominent Lang select (Auto / فارسی fa-IR / en-GB / tr-TR / ar-SA + more), drawer chips, persist `cd-voice-lang`. SR.lang follows the selector. Instant engine localizes fa/tr/ar/… written + spoken. Audio always sent with `langHint`. Vault selected language wins even if the SR transcript looks English. If API language differs from instant, card + speech update to the spoken language. Title/H1/meta/canonical/sitemap 122 unchanged. Deploy `40185770673`. Commit `9f7792f`.
+
 ### [2026-10-25j] — Voice mic cutoff + filler + 30s delay (`?v=20261025b`) — supersedes 25i
 - Mic: SpeechRecognition `continuous=true`, `interimResults=true`; silence auto-submit **3800ms after speech has started** (was 700ms). MediaRecorder meter also 3800ms. Max record 60s. Button while listening: `⏹ TAP WHEN DONE (Listening...)`. Second tap or Ask submits immediately. Phrases accumulate across pauses.
 - Filler deleted: no GREET_EN, vault `EnIntro`/`EnLead` empty, prompt “Do NOT introduce yourself / Do NOT start with Hello”. Client `stripFiller()` strips leftover Head Engineer greetings. `speakDiagnosis()` speaks the full diagnosis once; Chrome keep-alive pause/resume every 10s. `cancel()` only on a new user tap or a new ask.

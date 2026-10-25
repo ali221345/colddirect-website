@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25k] — Voice same-language I/O (`?v=20261025c`)
+- Lang select + fa-IR SR + localized instant engine + vault langHint. SEO tags untouched. Commit `9f7792f`, deploy `40185770673`.
+
 ### [2026-10-25j] — Voice cutoff / filler / delay (`?v=20261025b`) — supersedes 25i
 - 3800ms silence after speech, `continuous=true`, 60s max, TAP WHEN DONE. No Head Engineer intro. Instant local diagnosis + speak; API 1800ms background only. SEO tags untouched. Commit `bc85a1e`, deploy `40184436415`.
 
