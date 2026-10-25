@@ -107,10 +107,10 @@ function cd_load_key(): string
 function cd_system_prompt(): string
 {
     return <<<'PROMPT'
-You are the Senior Engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. 30 years of commercial refrigeration in London only. Kind, polite, no slang.
-Return STRICT JSON only with exactly these keys:
-{"target_language_code":"BCP-47 code of the language the reply MUST be in (e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA, es-ES). CRITICAL RULE: If the user asks to translate into a specific language (e.g. translate to Turkish / به ترکی بگو) or speaks a language, set target_language_code to THAT requested language and write the ENTIRE response in that language!","transcript":"exact customer words in their own script","display_text":"The full text shown on screen in target_language_code. MUST include all 3 parts: (1) Greeting as Senior Engineer at Cold Direct, (2) Concise 2-3 sentence technical troubleshooting answer or requested translation, (3) Closing sentence with clean phone numbers 0203 952 4822 and 07983 759320 AND a clear request to click the green Like & 5-Star Review button below.","spoken_text":"The exact text to be read out loud by TTS in target_language_code. Same 3 mandatory parts as display_text, EXCEPT phone numbers MUST be written out in natural spoken words in that target language (never raw digits!). For Persian (fa-IR), write: درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. [پاسخ فنی کوتاه]. برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید."}
-Never mix English into a non-English reply. Never skip the phones or the Like request, including Tagalog/Filipino, Turkish, Arabic and Spanish. Commercial refrigeration only, London only.
+You are a commercial refrigeration diagnostic engine for Cold Direct Ltd, London. Kind, polite, no slang.
+NEVER introduce yourself. NEVER write a greeting. NEVER include phone numbers, Like, review, or closing text.
+Output ONLY 2 short sentences diagnosing the fault in the user's language. If they ask to translate, output in that requested language. If audio is Persian, write Persian.
+Return STRICT JSON only: {"target_language_code":"BCP-47 e.g. fa-IR","transcript":"exact customer words in native script","technical_answer":"exactly two short diagnostic sentences, no greeting, no phones, no like/review"}
 PROMPT;
 }
 
@@ -346,7 +346,7 @@ function cd_parse_model_json(string $text): ?array
     if (!is_array($json)) {
         return null;
     }
-    $display = (string) ($json['display_text'] ?? $json['spoken'] ?? $json['summary'] ?? '');
+    $display = (string) ($json['technical_answer'] ?? $json['display_text'] ?? $json['spoken'] ?? $json['summary'] ?? '');
     $spokenTts = (string) ($json['spoken_text'] ?? $json['tts_text'] ?? '');
     if (!is_array($json) || ($display === '' && $spokenTts === '')) {
         return null;
@@ -439,9 +439,6 @@ function cd_strip_persian_frame(string $text): string
 
 function cd_persian_tts_text(string $text): string
 {
-    if (strpos($text, 'درود بر شما') === 0 || strpos($text, 'دُرود بر شُما') === 0) {
-        return $text;
-    }
     $s = cd_strip_persian_frame($text);
     $s = str_replace('سردخانه', 'سَردخانه', $s);
     $s = str_replace('یخچال', 'یَخچالِ', $s);
@@ -452,13 +449,13 @@ function cd_persian_tts_text(string $text): string
     $s = preg_replace('/کولد\s*دایرکت|ColdDirect|Cold Direct/iu', 'کُلد دایرِکت', $s);
     return 'درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. '
         . trim($s) . ' '
-        . 'برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.';
+        . 'برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.';
 }
 
 function cd_gemini_tts(string $key, string $spoken): ?array
 {
     if (preg_match('/[\x{0600}-\x{06FF}]/u', $spoken)) {
-        $spoken = cd_persian_tts_text($spoken);
+        return null;
     }
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=' . rawurlencode($key);
     $line = 'Speak as a warm, calm, experienced male Head Engineer. Conversational pace, never rushed. Read this exactly:\n\n' . $spoken;
@@ -518,6 +515,7 @@ function cd_voice_selftest(): bool
     $tts = cd_persian_tts_text('کندانسور کثیف است. لاستیک در را چک کنید. 07983 759320');
     $phonesOk = strpos($tts, 'درود بر شما') !== false
         && strpos($tts, 'صفر دویست و سه') !== false
+        && strpos($tts, 'صفر هفتصد و نود و هشت') !== false
         && strpos($tts, 'کُندانسور') !== false
         && strpos($tts, '07983') === false;
     return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'target_language_code') !== false && $phonesOk;

@@ -10,10 +10,10 @@ var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
 var DENY = "UK IP VIOLATION: Commercial License Required from ColdDirect.co.uk";
 
 var SYSTEM_PROMPT = [
-  "You are the Senior Engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. 30 years of commercial refrigeration in London only. Kind, polite, no slang.",
-  "Return STRICT JSON only with exactly these keys:",
-  '{"target_language_code":"BCP-47 code of the language the reply MUST be in (e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA). CRITICAL RULE: If the user asks to translate into a specific language (e.g. translate to Turkish / به ترکی بگو) or speaks a language, set target_language_code to THAT requested language and write the ENTIRE response in that language!","transcript":"exact customer words in their own script","display_text":"The full text shown on screen in target_language_code. MUST include all 3 parts: (1) Greeting as Senior Engineer at Cold Direct, (2) Concise 2-3 sentence technical troubleshooting answer or requested translation, (3) Closing sentence with clean phone numbers 0203 952 4822 and 07983 759320 AND a clear request to click the green Like & 5-Star Review button below.","spoken_text":"The exact text to be read out loud by TTS in target_language_code. Same 3 mandatory parts as display_text, EXCEPT phone numbers MUST be written out in natural spoken words in that target language (never raw digits!). For Persian (fa-IR) use native Iranian phrasing with کُلد دایرِکت and spoken number-words for both phone numbers plus the Like & 5-Star Review close."}',
-  "Never mix English into a non-English reply. Never skip the phones or the Like request, including Tagalog/Filipino, Turkish, Arabic and Spanish. Commercial refrigeration only, London only."
+  "You are a commercial refrigeration diagnostic engine for Cold Direct Ltd, London. Kind, polite, no slang.",
+  "NEVER introduce yourself. NEVER write a greeting. NEVER include phone numbers, Like, review, or closing text.",
+  "Output ONLY 2 short sentences diagnosing the fault in the user's language. If they ask to translate, output in that requested language. If audio is Persian, write Persian.",
+  "Return STRICT JSON only: {\"target_language_code\":\"BCP-47 e.g. fa-IR\",\"transcript\":\"exact customer words in native script\",\"technical_answer\":\"exactly two short diagnostic sentences, no greeting, no phones, no like/review\"}"
 ].join(" ");
 
 function hostOk(value) {
@@ -160,7 +160,7 @@ function parseModelJson(text) {
   if (!m) return null;
   try {
     var json = JSON.parse(m[0]);
-    var display = json.display_text || json.spoken || json.summary || "";
+    var display = json.technical_answer || json.display_text || json.spoken || json.summary || "";
     var spokenTts = json.spoken_text || json.tts_text || "";
     if (!display && !spokenTts) return null;
     if (!display) display = spokenTts;
@@ -221,9 +221,9 @@ async function diagnose(key, text, audio, mime) {
 
 function persianTtsText(text) {
   var s = String(text || "");
-  if (s.indexOf("درود بر شما") === 0 || s.indexOf("دُرود بر شُما") === 0) return s;
   s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
   s = s.replace(/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u, "");
+  s = s.replace(/من مهندس ارشد[^.!?؟]*[.!?؟]\s*/gu, "");
   s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
   s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
   s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
@@ -240,11 +240,11 @@ function persianTtsText(text) {
   s = s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
   return "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. "
     + s + " "
-    + "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
+    + "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
 }
 
 async function tts(key, spoken) {
-  if (/[\u0600-\u06FF]/.test(spoken)) spoken = persianTtsText(spoken);
+  if (/[\u0600-\u06FF]/.test(spoken)) return null;
   var out = await geminiJson(key, "gemini-2.5-flash-preview-tts", {
     contents: [{ role: "user", parts: [{ text: "Speak as a warm, calm, experienced male Head Engineer. Conversational pace. Read this exactly:\n\n" + spoken }] }],
     generationConfig: {

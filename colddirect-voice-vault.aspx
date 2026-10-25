@@ -73,10 +73,12 @@ string LoadKey()
 
 string SystemPrompt()
 {
-    return "You are the Senior Engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. 30 years of commercial refrigeration in London only. Kind, polite, no slang. "
-        + "Return STRICT JSON only with exactly these keys: "
-        + "{\"target_language_code\":\"BCP-47 code of the language the reply MUST be in (e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA, es-ES). CRITICAL RULE: If the user asks to translate into a specific language (e.g. translate to Turkish / به ترکی بگو) or speaks a language, set target_language_code to THAT requested language and write the ENTIRE response in that language!\",\"transcript\":\"exact customer words in their own script\",\"display_text\":\"The full text shown on screen in target_language_code. MUST include all 3 parts: (1) Greeting as Senior Engineer at Cold Direct, (2) Concise 2-3 sentence technical troubleshooting answer or requested translation, (3) Closing sentence with clean phone numbers 0203 952 4822 and 07983 759320 AND a clear request to click the green Like & 5-Star Review button below.\",\"spoken_text\":\"The exact text to be read out loud by TTS in target_language_code. Same 3 mandatory parts as display_text, EXCEPT phone numbers MUST be written out in natural spoken words in that target language (never raw digits!) so TTS reads them fluently. For Persian (fa-IR), write: درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. [پاسخ فنی کوتاه]. برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.\"} "
-        + "Never mix English into a non-English reply. Never skip the phones or the Like request, including Tagalog/Filipino, Turkish, Arabic and Spanish. Commercial refrigeration only, London only.";
+    return "You are a commercial refrigeration diagnostic engine for Cold Direct Ltd, London. Kind, polite, no slang. "
+        + "NEVER introduce yourself. NEVER write a greeting. NEVER include phone numbers, Like, review, or closing text. The server wraps those. "
+        + "Output ONLY 2 short sentences diagnosing the fault (or the requested translation) in the user's language. "
+        + "CRITICAL: If they ask to translate into a language (e.g. translate to Turkish / به ترکی بگو) or speak a language, set target_language_code to THAT language and write technical_answer entirely in it. "
+        + "If the attached audio is Persian/Farsi, set target_language_code to fa-IR and write Persian, even if a typed transcript looks like broken English. "
+        + "Return STRICT JSON only: {\"target_language_code\":\"BCP-47 e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA\",\"transcript\":\"exact customer words in their own native script\",\"technical_answer\":\"exactly two short diagnostic sentences, no greeting, no phones, no like/review\"}";
 }
 
 string[] DetectLang(string text)
@@ -170,7 +172,7 @@ string CloseSpoken(string code)
 {
     switch (code)
     {
-        case "fa": return " برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
+        case "fa": return " برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
         case "tr": return " Londra'da acil teknisyen için sıfır iki sıfır üç, dokuz beş iki, kırk sekiz yirmi iki veya cep sıfır yedi dokuz sekiz üç, yedi yüz elli dokuz, üç yüz yirmi'yi arayın. Bu öneri işinize yaradıysa aşağıdaki yeşil Beğen ve beş yıldızlı yorum düğmesine tıklayın.";
         case "tl": return " Para sa agarang technician sa London, tawagan ang zero two zero three, nine five two, four eight two two, o mobile zero seven nine eight three, seven five nine, three two zero. Kung nakatulong ito, paki-click ang berdeng Like at five-star Review button sa ibaba.";
         case "ar": return " لإرسال فني فوري في لندن اتصلوا على صفر اثنان صفر ثلاثة، تسعة خمسة اثنان، أربعة ثمانية اثنان اثنان أو الموبايل صفر سبعة تسعة ثمانية ثلاثة، سبعة خمسة تسعة، ثلاثة اثنان صفر. إذا أفادتكم النصيحة، اضغطوا زر الإعجاب الأخضر وتقييم الخمس نجوم في أسفل هذا المربع.";
@@ -576,7 +578,7 @@ string LabelFor(string code, string name)
 const string FA_DISPLAY_OPEN = "درود، من مهندس ارشد در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.";
 const string FA_DISPLAY_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره 0203 952 4822 یا موبایل 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر ۵ ستاره را در پایین همین کادر بزنید.";
 const string FA_AUDIO_OPEN = "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. ";
-const string FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
+const string FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
 
 string TwoFaSentences(string text)
 {
@@ -592,6 +594,9 @@ string StripPersianFrame(string text)
     string s = text ?? "";
     s = Regex.Replace(s, "^دُرود بر شُما[\\s\\S]*?اِنتِخاب کَردید\\.?\\s*", "");
     s = Regex.Replace(s, "^درود بر شما[\\s\\S]*?انتخاب کردید\\.?\\s*", "");
+    s = Regex.Replace(s, "درود،?\\s*من مهندس ارشد[^.!?؟]*[.!?؟]\\s*", "");
+    s = Regex.Replace(s, "من مهندس ارشد[^.!?؟]*[.!?؟]\\s*", "");
+    s = Regex.Replace(s, "خوشحالم که (ما را |شرکت ما را )?انتخاب کردید[.!?؟]?\\s*", "");
     s = Regex.Replace(s, "^درود[^.!?؟]*[.!?؟]?\\s*", "");
     s = Regex.Replace(s, "^سلام[^.!?؟]*[.!?؟]?\\s*", "");
     s = Regex.Replace(s, "\\s*برای اعزام فوری[\\s\\S]*$", "");
@@ -626,8 +631,20 @@ string WrapPersianDisplay(string text)
 
 string PersianAudioText(string text)
 {
-    if (!string.IsNullOrEmpty(text) && (text.IndexOf("درود بر شما") == 0 || text.IndexOf("دُرود بر شُما") == 0)) return text;
     return FA_AUDIO_OPEN + CleanTechnicalAnswerForTTS(text) + " " + FA_AUDIO_CLOSE;
+}
+
+bool HasPersianScript(string s)
+{
+    return Regex.IsMatch(s ?? "", "[\u067E\u0686\u0698\u06AF\u06CC\u06A9\u0600-\u06FF]");
+}
+
+bool SrJunk(string t)
+{
+    if (string.IsNullOrEmpty(t)) return true;
+    if (t.IndexOf("</s>", StringComparison.OrdinalIgnoreCase) >= 0) return true;
+    if (Regex.IsMatch(t, "shalom|mi\\s*con[aá]|coná", RegexOptions.IgnoreCase)) return true;
+    return false;
 }
 
 // Accepts any language. Missing phones / Like close are appended, never rejected.
@@ -640,15 +657,16 @@ string ParseModelJson(string text, string forceLang)
     try { d = Obj(Json().DeserializeObject(m.Value)); } catch { return null; }
     if (d == null) return null;
 
-    string display = Str(d, "display_text", "spoken_script", "spoken");
-    string spokenTts = Str(d, "spoken_text", "tts_text");
-    string summary = Str(d, "summary");
+    string display = Str(d, "technical_answer", "display_text", "spoken_script", "spoken");
+    string spokenTts = Str(d, "technical_answer", "spoken_text", "tts_text");
+    string summary = Str(d, "summary", "technical_answer");
     if (display == "" && spokenTts == "" && summary == "") return null;
     if (display == "") display = spokenTts != "" ? spokenTts : summary;
     if (display.Length < 80 && Regex.IsMatch(display, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
 
     string code = CanonLang(forceLang);
     if (code == "") code = CanonLang(Str(d, "target_language_code", "language_code", "language"));
+    if (HasPersianScript(display + " " + spokenTts + " " + Str(d, "transcript")) && code != "ar") code = "fa";
     if (code == "") code = DetectLang(display + " " + spokenTts)[0];
     string label = LabelFor(code, Str(d, "language_name", "languageLabel"));
 
@@ -678,13 +696,14 @@ string GeminiDiagnose(string key, string text, string audioB64, string mime, str
 {
     List<object> parts = new List<object>();
     bool hasAudio = !string.IsNullOrEmpty(audioB64);
+    if (hasAudio && SrJunk(text)) text = "";
     string instr = hasAudio
-        ? "The customer's question is in the attached audio recording. Transcribe it exactly in the native script of the language they actually spoke. If they asked to translate or switch language, that requested language WINS and display_text plus spoken_text MUST be entirely in it." + (text != "" ? " They also typed: " + text : "")
+        ? "The customer's question is in the attached audio. Transcribe it in the native script they actually spoke (Persian must stay Persian letters, never Latin gibberish). Then write technical_answer as TWO short diagnostic sentences only — no greeting, no phones, no like/review." + (text != "" ? " Typed note: " + text : "")
         : text;
     if (!string.IsNullOrEmpty(requested))
-        instr = "CRITICAL: the user asked for language code '" + requested + "'. Set target_language_code to that language and write display_text and spoken_text ENTIRELY in that language. " + instr;
+        instr = "CRITICAL: the user asked for language code '" + requested + "'. Set target_language_code to that language and write technical_answer ENTIRELY in that language. No greeting, no phones. " + instr;
     else if (!string.IsNullOrEmpty(langHint) && langHint != "auto")
-        instr = "The customer selected language '" + langHint + "'. Write display_text and spoken_text 100% in that language. Do not answer in English unless they selected English. " + instr;
+        instr = "The customer selected language '" + langHint + "'. Write technical_answer 100% in that language. No greeting, no phones. " + instr;
     Dictionary<string, object> tp = new Dictionary<string, object>();
     tp["text"] = instr;
     parts.Add(tp);
@@ -706,24 +725,19 @@ string GeminiDiagnose(string key, string text, string audioB64, string mime, str
     content["parts"] = parts;
 
     // gemini-2.x text models return 404 for new keys; 3.8-flash needs ~45s even on low thinking, so it is backup only.
-    string[] models = new string[] { "gemini-3.5-flash-lite", "gemini-3.8-flash" };
+    string[] models = new string[] { "gemini-3.5-flash-lite" };
     foreach (string model in models)
     {
         Dictionary<string, object> gc = new Dictionary<string, object>();
-        gc["temperature"] = 0.45;
+        gc["temperature"] = 0.2;
+        gc["maxOutputTokens"] = 180;
         gc["responseMimeType"] = "application/json";
-        if (model == "gemini-3.8-flash")
-        {
-            Dictionary<string, object> tc = new Dictionary<string, object>();
-            tc["thinkingLevel"] = "low";
-            gc["thinkingConfig"] = tc;
-        }
         Dictionary<string, object> body = new Dictionary<string, object>();
         body["systemInstruction"] = sys;
         body["contents"] = new object[] { content };
         body["generationConfig"] = gc;
         string url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + Uri.EscapeDataString(key);
-        string raw = HttpJson(url, Json().Serialize(body), model == "gemini-3.8-flash" ? 50000 : 25000);
+        string raw = HttpJson(url, Json().Serialize(body), 12000);
         string parsed = ParseModelJson(ModelText(raw), requested != "" ? requested : langHint);
         if (!string.IsNullOrEmpty(parsed)) return parsed;
     }
@@ -773,10 +787,11 @@ string OpenAiDiagnose(string userText, string langHint, string requested)
     {
         Dictionary<string, object> body = new Dictionary<string, object>();
         body["model"] = model;
-        body["temperature"] = 0.35;
+        body["temperature"] = 0.2;
+        body["max_tokens"] = 180;
         body["response_format"] = rf;
         body["messages"] = new object[] { sys, usr };
-        string raw = OpenAiChatRaw(Json().Serialize(body), 18000);
+        string raw = OpenAiChatRaw(Json().Serialize(body), 8000);
         string parsed = ParseModelJson(OpenAiMessage(raw), requested != "" ? requested : langHint);
         if (!string.IsNullOrEmpty(parsed)) return parsed;
     }
@@ -924,6 +939,8 @@ string AzureVoice(string lang)
         case "fa": return "fa-IR-FaridNeural";
         case "en": return "en-GB-RyanNeural";
         case "tr": return "tr-TR-AhmetNeural";
+        case "tl": return "fil-PH-AngeloNeural";
+        case "fil": return "fil-PH-AngeloNeural";
         case "ar": return "ar-SA-HamedNeural";
         case "es": return "es-ES-AlvaroNeural";
         case "hi": return "hi-IN-MadhurNeural";
@@ -948,19 +965,21 @@ string[] AzureTts(string lang, string text)
     string[] az = LoadAzure();
     if (az == null || string.IsNullOrEmpty(text)) return null;
     string voice = AzureVoice(lang);
-    string xmlLang = voice.Substring(0, 5);
+    Match lm = Regex.Match(voice, "^[A-Za-z]{2,3}-[A-Za-z]{2}");
+    string xmlLang = lm.Success ? lm.Value : "en-GB";
     string ssml = "<speak version='1.0' xml:lang='" + xmlLang + "'><voice name='" + voice + "'><prosody rate='-6%'>" + System.Security.SecurityElement.Escape(text) + "</prosody></voice></speak>";
     Dictionary<string, string> h = new Dictionary<string, string>();
     h["Ocp-Apim-Subscription-Key"] = az[1];
     h["X-Microsoft-OutputFormat"] = "audio-24khz-48kbitrate-mono-mp3";
-    byte[] mp3 = HttpBytes("POST", "https://" + az[0] + ".tts.speech.microsoft.com/cognitiveservices/v1", "application/ssml+xml", Encoding.UTF8.GetBytes(ssml), h, 30000);
+    byte[] mp3 = HttpBytes("POST", "https://" + az[0] + ".tts.speech.microsoft.com/cognitiveservices/v1", "application/ssml+xml", Encoding.UTF8.GetBytes(ssml), h, 10000);
     if (mp3 == null || mp3.Length < 500) return null;
     return new string[] { "audio/mpeg", Convert.ToBase64String(mp3) };
 }
 
-string[] EdgeTts(string text)
+string[] EdgeTts(string lang, string text)
 {
     if (string.IsNullOrEmpty(text)) return null;
+    string voice = AzureVoice(lang);
     string dir = Path.GetTempPath();
     string id = Guid.NewGuid().ToString("N");
     string txt = Path.Combine(dir, "cd-fa-" + id + ".txt");
@@ -969,8 +988,8 @@ string[] EdgeTts(string text)
     try
     {
         File.WriteAllText(txt, text, new UTF8Encoding(false));
-        File.WriteAllText(pyf, "import asyncio,edge_tts,sys\nasyncio.run(edge_tts.Communicate(open(sys.argv[1],encoding='utf-8').read(),'fa-IR-FaridNeural').save(sys.argv[2]))\n", new UTF8Encoding(false));
-        System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo("python", "\"" + pyf + "\" \"" + txt + "\" \"" + mp3 + "\"");
+        File.WriteAllText(pyf, "import asyncio,edge_tts,sys\nasyncio.run(edge_tts.Communicate(open(sys.argv[1],encoding='utf-8').read(),sys.argv[3]).save(sys.argv[2]))\n", new UTF8Encoding(false));
+        System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo("python", "\"" + pyf + "\" \"" + txt + "\" \"" + mp3 + "\" \"" + voice + "\"");
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
         psi.RedirectStandardError = true;
@@ -1000,7 +1019,7 @@ string[] SpeakFa(string text)
     string[] r = null;
     try { r = AzureTts("fa", text); } catch { r = null; }
     if (r != null) { ttsDiag = "azure-farid"; return r; }
-    try { r = EdgeTts(text); } catch { r = null; }
+    try { r = EdgeTts("fa", text); } catch { r = null; }
     if (r != null) { ttsDiag = "edge-farid"; return r; }
     try { r = PiperTts("fa", text); } catch { r = null; }
     if (r != null) { ttsDiag = "piper-ganji"; return r; }
@@ -1315,29 +1334,28 @@ string[] TranslateTts(string lang, string text)
     }
 }
 
-// OpenAI onyx (if a key is installed) -> Puck -> Piper (fa/en/tr/ar) -> Azure -> Google stream for every other language.
+// Microsoft Neural first (Farid/Ryan/Ahmet/Angelo/Hamed). Never OpenAI onyx/alloy. Never Gemini Puck.
 string[] Speak(string key, string lang, string text, out string voice)
 {
     voice = "none";
     if (string.IsNullOrEmpty(text)) return null;
     lang = CanonLang(lang);
+    if (HasPersianScript(text) && lang != "ar") lang = "fa";
     if (lang == "fa")
     {
         text = PersianAudioText(text);
         string[] fa = SpeakFa(text);
-        if (fa != null) { voice = ttsDiag; return fa; }
+        if (fa != null) { voice = string.IsNullOrEmpty(ttsDiag) ? "fa-IR-FaridNeural" : ttsDiag; return fa; }
         voice = "none";
         return null;
     }
     string[] r = null;
-    try { r = OpenAiTts(text); } catch { r = null; }
-    if (r != null) { voice = "openai-onyx"; return r; }
-    try { r = GeminiTts(key, text); } catch { r = null; }
-    if (r != null) { voice = "Puck"; return r; }
+    try { r = AzureTts(lang, text); } catch { r = null; }
+    if (r != null) { voice = AzureVoice(lang); return r; }
+    try { r = EdgeTts(lang, text); } catch { r = null; }
+    if (r != null) { voice = "edge-" + AzureVoice(lang); return r; }
     r = PiperTts(lang, text);
     if (r != null) { voice = "piper-" + PiperModel(lang); return r; }
-    try { r = AzureTts(lang, text); } catch { r = null; }
-    if (r != null) { voice = "azure-neural"; return r; }
     try { r = TranslateTts(lang, text); } catch { r = null; }
     if (r != null) { voice = "cloud-neural-fallback"; return r; }
     return null;
@@ -1405,51 +1423,14 @@ protected void Page_Load(object sender, EventArgs e)
         string lang = CanonLang(Str(req, "language", "lang"));
         if (lang == "") lang = CanonLang(Request.QueryString["lang"] ?? "");
         if (lang == "") lang = DetectLang(say)[0];
-        bool piperOnly = Str(req, "engine").ToLowerInvariant() == "piper";
         string v = "none";
-        string[] spoken = null;
-        List<string> more = new List<string>();
-        if (lang == "fa")
-        {
-            say = PersianAudioText(say);
-            spoken = SpeakFa(say);
-            if (spoken != null) v = string.IsNullOrEmpty(ttsDiag) ? "fa-IR-FaridNeural" : ttsDiag;
-        }
-        else if (!piperOnly)
-        {
-            try { spoken = OpenAiTts(say); } catch { spoken = null; }
-            if (spoken != null) v = "openai-onyx";
-            if (spoken == null)
-            {
-                try { spoken = GeminiTts(key, say); } catch { spoken = null; }
-                if (spoken != null) v = "Puck";
-            }
-        }
-        if (spoken == null && PiperModel(lang) != null)
-        {
-            List<string> groups = piperOnly ? new List<string> { Regex.Replace(say, "\\s+", " ").Trim() } : StreamGroups(say);
-            if (groups.Count > 0 && groups.Count <= 25)
-            {
-                spoken = PiperTts(lang, groups[0]);
-                if (spoken != null) { v = "piper-" + PiperModel(lang); more = groups.GetRange(1, groups.Count - 1); }
-            }
-        }
-        if (spoken == null && !piperOnly)
-        {
-            try { spoken = AzureTts(lang, say); } catch { spoken = null; }
-            if (spoken != null) v = "azure-neural";
-            if (spoken == null)
-            {
-                try { spoken = TranslateTts(lang, say); } catch { spoken = null; }
-                if (spoken != null) v = "cloud-neural-fallback";
-            }
-        }
+        string[] spoken = Speak(key, lang, say, out v);
         Dictionary<string, object> o = new Dictionary<string, object>();
         o["ok"] = spoken != null;
         o["voice"] = spoken != null ? v : "none";
-        o["language"] = lang;
-        o["tts_text"] = say;
-        if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; o["more"] = more; }
+        o["language"] = HasPersianScript(say) && lang != "ar" ? "fa" : lang;
+        o["tts_text"] = lang == "fa" || HasPersianScript(say) ? PersianAudioText(say) : say;
+        if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; o["more"] = new List<string>(); }
         else { o["error"] = "No voice available for this language right now."; o["detail"] = ttsDiag; }
         o["watermark"] = MARK;
         Response.Write(Json().Serialize(o));
@@ -1463,18 +1444,15 @@ protected void Page_Load(object sender, EventArgs e)
         return;
     }
 
+    if (audioIn != "" && SrJunk(text)) text = "";
     string requested = RequestedLang(text);
     string hint = requested != "" ? requested : CanonLang(Str(req, "langHint", "language"));
     string result = null;
-    if (audioIn == "" && LoadOpenAi() != "")
-    {
-        try { result = OpenAiDiagnose(text, hint, requested); } catch { result = null; }
-    }
-    if (string.IsNullOrEmpty(result) && key != "")
+    if (key != "")
     {
         try { result = GeminiDiagnose(key, text, audioIn, mime, hint, requested); } catch { result = null; }
     }
-    if (string.IsNullOrEmpty(result) && audioIn != "" && LoadOpenAi() != "" && text != "")
+    if (string.IsNullOrEmpty(result) && audioIn == "" && LoadOpenAi() != "")
     {
         try { result = OpenAiDiagnose(text, hint, requested); } catch { result = null; }
     }
@@ -1496,6 +1474,7 @@ protected void Page_Load(object sender, EventArgs e)
         string say = JsonField(result, "tts_text");
         if (say == "") say = JsonField(result, "spoken_text");
         if (say == "") say = JsonField(result, "spoken");
+        if (HasPersianScript(say) && lang != "ar") lang = "fa";
         string vOut = "none";
         string[] clip = Speak(key, lang, say, out vOut);
         if (clip != null)

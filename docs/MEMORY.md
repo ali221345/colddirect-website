@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25ag: No OpenAI TTS. Persian audio is Azure/Edge `fa-IR-FaridNeural` only. LLM writes 2 technical sentences; wrapper adds one greeting + one close. No live SpeechRecognition in Auto (show Recording…). Diagnose = one Gemini call then neural TTS. Script `?v=20261025ag`.
+
 Owner 2026-10-25af: Universal multilingual JSON `{target_language_code, display_text, spoken_text}` via `gpt-4o-mini` `json_object`. Every language MUST greet as Senior Engineer, answer in 2–3 sentences, then close with `0203 952 4822` / `07983 759320` and the green Like & 5-Star Review request. “Translate to X” wins. Persian TTS is FaridNeural / Edge / Piper only — never OpenAI onyx. Script `?v=20261025af`.
 
 Owner 2026-10-25ae: Do NOT let the LLM invent Persian opening/phones/closing. LLM outputs 2 technical sentences only. Display wrap and vocalized TTS wrap are hardcoded (`دُرود بر شُما…کُلد دایرِکت…صِفر دِویست و سه…`). Persian audio = FaridNeural then onyx; never append English audio. Script `?v=20261025ae`.

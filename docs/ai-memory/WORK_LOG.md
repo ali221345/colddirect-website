@@ -26,6 +26,12 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25ag] — FaridNeural only, no SR gibberish, no duplicate greet (`?v=20261025ag`)
+- Speak() never calls OpenAI TTS. Persian = Azure/Edge `fa-IR-FaridNeural`. English Ryan, Turkish Ahmet, Filipino Angelo, Arabic Hamed.
+- LLM outputs two technical sentences only; wrapper adds a single greeting and close. Duplicate «من مهندس ارشد» stripped.
+- Auto recording shows `🎙️ در حال ضبط صدا... / Recording your voice...` — webkitSpeechRecognition disabled.
+- One Gemini diagnose (max 180 tokens) then neural TTS. Title/H1/meta unchanged.
+
 ### [2026-10-25af] — Universal multilingual voice JSON (`?v=20261025af`)
 - Replaced fragmented language rules with one `gpt-4o-mini` JSON object: `target_language_code`, `display_text`, `spoken_text`. Server `EnsureDisplay`/`EnsureSpoken` appends phones + Like close for every language (Tagalog/Turkish/Arabic/Spanish/English/Persian). `RequestedLang` makes “translate to Turkish” / «به ترکی بگو» win. Persian TTS is Azure/Edge FaridNeural then Piper Ganji — OpenAI onyx removed from `SpeakFa`. Fallback never 502s non-en/fa. Title/H1/meta unchanged.
 

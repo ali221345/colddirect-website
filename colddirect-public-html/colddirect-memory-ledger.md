@@ -21,6 +21,9 @@ No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the 
 
 ---
 
+### [2026-10-25ag] — FaridNeural only, no SR junk, one greeting (`?v=20261025ag`)
+- No OpenAI TTS. Persian Azure/Edge FaridNeural. Two-sentence LLM + wrapper greet/close. Recording placeholder. Title/H1/meta unchanged.
+
 ### [2026-10-25af] — Universal multilingual voice JSON (`?v=20261025af`)
 - One JSON schema for every language. Phones + Like close guaranteed. Translate-to-X wins. Persian TTS FaridNeural/Edge/Piper only. Title/H1/meta unchanged.
 

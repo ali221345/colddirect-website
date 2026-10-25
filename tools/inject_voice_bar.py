@@ -12,7 +12,7 @@ SKIP_DIRS = {
     "tools", "scripts", "logs", "App_Data", "images", "css", "js", "assets",
 }
 SKIP_PREFIX = ("_backup", "gsc-analysis", "AUDIT-", "audit-")
-SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=20261025af" defer></script>'
+SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=20261025ag" defer></script>'
 MARKER = "<!-- CD-VOICE-BAR-V1 -->"
 BLOCK = MARKER + "\n" + SCRIPT + "\n"
 HAS_SCRIPT = re.compile(r"colddirect-voice-bar\.js\?v=[^\"'\s>]+", re.I)
@@ -45,7 +45,7 @@ def targets():
 
 
 def inject(text):
-    bumped = BUMP_V.sub(r'\1?v=20261025af"', text, count=1)
+    bumped = BUMP_V.sub(r'\1?v=20261025ag"', text, count=1)
     changed = bumped != text
     text = bumped
     if HAS_SCRIPT.search(text):

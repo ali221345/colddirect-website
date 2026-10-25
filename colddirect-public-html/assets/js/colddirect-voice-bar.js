@@ -21,7 +21,7 @@
   var FA_DISPLAY_OPEN = "درود، من مهندس ارشد در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.";
   var FA_DISPLAY_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره 0203 952 4822 یا موبایل 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر ۵ ستاره را در پایین همین کادر بزنید.";
   var FA_AUDIO_OPEN = "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. ";
-  var FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
+  var FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
   var GREET = {
     en: GREET_EN,
     fa: FA_DISPLAY_OPEN + " ",
@@ -39,8 +39,8 @@
     es: " Para un técnico urgente en Londres llame al 0203 952 4822 o al móvil 07983 759320. Si esto le ayudó, pulse el botón verde de Like y reseña de 5 estrellas abajo."
   };
   var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
-  var DIAGNOSE_MS = 28000;
-  var TTS_MS = 18000;
+  var DIAGNOSE_MS = 14000;
+  var TTS_MS = 10000;
   var MAX_MS = 60000;
 
   var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
@@ -224,6 +224,9 @@
     var s = westDigits(text);
     s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
     s = s.replace(/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u, "");
+    s = s.replace(/درود،?\s*من مهندس ارشد[^.!?؟]*[.!?؟]\s*/gu, "");
+    s = s.replace(/من مهندس ارشد[^.!?؟]*[.!?؟]\s*/gu, "");
+    s = s.replace(/خوشحالم که (ما را |شرکت ما را )?انتخاب کردید[.!?؟]?\s*/gu, "");
     s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
     s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
     s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
@@ -260,11 +263,7 @@
   }
 
   function ttsPayload(text, lang) {
-    if (lang === "fa" || hasPersian(text)) {
-      var t = String(text || "");
-      if (t.indexOf("درود بر شما") === 0 || t.indexOf("دُرود بر شُما") === 0) return t;
-      return persianAudioText(text);
-    }
+    if (lang === "fa" || hasPersian(text)) return persianAudioText(text);
     return String(text || "");
   }
 
@@ -369,8 +368,11 @@
     var g = GREET[lang] || GREET.en;
     var t = String(text || "").replace(/^\s+/, "");
     t = t.replace(/^Hello\.\s*I am the (?:Head|Senior) Engineer[^.]*\.\s*/i, "");
+    t = t.replace(/^Merhaba\.[^.]*\.\s*/i, "");
+    t = t.replace(/^Kumusta\.[^.]*\.\s*/i, "");
+    t = t.replace(/^Hola\.[^.]*\.\s*/i, "");
+    t = t.replace(/^مرحبا[^.]*[.。]\s*/, "");
     if (!t) return g.replace(/\s+$/, "");
-    if (/Cold Direct|ColdDirect|کولد|کُلد/i.test(t)) return t;
     return g + t;
   }
 
@@ -622,37 +624,7 @@
   }
 
   function startSpeechRec() {
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent || "")) return false;
-    var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Ctor) return false;
-    try {
-      srText = "";
-      srFinal = "";
-      sr = new Ctor();
-      sr.interimResults = true;
-      sr.continuous = true;
-      sr.lang = "en-GB";
-      sr.onresult = function (ev) {
-        var finals = "";
-        var inter = "";
-        for (var i = 0; i < ev.results.length; i++) {
-          if (ev.results[i].isFinal) finals += ev.results[i][0].transcript + " ";
-          else inter += ev.results[i][0].transcript;
-        }
-        if (finals.replace(/\s+/g, " ").trim()) srFinal = (srFinal + " " + finals).replace(/\s+/g, " ").trim();
-        srText = (srFinal + " " + inter).replace(/\s+/g, " ").trim();
-        if (srText) upsertLive("user", srText, false);
-      };
-      sr.onend = function () {
-        if (!recording) return;
-        try { sr.start(); } catch (e2) {}
-      };
-      sr.start();
-      return true;
-    } catch (e3) {
-      sr = null;
-      return false;
-    }
+    return false;
   }
 
   function startRec() {
@@ -668,8 +640,8 @@
     recChunks = [];
     liveUser = null;
     setSpeakUi(true);
-    setStatus("active", "Listening — tap STOP & SEND when you finish.");
-    upsertLive("user", "Listening…", false);
+    setStatus("active", "🎙️ در حال ضبط صدا... / Recording your voice...");
+    upsertLive("user", "🎙️ در حال ضبط صدا... / Recording your voice...", false);
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
       recStarting = false;
       recording = false;
@@ -695,9 +667,8 @@
       recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) recChunks.push(ev.data); };
       recorder.start(200);
       startMeter(stream);
-      startSpeechRec();
       recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
-      setStatus("active", "Listening — tap STOP & SEND when you finish.");
+      setStatus("active", "🎙️ در حال ضبط صدا... / Recording your voice...");
     }).catch(function () {
       recStarting = false;
       recording = false;
@@ -756,14 +727,14 @@
   function finishRec() {
     if (!recording && !recStarting) return;
     setStatus("connecting", "Diagnosing fault...");
-    var spoken = srText;
+    srText = "";
+    srFinal = "";
     endCapture(function (rec) {
       var type = String((rec && rec.mimeType) || pickMime() || "audio/webm");
       var blob = new Blob(recChunks, { type: type });
       recChunks = [];
       function go(audio) {
-        if (spoken && spoken.length >= 2) ask(spoken, audio);
-        else if (audio) ask("", audio);
+        if (audio) ask("", audio);
         else setStatus("error", "That was too short — tap SPEAK and try again.");
       }
       if (blob.size >= 800) {
@@ -805,16 +776,13 @@
       if (seq !== askSeq) return;
       var rawSpoken = data.display_text || data.spoken || data.summary || "";
       var lang = canonLang(data.language || data.target_language_code || langHint) || (hasPersian(rawSpoken) ? "fa" : "en");
-      if (hasPersian(rawSpoken) && !langHint) lang = "fa";
+      if (hasPersian(rawSpoken) && lang !== "ar") lang = "fa";
       if (langHint) lang = langHint;
       lastLang = lang;
       if (data.transcript) upsertLive("user", data.transcript, true);
-      var fa = lang === "fa";
+      var fa = lang === "fa" || hasPersian(rawSpoken);
       var spokenOut = fa ? wrapPersianDisplay(rawSpoken) : ensureClosing(withGreet(rawSpoken, lang), lang);
-      var serverTts = String(data.tts_text || data.spoken_text || "");
-      var ttsOut = fa
-        ? ((serverTts.indexOf("درود بر شما") === 0 || serverTts.indexOf("دُرود بر شُما") === 0) ? serverTts : persianAudioText(rawSpoken))
-        : (serverTts || spokenOut);
+      var ttsOut = fa ? persianAudioText(rawSpoken) : spokenOut;
       lastSpoken = spokenOut;
       lastTtsText = ttsOut;
       upsertLive("bot", spokenOut, true);
