@@ -1,5 +1,5 @@
 /* ColdDirect Voice — Ask Your Fault via ElevenLabs Conversational AI
- * Agent: agent_2901m5th5arfe9amcec9ef2p42q
+ * Agent: agent_2901m5th5arfe9kamcec9ef2p42q
  * Watermark: CD-UK-IP-2026-994821-VOICE-AI
  * Owner: ColdDirect Ltd, colddirect.co.uk
  */
@@ -12,7 +12,7 @@
   var REVIEW_HREF = "/write-a-review/";
   var SPEAK_LABEL = "🎤 SPEAK";
   var END_LABEL = "⏹ END";
-  var AGENT_ID = "agent_2901m5th5arfe9amcec9ef2p42q";
+  var AGENT_ID = "agent_2901m5th5arfe9kamcec9ef2p42q";
   var TOKEN_URL = "/colddirect-elevenlabs-token.aspx";
   var SDK_URLS = [
     "https://cdn.jsdelivr.net/npm/@elevenlabs/client@0.15.2/+esm",
@@ -437,27 +437,23 @@
     function startWith(opts) {
       return Conversation.startSession(opts);
     }
-    function withToken(err) {
+    return startWith(sessionOptions(my, "webrtc")).catch(function (err) {
+      var msg = String((err && err.message) || err || "");
+      if (!/401|authentication|signed url|conversation token/i.test(msg)) throw err;
       return fetchConversationToken().then(function (token) {
-        if (!token) throw err || new Error("no conversation token");
+        if (!token) throw err;
         var opts = sessionOptions(my, "webrtc");
         delete opts.agentId;
         opts.conversationToken = token;
         return startWith(opts);
       });
-    }
-    return startWith(sessionOptions(my, "webrtc"))
-      .catch(function (err) { return withToken(err); })
-      .catch(function (err) {
-        return startWith(sessionOptions(my, "websocket")).catch(function () { throw err; });
-      })
-      .then(function (conv) {
-        if (my !== seq) {
-          if (conv && conv.endSession) try { conv.endSession(); } catch (e2) {}
-          return;
-        }
-        conversation = conv || conversation;
-      });
+    }).then(function (conv) {
+      if (my !== seq) {
+        if (conv && conv.endSession) try { conv.endSession(); } catch (e2) {}
+        return;
+      }
+      conversation = conv || conversation;
+    });
   }
 
   function startLive() {

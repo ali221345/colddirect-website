@@ -17,7 +17,7 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25ah, NEVER regress)
-After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `agent_2901m5th5arfe9amcec9ef2p42q`. Text-only after a tap is a P0 bug. Do not restore MediaRecorder / PHP vault / OpenAI TTS / Vapi.
+After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `agent_2901m5th5arfe9kamcec9ef2p42q`. Text-only after a tap is a P0 bug. Do not restore MediaRecorder / PHP vault / OpenAI TTS / Vapi.
 1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA display `سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` — TTS speaks `کُلد دایرِکت`).
 2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
 3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` / `کولد دایرکت` → `کُلد دایرِکت` for audio only), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
@@ -25,6 +25,10 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 5. Persian display vs TTS: on-screen keeps `کولد دایرکت` and `07983 759320` / `0203 952 4822` / `0800 112 3427`. Audio input uses `کُلد دایرِکت` and the spoken Persian number-word groups. Never reverse the phonetic brand in FA_LEXICON. Never run `NumFa` on leftover phone digits.
 
 ---
+
+### [2026-10-25aj] — Correct public ConvAI agent ID (`?v=20261025aj`)
+- Fixed one-letter typo `9am` → `9kam`. Live ID is `agent_2901m5th5arfe9kamcec9ef2p42q`. Public token/widget APIs return HTTP 200. SPEAK starts with `agentId` only; does not block on `App_Data/elevenlabs.key`.
+- Title/H1/meta unchanged.
 
 ### [2026-10-25ai] — ElevenLabs ConvAI + server token proxy (`?v=20261025ai`)
 - Public widget/token APIs return `agent_not_found` for `agent_2901m5th5arfe9amcec9ef2p42q` (auth enabled). Widget now falls back to `/colddirect-elevenlabs-token.aspx` which mints a conversation token from `App_Data/elevenlabs.key` without exposing the key.

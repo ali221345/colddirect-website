@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25aj: Exact public agent ID `agent_2901m5th5arfe9kamcec9ef2p42q` (`9kam`, not `9am`). SPEAK uses `Conversation.startSession({ agentId, connectionType: 'webrtc' })` and does not wait on `App_Data/elevenlabs.key`. Script `?v=20261025aj`.
+
 Owner 2026-10-25ai: Same ElevenLabs agent. If public token 404s, the widget mints a conversation token via `/colddirect-elevenlabs-token.aspx` + `App_Data/elevenlabs.key`. Script `?v=20261025ai`.
 
 Owner 2026-10-25ah: Production voice is ElevenLabs Conversational AI agent `agent_2901m5th5arfe9amcec9ef2p42q` via `@elevenlabs/client` `Conversation.startSession({ agentId, connectionType: 'webrtc' })`. SPEAK opens the existing diagnostic modal and starts the live session immediately. Live user/agent transcript (RTL for Persian/Arabic; clickable `tel:` for `0203 952 4822` and `07983 759320`). Keep the green Like & 5-Star Review CTA. Do not bring back MediaRecorder, PHP vault, OpenAI TTS, or Vapi. Script `?v=20261025ah`.
