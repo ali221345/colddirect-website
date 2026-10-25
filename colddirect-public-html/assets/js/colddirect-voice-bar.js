@@ -34,9 +34,9 @@
 
   function css() {
     return [
-      ".cd-main-header,.cd-header-inner,header.site,.site-header{overflow:visible !important;}",
+      ".cd-main-header,.cd-header-inner,header.site,.site-header,.cd-topbar{overflow:visible !important;}",
+      "#cd-voice-mobile-strip{display:none;}",
       "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}",
-      "@media (max-width:768px){#cd-audio-dock{width:min(168px,42vw) !important;top:8px !important;right:8px !important;max-height:none !important;overflow:visible !important;z-index:500 !important;}}",
       "#cd-voice-root{position:fixed !important;top:10px !important;left:10px !important;right:auto !important;bottom:auto !important;z-index:99999 !important;width:max-content;max-width:min(420px,calc(100vw - 24px));margin:0;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0;}",
       "#cd-voice-root *{box-sizing:border-box;}",
       "#cd-voice-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:7px 9px;background:linear-gradient(90deg,#0b1120 0%,#0f172a 100%);border:1px solid #38bdf8;border-radius:10px;box-shadow:0 8px 22px rgba(15,23,42,.28);}",
@@ -67,12 +67,17 @@
       "#cd-voice-cta{display:flex;margin-top:12px;width:100%;min-height:48px;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:0;border-radius:10px;background:linear-gradient(180deg,#16a34a 0%,#15803d 100%);color:#fff;font:800 13px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;box-shadow:0 0 0 2px rgba(74,222,128,.55),0 8px 18px rgba(22,163,74,.38);}",
       "#cd-voice-cta.is-hot{background:#22c55e;color:#052e16;box-shadow:0 0 0 4px rgba(74,222,128,.75),0 0 28px rgba(34,197,94,.7);animation:cdVoiceCta .9s ease-in-out infinite;}",
       "@keyframes cdVoiceCta{0%,100%{transform:scale(1);}50%{transform:scale(1.045);}}",
-      "@media (min-width:769px){#cd-voice-root{max-width:min(420px,calc(100vw - 270px));}}",
+      "@media (min-width:769px){#cd-voice-root{max-width:min(420px,calc(100vw - 270px));}#cd-voice-mobile-strip{display:none !important;}}",
       "@media (max-width:768px){" +
-        "#cd-voice-root{top:10px !important;left:10px !important;bottom:auto !important;max-width:min(320px,calc(100vw - 20px));}" +
-        "#cd-voice-bar{flex-wrap:wrap;white-space:normal;}" +
-        "#cd-voice-root button.cd-voice-btn{height:32px;min-height:32px;padding:0 10px;font-size:11px;}" +
-        "#cd-voice-panel{width:min(320px,calc(100vw - 20px));max-height:min(70vh,520px);overflow:auto;}" +
+        ".cd-main-header{height:auto !important;overflow:visible !important;}" +
+        ".cd-header-inner{height:auto !important;min-height:64px !important;}" +
+        "#cd-voice-mobile-strip{display:flex !important;align-items:stretch;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;padding:6px 8px 8px;background:#0f172a;position:relative;z-index:120;overflow:visible;}" +
+        "#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;float:none !important;width:auto !important;max-width:none !important;flex:1 1 42%;margin:0 !important;z-index:1 !important;max-height:none !important;overflow:visible !important;}" +
+        "#cd-voice-root{position:static !important;top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 55%;z-index:2 !important;margin:0;}" +
+        "#cd-voice-bar{flex-wrap:wrap;white-space:normal;width:100%;}" +
+        "#cd-voice-title{font-size:11px;}" +
+        "#cd-voice-root button.cd-voice-btn{height:32px;min-height:32px;padding:0 8px;font-size:11px;}" +
+        "#cd-voice-mobile-strip #cd-voice-panel{position:absolute;left:8px;right:8px;width:auto;max-width:none;top:100%;margin-top:6px;max-height:min(70vh,520px);overflow:auto;z-index:200;}" +
       "}"
     ].join("");
   }
@@ -406,32 +411,60 @@
     });
   }
 
+  function isMobileVoice() {
+    try { return window.matchMedia("(max-width: 768px)").matches; } catch (e1) { return false; }
+  }
+
   function restoreAudioDock() {
     var dock = document.getElementById("cd-audio-dock");
     if (!dock) return;
     dock.removeAttribute("hidden");
     dock.removeAttribute("aria-hidden");
     dock.style.removeProperty("display");
-    var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
-    if (header && dock.parentNode !== header) header.appendChild(dock);
+    dock.style.removeProperty("position");
+    dock.style.removeProperty("top");
+    dock.style.removeProperty("right");
     if (!document.getElementById("cd-audio-dock-restore")) {
       var style = document.createElement("style");
       style.id = "cd-audio-dock-restore";
       style.textContent = [
-        "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}",
-        "@media (max-width:768px){#cd-audio-dock{width:min(168px,42vw) !important;top:8px !important;right:8px !important;max-height:none !important;overflow:visible !important;z-index:500 !important;}}"
+        "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}",
+        "@media (min-width:769px){#cd-audio-dock{position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}}",
+        "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 42%;margin:0 !important;z-index:1 !important;}}"
       ].join("");
       (document.body || document.documentElement).appendChild(style);
     }
   }
 
   function placeRoot(node) {
-    if (!node || !document.body) return;
-    if (node.parentNode !== document.body) document.body.appendChild(node);
+    if (!node) return;
+    var dock = document.getElementById("cd-audio-dock");
+    var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
+    var strip = document.getElementById("cd-voice-mobile-strip");
+    if (isMobileVoice() && header) {
+      if (!strip) {
+        strip = document.createElement("div");
+        strip.id = "cd-voice-mobile-strip";
+      }
+      if (strip.parentNode !== header) header.appendChild(strip);
+      if (dock && dock.parentNode !== strip) strip.insertBefore(dock, strip.firstChild);
+      if (node.parentNode !== strip) strip.appendChild(node);
+      if (dock && node && dock.nextSibling !== node) {
+        strip.insertBefore(dock, node);
+      }
+      return;
+    }
+    if (strip && strip.parentNode) {
+      if (dock && header) header.appendChild(dock);
+      strip.parentNode.removeChild(strip);
+    }
+    if (document.body && node.parentNode !== document.body) document.body.appendChild(node);
+    if (dock && header && dock.parentNode !== header) header.appendChild(dock);
   }
 
   function syncVoicePlacement() {
     if (root) placeRoot(root);
+    restoreAudioDock();
   }
 
   function mount() {
@@ -461,6 +494,9 @@
     placeRoot(root);
     restoreAudioDock();
     window.addEventListener("resize", syncVoicePlacement);
+    var mq = window.matchMedia("(max-width: 768px)");
+    if (mq.addEventListener) mq.addEventListener("change", syncVoicePlacement);
+    else if (mq.addListener) mq.addListener(syncVoicePlacement);
 
     speakBtn = document.getElementById("cd-voice-speak");
     listenBtn = document.getElementById("cd-voice-listen");

@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25x] — Mobile widget strip below header, Welcome left / Ask Your Fault right (`?v=20261025u`)
+- Mobile: in-flow `#cd-voice-mobile-strip` under logo/menu. No overlay on phones, email, logo, or Menu. Desktop overlay unchanged. Title/H1/meta unchanged.
+
 ### [2026-10-25w] — Ask Your Fault fixed at top-left while scrolling (`?v=20261025s`)
 - `#cd-voice-root` is `position:fixed; top:10px; left:10px; z-index:99999` on mobile and desktop. Transcript panel has ✕. Audio dock stays top-right. Title/H1/meta unchanged.
 
