@@ -75,18 +75,19 @@ string SystemPrompt()
 {
     return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX, with 30 years of hands-on commercial refrigeration and catering-equipment experience across London. "
         + "STEP 1 - TRANSCRIBE AND DETECT: if the customer sent an audio recording, first write down exactly what they said, in the native script of the language they actually spoke (Persian in Persian script, Arabic in Arabic script, Turkish with Turkish letters, and so on), and identify that language from the speech itself, never from the browser or from these instructions. If they typed, the typed text is the transcript. "
-        + "STEP 2 - CRITICAL LANGUAGE LOCK, ZERO MIXING: summary, likely_cause, quick_checks and spoken_script must be 100% in that exact same language and script. English -> warm conversational London British English. Persian (Farsi) -> warm everyday colloquial Tehrani spoken Persian (تهرانی محاوره‌ای و صمیمی، بدون کلمات کتابی), mention you are in London. Any other language (Turkish, Arabic, Kurdish, Spanish, Hindi, Polish, Urdu, Romanian, etc.) -> answer only in that language, never English. "
+        + "STEP 2 - CRITICAL LANGUAGE LOCK, ZERO MIXING: summary, likely_cause, quick_checks and spoken_script must be 100% in that exact same language and script. English -> warm conversational London British English. Persian (Farsi) -> fluent, articulate, natural and respectful standard Iranian Persian (فارسی معیار، روان، خوش‌بیان و محترمانه‌ی مهندسی): address the customer as 'شما', use full written verb forms (است، می‌شود، می‌کند، بررسی کنید), no slang and no colloquial contractions (never میاد، می‌کنه، رو، بذار، قربونت), mention you are in London. Any other language (Turkish, Arabic, Kurdish, Spanish, Hindi, Polish, Urdu, Romanian, etc.) -> answer only in that language, never English. "
         + "NEVER reply with a brush-off such as 'tell me the make or error code' or 'describe the problem'. ALWAYS answer the exact words the customer used with a specific technical diagnosis. "
         + "Noise/clicking/buzzing: evaporator or condenser fan blade hitting ice, worn fan motor bearings, compressor start relay clicking; tell them to open the door and check if the noise stops (inside evaporator fan), and to call before the fan or compressor seizes. "
         + "Warm/not cooling: blocked condenser coil or filter, failed door gasket, iced evaporator, refrigerant leak or failing compressor. Leaking/water: blocked condensate drain line or overflowing drip tray. Tripping/no power: compressor or fan motor shorting to earth, burned plug or contactor, control board failure. "
         + "If the customer only says they have a problem, give the top 3 causes (condenser blockage causing poor cooling, evaporator fan icing causing noise or warm cabinet, thermostat/sensor or compressor relay failure) and how to check each right now. "
         + "ENGLISH TONE (English replies only; never put English words or slang into any other language, use that language's own everyday expressions instead): talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
-        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. Persian replies use a warm colloquial Tehrani accent (accent only, you live and work in London). "
+        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. "
+        + "PERSIAN STYLE (it is read aloud by a Persian voice engine): short, complete, grammatical sentences of 8 to 18 words, each ending with '.', with the Persian comma '،' at natural breathing points, like a calm professional broadcaster. In Persian spoken_script write EVERY brand and technical term in Persian script (کُلد دایرِکت، فاستر، ویلیامز، هوشیزاکی، اسکاتس‌مَن، پولار، گِرام، کمپرسور، کندانسور، اواپراتور، ترموستات) and every number and error code as Persian words (ئی یک، هشت درجه); spoken_script must contain no Latin letters, no digits and no symbols at all. "
         + "In every language: open warmly as the Head Engineer at ColdDirect with thirty years in London, give the specific diagnosis and one or two hands-on checks, and end by asking them to tap the Like button or give five stars right here on this page (never call it a video). "
         + "Keep spoken_script under 130 words, one flowing paragraph, no lists or line breaks. summary must name the likely cause, never just repeat the symptom. "
         + "PHONE IS FIXED, 07983 759320: English says 'zero seven nine eight three, seven five nine, three two zero'; Persian says 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'; other languages say the same digits one by one in their own number words. Never invent, shorten or change the number. "
-        + "Never use filler words, stammers or self-corrections. Persian opens exactly with 'سلام رفیق، اصلاً نگران نباش! سرمهندس کلد دایرکت‌ام، سی ساله تو لندن یخچال و فریزر صنعتی و تجهیزات کترینگ درست می‌کنم.' then goes straight to the diagnosis. "
-        + "ColdDirect works in London only; never claim to work in Tehran, Iran or any other city. Persian ends with e.g. 'اگه کمکت کرد، لطفاً لایک کن یا پنج ستاره بده، قربونت!'. "
+        + "Never use filler words, stammers or self-corrections. Persian opens exactly with 'سلام و درود، سرمهندس شرکت کُلد دایرِکت در لندن هستم، با سی سال تجربه‌ی تخصصی در تعمیرات تجهیزات برودتی.' then goes straight to the diagnosis. "
+        + "ColdDirect works in London only; never claim to work in Tehran, Iran or any other city. Persian ends with e.g. 'اگر این راهنمایی برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم.'. "
         + "Commercial refrigeration and catering only. Return STRICT JSON only, with exactly these keys: {\"transcript\":\"exact words the customer said, in their own script\",\"language_code\":\"ISO 639-1 code such as fa, en, tr, ar, ku, es, hi, pl\",\"language_name\":\"English name of that language, e.g. Persian\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
 
@@ -117,7 +118,7 @@ string SpellCodeFa(string letter, string digits)
 {
     string[] w = { "صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه" };
     string l = letter.ToUpperInvariant();
-    string name = l == "E" ? "ای" : l == "F" ? "اف" : l == "P" ? "پی" : l;
+    string name = l == "E" ? "ئی" : l == "F" ? "اِف" : l == "P" ? "پی" : l;
     StringBuilder sb = new StringBuilder(name);
     foreach (char c in digits) sb.Append(" ").Append(w[c - '0']);
     return sb.ToString();
@@ -131,10 +132,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
     {
         case "noise":
             return fa ? new string[] {
-                "خب، گفتی " + a + " سروصدا می‌کنه. نُه بار از ده بار یکی از این سه تاست. یک: پره‌ی فن اواپراتور داخل دستگاه به یخ گیر کرده، که صدای خِرخِر یا تق‌تق می‌ده. دو: بلبرینگ موتور فن خورده شده، که یه وزوز یا غرش یکسره می‌ده. سه: رله‌ی استارت کمپرسور هِی تیک می‌زنه و کمپرسور راه نمی‌افته، که هر چند دقیقه یه تیک می‌شنوی. یه تست ساده: در رو باز کن و گوش بده. اگه با باز شدن در صدا قطع شد، کار فن داخلیه، چون بیشتر فن‌ها با باز شدن در خاموش می‌شن. اگه صدا ادامه داشت، از فن کندانسور یا کمپرسور پشت یا پایین دستگاهه. نذار چند روز همین‌جوری کار کنه، چون فن یا کمپرسور ممکنه بِگیره و کل دستگاه بخوابه.",
-                "صدای " + a + " معمولاً از گیر کردن پره‌ی فن اواپراتور به یخ، خراب شدن بلبرینگ موتور فن، یا تیک زدن رله‌ی استارت کمپرسوره.",
-                "پره‌ی فن اواپراتور به یخ می‌خوره، بلبرینگ موتور فن خورده شده (وزوز و غرش)، یا رله‌ی استارت کمپرسور خرابه (تیک‌تیک).",
-                "در رو باز کن؛ اگه صدا قطع شد، فن اواپراتور داخلیه.|پشت پنل داخلی رو برای یخ دور فن ببین و پشت دستگاه گوش بده ببین تیک کمپرسوره یا نه.|قبل از اینکه فن یا کمپرسور بگیره با 07983 759320 تماس بگیر." }
+                "شما فرمودید " + a + " صدای غیرعادی می‌دهد. در بیشتر موارد، علت یکی از این سه مورد است. نخست، پره‌ی فن اواپراتور داخل دستگاه به یخ برخورد می‌کند و صدای خش‌خش یا تق‌تق ایجاد می‌شود. دوم، بلبرینگ موتور فن فرسوده شده است و صدای وزوز یا غرش یکنواخت شنیده می‌شود. سوم، رله‌ی استارت کمپرسور مدام عمل می‌کند و کمپرسور روشن نمی‌شود، به همین دلیل هر چند دقیقه یک صدای تیک می‌شنوید. یک آزمایش ساده انجام دهید، در دستگاه را باز کنید و گوش دهید. اگر با باز شدن در صدا قطع شد، مشکل از فن داخلی است، زیرا بیشتر فن‌ها با باز شدن در خاموش می‌شوند. اگر صدا ادامه داشت، منشأ آن فن کندانسور یا کمپرسور در پشت یا پایین دستگاه است. لطفاً اجازه ندهید دستگاه چند روز به همین شکل کار کند، چون ممکن است فن یا کمپرسور از کار بیفتد.",
+                "صدای " + a + " معمولاً ناشی از برخورد پره‌ی فن اواپراتور با یخ، فرسودگی بلبرینگ موتور فن، یا عمل کردن مداوم رله‌ی استارت کمپرسور است.",
+                "برخورد پره‌ی فن اواپراتور با یخ، فرسودگی بلبرینگ موتور فن، یا خرابی رله‌ی استارت کمپرسور.",
+                "در را باز کنید؛ اگر صدا قطع شد، مشکل از فن اواپراتور داخلی است.|دیواره‌ی پشتی داخل را از نظر یخ‌زدگی اطراف فن بررسی کنید و به صدای پشت دستگاه دقت کنید.|پیش از آنکه فن یا کمپرسور آسیب ببیند، با شماره‌ی 07983 759320 تماس بگیرید." }
             : new string[] {
                 "if your " + a + "'s making a racket or buzzing away, nine times out of ten the evaporator fan at the back's clipping a bit of ice buildup... or the little start relay on the compressor's clicking away, trying to kick in. If it's more of a steady hum or a grind, that's usually a fan motor bearing on its way out. Here's a quick one for you. Pop the door open for a second... if the noise stops straight away, it's definitely that inside fan hitting ice. If it carries on, it's the fan or the compressor round the back or underneath. Don't leave it running like that for days, mate, a dodgy fan or a struggling compressor can seize up, and then you've lost the whole cabinet.",
                 "Noisy " + a + "? Nine times out of ten the evaporator fan's clipping ice, a fan motor bearing's worn out, or the compressor start relay's clicking away trying to kick in.",
@@ -142,10 +143,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Pop the door open for a second. If the noise stops straight away, it's the inside fan hitting ice.|Have a peek at the back wall inside for ice round the fan, and listen round the back for a clicking compressor.|Give us a bell on 07983 759320 before the motor burns out." };
         case "warm":
             return fa ? new string[] {
-                "حالا اینکه " + a + " خوب سرد نمی‌کنه. مقصرهای همیشگی به ترتیب: اول کندانسور گرفته، همون شبکه‌ی رادیاتوری پشت یا بالا یا پایین دستگاه. وقتی پُر از گردوخاک و چربی آشپزخونه بشه، دستگاه نمی‌تونه گرما رو بیرون بده و دیگه سرد نمی‌کنه. دوم لاستیک در که پاره شده یا شُل شده و هوای گرم میاد تو. سوم اواپراتور داخل یخ زده و هوای سرد نمی‌چرخه. آخری هم که جدی‌تره، نشتی گاز یا کمپرسوری که داره از کار میفته. تست سریع: کندانسور رو با چراغ‌قوه نگاه کن، اگه پر از خاکه دستگاه رو خاموش کن و با برس تمیزش کن. یه تیکه کاغذ لای در بذار و در رو ببند؛ اگه راحت بیرون اومد، لاستیک آب‌بندی نمی‌کنه. دیواره‌ی پشتی داخل رو ببین برفک سنگین داره یا نه. اگه کمپرسور ساکته و داغه، یا یکسره کار می‌کنه و باز سرد نیست، دیگه کار تکنسینه.",
-                a + " که سرد نمی‌کنه معمولاً کندانسورش گرفته، لاستیک درش خرابه، اواپراتورش یخ زده، یا مشکل گاز و کمپرسور داره.",
-                "کندانسور یا فیلتر هوا پر از خاک و چربی، لاستیک در که آب‌بندی نمی‌کنه، اواپراتور یخ‌زده، یا کمبود گاز و کمپرسور ضعیف.",
-                "دستگاه رو خاموش کن و کندانسور و فیلتر هوا رو با برس تمیز کن.|تست کاغذ رو دور تا دور لاستیک در انجام بده.|اگه یکسره کار می‌کنه یا کمپرسور ساکت و داغه، مواد رو جابه‌جا کن و به 07983 759320 زنگ بزن." }
+                "اینکه " + a + " به‌خوبی سرد نمی‌کند، معمولاً یکی از این دلایل را دارد. نخست، کندانسور گرفته است، یعنی همان شبکه‌ی رادیاتوری پشت، بالا یا پایین دستگاه. وقتی این شبکه از گرد و غبار و چربی آشپزخانه پر شود، دستگاه نمی‌تواند گرما را دفع کند. دوم، لاستیک در پاره یا شل شده است و هوای گرم وارد کابین می‌شود. سوم، اواپراتور داخلی یخ زده است و هوای سرد جریان پیدا نمی‌کند. در موارد جدی‌تر نیز، نشتی گاز یا ضعف کمپرسور علت است. یک بررسی سریع انجام دهید، کندانسور را با چراغ‌قوه نگاه کنید. اگر پر از گرد و غبار است، دستگاه را خاموش کنید و با برس تمیزش کنید. سپس یک برگه‌ی کاغذ لای در بگذارید و در را ببندید. اگر کاغذ به‌راحتی بیرون آمد، لاستیک در آب‌بندی نمی‌کند. اگر کمپرسور خاموش و داغ است، یا مدام کار می‌کند و باز هم سرد نمی‌کند، بررسی آن به تکنسین نیاز دارد.",
+                a + " که سرد نمی‌کند، معمولاً کندانسور گرفته، لاستیک در معیوب، اواپراتور یخ‌زده، یا مشکل گاز و کمپرسور دارد.",
+                "کندانسور یا فیلتر هوای پر از گرد و چربی، لاستیک دری که آب‌بندی نمی‌کند، اواپراتور یخ‌زده، یا کمبود گاز و ضعف کمپرسور.",
+                "دستگاه را خاموش کنید و کندانسور و فیلتر هوا را با برس تمیز کنید.|آزمایش کاغذ را در تمام اطراف لاستیک در انجام دهید.|اگر دستگاه مدام کار می‌کند یا کمپرسور خاموش و داغ است، مواد را جابه‌جا کنید و با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "if your " + a + "'s gone warm and isn't holding temp, first thing... don't let your stock spoil, get anything important into another fridge. Usually, the condenser coil underneath is choked up with kitchen grease and dust so it can't breathe, or the fan motor's packed up. Have a quick feel down by the grille... if it's baking hot or dead silent, that's your culprit. Switch it off and give that coil a good brush. Next, shut the door on a sheet of paper. If it slides out easy, the door seal's had it and warm air's sneaking in. And have a peek at the back wall inside, if it's iced right up, the cold air can't get round. If the compressor's silent and hot, or it's running non-stop and still not cold, you've probably got a gas leak or a compressor on the blink, and that's one for us.",
                 "Warm " + a + "? Usually the condenser's choked up with grease and dust, the fan motor's packed up, the door seal's had it, or there's a gas or compressor problem.",
@@ -153,10 +154,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Feel down by the grille. Baking hot or dead silent? Switch off and brush the condenser clean.|Shut the door on a sheet of paper all the way round. If it slides out easy, the seal's gone.|If it's running non-stop or the compressor's silent and hot, move your stock and ring 07983 759320." };
         case "leak":
             return fa ? new string[] {
-                "آب ریختن از " + a + " تقریباً همیشه یعنی آب برفک‌زدایی راه در رو نداره. هر بار که دستگاه دیفراست می‌کنه، آب از یه لوله‌ی درین می‌ره تو سینی پایین که خودش بخار می‌شه. اگه این لوله با خرده‌غذا یا یخ بسته بشه، آب تو کابین سرریز می‌کنه و از زیر در می‌زنه بیرون. یا سینی پایین ترک خورده یا پر شده. تست سریع: پایین دیواره‌ی پشتی داخل یه سوراخ کوچیک درین هست؛ اگه دورش آب یا یخ جمع شده، گرفته. می‌تونی آروم با آب ولرم بشوریش. بعد سینی پایین دستگاه رو بکش بیرون ببین پره یا ترک داره.",
-                "نشتی آب " + a + " تقریباً همیشه از گرفتگی لوله‌ی درین یا سرریز سینی آبه.",
-                "لوله‌ی درین با خرده‌غذا یا یخ گرفته، سینی آب ترک داره یا سرریز کرده، یا هیتر درین فریزر سوخته.",
-                "سوراخ درین پایین دیواره‌ی پشتی رو پیدا کن و آروم با آب ولرم بشور.|سینی زیر دستگاه رو برای سرریز یا ترک چک کن.|اگه دوباره یخ زد یا باز آب داد، به 07983 759320 زنگ بزن." }
+                "نشتی آب از " + a + " تقریباً همیشه به این معناست که آب برفک‌زدایی راه خروج ندارد. هر بار که دستگاه برفک‌زدایی می‌کند، آب از طریق لوله‌ی تخلیه به سینی پایین می‌رود و در آنجا تبخیر می‌شود. اگر این لوله با ذرات غذا یا یخ مسدود شود، آب داخل کابین جمع می‌شود و از زیر در بیرون می‌ریزد. همچنین ممکن است سینی پایین ترک خورده یا پر شده باشد. یک بررسی سریع انجام دهید، در پایین دیواره‌ی پشتی داخل، یک سوراخ کوچک تخلیه وجود دارد. اگر اطراف آن آب یا یخ جمع شده است، یعنی مسدود شده است. آن را به‌آرامی با آب ولرم بشویید. سپس سینی زیر دستگاه را بیرون بکشید و مطمئن شوید پر یا ترک‌خورده نیست.",
+                "نشتی آب " + a + " تقریباً همیشه ناشی از گرفتگی لوله‌ی تخلیه یا سرریز سینی آب است.",
+                "گرفتگی لوله‌ی تخلیه با ذرات غذا یا یخ، ترک یا سرریز سینی آب، یا سوختن هیتر لوله‌ی تخلیه در فریزر.",
+                "سوراخ تخلیه‌ی پایین دیواره‌ی پشتی را پیدا کنید و به‌آرامی با آب ولرم بشویید.|سینی زیر دستگاه را از نظر سرریز یا ترک بررسی کنید.|اگر دوباره یخ زد یا نشتی ادامه داشت، با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "water on the floor from a " + a + " is nearly always the defrost water not getting away. Every time it defrosts, the water runs down a little drain into a tray underneath, and normally it just evaporates off. But if that drain gets blocked up solid with bits of food or ice, the water backs up inside and comes out under the door. Have a look at the bottom of the back wall inside, there's a small drain hole... if there's water or ice sat round it, it's blocked. Give it a gentle flush with warm water. Then pull out the tray underneath and check it's not full or cracked. And get a towel down in the meantime, nobody wants a slip in the kitchen.",
                 "Leaking " + a + "? Nearly always the drain's blocked up solid or the drip tray underneath is overflowing.",
@@ -164,10 +165,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Find the little drain hole at the bottom of the back wall inside and flush it gently with warm water.|Pull out the tray underneath and check it's not full or cracked.|If it ices up again or keeps flooding, give us a bell on 07983 759320." };
         case "trip":
             return fa ? new string[] {
-                "اینکه " + a + " برق رو می‌پرونه یا روشن نمی‌شه باید با احتیاط بررسی بشه، اول ایمنی. اگه فیوز یا کلید محافظ جان رو می‌زنه، رایج‌ترین دلیل اینه که کمپرسور یا موتور فن اتصال بدنه داره، معمولاً بعد از اینکه آب رفته توش. بعدش دوشاخه، سیم یا کنتاکتور سوخته. سومی هم برد کنترل یا منبع تغذیه‌ی خراب. تست سریع: دوشاخه رو بکش و دوشاخه و سیم رو برای جای سوختگی یا بوی پلاستیک داغ نگاه کن. یه پریز دیگه امتحان کن. اگه درست همون لحظه‌ای که کمپرسور روشن می‌شه برق می‌پره، به احتمال زیاد خود کمپرسور یا سیم‌کشیشه. لطفاً هی کلید رو بالا نزن، چون هر بار فشار به کمپرسور و سیم‌کشی میاد.",
-                a + " که برق رو می‌پرونه یا روشن نمی‌شه معمولاً اتصال بدنه‌ی کمپرسور یا فن، دوشاخه یا کنتاکتور سوخته، یا برد کنترل خراب داره.",
-                "اتصال بدنه‌ی کمپرسور یا موتور فن، دوشاخه و سیم یا کنتاکتور سوخته، یا خرابی برد کنترل و منبع تغذیه.",
-                "دوشاخه رو بکش و دوشاخه و سیم رو برای سوختگی چک کن.|یه پریز دیگه امتحان کن و ببین درست موقع روشن شدن کمپرسور برق می‌پره یا نه.|دیگه کلید رو بالا نزن و به 07983 759320 زنگ بزن." }
+                "اینکه " + a + " برق را قطع می‌کند یا روشن نمی‌شود، باید با احتیاط بررسی شود و ایمنی در اولویت است. اگر فیوز یا کلید محافظ جان عمل می‌کند، رایج‌ترین علت اتصال بدنه‌ی کمپرسور یا موتور فن است، که معمولاً پس از نفوذ آب رخ می‌دهد. پس از آن، دوشاخه، کابل یا کنتاکتور سوخته، و در برخی موارد خرابی برد کنترل یا منبع تغذیه علت است. یک بررسی سریع انجام دهید، دوشاخه را از پریز بکشید و دوشاخه و کابل را از نظر سوختگی یا بوی پلاستیک داغ بررسی کنید. دستگاه را به پریز دیگری وصل کنید. اگر درست در لحظه‌ی روشن شدن کمپرسور برق قطع می‌شود، به احتمال زیاد مشکل از خود کمپرسور یا سیم‌کشی آن است. لطفاً کلید را پشت سر هم وصل نکنید، چون هر بار به کمپرسور و سیم‌کشی فشار وارد می‌شود.",
+                a + " که برق را قطع می‌کند یا روشن نمی‌شود، معمولاً اتصال بدنه‌ی کمپرسور یا فن، دوشاخه یا کنتاکتور سوخته، یا برد کنترل معیوب دارد.",
+                "اتصال بدنه‌ی کمپرسور یا موتور فن، سوختگی دوشاخه، کابل یا کنتاکتور، یا خرابی برد کنترل و منبع تغذیه.",
+                "دوشاخه را بکشید و دوشاخه و کابل را از نظر سوختگی بررسی کنید.|پریز دیگری را امتحان کنید و ببینید آیا برق درست هنگام روشن شدن کمپرسور قطع می‌شود.|کلید را دوباره وصل نکنید و با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "if your " + a + " keeps tripping the power or won't switch on at all, safety first, yeah? Nine times out of ten the compressor or a fan motor's shorting to earth, usually after a bit of water's got where it shouldn't. Next up is a burnt plug, a dodgy lead or a knackered contactor... and now and then it's the control board that's packed up. Pull the plug out and give it a quick look. Any scorch marks, or a hot plastic smell, and that's your answer. Try it on another socket. If it trips the second the compressor kicks in, it's almost certainly the compressor or its wiring. And please, don't keep flicking the breaker back on, every trip gives the compressor and the wiring a proper hammering.",
                 "Tripping the power or won't switch on? Usually the compressor or a fan motor's shorting to earth, a burnt plug or contactor, or the control board's packed up.",
@@ -175,10 +176,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Pull the plug and give the plug and lead a quick look for scorch marks or a hot plastic smell.|Try another socket, and notice if it trips the second the compressor kicks in.|Stop flicking the breaker back on and ring 07983 759320." };
         case "ice":
             return fa ? new string[] {
-                "یخ و برفک سنگین داخل " + a + " یعنی سیکل برفک‌زدایی درست کار نمی‌کنه یا هوای گرم و مرطوب داره میاد تو. یا هیتر، تایمر یا سنسور دیفراست خراب شده، یا لاستیک در هوا می‌ده. یخ رو با چاقو از روی کویل نکَن، این‌جوری کویل سوراخ می‌شه و گاز خالی می‌شه. دستگاه رو خاموش کن، مواد رو جابه‌جا کن، در رو باز بذار تا آب بشه. اگه ظرف یکی دو روز دوباره یخ بست، دیگه قطعاً مشکل دیفراسته.",
-                "یخ‌زدگی " + a + " معمولاً از خرابی سیکل دیفراست یا ورود هوای مرطوب از دره.",
-                "هیتر، تایمر یا سنسور دیفراست خراب، لاستیک در که هوا می‌ده، یا در که زیاد باز می‌مونه.",
-                "یخ رو با چیز تیز نکَن.|دستگاه رو خاموش کن و بذار کامل آب بشه، بعد ببین دوباره یخ می‌زنه یا نه.|اگه دوباره یخ زد با 07983 759320 تماس بگیر." }
+                "یخ و برفک سنگین داخل " + a + " به این معناست که چرخه‌ی برفک‌زدایی به‌درستی کار نمی‌کند، یا هوای گرم و مرطوب وارد دستگاه می‌شود. ممکن است هیتر، تایمر یا سنسور برفک‌زدایی خراب شده باشد، یا لاستیک در هوا را عبور دهد. لطفاً یخ را با چاقو از روی کویل جدا نکنید، چون کویل سوراخ می‌شود و گاز آن تخلیه می‌شود. دستگاه را خاموش کنید، مواد را جابه‌جا کنید و در را باز بگذارید تا یخ کاملاً آب شود. اگر ظرف یکی دو روز دوباره یخ زد، مشکل قطعاً از سیستم برفک‌زدایی است.",
+                "یخ‌زدگی " + a + " معمولاً ناشی از خرابی چرخه‌ی برفک‌زدایی یا ورود هوای مرطوب از اطراف در است.",
+                "خرابی هیتر، تایمر یا سنسور برفک‌زدایی، لاستیک دری که هوا را عبور می‌دهد، یا باز ماندن طولانی در.",
+                "یخ را با وسیله‌ی تیز جدا نکنید.|دستگاه را خاموش کنید تا یخ کاملاً آب شود، سپس ببینید دوباره یخ می‌زند یا نه.|اگر دوباره یخ زد، با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "if your " + a + "'s iced right up inside, the defrost isn't doing its job, or damp, warm air's sneaking in. Either the defrost heater, timer or probe's on the blink, or the door seal's letting air past. Whatever you do, don't go chipping the ice off with a knife... that's exactly how coils get punctured and lose their gas. Switch it off, move your stock, leave the door open and let it thaw right out. If it ices up again in a day or two, it's a defrost fault, no question.",
                 "Iced-up " + a + "? The defrost's on the blink, or damp air's sneaking in past the door seal.",
@@ -186,10 +187,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Don't chip the ice off with anything sharp, you'll puncture the coil.|Switch off, let it thaw right out, then watch if it ices up again in a day or two.|If it does, ring 07983 759320 and we'll sort the defrost." };
         case "noice":
             return fa ? new string[] {
-                "اگه یخساز یخ نمی‌ده، اول آب و رسوب و دفع گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر ورودی نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یه لایه یخ نازک و ناهماهنگ می‌زنه و دیگه رهاش نمی‌کنه. اگه فیلتر آب چند ماهه عوض نشده، این خیلی رایجه.",
-                "یخ ندادن یخساز معمولاً از آب، رسوب اواپراتور، کندانسور کثیف یا سوییچ مخزنه.",
-                "شیر آب بسته، فیلتر ورودی گرفته، رسوب آهک، کندانسور کثیف یا سوییچ مخزن که فکر می‌کنه مخزن پره.",
-                "ببین آب به دستگاه می‌رسه و فیلتر نگرفته.|اگه ورقه‌ی یخ نازک و ناهماهنگه و نمی‌افته، رسوبه.|کندانسور رو تمیز کن و اگه درست نشد به 07983 759320 زنگ بزن." }
+                "وقتی یخ‌ساز یخ تولید نمی‌کند، پیش از هر چیز باید آب‌رسانی، رسوب و دفع گرما را بررسی کرد، نه اینکه دستگاه را تعویض کرد. مطمئن شوید شیر آب باز است، فیلتر ورودی مسدود نشده، سوییچ مخزن گیر نکرده و کندانسور تمیز است. اواپراتوری که رسوب گرفته است، لایه‌ی یخ نازک و نامنظمی تشکیل می‌دهد و آن را رها نمی‌کند. اگر فیلتر آب چند ماه است تعویض نشده، این مشکل بسیار رایج است.",
+                "تولید نکردن یخ در یخ‌ساز معمولاً به آب‌رسانی، رسوب اواپراتور، کندانسور کثیف یا سوییچ مخزن مربوط است.",
+                "بسته بودن شیر آب، گرفتگی فیلتر ورودی، رسوب آهک، کندانسور کثیف، یا سوییچ مخزنی که مخزن را پر تشخیص می‌دهد.",
+                "مطمئن شوید آب به دستگاه می‌رسد و فیلتر مسدود نیست.|اگر لایه‌ی یخ نازک و نامنظم است و جدا نمی‌شود، علت رسوب است.|کندانسور را تمیز کنید و اگر مشکل برطرف نشد، با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "when an ice machine stops dropping cubes, it's almost always a scaled-up water float switch, a blocked spray bar, or the condenser's running way too hot. First, check the water tap's actually on and the inlet filter isn't clogged. Then have a look at the ice sheet... if it's thin and patchy and just won't drop, that's limescale, mate. Give the condenser a clean as well, and make sure the bin switch isn't stuck, thinking the bin's already full. If the water filter's months overdue, that's a classic in London pubs and restaurants.",
                 "Ice machine not dropping cubes? Almost always a scaled-up float switch, a blocked spray bar, or a condenser running way too hot.",
@@ -197,10 +198,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Check the water tap's on and the inlet filter isn't clogged.|Thin, patchy ice sheet that won't drop? That's limescale.|Clean the condenser, and if it still won't drop cubes, ring 07983 759320." };
         case "code":
             return fa ? new string[] {
-                "گفتی دستگاه کد " + codeFa + " نشون می‌ده. روی بیشتر کنترلرهای صنعتی مثل فاستر، ویلیامز، دیکسل، کارل و الیول، این مدل کدها معمولاً یعنی خرابی سنسور یا آلارم دمای بالا. یعنی یا کابین واقعاً گرم شده، یا سنسور شُل شده، یخ زده یا سوخته. اول کندانسور رو تمیز کن، لاستیک در رو چک کن و ببین مواد جلوی دریچه‌ی برگشت هوا رو نگرفته باشه. بعد با یه دماسنج جدا دمای واقعی رو بگیر؛ اگه دما خوبه ولی کد هست، سنسوره.",
-                "کد " + code + " روی بیشتر کنترلرها معنیش آلارم دمای بالا یا خرابی سنسوره.",
-                "کابین واقعاً گرم شده (کندانسور، لاستیک در، جریان هوا) یا سنسور هوا یا اواپراتور خراب یا شل شده.",
-                "کندانسور رو تمیز کن و لاستیک در رو چک کن.|با یه دماسنج جدا دمای واقعی رو بگیر.|اگه دما بالای ۸ درجه است یا کد پاک نمی‌شه، به 07983 759320 زنگ بزن." }
+                "فرمودید دستگاه کد " + codeFa + " نشان می‌دهد. روی بیشتر کنترلرهای صنعتی، مانند فاستر، ویلیامز، دیکسل، کارل و الیول، این نوع کدها معمولاً به معنای خرابی سنسور یا هشدار دمای بالاست. یعنی یا کابین واقعاً گرم شده است، یا سنسور شل شده، یخ زده یا سوخته است. ابتدا کندانسور را تمیز کنید، لاستیک در را بررسی کنید و مطمئن شوید مواد جلوی دریچه‌ی برگشت هوا را نگرفته‌اند. سپس با یک دماسنج جداگانه دمای واقعی را اندازه بگیرید. اگر دما مناسب است ولی کد همچنان نمایش داده می‌شود، مشکل از سنسور است.",
+                "کد " + code + " روی بیشتر کنترلرها به معنای هشدار دمای بالا یا خرابی سنسور است.",
+                "گرم شدن واقعی کابین به دلیل کندانسور، لاستیک در یا جریان هوا، یا خرابی و شل شدن سنسور هوا یا اواپراتور.",
+                "کندانسور را تمیز کنید و لاستیک در را بررسی کنید.|با یک دماسنج جداگانه دمای واقعی را اندازه بگیرید.|اگر دما بالای ۸ درجه است یا کد پاک نمی‌شود، با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "you've got " + SpellCode(code.Substring(0, 1), code.Substring(1)) + " showing, yeah? On most commercial controllers, Foster, Williams, Dixell, Carel, Eliwell, that kind of code means either a probe's playing up, or it's a high-temp alarm. So either the cabinet's genuinely gone warm, or the sensor's come loose, iced up or packed in. Give the condenser a clean, check the door seal, and make sure your stock isn't blocking the air vent at the back. Then pop a separate thermometer in... if the temp's fine but the code's still flashing, it's the probe itself, and that's a quick fix.",
                 "Code " + code + "? On most commercial controllers that's a probe playing up or a high-temp alarm.",
@@ -208,10 +209,10 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
                 "Give the condenser a clean and check the door seal.|Pop a separate thermometer in and check the real temp.|If it's over 8°C or the code won't clear, ring 07983 759320." };
         default:
             return fa ? new string[] {
-                "اگه " + a + " اذیتت می‌کنه، این سه تا خرابی رو از همه بیشتر می‌بینم و همین الان می‌تونی چکشون کنی. یک: کندانسور از گردوخاک گرفته و داغ می‌کنه، که باعث می‌شه دستگاه خوب سرد نکنه و پشتش داغ باشه. دستگاه رو خاموش کن و با برس تمیزش کن. دو: فن اواپراتور داخل یخ زده، که یا صدا می‌ده یا کابین گرم می‌شه. در رو باز کن و گوش بده، و دیواره‌ی پشتی داخل رو برای برفک سنگین نگاه کن. سه: ترموستات، سنسور دما یا رله‌ی کمپرسور خراب شده. اگه نمایشگر دمای اشتباه نشون می‌ده، یا هر چند دقیقه یه تیک می‌شنوی ولی کمپرسور روشن نمی‌شه، مقصر همینه.",
+                "اگر " + a + " دچار مشکل شده است، این سه خرابی را بیش از همه می‌بینیم و همین حالا می‌توانید بررسی‌شان کنید. نخست، کندانسور از گرد و غبار گرفته و داغ می‌شود، در نتیجه دستگاه به‌خوبی سرد نمی‌کند و پشت آن داغ است. دستگاه را خاموش کنید و با برس تمیزش کنید. دوم، فن اواپراتور داخلی یخ زده است، که باعث صدا یا گرم شدن کابین می‌شود. در را باز کنید، گوش دهید و دیواره‌ی پشتی داخل را از نظر برفک سنگین بررسی کنید. سوم، ترموستات، سنسور دما یا رله‌ی کمپرسور خراب شده است. اگر نمایشگر دمای نادرستی نشان می‌دهد، یا هر چند دقیقه صدای تیک می‌شنوید ولی کمپرسور روشن نمی‌شود، علت همین است.",
                 "سه خرابی رایج " + a + ": کندانسور گرفته و داغ، فن اواپراتور یخ‌زده، یا خرابی ترموستات، سنسور یا رله‌ی کمپرسور.",
-                "کندانسور گرفته که خنک‌کاری رو ضعیف می‌کنه، فن اواپراتور یخ‌زده که صدا یا گرمی کابین میاره، یا خرابی ترموستات و سنسور و رله‌ی کمپرسور.",
-                "دستگاه رو خاموش کن و کندانسور رو با برس تمیز کن.|در رو باز کن و گوش بده، و دیواره‌ی پشتی رو برای برفک ببین.|دمای نمایشگر رو با یه دماسنج جدا مقایسه کن و اگه کمپرسور فقط تیک می‌زنه به 07983 759320 زنگ بزن." }
+                "کندانسور گرفته که سرمایش را ضعیف می‌کند، فن اواپراتور یخ‌زده که باعث صدا یا گرم شدن کابین می‌شود، یا خرابی ترموستات، سنسور و رله‌ی کمپرسور.",
+                "دستگاه را خاموش کنید و کندانسور را با برس تمیز کنید.|در را باز کنید، گوش دهید و دیواره‌ی پشتی را از نظر برفک بررسی کنید.|دمای نمایشگر را با یک دماسنج جداگانه مقایسه کنید و اگر کمپرسور فقط تیک می‌زند، با 07983 759320 تماس بگیرید." }
             : new string[] {
                 "when a " + a + " starts playing up out of nowhere, it usually comes down to three classic things. Number one... the condenser's choked up with dust, so it overheats, the cooling goes weak, and the back of the unit feels hot. Switch it off and give it a good brush. Number two... the evaporator fan inside's iced right up, so you get a racket or a warm cabinet. Pop the door open, have a listen, and look for heavy frost on the back wall. Number three... a dodgy thermostat, temperature probe or compressor relay. If the display's showing the wrong temp, or you hear a click every few minutes but the compressor never kicks in, that's your culprit.",
                 "Three classic " + a + " faults: a condenser choked up with dust, an evaporator fan iced right up, or a dodgy thermostat, probe or compressor relay.",
@@ -266,7 +267,7 @@ string FallbackJson(string text)
     string a, aFa;
     if (Has(q, "fridge[\\s-]*freezer|freezer[\\s-]*fridge|یخچال\\s*(و\\s*)?فریزر|یخچال‌فریزر")) { a = "fridge freezer"; aFa = "یخچال فریزر"; }
     else if (Has(q, "ice\\s*machine|ice\\s*maker|یخساز|یخ\\s*ساز")) { a = "ice machine"; aFa = "یخساز"; }
-    else if (Has(q, "cold\\s*room|walk[\\s-]*in|سردخانه|سردخونه")) { a = "cold room"; aFa = "سردخونه"; }
+    else if (Has(q, "cold\\s*room|walk[\\s-]*in|سردخانه|سردخونه")) { a = "cold room"; aFa = "سردخانه"; }
     else if (Has(q, "cellar|keg|سرداب")) { a = "cellar cooler"; aFa = "خنک‌کننده‌ی سرداب"; }
     else if (Has(q, "freezer|فریزر")) { a = "freezer"; aFa = "فریزر"; }
     else if (Has(q, "fridge|refrigerator|chiller|bottle\\s*cooler|display|یخچال")) { a = "fridge"; aFa = "یخچال"; }
@@ -292,10 +293,10 @@ string FallbackJson(string text)
 
     string first = syms[0];
     string intro = lc == "fa"
-        ? "سلام رفیق، سرمهندس کلد دایرکت‌ام، سی ساله تو لندن یخچال و فریزر صنعتی و تجهیزات کترینگ درست می‌کنم. "
+        ? "سلام و درود، سرمهندس شرکت کُلد دایرِکت در لندن هستم، با سی سال تجربه‌ی تخصصی در تعمیرات تجهیزات برودتی و آشپزخانه‌های صنعتی. "
         : EnIntro(first);
     string outro = lc == "fa"
-        ? " اگه خواستی همین امروز یه تکنسین بفرستیم، زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر. اگه کمکت کرد، لطفاً دکمه‌ی لایک رو بزن یا پنج ستاره بده، خیلی کمک می‌کنه کلد دایرکت رشد کنه. قربونت."
+        ? " اگر مایل هستید همین امروز یک تکنسین اعزام کنیم، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این راهنمایی برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
         : " Give us a bell on zero seven nine eight three, seven five nine, three two zero, " + EnUrgency(first) + "... and if this tip helped you out, smash that Like button or drop us a quick five-star review. Cheers!";
 
     StringBuilder spoken = new StringBuilder(intro);
@@ -307,9 +308,15 @@ string FallbackJson(string text)
         if (fosterE1 && syms[i] == "code")
         {
             b[0] = lc == "fa"
-                ? "گفتی فاستر کد " + codeFa + " نشون می‌ده. روی کنترلرهای فاستر این معمولاً آلارم دمای بالا یا خرابی سنسوره: یا کابین از محدوده‌ی امن گرم‌تر شده، یا سنسور هوا شل شده، یخ زده یا سوخته. کندانسور بالای دستگاه رو برای گردوخاک ببین، لاستیک در رو چک کن و ببین مواد جلوی برگشت هوا رو نگرفته. اگه دمای مواد از هشت درجه بالاتر رفته، همون روز میایم."
+                ? "فرمودید کنترلر فاستر کد " + codeFa + " نشان می‌دهد. روی کنترلرهای فاستر، این کد یعنی سنسور هوای کابین قطع شده یا از جای خود خارج شده است، و کنترلر دیگر نمی‌تواند دما را بخواند. در را باز کنید و سنسور کوچک نزدیک فن اواپراتور را پیدا کنید. مطمئن شوید در جای خود محکم است و سیم آن بریده، له یا کنده نشده است. دستگاه را یک دقیقه از برق بکشید و دوباره وصل کنید، گاهی همین کار کد را پاک می‌کند. اگر کد بلافاصله برگشت، سنسور باید تعویض شود، که کار سریعی است. در این فاصله، با یک دماسنج جداگانه مطمئن شوید دمای مواد زیر هشت درجه است."
                 : "that " + SpellCode("E", "1") + " flashing on your Foster controller just means the cabinet air probe has gone open-circuit or come loose... basically, the controller can't read the temperature anymore. Pop the door open and find the little probe up near the evaporator fan. Check it's clipped in properly and the wire isn't chewed, pinched or pulled out. Switch it off at the wall for a minute, then back on, sometimes that's enough to clear it. If it comes straight back, the probe needs swapping, it's a quick job. In the meantime, pop a separate thermometer in and make sure your food's still under eight degrees.";
-            if (lc != "fa")
+            if (lc == "fa")
+            {
+                b[1] = "کد " + code + " روی کنترلر فاستر یعنی سنسور هوای کابین قطع شده یا از جای خود خارج شده است.";
+                b[2] = "قطع بودن مدار سنسور هوای کابین، جدا شدن آن از گیره، یا آسیب‌دیدگی سیم سنسور.";
+                b[3] = "سنسور نزدیک فن اواپراتور را بررسی کنید که در جای خود باشد و سیمش سالم باشد.|دستگاه را یک دقیقه از برق بکشید و دوباره وصل کنید.|اگر کد دوباره ظاهر شد، برای تعویض سریع سنسور با 07983 759320 تماس بگیرید.";
+            }
+            else
             {
                 b[1] = "Foster E1? The cabinet air probe has gone open-circuit or come loose, so the controller can't read the temperature.";
                 b[2] = "Cabinet air probe open-circuit, unclipped, or a chewed or pulled-out probe wire.";
@@ -330,6 +337,12 @@ string FallbackJson(string text)
         }
     }
     spoken.Append(outro);
+    if (lc == "fa")
+    {
+        string clean = NormalizePersianForSpeech(spoken.ToString());
+        spoken.Length = 0;
+        spoken.Append(clean);
+    }
 
     StringBuilder cj = new StringBuilder("[");
     for (int k = 0; k < checks.Count; k++) cj.Append(k > 0 ? "," : "").Append("\"").Append(Esc(checks[k])).Append("\"");
@@ -471,9 +484,10 @@ string ParseModelJson(string text)
 
     if (!Regex.IsMatch(spoken, "759|seven,? five,? nine|هفت،? پنج،? نه|۷۵۹", RegexOptions.IgnoreCase))
     {
-        if (code == "fa") spoken += " زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.";
+        if (code == "fa") spoken += " برای هماهنگی، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید.";
         else if (code == "en") spoken += " Give us a bell on zero seven nine eight three, seven five nine, three two zero.";
     }
+    if (code == "fa") spoken = NormalizePersianForSpeech(spoken);
 
     Dictionary<string, object> o = new Dictionary<string, object>();
     o["ok"] = true;
@@ -715,6 +729,122 @@ string[] AzureTts(string lang, string text)
     return new string[] { "audio/mpeg", Convert.ToBase64String(mp3) };
 }
 
+// Persian voice engines mangle Latin words, digits and undiacritised loanwords (ColdDirect -> "kald
+// dayerakat"). Everything sent to a Persian voice goes through here first, so it receives only Persian
+// script. The diacritised spellings were checked against the eSpeak phonemes Piper actually produces.
+static readonly string[] FA_ONES = { "صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نُه" };
+static readonly string[] FA_TEENS = { "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده" };
+static readonly string[] FA_TENS = { "", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود" };
+static readonly string[] FA_HUNDREDS = { "", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد" };
+
+static readonly Dictionary<char, string> FA_LETTERS = new Dictionary<char, string> {
+    {'A',"اِی"},{'B',"بی"},{'C',"سی"},{'D',"دی"},{'E',"ئی"},{'F',"اِف"},{'G',"جی"},{'H',"اِچ"},{'I',"آی"},
+    {'J',"جِی"},{'K',"کِی"},{'L',"اِل"},{'M',"اِم"},{'N',"اِن"},{'O',"اُ"},{'P',"پی"},{'Q',"کیو"},{'R',"آر"},
+    {'S',"اِس"},{'T',"تی"},{'U',"یو"},{'V',"وی"},{'W',"دابِلیو"},{'X',"اِکْس"},{'Y',"وای"},{'Z',"زِد"} };
+
+// Latin brand and trade words -> Persian script. Longest first so "cold room" wins over "cold".
+static readonly string[,] FA_LATIN = {
+    {"colddirect\\.co\\.uk", "کُلد دایرِکت"}, {"cold\\s*direct(\\s*ltd)?", "کُلد دایرِکت"},
+    {"foster", "فاسْتِر"}, {"williams", "ویلیامْز"}, {"hoshizaki", "هوشیزاکی"}, {"scotsman", "اِسکاتْس‌مَن"},
+    {"polar", "پولار"}, {"gram", "گِرام"}, {"gamko", "گامْکو"}, {"adande", "آدانْد"}, {"precision", "پْرِسیژِن"},
+    {"electrolux", "اِلِکْتْرولوکْس"}, {"samsung", "سامْسونْگ"}, {"daikin", "دایْکین"}, {"liebherr", "لیبْهِر"},
+    {"tefcold", "تِفْکُلد"}, {"blizzard", "بْلیزارْد"}, {"husky", "هاسْکی"}, {"danfoss", "دانْفاس"},
+    {"interlevin", "اینْتِرْلِوین"}, {"dixell", "دیکْسِل"}, {"carel", "کارِل"}, {"eliwell", "اِلیوِل"},
+    {"mitsubishi", "میتسوبیشی"}, {"rational", "رَشْنال"}, {"london", "لَندَن"}, {"whatsapp", "واتْس‌اَپ"},
+    {"cold\\s*room", "سردخانه"}, {"ice\\s*machine", "یخ‌ساز"}, {"compressor", "کُمپْرِسُر"}, {"condenser", "کندانسور"},
+    {"evaporator", "اِواپْراتُر"}, {"thermostat", "ترموستات"}, {"defrost", "برفک‌زدایی"}, {"relay", "رله"},
+    {"sensor", "سنسور"}, {"probe", "سنسور"}, {"gasket", "لاستیک در"}, {"controller", "کنترلر"},
+    {"fridge", "یخچال"}, {"freezer", "فریزر"}, {"chiller", "چیلر"}, {"fan", "فن"}, {"email", "ایمیل"} };
+
+// Persian spellings that eSpeak reads with wrong vowels unless they carry diacritics.
+static readonly string[,] FA_LEXICON = {
+    {"کلد\\s*\u200C?\\s*دایرکت", "کُلد دایرِکت"}, {"کمپرسور", "کُمپْرِسُر"}, {"اواپراتور", "اِواپْراتُر"},
+    {"فاستر", "فاسْتِر"}, {"ویلیامز", "ویلیامْز"}, {"اسکاتس\u200C?\\s*من", "اِسکاتْس‌مَن"}, {"تکنسین", "تِکْنِسین"} };
+
+string NumFa(long n)
+{
+    if (n < 0) return "منفی " + NumFa(-n);
+    if (n < 10) return FA_ONES[n];
+    if (n < 20) return FA_TEENS[n - 10];
+    if (n < 100) return FA_TENS[n / 10] + (n % 10 > 0 ? " و " + FA_ONES[n % 10] : "");
+    if (n < 1000) return FA_HUNDREDS[n / 100] + (n % 100 > 0 ? " و " + NumFa(n % 100) : "");
+    if (n < 1000000) return (n / 1000 == 1 ? "" : NumFa(n / 1000) + " ") + "هزار" + (n % 1000 > 0 ? " و " + NumFa(n % 1000) : "");
+    return DigitsFa(n.ToString());
+}
+
+string DigitsFa(string digits)
+{
+    StringBuilder sb = new StringBuilder();
+    foreach (char c in digits) if (c >= '0' && c <= '9') sb.Append(sb.Length > 0 ? " " : "").Append(FA_ONES[c - '0']);
+    return sb.ToString();
+}
+
+string LettersFa(string letters)
+{
+    StringBuilder sb = new StringBuilder();
+    foreach (char c in letters.ToUpperInvariant()) { string w; if (FA_LETTERS.TryGetValue(c, out w)) sb.Append(sb.Length > 0 ? " " : "").Append(w); }
+    return sb.ToString();
+}
+
+string NormalizePersianForSpeech(string text)
+{
+    if (string.IsNullOrEmpty(text)) return "";
+    StringBuilder d = new StringBuilder(text.Length);
+    foreach (char c in text)
+    {
+        if (c >= '\u06F0' && c <= '\u06F9') d.Append((char)('0' + (c - '\u06F0')));
+        else if (c >= '\u0660' && c <= '\u0669') d.Append((char)('0' + (c - '\u0660')));
+        else d.Append(c);
+    }
+    string s = d.ToString();
+    RegexOptions ci = RegexOptions.IgnoreCase;
+    const string NOT_LATIN_BEFORE = "(?<![A-Za-z])", NOT_LATIN_AFTER = "(?![A-Za-z])";
+
+    s = Regex.Replace(s, "https?://\\S+|www\\.\\S+", " ", ci);
+    s = Regex.Replace(s, "[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+", " ایمیل ما ");
+    s = Regex.Replace(s, "(\\+44\\s*\\(?0?\\)?|0)\\s*7983[\\s-]*759[\\s-]*320", " صفر هفت نُه هشت سه، هفت پنج نُه، سه دو صفر ");
+    s = Regex.Replace(s, "(?<!\\d)(\\+?\\d[\\d\\s-]{6,}\\d)(?!\\d)", delegate (Match m)
+    {
+        List<string> groups = new List<string>();
+        foreach (string g in Regex.Split(m.Value.Replace("+44", "0"), "[\\s-]+")) if (g.Length > 0) groups.Add(DigitsFa(g));
+        return " " + string.Join("، ", groups.ToArray()) + " ";
+    });
+    s = Regex.Replace(s, "([-\u2212]?)(\\d+)\\s*°\\s*[CcFf]?", delegate (Match m)
+    {
+        return " " + (m.Groups[1].Value.Length > 0 ? "منفی " : "") + NumFa(long.Parse(m.Groups[2].Value)) + " درجه ";
+    });
+    s = Regex.Replace(s, "(\\d+)\\s*%", delegate (Match m) { return " " + NumFa(long.Parse(m.Groups[1].Value)) + " درصد "; });
+
+    for (int i = 0; i < FA_LATIN.GetLength(0); i++)
+        s = Regex.Replace(s, NOT_LATIN_BEFORE + FA_LATIN[i, 0] + NOT_LATIN_AFTER, " " + FA_LATIN[i, 1] + " ", ci);
+    s = Regex.Replace(s, NOT_LATIN_BEFORE + "R\\s?-?(\\d{2,4})([A-Za-z]?)" + NOT_LATIN_AFTER, delegate (Match m)
+    {
+        return " آر " + DigitsFa(m.Groups[1].Value) + (m.Groups[2].Value.Length > 0 ? " " + LettersFa(m.Groups[2].Value) : "") + " ";
+    });
+    s = Regex.Replace(s, NOT_LATIN_BEFORE + "([A-Za-z]{1,3})\\s?-?(\\d{1,3})(?!\\d)", delegate (Match m)
+    {
+        return " " + LettersFa(m.Groups[1].Value) + " " + NumFa(long.Parse(m.Groups[2].Value)) + " ";
+    });
+    s = Regex.Replace(s, NOT_LATIN_BEFORE + "[A-Z]{2,4}" + NOT_LATIN_AFTER, delegate (Match m) { return " " + LettersFa(m.Value) + " "; });
+    s = Regex.Replace(s, "\\d+", delegate (Match m) { return m.Value.Length <= 6 ? " " + NumFa(long.Parse(m.Value)) + " " : " " + DigitsFa(m.Value) + " "; });
+    s = Regex.Replace(s, "[A-Za-z][A-Za-z'\\-.]*", " ");
+
+    for (int i = 0; i < FA_LEXICON.GetLength(0); i++) s = Regex.Replace(s, FA_LEXICON[i, 0], FA_LEXICON[i, 1]);
+    const string FA_NUM = "(صفر|یک|دو|سه|چهار|پنج|شش|هفت|هشت|نه|نُه)";
+    s = Regex.Replace(s, "(?<=(?<![\u0600-\u06FF])" + FA_NUM + "[\\s،]+)نه(?![\u0600-\u06FF])", "نُه");
+    s = Regex.Replace(s, "(?<![\u0600-\u06FF])نه(?=[\\s،]+" + FA_NUM + "(?![\u0600-\u06FF]))", "نُه");
+    s = Regex.Replace(s, "(?<![\u0600-\u06FF])نه(?=\\s+(درجه|سال|دقیقه|ساعت|ماه|روز))", "نُه");
+
+    s = s.Replace(':', '،').Replace(';', '؛').Replace(',', '،').Replace('?', '؟');
+    s = Regex.Replace(s, "[^\u0600-\u06FF\u200C\\s.!،؛؟]", " ");
+    s = Regex.Replace(s, "\\s+", " ");
+    s = Regex.Replace(s, "\\s+([.!،؛؟])", "$1");
+    s = Regex.Replace(s, "([،؛])(?:\\s*[،؛])+", "$1");
+    s = Regex.Replace(s, "[،؛]\\s*([.!؟])", "$1");
+    s = Regex.Replace(s, "([.!؟])(?=[^\\s])", "$1 ");
+    return s.Trim();
+}
+
 // Piper (open-source, runs on this server, no key, no quota). Every voice here is male; there is
 // deliberately no female engine anywhere in the chain. Files: App_Data/piper/piper.exe + voices/<model>.onnx(.json).
 static readonly System.Threading.SemaphoreSlim piperGate = new System.Threading.SemaphoreSlim(8);
@@ -723,7 +853,7 @@ string PiperModel(string lang)
 {
     switch (lang)
     {
-        case "fa": return "fa_IR-amir-medium";
+        case "fa": return "fa_IR-ganji-medium";
         case "en": return "en_GB-alan-medium";
         case "tr": return "tr_TR-dfki-medium";
         case "ar": return "ar_JO-kareem-medium";
@@ -731,18 +861,16 @@ string PiperModel(string lang)
     }
 }
 
-// Amir is a light baritone; playing his WAV 7% slower lowers him to a deeper engineer's voice, and
-// a shorter length_scale keeps the speaking pace the same.
-double PiperDeepen(string lang) { return lang == "fa" ? 0.93 : 1.0; }
+// Ganji (Persian narrator) reads a touch faster than the others; output is always at the native sample rate.
+string PiperArgs(string lang) { return lang == "fa" ? "--length_scale 0.95 --noise_scale 0.667" : "--length_scale 1.05 --noise_scale 0.667"; }
 
-byte[] PiperRun(string exe, string dir, string onnx, string line, double deepen)
+byte[] PiperRun(string exe, string dir, string onnx, string line, string args)
 {
     if (!piperGate.Wait(30000)) { ttsDiag = "piper-busy"; return null; }
     try
     {
-        string lengthScale = (1.05 * deepen).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-        System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(exe,
-            "-m \"" + onnx + "\" --output_raw --length_scale " + lengthScale + " --sentence_silence 0.25");
+       System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(exe,
+            "-m \"" + onnx + "\" --output_raw " + args + " --sentence_silence 0.25");
         psi.WorkingDirectory = dir;
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
@@ -810,10 +938,10 @@ string[] PiperTts(string lang, string text)
     catch { }
     List<string> groups = SentenceGroups(Regex.Replace(text, "\\s+", " ").Trim(), 120);
     if (groups.Count == 0 || groups.Count > 24) return null;
-    double deepen = PiperDeepen(lang);
+    string args = PiperArgs(lang);
     byte[][] parts = new byte[groups.Count][];
     System.Threading.Tasks.Parallel.For(0, groups.Count, new System.Threading.Tasks.ParallelOptions { MaxDegreeOfParallelism = 6 },
-        delegate (int i) { parts[i] = PiperRun(exe, dir, onnx, groups[i], deepen); });
+        delegate (int i) { parts[i] = PiperRun(exe, dir, onnx, groups[i], args); });
     byte[] gap = new byte[(rate / 4) * 2];
     using (MemoryStream all = new MemoryStream())
     {
@@ -823,7 +951,7 @@ string[] PiperTts(string lang, string text)
             if (i > 0) all.Write(gap, 0, gap.Length);
             all.Write(parts[i], 0, parts[i].Length);
         }
-        return new string[] { "audio/wav", Convert.ToBase64String(PcmToWav(all.ToArray(), (int)Math.Round(rate * deepen))) };
+        return new string[] { "audio/wav", Convert.ToBase64String(PcmToWav(all.ToArray(), rate)) };
     }
 }
 
@@ -846,6 +974,7 @@ string[] Speak(string key, string lang, string text, out string voice)
 {
     voice = "none";
     if (string.IsNullOrEmpty(text)) return null;
+    if (lang == "fa") text = NormalizePersianForSpeech(text);
     string[] r = null;
     try { r = GeminiTts(key, text); } catch { r = null; }
     if (r != null) { voice = "Puck"; return r; }
@@ -920,6 +1049,7 @@ protected void Page_Load(object sender, EventArgs e)
         if (lang.StartsWith("pes") || lang.StartsWith("prs") || lang.StartsWith("per") || lang.StartsWith("far")) lang = "fa";
         if (lang.Length > 2) lang = lang.Substring(0, 2);
         if (lang == "") lang = DetectLang(say)[0];
+        if (lang == "fa") say = NormalizePersianForSpeech(say);
         // Piper only renders the first sentence group; the widget fetches "more" (engine=piper) while it plays.
         bool piperOnly = Str(req, "engine").ToLowerInvariant() == "piper";
         string v = "none";
@@ -948,6 +1078,7 @@ protected void Page_Load(object sender, EventArgs e)
         o["ok"] = spoken != null;
         o["voice"] = spoken != null ? v : "none";
         o["language"] = lang;
+        o["tts_text"] = say;
         if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; o["more"] = more; }
         else { o["error"] = "No voice available for this language right now."; o["detail"] = ttsDiag; }
         o["watermark"] = MARK;

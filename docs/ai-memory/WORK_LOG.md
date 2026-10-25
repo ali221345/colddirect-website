@@ -18,6 +18,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25d] — Persian voice: Ganji (no pitch shift) + phonetic normalizer, homepage `?v=10`
+- Replaced `fa_IR-amir-medium` with **`fa_IR-ganji-medium`** (Iranian male audiobook narrator). **Removed the 7% pitch-down** (no sample-rate rewrite, no formant smear). Piper args for fa: `--length_scale 0.95 --noise_scale 0.667`. WAV is native 22050 Hz. Widget `PACE` is now 1 so playback does not slow/pitch the file.
+- **`NormalizePersianForSpeech`** runs on every Persian string before Puck and before Piper (mode=tts, Speak, ParseModelJson, FallbackJson). `ColdDirect` / `colddirect.co.uk` / `کلد دایرکت` → `کُلد دایرِکت`; `07983 759320` → `صفر هفت نُه هشت سه، هفت پنج نُه، سه دو صفر`; `E1` → `ئی یک`; Foster/Williams/Hoshizaki/Scotsman/Polar/Gram and leftover Latin stripped. Live: `tts_text` has zero Latin, voice=`piper-fa_IR-ganji-medium`, 9.2s WAV, median F0 **95 Hz** (male, not shifted).
+- Gemini + fallback Persian copy: formal Iranian (`سلام و درود، سرمهندس شرکت کُلد دایرِکت در لندن هستم…`), `شما`, full verbs, no slang. `سردخونه` → `سردخانه`.
+- Ganji onnx already in git-ignored `App_Data/piper/voices/` (Plesk 404). `tools/upload_piper_ftp.py` now lists ganji, not amir.
+
 ### [2026-10-25c] — Male-only voice: Piper on the server (Iranian Amir), Google Translate TTS removed, homepage `?v=9`
 - **Owner rule: the voice is ALWAYS male.** The Google `translate_tts` voices were measured as female (F0 225Hz fa-bridge, 208Hz en), so `translate_tts` is **deleted from the vault entirely** (no Urdu/Arabic bridge for Persian, no English fallback). Do not bring it back.
 - **Piper** (open source, rhasspy, MIT) runs on the IIS host: `App_Data/piper/piper.exe` (+ onnxruntime, espeak-ng-data) and `App_Data/piper/voices/` with `fa_IR-amir-medium`, `en_GB-alan-medium`, `tr_TR-dfki-medium`, `ar_JO-kareem-medium` (all measured male: 146 / 98 / 106 / 110 Hz). ~280MB, git-ignored, excluded from deploy, 404 from the web. Install/refresh with `python tools/upload_piper_ftp.py` (download → FTP with a size-skip → live check). The host allows Process.Start (Server 2019, the app pool is 32-bit but piper.exe is 64-bit; it works). CPU is capped per site, so parallel processes don't speed things up.

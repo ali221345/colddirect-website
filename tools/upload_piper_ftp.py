@@ -2,7 +2,7 @@
 
 Downloads the official Piper Windows build and male voices into the git-ignored App_Data/piper/,
 uploads that folder to Plesk /httpdocs/App_Data/piper/ over plain FTP (skipping files that are
-already there with the same size), then checks the live vault speaks Persian with Amir.
+already there with the same size), then checks the live vault speaks Persian with Ganji.
 
 Usage: python tools/upload_piper_ftp.py [--no-upload] [--no-verify]
 """
@@ -14,13 +14,13 @@ DEST = ROOT / "App_Data" / "piper"
 PIPER_ZIP = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip"
 HF = "https://huggingface.co/rhasspy/piper-voices/resolve/main"
 VOICES = [
-    "fa/fa_IR/amir/medium/fa_IR-amir-medium",
+    "fa/fa_IR/ganji/medium/fa_IR-ganji-medium",
     "en/en_GB/alan/medium/en_GB-alan-medium",
     "tr/tr_TR/dfki/medium/tr_TR-dfki-medium",
     "ar/ar_JO/kareem/medium/ar_JO-kareem-medium",
 ]
 VAULT = "https://www.colddirect.co.uk/colddirect-voice-vault.aspx?mode=tts"
-FA_TEXT = "سلام رفیق، اصلاً نگران نباش! سرمهندس کلد دایرکت‌ام و سی ساله تو لندن یخچال صنعتی درست می‌کنم."
+FA_TEXT = "سلام و درود، سرمهندس شرکت ColdDirect در لندن هستم، با سی سال تجربه‌ی تخصصی در تعمیرات تجهیزات برودتی."
 
 
 def fetch(url):
@@ -105,7 +105,7 @@ def verify():
         d = json.loads(r.read().decode("utf-8-sig"))
     audio = base64.b64decode(d.get("audio_base64") or "")
     print(f"live fa: ok={d.get('ok')} voice={d.get('voice')} mime={d.get('audio_mime')} bytes={len(audio)} {d.get('detail', '')}")
-    return d.get("ok") is True and len(audio) > 20000 and d.get("voice") in ("Puck", "piper-fa_IR-amir-medium")
+    return d.get("ok") is True and len(audio) > 20000 and d.get("voice") in ("Puck", "piper-fa_IR-ganji-medium")
 
 
 if __name__ == "__main__":

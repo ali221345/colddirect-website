@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25d] — Ganji Persian male (no pitch shift) + `NormalizePersianForSpeech`, `?v=10`
+- Amir + 7% pitch-down removed. Live: `piper-fa_IR-ganji-medium`, 22050 Hz, F0 95 Hz, `ColdDirect` → `کُلد دایرِکت`, zero Latin in TTS text.
+
 ### [2026-10-25c] — Male-only: Piper on the server (fa Amir / en Alan / tr dfki / ar Kareem), `translate_tts` deleted, `?v=9`
 - The voice is always male; Google `translate_tts` was female and is removed for good. Piper lives in `App_Data/piper/` (`tools/upload_piper_ftp.py`), streamed sentence by sentence (`more` + `engine:"piper"`). The browser fallback is a strict male allowlist.
 

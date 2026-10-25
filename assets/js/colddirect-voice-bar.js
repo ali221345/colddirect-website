@@ -28,7 +28,7 @@
   var MAX_MS = 60000;
   var SILENCE_MS = 3000;
   var NO_SPEECH_MS = 9000;
-  var PACE = 0.95;
+  var PACE = 1;
   var SPEAK_LABEL = "🎤 SPEAK";
   var STOP_LABEL = "⏹ STOP & SEND";
 
