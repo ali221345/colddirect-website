@@ -1,6 +1,6 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
-Owner 2026-10-25aa: `vapi.start('e31c40c7-a45b-4dff-833c-320c54250743')` with no second argument (`?v=20261025x`). Dashboard v6 owns prompt/maxTokens. Never auto-stop on speech-end/timer. Pulse the Like CTA on speech-end. Ignore daily-js noise; do not tear down an active/starting call on a false error.
+Owner 2026-10-25ab: No Vapi WebRTC. Instant MediaRecorder: SPEAK starts in <100ms, second tap is STOP & SEND, mic tracks fully stopped before playback (`?v=20261025y`). Play via `__cdPlayCtx` AudioBufferSourceNode then HTML5 `<audio playsinline>`. Vault diagnose returns `audio_base64`. Pulse Like CTA when the answer finishes. Never auto-stop on silence.
 
 1. Title `Ask Your Fault`. Badge `Lang: Auto`. SPEAK and LISTEN sit together in that compact box.
 2. SPEAK opens a dropdown panel under the box with live transcript (RTL Persian / LTR English).

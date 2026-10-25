@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25ab] — Instant record-stop-reply, mic off while the engineer speaks (`?v=20261025y`)
+- Removed Vapi WebRTC. SPEAK starts MediaRecorder immediately; STOP & SEND kills every mic track then POSTs `/colddirect-voice-vault.aspx` diagnose. Playback is buffered `__cdPlayCtx` / HTML5 audio. No silence auto-stop. Like CTA pulses when audio ends. Title/H1/meta unchanged.
+
 ### [2026-10-25aa] — SPEAK starts with assistant id only; ignore Daily false errors (`?v=20261025x`)
 - `vapi.start('e31c40c7-a45b-4dff-833c-320c54250743')` — no assistantOverrides. speech-end pulses Like CTA. No auto-stop. Error handler logs and does not kill a starting/live call on daily-js noise. Title/H1/meta unchanged.
 

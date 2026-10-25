@@ -17,9 +17,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-`vapi.start('e31c40c7-a45b-4dff-833c-320c54250743')` with no overrides (`?v=20261025x`). Dashboard v6 owns prompt/maxTokens. Never auto-stop. Pulse Like CTA on speech-end. Ignore daily-js false errors.
+No Vapi WebRTC (`?v=20261025y`). SPEAK records instantly; STOP & SEND kills the mic then diagnose+TTS. Play via AudioBufferSourceNode / HTML5 audio so mobile does not chop. Pulse Like CTA when the answer ends.
 
 ---
+
+### [2026-10-25ab] — Instant record-stop-reply (`?v=20261025y`)
+- Mic off before playback. Title/H1/meta unchanged.
 
 ### [2026-10-25aa] — SPEAK starts with assistant id only (`?v=20261025x`)
 - No assistantOverrides. Title/H1/meta unchanged.
