@@ -28,6 +28,7 @@
   var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl;
   var callActive = false;
   var callStarting = false;
+  var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
 
@@ -115,11 +116,13 @@
     }
   }
 
-  function openPanel() {
+  function openPanel(force) {
+    if (userCollapsed && !force) return;
     if (root) root.classList.add("is-open");
   }
 
   function closePanel() {
+    userCollapsed = true;
     if (root) root.classList.remove("is-open");
   }
 
@@ -285,7 +288,8 @@
     if (!vapi || callStarting) return;
     if (callActive) return;
     callStarting = true;
-    openPanel();
+    userCollapsed = false;
+    openPanel(true);
     resetTranscript();
     if (speakBtn) speakBtn.disabled = true;
     if (listenBtn) listenBtn.disabled = true;
@@ -313,7 +317,8 @@
 
   function listenNow() {
     if (callStarting) return;
-    openPanel();
+    userCollapsed = false;
+    openPanel(true);
     if (callActive) {
       setStatus("active", "Listening — the engineer is on the line.");
       return;
