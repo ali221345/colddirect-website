@@ -16,8 +16,8 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25, NEVER regress)
-After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a microphone recording is a P0 bug.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25ah, NEVER regress)
+After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `agent_2901m5th5arfe9amcec9ef2p42q`. Text-only after a tap is a P0 bug. Do not restore MediaRecorder / PHP vault / OpenAI TTS / Vapi.
 1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA display `سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` — TTS speaks `کُلد دایرِکت`).
 2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
 3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` / `کولد دایرکت` → `کُلد دایرِکت` for audio only), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
@@ -25,6 +25,11 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 5. Persian display vs TTS: on-screen keeps `کولد دایرکت` and `07983 759320` / `0203 952 4822` / `0800 112 3427`. Audio input uses `کُلد دایرِکت` and the spoken Persian number-word groups. Never reverse the phonetic brand in FA_LEXICON. Never run `NumFa` on leftover phone digits.
 
 ---
+
+### [2026-10-25ah] — ElevenLabs ConvAI live voice (`?v=20261025ah`)
+- Replaced MediaRecorder/PHP/OpenAI/Vapi with `@elevenlabs/client` `Conversation.startSession` + agent `agent_2901m5th5arfe9amcec9ef2p42q` (WebRTC).
+- SPEAK opens the existing diagnostic modal and starts the live session. Transcript RTL + clickable office/mobile `tel:` links. Green Like CTA kept.
+- FTP JS + homepage immediately. Title/H1/meta unchanged.
 
 ### [2026-10-25ag] — FaridNeural only, no SR gibberish, no duplicate greet (`?v=20261025ag`)
 - Speak() never calls OpenAI TTS. Persian = Azure/Edge `fa-IR-FaridNeural`. English Ryan, Turkish Ahmet, Filipino Angelo, Arabic Hamed.

@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25ah: Production voice is ElevenLabs Conversational AI agent `agent_2901m5th5arfe9amcec9ef2p42q` via `@elevenlabs/client` `Conversation.startSession({ agentId, connectionType: 'webrtc' })`. SPEAK opens the existing diagnostic modal and starts the live session immediately. Live user/agent transcript (RTL for Persian/Arabic; clickable `tel:` for `0203 952 4822` and `07983 759320`). Keep the green Like & 5-Star Review CTA. Do not bring back MediaRecorder, PHP vault, OpenAI TTS, or Vapi. Script `?v=20261025ah`.
+
 Owner 2026-10-25ag: No OpenAI TTS. Persian audio is Azure/Edge `fa-IR-FaridNeural` only. LLM writes 2 technical sentences; wrapper adds one greeting + one close. No live SpeechRecognition in Auto (show Recording…). Diagnose = one Gemini call then neural TTS. Script `?v=20261025ag`.
 
 Owner 2026-10-25af: Universal multilingual JSON `{target_language_code, display_text, spoken_text}` via `gpt-4o-mini` `json_object`. Every language MUST greet as Senior Engineer, answer in 2–3 sentences, then close with `0203 952 4822` / `07983 759320` and the green Like & 5-Star Review request. “Translate to X” wins. Persian TTS is FaridNeural / Edge / Piper only — never OpenAI onyx. Script `?v=20261025af`.

@@ -1,4 +1,5 @@
-/* ColdDirect Voice — Ask Your Fault, instant record-stop-reply (no WebRTC)
+/* ColdDirect Voice — Ask Your Fault via ElevenLabs Conversational AI
+ * Agent: agent_2901m5th5arfe9amcec9ef2p42q
  * Watermark: CD-UK-IP-2026-994821-VOICE-AI
  * Owner: ColdDirect Ltd, colddirect.co.uk
  */
@@ -10,64 +11,26 @@
   var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
   var REVIEW_HREF = "/write-a-review/";
   var SPEAK_LABEL = "🎤 SPEAK";
-  var STOP_LABEL = "⏹ SEND";
-  var ENDPOINTS = [
-    "/colddirect-voice-vault.aspx",
-    "/api/colddirect-voice-vault.aspx",
-    "/api/colddirect-voice-vault.php",
-    "/api/colddirect-voice-vault.js"
+  var END_LABEL = "⏹ END";
+  var AGENT_ID = "agent_2901m5th5arfe9amcec9ef2p42q";
+  var SDK_URLS = [
+    "https://cdn.jsdelivr.net/npm/@elevenlabs/client@0.15.2/+esm",
+    "https://esm.sh/@elevenlabs/client@0.15.2",
+    "https://unpkg.com/@elevenlabs/client@0.15.2/+esm",
+    "https://cdn.jsdelivr.net/npm/@11labs/client@0.15.2/+esm"
   ];
-  var GREET_EN = "Hello. I am the Senior Engineer at Cold Direct. I am glad you chose our company. ";
-  var FA_DISPLAY_OPEN = "درود، من مهندس ارشد در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.";
-  var FA_DISPLAY_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره 0203 952 4822 یا موبایل 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر ۵ ستاره را در پایین همین کادر بزنید.";
-  var FA_AUDIO_OPEN = "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. ";
-  var FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفتصد و نود و هشت، سی و هفت، پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
-  var GREET = {
-    en: GREET_EN,
-    fa: FA_DISPLAY_OPEN + " ",
-    tr: "Merhaba. Cold Direct'te kıdemli mühendisim ve bizi seçtiğiniz için memnunum. ",
-    tl: "Kumusta. Ako ang Senior Engineer sa Cold Direct at natutuwa akong pinili ninyo kami. ",
-    ar: "مرحبا. أنا المهندس الأول في كولد دايركت ويسعدني أنكم اخترتمونا. ",
-    es: "Hola. Soy el ingeniero sénior de Cold Direct y me alegra que nos hayan elegido. "
-  };
-  var CLOSE_D = {
-    en: " For a same-day engineer in London, call 0203 952 4822 or mobile 07983 759320. If this helped, please click the green Like & 5-Star Review button below.",
-    fa: " " + FA_DISPLAY_CLOSE,
-    tr: " Londra'da acil teknisyen için 0203 952 4822 veya cep 07983 759320'yi arayın. Bu öneri işinize yaradıysa aşağıdaki yeşil Beğen ve 5 yıldızlı yorum düğmesine tıklayın.",
-    tl: " Para sa agarang technician sa London, tawagan ang 0203 952 4822 o mobile 07983 759320. Kung nakatulong ito, paki-click ang berdeng Like at 5-Star Review button sa ibaba.",
-    ar: " لإرسال فني فوري في لندن اتصلوا على 0203 952 4822 أو الموبايل 07983 759320. إذا أفادتكم النصيحة، اضغطوا زر الإعجاب الأخضر وتقييم الخمس نجوم في أسفل هذا المربع.",
-    es: " Para un técnico urgente en Londres llame al 0203 952 4822 o al móvil 07983 759320. Si esto le ayudó, pulse el botón verde de Like y reseña de 5 estrellas abajo."
-  };
-  var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
-  var DIAGNOSE_MS = 14000;
-  var TTS_MS = 10000;
-  var MAX_MS = 60000;
 
-  var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
+  var root, speakBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
-  var recording = false;
-  var recStarting = false;
-  var recStream = null;
-  var recorder = null;
-  var recChunks = [];
-  var recTimer = null;
+  var conversation = null;
+  var starting = false;
+  var live = false;
+  var agentSpoke = false;
   var meterTimer = null;
-  var meterCtx = null;
-  var meterSrc = null;
-  var sr = null;
-  var srText = "";
-  var srFinal = "";
-  var askSeq = 0;
-  var lastSpoken = "";
-  var lastTtsText = "";
-  var lastLang = "en";
-  var lastAudio = null;
-  var recBeganAt = 0;
-  var playing = false;
-  var playSource = null;
-  var unlocked = false;
+  var sdkPromise = null;
+  var seq = 0;
 
   function css() {
     return [
@@ -107,7 +70,7 @@
       "#cd-voice-cta{display:flex;margin-top:12px;width:100%;min-height:48px;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:0;border-radius:10px;background:linear-gradient(180deg,#16a34a 0%,#15803d 100%);color:#fff;font:800 13px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;box-shadow:0 0 0 2px rgba(74,222,128,.55),0 8px 18px rgba(22,163,74,.38);}",
       "#cd-voice-cta.is-hot{background:#22c55e;color:#052e16;box-shadow:0 0 0 4px rgba(74,222,128,.75),0 0 28px rgba(34,197,94,.7);animation:cdVoiceCta .9s ease-in-out infinite;}",
       "@keyframes cdVoiceCta{0%,100%{transform:scale(1);}50%{transform:scale(1.045);}}",
-      "#cd-voice-html5{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}",
+      "elevenlabs-convai,.vapi-widget{display:none !important;}",
       "@media (min-width:769px){#cd-voice-root{max-width:min(420px,calc(100vw - 270px));}#cd-voice-mobile-strip{display:none !important;}}",
       "@media (max-width:768px){" +
         ".cd-main-header{height:auto !important;overflow:visible !important;}" +
@@ -136,163 +99,33 @@
         '<div id="cd-voice-controls">' +
           '<span class="cd-voice-langwrap" aria-label="Language">' + LANG_BADGE + "</span>" +
           '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false">' + SPEAK_LABEL + "</button>" +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false">🔊 LISTEN</button>' +
         "</div>" +
       "</div>" +
       '<div id="cd-voice-panel">' +
         '<div id="cd-voice-panel-head">' +
-          '<div id="cd-voice-status" role="status">Tap SPEAK, then STOP &amp; SEND when you finish.</div>' +
+          '<div id="cd-voice-status" role="status">Tap SPEAK to talk to the Head Engineer.</div>' +
           '<button type="button" id="cd-voice-close" aria-label="Close transcript">✕</button>' +
         "</div>" +
         '<div id="cd-voice-meter" hidden><i></i></div>' +
         '<div id="cd-voice-log" aria-live="polite"></div>' +
         '<a id="cd-voice-cta" href="' + REVIEW_HREF + '">👍 Like &amp; Leave a 5-Star Review</a>' +
-        '<audio id="cd-voice-html5" playsinline webkit-playsinline preload="auto"></audio>' +
       "</div>"
     );
   }
 
-  function hasPersian(text) {
-    return /[\u0600-\u06FF]/.test(String(text || ""));
+  function isRtl(text) {
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(String(text || ""));
   }
 
   function applyDir(el, text) {
     if (!el) return;
-    if (hasPersian(text)) {
+    if (isRtl(text)) {
       el.setAttribute("dir", "rtl");
       el.style.textAlign = "right";
     } else {
       el.setAttribute("dir", "ltr");
       el.style.textAlign = "left";
     }
-  }
-
-  function openPanel(force) {
-    if (userCollapsed && !force) return;
-    if (root) root.classList.add("is-open");
-  }
-
-  function closePanel() {
-    userCollapsed = true;
-    if (root) root.classList.remove("is-open");
-  }
-
-  function setStatus(kind, message) {
-    if (arguments.length === 1) {
-      message = kind;
-      kind = "";
-    }
-    if (!statusEl) return;
-    statusEl.textContent = message || "";
-    statusEl.classList.toggle("is-error", kind === "error");
-    if (root) {
-      root.classList.toggle("is-busy", kind === "connecting");
-      root.classList.toggle("is-live", kind === "active" || recording);
-    }
-  }
-
-  function highlightCta(on) {
-    if (!ctaEl) return;
-    openPanel();
-    if (!on) {
-      ctaEl.classList.remove("is-hot");
-      return;
-    }
-    ctaEl.classList.remove("is-hot");
-    void ctaEl.offsetWidth;
-    ctaEl.classList.add("is-hot");
-    try { ctaEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e1) {}
-  }
-
-  function westDigits(s) {
-    return String(s || "").replace(/[\u06F0-\u06F9]/g, function (c) {
-      return String(c.charCodeAt(0) - 0x06F0);
-    }).replace(/[\u0660-\u0669]/g, function (c) {
-      return String(c.charCodeAt(0) - 0x0660);
-    });
-  }
-
-  function twoSentences(text) {
-    var s = String(text || "").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-    if (!s) return "";
-    var parts = s.split(/(?<=[.!?؟])\s+/);
-    if (parts.length <= 2) return s;
-    return (parts[0] + " " + parts[1]).replace(/^\s+|\s+$/g, "");
-  }
-
-  function stripPersianFrame(text) {
-    var s = westDigits(text);
-    s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
-    s = s.replace(/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u, "");
-    s = s.replace(/درود،?\s*من مهندس ارشد[^.!?؟]*[.!?؟]\s*/gu, "");
-    s = s.replace(/من مهندس ارشد[^.!?؟]*[.!?؟]\s*/gu, "");
-    s = s.replace(/خوشحالم که (ما را |شرکت ما را )?انتخاب کردید[.!?؟]?\s*/gu, "");
-    s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
-    s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
-    s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
-    s = s.replace(/\s*چِنانچه مُشکِل[\s\S]*$/u, "");
-    s = s.replace(/\s*اگر این راهنمایی[\s\S]*$/u, "");
-    s = s.replace(/\s*اَگَر این راهْنَمایی[\s\S]*$/u, "");
-    s = s.replace(/\s*برای هماهنگی[\s\S]{0,80}تماس بگیرید\.?/gu, " ");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, " ");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, " ");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/g, " ");
-    s = s.replace(/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/g, " ");
-    return twoSentences(s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, ""));
-  }
-
-  function cleanTechnicalAnswerForTTS(text) {
-    var s = stripPersianFrame(text);
-    s = s.replace(/سردخانه/g, "سَردخانه");
-    s = s.replace(/یخچال/g, "یَخچالِ");
-    s = s.replace(/کمپرسور/g, "کُمپرِسور");
-    s = s.replace(/ترموستات/g, "تِرموستات");
-    s = s.replace(/کندانسور/g, "کُندانسور");
-    s = s.replace(/اواپراتور/g, "اِواپُراتور");
-    s = s.replace(/کولد\s*دایرکت|ColdDirect|Cold Direct/gi, "کُلد دایرِکت");
-    return s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-  }
-
-  function wrapPersianDisplay(text) {
-    var tech = stripPersianFrame(text);
-    return FA_DISPLAY_OPEN + "\n" + tech + "\n" + FA_DISPLAY_CLOSE;
-  }
-
-  function persianAudioText(text) {
-    return FA_AUDIO_OPEN + cleanTechnicalAnswerForTTS(text) + " " + FA_AUDIO_CLOSE;
-  }
-
-  function ttsPayload(text, lang) {
-    if (lang === "fa" || hasPersian(text)) return persianAudioText(text);
-    return String(text || "");
-  }
-
-  function canonLang(code) {
-    var c = String(code || "").toLowerCase().replace("_", "-");
-    if (c.indexOf("fil") === 0 || c === "tagalog" || c.indexOf("tl") === 0) return "tl";
-    if (c.indexOf("fa") === 0 || c.indexOf("per") === 0 || c.indexOf("far") === 0) return "fa";
-    if (c.length > 2 && c.charAt(2) === "-") return c.slice(0, 2);
-    return c.slice(0, 2);
-  }
-
-  function detectRequestedLang(text) {
-    var t = String(text || "");
-    if (/t[uü]rk|turkish|به\s*ترکی|ترکی\s*بگو|sa\s+turkish|sa\s+turko/i.test(t)) return "tr";
-    if (/persian|farsi|فارسی|به\s*فارسی/i.test(t)) return "fa";
-    if (/tagalog|filipino|pilipino|تاگالوگ/i.test(t)) return "tl";
-    if (/arabic|عربي|عربی|به\s*عربی/i.test(t)) return "ar";
-    if (/spanish|espa[nñ]ol|castellano|اسپانیایی/i.test(t)) return "es";
-    if (/\benglish\b|انگلیسی|به\s*انگلیسی/i.test(t)) return "en";
-    if (/french|fran[cç]ais|فرانسه/i.test(t)) return "fr";
-    return "";
-  }
-
-  function hasPhones(s) {
-    return /759320|952\s*4822|0203|07983|seven nine eight|s[iı]f[iı]r yedi|صفر هفت|cero siete|zero seven nine/i.test(s || "");
-  }
-
-  function hasLike(s) {
-    return /like|review|5-star|five.star|لایک|ستاره|be[gğ]eni|y[iı]ld[iı]z|bituin|estrellas|نجمة|إعجاب|bintang/i.test(s || "");
   }
 
   function telHref(display) {
@@ -362,491 +195,67 @@
     if (logEl) logEl.scrollTop = logEl.scrollHeight;
   }
 
-  function withGreet(text, lang) {
-    var fa = lang === "fa" || hasPersian(text);
-    if (fa) return wrapPersianDisplay(text);
-    var g = GREET[lang] || GREET.en;
-    var t = String(text || "").replace(/^\s+/, "");
-    t = t.replace(/^Hello\.\s*I am the (?:Head|Senior) Engineer[^.]*\.\s*/i, "");
-    t = t.replace(/^Merhaba\.[^.]*\.\s*/i, "");
-    t = t.replace(/^Kumusta\.[^.]*\.\s*/i, "");
-    t = t.replace(/^Hola\.[^.]*\.\s*/i, "");
-    t = t.replace(/^مرحبا[^.]*[.。]\s*/, "");
-    if (!t) return g.replace(/\s+$/, "");
-    return g + t;
+  function openPanel(force) {
+    if (userCollapsed && !force) return;
+    if (root) root.classList.add("is-open");
   }
 
-  function ensureClosing(text, lang) {
-    if (lang === "fa" || hasPersian(text)) return wrapPersianDisplay(text);
-    var t = String(text || "");
-    if (hasPhones(t) && hasLike(t)) return t;
-    return (t ? t.replace(/\s+$/, "") : "") + (CLOSE_D[lang] || CLOSE_D.en);
-  }
-
-  function playCtx() {
-    var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return null;
-    if (!window.__cdPlayCtx) window.__cdPlayCtx = new AC();
-    if (window.__cdPlayCtx.state === "suspended") {
-      try { window.__cdPlayCtx.resume(); } catch (e1) {}
-    }
-    return window.__cdPlayCtx;
-  }
-
-  function player() {
-    if (!window.__cdVoicePlayer) {
-      var a = document.getElementById("cd-voice-html5") || new Audio();
-      a.setAttribute("playsinline", "true");
-      a.setAttribute("webkit-playsinline", "true");
-      a.preload = "auto";
-      window.__cdVoicePlayer = a;
-    }
-    return window.__cdVoicePlayer;
-  }
-
-  function unlockAudio() {
-    try {
-      var ctx = playCtx();
-      if (ctx && !unlocked) {
-        var buf = ctx.createBuffer(1, 1, 22050);
-        var src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.connect(ctx.destination);
-        src.start(0);
-        unlocked = true;
-      }
-    } catch (e1) {}
-    try {
-      var a = player();
-      if (a && !playing) {
-        a.src = SILENT_WAV;
-        var p = a.play();
-        if (p && p.catch) p.catch(function () {});
-      }
-    } catch (e2) {}
-  }
-
-  function b64ToBytes(b64) {
-    var bin = atob(b64);
-    var out = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-    return out;
-  }
-
-  function stopPlayback() {
-    playing = false;
-    if (listenBtn) {
-      listenBtn.classList.remove("is-on");
-      listenBtn.setAttribute("aria-pressed", "false");
-    }
-    try { if (playSource) { playSource.onended = null; playSource.stop(); } } catch (e1) {}
-    playSource = null;
-    var el = window.__cdVoicePlayer;
-    if (el) {
-      el.onended = null;
-      try { el.pause(); el.currentTime = 0; } catch (e2) {}
-    }
-  }
-
-  function playBytes(bytes, mime, onDone) {
-    stopPlayback();
-    var ctx = playCtx();
-    playing = true;
-    window.__cdAudioPlayed = true;
-    if (listenBtn) {
-      listenBtn.classList.add("is-on");
-      listenBtn.setAttribute("aria-pressed", "true");
-    }
-    setStatus("active", "🔊 Speaking Answer...");
-    var type = mime || "audio/wav";
-    var copy = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-    var blob = new Blob([bytes], { type: type });
-    var url = URL.createObjectURL(blob);
-
-    function done() {
-      playing = false;
-      if (listenBtn) {
-        listenBtn.classList.remove("is-on");
-        listenBtn.setAttribute("aria-pressed", "false");
-      }
-      URL.revokeObjectURL(url);
-      highlightCta(true);
-      if (lastLang !== "fa") setStatus("active", "If this helped, please leave a like and a 5-star review.");
-      else setStatus("active", "");
-      if (onDone) onDone();
-    }
-
-    function viaElement() {
-      var el = player();
-      el.onended = done;
-      el.src = url;
-      el.playbackRate = 1;
-      var p = el.play();
-      if (p && p.catch) p.catch(function () { done(); });
-    }
-
-    if (ctx && ctx.decodeAudioData) {
-      try {
-        var pdec = ctx.decodeAudioData(copy);
-        if (pdec && pdec.then) {
-          pdec.then(function (buf) {
-            var src = ctx.createBufferSource();
-            src.buffer = buf;
-            src.connect(ctx.destination);
-            playSource = src;
-            src.onended = done;
-            src.start(0);
-          }).catch(viaElement);
-          return;
-        }
-        ctx.decodeAudioData(copy, function (buf) {
-          var src = ctx.createBufferSource();
-          src.buffer = buf;
-          src.connect(ctx.destination);
-          playSource = src;
-          src.onended = done;
-          src.start(0);
-        }, viaElement);
-        return;
-      } catch (e3) { viaElement(); return; }
-    }
-    viaElement();
-  }
-
-  function playVaultAudio(data) {
-    var b64 = data && (data.audio_base64 || (data.audio && (data.audio.data || data.audio.audio_base64)));
-    var mime = (data && (data.audio_mime || (data.audio && data.audio.mime))) || "audio/wav";
-    if (!b64) return false;
-    lastAudio = { data: b64, mime: mime };
-    playBytes(b64ToBytes(b64), mime);
-    return true;
-  }
-
-  function postVault(payload, timeoutMs) {
-    var i = 0;
-    var ms = timeoutMs == null ? DIAGNOSE_MS : timeoutMs;
-    function tryNext(err) {
-      if (i >= ENDPOINTS.length) return Promise.reject(err || new Error("Voice vault unavailable"));
-      var url = ENDPOINTS[i++];
-      var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-      var timer = ms && ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e0) {} }, ms) : null;
-      return fetch(url, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-CD-IP": MARK, "Accept": "application/json" },
-        body: JSON.stringify(payload),
-        signal: ctrl ? ctrl.signal : undefined
-      }).then(function (res) {
-        if (res.status === 404 || res.status === 405) return tryNext(new Error("skip"));
-        return res.text().then(function (txt) {
-          var json = {};
-          try { json = txt ? JSON.parse(txt) : {}; } catch (e4) { json = { error: txt }; }
-          if (!res.ok) throw new Error(json.error || json.message || ("HTTP " + res.status));
-          return json;
-        });
-      }).catch(function (e) {
-        if (e && e.name === "AbortError") throw e;
-        if (i < ENDPOINTS.length) return tryNext(e);
-        throw e;
-      }).finally(function () {
-        if (timer) clearTimeout(timer);
-      });
-    }
-    return tryNext();
-  }
-
-  function pickMime() {
-    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
-    var types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"];
-    for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported(types[i])) return types[i];
-    return "";
+  function closePanel() {
+    userCollapsed = true;
+    if (root) root.classList.remove("is-open");
   }
 
   function setSpeakUi(on) {
     if (!speakBtn) return;
-    speakBtn.classList.toggle("is-on", on);
+    speakBtn.classList.toggle("is-on", !!on);
     speakBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    speakBtn.textContent = on ? STOP_LABEL : SPEAK_LABEL;
-    if (root) root.classList.toggle("is-live", on);
+    speakBtn.textContent = on ? END_LABEL : SPEAK_LABEL;
   }
 
-  function killMic() {
-    if (recStream) {
-      recStream.getTracks().forEach(function (t) { try { t.stop(); } catch (e1) {} });
-      recStream = null;
+  function setStatus(kind, message) {
+    if (arguments.length === 1) {
+      message = kind;
+      kind = "";
+    }
+    if (!statusEl) return;
+    statusEl.textContent = message || "";
+    statusEl.classList.toggle("is-error", kind === "error");
+    if (root) {
+      root.classList.toggle("is-busy", kind === "connecting" || starting);
+      root.classList.toggle("is-live", kind === "active" || live);
     }
   }
 
-  function stopMeter() {
-    if (meterTimer) { clearInterval(meterTimer); meterTimer = null; }
-    try { if (meterSrc) meterSrc.disconnect(); } catch (e1) {}
-    meterSrc = null;
-    if (meterCtx) {
-      try { meterCtx.close(); } catch (e2) {}
-      meterCtx = null;
+  function highlightCta(on) {
+    if (!ctaEl) return;
+    openPanel();
+    if (!on) {
+      ctaEl.classList.remove("is-hot");
+      return;
     }
-    if (meterEl) {
-      meterEl.hidden = true;
-      var bar = meterEl.querySelector("i");
-      if (bar) bar.style.width = "0";
-    }
+    ctaEl.classList.remove("is-hot");
+    void ctaEl.offsetWidth;
+    ctaEl.classList.add("is-hot");
+    try { ctaEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e1) {}
   }
 
-  function stopSr() {
-    if (sr) {
-      try { sr.onresult = null; sr.onend = null; sr.onerror = null; sr.stop(); } catch (e1) {}
-      sr = null;
-    }
-  }
-
-  function startMeter(stream) {
-    var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC || !meterEl) return;
+  function unlockAudio() {
     try {
-      if (meterCtx) { try { meterCtx.close(); } catch (e0) {} meterCtx = null; }
-      meterCtx = new AC();
-      meterSrc = meterCtx.createMediaStreamSource(stream);
-      var an = meterCtx.createAnalyser();
-      an.fftSize = 1024;
-      meterSrc.connect(an);
-      var buf = new Uint8Array(an.fftSize);
-      var bar = meterEl.querySelector("i");
-      meterEl.hidden = false;
-      meterTimer = setInterval(function () {
-        if (!recording) return;
-        an.getByteTimeDomainData(buf);
-        var sum = 0;
-        for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; }
-        var rms = Math.sqrt(sum / buf.length);
-        if (bar) bar.style.width = Math.min(100, Math.round(rms * 280)) + "%";
-      }, 80);
-    } catch (e1) { stopMeter(); }
-  }
-
-  function startSpeechRec() {
-    return false;
-  }
-
-  function startRec() {
-    if (recording || recStarting) return;
-    userCollapsed = false;
-    openPanel(true);
-    unlockAudio();
-    stopPlayback();
-    stopSr();
-    recording = true;
-    recStarting = true;
-    recBeganAt = Date.now();
-    recChunks = [];
-    liveUser = null;
-    setSpeakUi(true);
-    setStatus("active", "🎙️ در حال ضبط صدا... / Recording your voice...");
-    upsertLive("user", "🎙️ در حال ضبط صدا... / Recording your voice...", false);
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
-      recStarting = false;
-      recording = false;
-      setSpeakUi(false);
-      setStatus("error", "Voice recording isn't supported on this browser.");
-      return;
-    }
-    navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-    }).then(function (stream) {
-      recStarting = false;
-      if (!recording) {
-        stream.getTracks().forEach(function (t) { t.stop(); });
-        return;
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) {
+        if (!window.__cdPlayCtx) window.__cdPlayCtx = new AC();
+        if (window.__cdPlayCtx.state === "suspended") window.__cdPlayCtx.resume();
       }
-      recStream = stream;
-      var mime = pickMime();
-      try {
-        recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-      } catch (e1) {
-        recorder = new MediaRecorder(stream);
-      }
-      recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) recChunks.push(ev.data); };
-      recorder.start(200);
-      startMeter(stream);
-      recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
-      setStatus("active", "🎙️ در حال ضبط صدا... / Recording your voice...");
-    }).catch(function () {
-      recStarting = false;
-      recording = false;
-      setSpeakUi(false);
-      setStatus("error", "Microphone blocked — allow the mic and tap SPEAK again.");
-    });
-  }
-
-  function blobToB64(blob) {
-    return new Promise(function (resolve) {
-      var r = new FileReader();
-      r.onload = function () {
-        var s = String(r.result || "");
-        var i = s.indexOf(",");
-        resolve(i >= 0 ? s.slice(i + 1) : "");
-      };
-      r.onerror = function () { resolve(""); };
-      r.readAsDataURL(blob);
-    });
-  }
-
-  function endCapture(onStopped) {
-    recording = false;
-    recStarting = false;
-    setSpeakUi(false);
-    if (recTimer) { clearTimeout(recTimer); recTimer = null; }
-    stopSr();
-    stopMeter();
-    var rec = recorder;
-    recorder = null;
-    function finish(stoppedRec) {
-      killMic();
-      if (onStopped) onStopped(stoppedRec);
-    }
-    if (!rec) {
-      finish(null);
-      return;
-    }
-    var done = false;
-    rec.onstop = function () {
-      if (done) return;
-      done = true;
-      finish(rec);
-    };
-    try {
-      if (rec.state !== "inactive") rec.stop();
-      else rec.onstop();
-    } catch (e1) { rec.onstop(); }
-  }
-
-  function cancelRec() {
-    endCapture(function () { recChunks = []; });
-    setStatus("", "Tap SPEAK, then STOP & SEND when you finish.");
-  }
-
-  function finishRec() {
-    if (!recording && !recStarting) return;
-    setStatus("connecting", "Diagnosing fault...");
-    srText = "";
-    srFinal = "";
-    endCapture(function (rec) {
-      var type = String((rec && rec.mimeType) || pickMime() || "audio/webm");
-      var blob = new Blob(recChunks, { type: type });
-      recChunks = [];
-      function go(audio) {
-        if (audio) ask("", audio);
-        else setStatus("error", "That was too short — tap SPEAK and try again.");
-      }
-      if (blob.size >= 800) {
-        blobToB64(blob).then(function (b64) {
-          go(b64 ? { data: b64, mime: type } : null);
-        });
-      } else {
-        go(null);
-      }
-    });
-  }
-
-  function ask(text, audio) {
-    var q = (text || "").replace(/\s+/g, " ").trim();
-    if (!q && !(audio && audio.data)) {
-      setStatus("error", "Tap SPEAK and record your question.");
-      return;
-    }
-    var seq = ++askSeq;
-    unlockAudio();
-    openPanel(true);
-    stopPlayback();
-    if (q) upsertLive("user", q, true);
-    setStatus("connecting", "Diagnosing fault...");
-    var langHint = detectRequestedLang(q);
-    var payload = {
-      mode: "diagnose",
-      text: q,
-      language: langHint,
-      langHint: langHint,
-      page: location.pathname,
-      watermark: MARK
-    };
-    if (audio && audio.data) {
-      payload.audio = audio.data;
-      payload.mime = audio.mime || "audio/webm";
-    }
-    postVault(payload, DIAGNOSE_MS).then(function (data) {
-      if (seq !== askSeq) return;
-      var rawSpoken = data.display_text || data.spoken || data.summary || "";
-      var lang = canonLang(data.language || data.target_language_code || langHint) || (hasPersian(rawSpoken) ? "fa" : "en");
-      if (hasPersian(rawSpoken) && lang !== "ar") lang = "fa";
-      if (langHint) lang = langHint;
-      lastLang = lang;
-      if (data.transcript) upsertLive("user", data.transcript, true);
-      var fa = lang === "fa" || hasPersian(rawSpoken);
-      var spokenOut = fa ? wrapPersianDisplay(rawSpoken) : ensureClosing(withGreet(rawSpoken, lang), lang);
-      var ttsOut = fa ? persianAudioText(rawSpoken) : spokenOut;
-      lastSpoken = spokenOut;
-      lastTtsText = ttsOut;
-      upsertLive("bot", spokenOut, true);
-      if (playVaultAudio(data)) return;
-      return postVault({ mode: "tts", text: ttsOut, language: lang, watermark: MARK }, TTS_MS).then(function (v) {
-        if (seq !== askSeq) return;
-        if (!playVaultAudio(v)) {
-          highlightCta(true);
-          setStatus("active", "Answer is written below. Tap LISTEN if audio is blocked.");
-        }
-      });
-    }).catch(function (err) {
-      if (seq !== askSeq) return;
-      try { console.error("ColdDirect diagnose error", err); } catch (e1) {}
-      setStatus("error", "The diagnosis could not start. Please tap SPEAK again.");
-    });
-  }
-
-  function onSpeakPointer(ev) {
-    if (ev && ev.pointerType === "mouse" && ev.button !== 0) return;
-    if (recording || recStarting) return;
-    unlockAudio();
-    startRec();
-  }
-
-  function onSpeakClick(ev) {
-    if (ev) ev.preventDefault();
-    if ((recording || recStarting) && Date.now() - recBeganAt > 400) finishRec();
-  }
-
-  function listenNow() {
-    userCollapsed = false;
-    openPanel(true);
-    unlockAudio();
-    if (lastAudio && lastAudio.data) {
-      playBytes(b64ToBytes(lastAudio.data), lastAudio.mime || "audio/wav");
-      return;
-    }
-    if (lastSpoken) {
-      setStatus("connecting", "Preparing the Head Engineer's voice…");
-      postVault({ mode: "tts", text: lastTtsText || ttsPayload(lastSpoken, lastLang), language: lastLang, watermark: MARK }, TTS_MS).then(function (v) {
-        if (!playVaultAudio(v)) setStatus("active", lastSpoken);
-      }).catch(function () {
-        setStatus("active", lastSpoken);
-      });
-      return;
-    }
-    setStatus("", "Tap SPEAK, then STOP & SEND when you finish.");
+    } catch (e1) {}
   }
 
   function isMobileVoice() {
-    try { return window.matchMedia("(max-width: 768px)").matches; } catch (e1) { return false; }
+    return window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
   }
 
   function restoreAudioDock() {
-    var dock = document.getElementById("cd-audio-dock");
-    if (!dock) return;
-    dock.removeAttribute("hidden");
-    dock.removeAttribute("aria-hidden");
-    dock.style.removeProperty("display");
-    dock.style.removeProperty("position");
-    dock.style.removeProperty("top");
-    dock.style.removeProperty("right");
-    if (!document.getElementById("cd-audio-dock-restore")) {
+    if (document.getElementById("cd-audio-dock-restore")) return;
+    try {
       var style = document.createElement("style");
       style.id = "cd-audio-dock-restore";
       style.textContent = [
@@ -855,7 +264,7 @@
         "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 40%;min-width:0;margin:0 !important;z-index:1 !important;overflow:hidden !important;box-sizing:border-box;}}"
       ].join("");
       (document.body || document.documentElement).appendChild(style);
-    }
+    } catch (e1) {}
   }
 
   function placeRoot(node) {
@@ -887,35 +296,197 @@
     restoreAudioDock();
   }
 
-  function warmEngine() {
-    try { playCtx(); } catch (e1) {}
-    try {
-      var a = player();
-      a.src = SILENT_WAV;
-      if (a.load) a.load();
-    } catch (e2) {}
-    if (navigator.permissions && navigator.permissions.query) {
-      try {
-        navigator.permissions.query({ name: "microphone" }).then(function (p) {
-          if (p && p.state === "granted" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
-              s.getTracks().forEach(function (t) { try { t.stop(); } catch (e3) {} });
-            }).catch(function () {});
-          }
-        }).catch(function () {});
-      } catch (e4) {}
+  function loadSdk() {
+    if (sdkPromise) return sdkPromise;
+    sdkPromise = (function next(i) {
+      if (i >= SDK_URLS.length) return Promise.reject(new Error("ElevenLabs SDK failed to load"));
+      return import(SDK_URLS[i]).then(function (mod) {
+        var C = (mod && (mod.Conversation || (mod.default && mod.default.Conversation) || mod.default)) || null;
+        if (C && typeof C.startSession === "function") return C;
+        return next(i + 1);
+      }).catch(function () { return next(i + 1); });
+    })(0);
+    return sdkPromise;
+  }
+
+  function messageText(payload) {
+    if (payload == null) return "";
+    if (typeof payload === "string") return payload;
+    return String(payload.message || payload.text || payload.transcript || payload.content || "");
+  }
+
+  function messageRole(payload) {
+    var src = "";
+    if (payload && typeof payload === "object") src = String(payload.source || payload.role || payload.type || payload.sender || "");
+    if (/user|human/i.test(src)) return "user";
+    return "bot";
+  }
+
+  function messageFinal(payload) {
+    if (!payload || typeof payload !== "object") return true;
+    if (payload.is_final === false || payload.isFinal === false) return false;
+    if (payload.tentative === true || payload.interim === true) return false;
+    return true;
+  }
+
+  function onAgentMessage(payload) {
+    var text = messageText(payload).replace(/\s+/g, " ").trim();
+    if (!text) return;
+    upsertLive(messageRole(payload), text, messageFinal(payload));
+  }
+
+  function stopMeter() {
+    if (meterTimer) { clearInterval(meterTimer); meterTimer = null; }
+    if (meterEl) {
+      meterEl.hidden = true;
+      var bar = meterEl.querySelector("i");
+      if (bar) bar.style.width = "0";
     }
+  }
+
+  function startMeter() {
+    if (!meterEl || !conversation) return;
+    meterEl.hidden = false;
+    var bar = meterEl.querySelector("i");
+    meterTimer = setInterval(function () {
+      if (!live || !conversation) return;
+      var p = null;
+      try {
+        if (typeof conversation.getInputVolume === "function") p = conversation.getInputVolume();
+      } catch (e1) { return; }
+      Promise.resolve(p).then(function (vol) {
+        var n = typeof vol === "number" ? vol : (vol && vol.volume);
+        if (typeof n !== "number") return;
+        if (bar) bar.style.width = Math.min(100, Math.round(n * 100)) + "%";
+      }).catch(function () {});
+    }, 120);
+  }
+
+  function hangup() {
+    var conv = conversation;
+    conversation = null;
+    live = false;
+    starting = false;
+    stopMeter();
+    setSpeakUi(false);
+    if (root) root.classList.remove("is-live", "is-busy");
+    setStatus("", "Tap SPEAK to talk to the Head Engineer.");
+    if (conv && typeof conv.endSession === "function") {
+      try { conv.endSession(); } catch (e1) {}
+    }
+  }
+
+  function sessionOptions(my, connectionType) {
+    return {
+      agentId: AGENT_ID,
+      connectionType: connectionType,
+      onConnect: function () {
+        if (my !== seq) return;
+        live = true;
+        starting = false;
+        setSpeakUi(true);
+        setStatus("active", "Speak now — the Head Engineer is listening.");
+        startMeter();
+      },
+      onDisconnect: function () {
+        if (my !== seq) return;
+        hangup();
+      },
+      onError: function (err) {
+        try { console.error("ColdDirect ElevenLabs error", err); } catch (e1) {}
+        if (my !== seq) return;
+        hangup();
+        setStatus("error", "The voice session could not start. Allow the microphone and tap SPEAK again.");
+      },
+      onMessage: function (payload) {
+        if (my !== seq) return;
+        onAgentMessage(payload);
+      },
+      onAgentResponseCorrection: function (info) {
+        if (my !== seq) return;
+        var text = info && (info.corrected_agent_response || info.corrected);
+        if (text) upsertLive("bot", String(text), true);
+      },
+      onModeChange: function (info) {
+        if (my !== seq) return;
+        var mode = "";
+        if (typeof info === "string") mode = info;
+        else if (info && typeof info === "object") mode = String(info.mode || info.status || "");
+        mode = mode.toLowerCase();
+        if (mode === "speaking") {
+          agentSpoke = true;
+          setStatus("active", "🔊 Head Engineer speaking...");
+        } else if (mode === "listening") {
+          setStatus("active", "Speak now — the Head Engineer is listening.");
+          if (agentSpoke) highlightCta(true);
+        }
+      }
+    };
+  }
+
+  function beginSession(Conversation, my) {
+    return Conversation.startSession(sessionOptions(my, "webrtc")).catch(function (err) {
+      var msg = String((err && err.message) || err || "");
+      if (!/401|authentication|signed url|conversation token|webrtc/i.test(msg)) throw err;
+      return Conversation.startSession(sessionOptions(my, "websocket"));
+    }).then(function (conv) {
+      if (my !== seq) {
+        if (conv && conv.endSession) try { conv.endSession(); } catch (e2) {}
+        return;
+      }
+      conversation = conv || conversation;
+    });
+  }
+
+  function startLive() {
+    if (live || starting) return;
+    var my = ++seq;
+    userCollapsed = false;
+    starting = true;
+    agentSpoke = false;
+    liveUser = null;
+    liveBot = null;
+    unlockAudio();
+    openPanel(true);
+    setSpeakUi(true);
+    setStatus("connecting", "Connecting to the Head Engineer...");
+    loadSdk().then(function (Conversation) {
+      if (my !== seq) return;
+      return beginSession(Conversation, my);
+    }).catch(function (err) {
+      try { console.error("ColdDirect ElevenLabs start", err); } catch (e4) {}
+      if (my !== seq) return;
+      hangup();
+      setStatus("error", "The voice session could not start. Allow the microphone and tap SPEAK again.");
+    });
+  }
+
+  function onSpeakPointer(ev) {
+    if (ev && ev.pointerType === "mouse" && ev.button !== 0) return;
+    unlockAudio();
+    loadSdk();
+  }
+
+  function onSpeakClick(ev) {
+    if (ev) ev.preventDefault();
+    if (live || starting) {
+      seq += 1;
+      hangup();
+      return;
+    }
+    startLive();
   }
 
   function bindUi() {
     speakBtn.addEventListener("pointerdown", onSpeakPointer);
     speakBtn.addEventListener("click", onSpeakClick);
-    listenBtn.addEventListener("click", listenNow);
     if (closeBtn) closeBtn.addEventListener("click", function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      if (recording || recStarting) cancelRec();
-      stopPlayback();
+      if (live || starting) {
+        seq += 1;
+        hangup();
+      }
       closePanel();
     });
     document.addEventListener("pointerdown", function () { unlockAudio(); }, { capture: true, once: true });
@@ -923,16 +494,18 @@
 
   function mount() {
     restoreAudioDock();
-    if (document.getElementById("cd-voice-root")) {
+    if (document.getElementById("cd-voice-root") && document.getElementById("cd-voice-speak")) {
       root = document.getElementById("cd-voice-root");
       syncVoicePlacement();
       return;
     }
     document.documentElement.classList.remove("cd-voice-on");
-    var float = document.querySelector(".vapi-widget");
+    var float = document.querySelector(".vapi-widget, elevenlabs-convai");
     if (float && float.parentNode) float.parentNode.removeChild(float);
     var oldCss = document.getElementById("cd-voice-bar-css");
     if (oldCss && oldCss.parentNode) oldCss.parentNode.removeChild(oldCss);
+    var oldRoot = document.getElementById("cd-voice-root");
+    if (oldRoot && oldRoot.parentNode) oldRoot.parentNode.removeChild(oldRoot);
 
     var style = document.createElement("style");
     style.id = "cd-voice-bar-css";
@@ -953,16 +526,14 @@
     else if (mq.addListener) mq.addListener(syncVoicePlacement);
 
     speakBtn = document.getElementById("cd-voice-speak");
-    listenBtn = document.getElementById("cd-voice-listen");
     closeBtn = document.getElementById("cd-voice-close");
     statusEl = document.getElementById("cd-voice-status");
     logEl = document.getElementById("cd-voice-log");
     ctaEl = document.getElementById("cd-voice-cta");
     meterEl = document.getElementById("cd-voice-meter");
-    if (document.getElementById("cd-voice-html5")) window.__cdVoicePlayer = document.getElementById("cd-voice-html5");
     bindUi();
-    warmEngine();
-    setStatus("", "Tap SPEAK, then STOP & SEND when you finish.");
+    loadSdk();
+    setStatus("", "Tap SPEAK to talk to the Head Engineer.");
   }
 
   function boot() { mount(); }

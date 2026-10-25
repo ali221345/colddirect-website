@@ -16,10 +16,13 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the mic then diagnose+TTS. Play via AudioBufferSourceNode / HTML5 audio so mobile does not chop. Pulse Like CTA when the answer ends. Persian on-screen: `کولد دایرکت` + digit phones. Persian audio: `کُلد دایرِکت` + number-word groups.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25ah — ElevenLabs ConvAI)
+Live voice is ElevenLabs agent `agent_2901m5th5arfe9amcec9ef2p42q` (`?v=20261025ah`). SPEAK opens the modal and starts the WebRTC session. Keep Like CTA, RTL transcript, clickable phones. Do not restore MediaRecorder/PHP/OpenAI/Vapi.
 
 ---
+
+### [2026-10-25ah] — ElevenLabs ConvAI live voice (`?v=20261025ah`)
+- `@elevenlabs/client` + agent `agent_2901m5th5arfe9amcec9ef2p42q`. SPEAK starts live session in the existing modal. Title/H1/meta unchanged.
 
 ### [2026-10-25ag] — FaridNeural only, no SR junk, one greeting (`?v=20261025ag`)
 - No OpenAI TTS. Persian Azure/Edge FaridNeural. Two-sentence LLM + wrapper greet/close. Recording placeholder. Title/H1/meta unchanged.
