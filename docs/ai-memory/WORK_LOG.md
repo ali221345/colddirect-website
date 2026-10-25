@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25g] — GSC daily report (Search Console unavailable)
+- Cursor automation still has no Search Console MCP or `GSC_CREDENTIALS_JSON`. Did not invent 28-day totals, tables, or movers. Requested windows: 27 Sep–24 Oct vs 30 Aug–26 Sep.
+- Property `https://www.colddirect.co.uk/` last reached for sitemap/inspect by nightly auto-seo dispatch `40131534540` (24 Oct 20:55 UTC): 122 submitted / 0 indexed; homepage and money pages PASS. Weekly Sync performance report still last 20 Oct (`39512458941`, 7-day only, not copied).
+- Wrote `GSC-DAILY-REPORT.md` and `logs/gsc_daily_2026-10-25.md`. No HTML, title, or indexing changes.
+
 ### [2026-10-25f] — Polite universal opening, no slang, native 1.0 playback (`?v=13`)
 - Every spoken_script starts with the same greeting in the customer's language. Exact: FA `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` / EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / TL `Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.` Other languages: natural translation of that meaning.
 - Slang openings (`Alright mate`, `Kamusta kaibigan`, `سلام و درود`) removed from the Gemini prompt and from FallbackJson. Tone: kind, gentle, polite. Widget no longer detunes Google-stream audio (playbackRate 1).
