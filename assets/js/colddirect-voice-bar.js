@@ -14,6 +14,15 @@
     "/colddirect-vapi-config.aspx",
     "/api/colddirect-vapi-config.aspx"
   ];
+  var CLOSING_EN = "If this advice helped you, please click the Like and 5-Star Review button right below in this box to help our website grow.";
+  var CLOSING_FA = "اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم دکمه لایک و ثبت نظر را در پایین همین صفحه بزنید.";
+  var CLOSING_RULE = [
+    "MANDATORY CLOSING RULE FOR EVERY RESPONSE: At the very end of EVERY single answer you give (regardless of the language), you MUST verbally ask the user to click the Like / Review button inside the box to help our website grow.",
+    "Never skip this spoken closing. Say it out loud after the technical answer. Do not only show it as text.",
+    "If speaking English, always end by saying: \"" + CLOSING_EN + "\"",
+    "If speaking Persian, always end by saying: \"" + CLOSING_FA + "\"",
+    "If speaking any other language, translate that exact closing sentence naturally into that language."
+  ].join(" ");
 
   var vapi = null;
   var root, speakBtn, listenBtn, statusEl, logEl, ctaEl;
@@ -51,9 +60,9 @@
       "#cd-voice-log .cd-voice-row.is-bot{align-self:flex-start;background:#111827;color:#f8fafc;border:1px solid #334155;}",
       "#cd-voice-log .cd-voice-row.is-partial{opacity:.78;}",
       "#cd-voice-log .cd-voice-who{display:block;margin:0 0 4px;font:700 10px/1 system-ui,sans-serif;letter-spacing:.04em;color:#93c5fd;}",
-      "#cd-voice-cta{display:flex;margin-top:12px;width:100%;min-height:44px;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border:0;border-radius:10px;background:#14532d;color:#bbf7d0;font:700 13px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;}",
-      "#cd-voice-cta.is-hot{background:#16a34a;color:#fff;box-shadow:0 0 0 3px rgba(34,197,94,.45);animation:cdVoiceCta 1.2s ease-in-out 3;}",
-      "@keyframes cdVoiceCta{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}",
+      "#cd-voice-cta{display:flex;margin-top:12px;width:100%;min-height:48px;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:0;border-radius:10px;background:linear-gradient(180deg,#16a34a 0%,#15803d 100%);color:#fff;font:800 13px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;box-shadow:0 0 0 2px rgba(74,222,128,.55),0 8px 18px rgba(22,163,74,.38);}",
+      "#cd-voice-cta.is-hot{background:#22c55e;color:#052e16;box-shadow:0 0 0 4px rgba(74,222,128,.75),0 0 28px rgba(34,197,94,.7);animation:cdVoiceCta .9s ease-in-out infinite;}",
+      "@keyframes cdVoiceCta{0%,100%{transform:scale(1);}50%{transform:scale(1.045);}}",
       "@media (max-width:900px){#cd-voice-root{left:8px;max-width:min(360px,calc(100vw - 16px));}#cd-voice-title{font-size:11px;}}",
       "@media (max-width:640px){#cd-voice-root{position:fixed;left:8px;top:auto;bottom:12px;z-index:400;}#cd-voice-panel{top:auto;bottom:calc(100% + 8px);}}"
     ].join("");
@@ -111,7 +120,39 @@
 
   function highlightCta(on) {
     if (!ctaEl) return;
-    ctaEl.classList.toggle("is-hot", !!on);
+    openPanel();
+    if (!on) {
+      ctaEl.classList.remove("is-hot");
+      return;
+    }
+    ctaEl.classList.remove("is-hot");
+    void ctaEl.offsetWidth;
+    ctaEl.classList.add("is-hot");
+    try { ctaEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e1) {}
+  }
+
+  function onSpeechEnd() {
+    highlightCta(true);
+    setStatus("active", "If this helped, please leave a like and a 5-star review.");
+  }
+
+  function assistantOverrides() {
+    return {
+      variableValues: {
+        closingRule: CLOSING_RULE
+      }
+    };
+  }
+
+  function injectClosingRule() {
+    if (!vapi) return;
+    try {
+      vapi.send({
+        type: "add-message",
+        message: { role: "system", content: CLOSING_RULE },
+        triggerResponseEnabled: false
+      });
+    } catch (e1) {}
   }
 
   function addRow(role, text, partial) {
@@ -234,7 +275,9 @@
     if (speakBtn) speakBtn.disabled = true;
     if (listenBtn) listenBtn.disabled = true;
     setStatus("connecting", "Requesting microphone access…");
-    Promise.resolve(vapi.start(ASSISTANT_ID)).catch(function () {
+    Promise.resolve(vapi.start(ASSISTANT_ID, assistantOverrides())).then(function () {
+      injectClosingRule();
+    }).catch(function () {
       setIdleState();
       setStatus("error", "The call could not start. Check microphone permission.");
     });
@@ -308,14 +351,17 @@
       if (final && role === "bot") highlightCta(true);
       return;
     }
+    if (type === "speech-end" || type === "speech-stopped") {
+      onSpeechEnd();
+      return;
+    }
     if (type === "speech-update") {
       var st = String(msg.status || msg.speechUpdateType || "").toLowerCase();
       if (st === "started" || st === "speech-started") {
         setStatus("active", "Head engineer is speaking…");
       }
-      if (st === "stopped" || st === "speech-stopped") {
-        highlightCta(true);
-        setStatus("active", "If this helped, please leave a like and a 5-star review.");
+      if (st === "stopped" || st === "speech-stopped" || st === "end" || st === "speech-end") {
+        onSpeechEnd();
       }
     }
   }
@@ -324,11 +370,15 @@
     vapi = instance;
     speakBtn.addEventListener("click", toggleSpeak);
     listenBtn.addEventListener("click", listenNow);
-    vapi.on("call-start", setLiveState);
+    vapi.on("call-start", function () {
+      setLiveState();
+      injectClosingRule();
+    });
     vapi.on("call-end", function () {
       setIdleState();
       if (logEl && logEl.children.length) highlightCta(true);
     });
+    vapi.on("speech-end", onSpeechEnd);
     vapi.on("message", handleMessage);
     vapi.on("error", function () {
       setIdleState();

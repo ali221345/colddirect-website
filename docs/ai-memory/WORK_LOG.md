@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25t] — Spoken like/review closing + CTA pulse (`?v=20261025p`)
+- `vapi.start(assistantId, assistantOverrides)` plus a system `add-message` so every spoken answer ends with the like/review line (EN/FA/other). `#cd-voice-cta` pulses on `speech-end`. Title/H1/meta unchanged.
+
 ### [2026-10-25s] — Header-left widget dropdown not clipped (`?v=20261025n`)
 - Same compact box, no `transform` on `#cd-voice-root` so the SPEAK dropdown paints over the hero. Title/H1/meta unchanged.
 
