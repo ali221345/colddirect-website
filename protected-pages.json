@@ -13,7 +13,7 @@
       "must_contain": "North London towns we already run",
       "min_bytes": 8000,
       "protected_at": "2026-10-25",
-      "reason": "Hand-fixed hub. Overnight FTP from git was reverting the short stub. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged."
+      "reason": "Hand-fixed hub. Overnight FTP from git was reverting the short stub. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged. | 2026-10-25m: voice ?v=20261025d autoplay after mic. Title/H1/meta/canonical unchanged."
     },
     {
       "id": "commercial-fridge-repair-london",
@@ -28,7 +28,7 @@
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 13675,
       "protected_at": "2026-10-25",
-      "reason": "Synced with auto-seo.aspx V4.7 (title unchanged; V4.7 tech matrix + schema added). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25h: CD-TOP3-RANK-BOOSTER-V5 dropped duplicate 'commercial commercial' in body/schema. Title/H1/meta/canonical unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged."
+      "reason": "Synced with auto-seo.aspx V4.7 (title unchanged; V4.7 tech matrix + schema added). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25h: CD-TOP3-RANK-BOOSTER-V5 dropped duplicate 'commercial commercial' in body/schema. Title/H1/meta/canonical unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged. | 2026-10-25m: voice ?v=20261025d autoplay after mic. Title/H1/meta/canonical unchanged."
     },
     {
       "id": "fridge-repair-london",
@@ -43,7 +43,7 @@
       "must_contain": "<!-- AUTO-SEO-V4-2026 -->",
       "min_bytes": 8074,
       "protected_at": "2026-10-25",
-      "reason": "Owner master directive 2026-10-21: money keyword hub title/meta/audio/body block (tools/money_data.py + auto-seo.aspx moneyMeta stay in sync). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged."
+      "reason": "Owner master directive 2026-10-21: money keyword hub title/meta/audio/body block (tools/money_data.py + auto-seo.aspx moneyMeta stay in sync). | 2026-10-23: body-only rebaseline \u2014 CD-TOP-RIGHT-AUDIO sole visible player; CD-AUDIO-V1 schema-only; 30+ years body copy. Title/H1/meta unchanged. | 2026-10-23b: freezer-visual unify (hero img after CTAs, top-right audio 44px, hide sticky-cta). Title/H1/meta unchanged. | 2026-10-23c: removed CD-CRO-TRUST-BAR dark navy strip. Title/H1/meta unchanged. | 2026-10-25i: voice widget cache-bust ?v=14 only. Title/H1/meta/canonical unchanged. | 2026-10-25j: voice ?v=20261025b only. Title/H1/meta/canonical unchanged. | 2026-10-25k: voice ?v=20261025c multilingual same-language I/O. Title/H1/meta/canonical unchanged. | 2026-10-25m: voice ?v=20261025d autoplay after mic. Title/H1/meta/canonical unchanged."
     }
   ]
 }

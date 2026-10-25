@@ -27,6 +27,15 @@
   var SR_SILENCE_MS = 3800;
   var NO_SPEECH_MS = 9000;
   var API_MS = 1800;
+  var TTS_MS = 8000;
+  var DIAGNOSE_MS = 15000;
+  var GREET = {
+    en: "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ",
+    fa: "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. ",
+    tr: "Merhaba. ColdDirect başmühendisiyim. Şirketimizi seçtiğiniz için memnunum. ",
+    ar: "مرحباً. أنا كبير المهندسين في كولد دايركت. يسعدني أنكم اخترتم شركتنا. ",
+    tl: "Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya. "
+  };
   var PACE = 1;
   var TTS_RATE = 1.05;
   var SPEAK_LABEL = "🎤 SPEAK";
@@ -61,6 +70,7 @@
   var langSel = "auto";
   var cardEls = {};
   var audioCtx = null;
+  var meterCtx = null;
   var unlocked = false;
   var recStream = null;
   var recorder = null;
@@ -92,22 +102,38 @@
 
   function $(sel, el) { return (el || document).querySelector(sel); }
 
+  function playCtx() {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    if (!window.__cdPlayCtx) window.__cdPlayCtx = new AC();
+    if (window.__cdPlayCtx.state === "suspended") {
+      try { window.__cdPlayCtx.resume(); } catch (e) {}
+    }
+    audioCtx = window.__cdPlayCtx;
+    return window.__cdPlayCtx;
+  }
+
   function unlockAudio() {
     try {
-      if (!audioCtx) {
-        var AC = window.AudioContext || window.webkitAudioContext;
-        if (AC) audioCtx = new AC();
-      }
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-      if (!unlocked && audioCtx) {
-        var buf = audioCtx.createBuffer(1, 1, 22050);
-        var src = audioCtx.createBufferSource();
+      var ctx = playCtx();
+      if (ctx && !unlocked) {
+        var buf = ctx.createBuffer(1, 1, 22050);
+        var src = ctx.createBufferSource();
         src.buffer = buf;
-        src.connect(audioCtx.destination);
+        src.connect(ctx.destination);
         src.start(0);
         unlocked = true;
       }
     } catch (e) { /* iOS unlock is best-effort */ }
+  }
+
+  function withGreet(text, lang) {
+    var code = String(lang || "en").slice(0, 2).toLowerCase();
+    var g = GREET[code] || GREET.en;
+    var t = String(text || "").replace(/^\s+/, "");
+    if (!t) return g.trim();
+    if (t.indexOf(g.slice(0, 18)) === 0 || /^سلام\.\s*من سرمهندس/.test(t) || /^Hello\.\s*I am the Head Engineer/i.test(t)) return t;
+    return g + t;
   }
 
   function setStatus(msg) {
@@ -236,11 +262,14 @@
 
   function playBytes(bytes, mime, onDone) {
     stopCurrent();
-    unlockAudio();
+    var ctx = playCtx();
     playing = true;
+    window.__cdAudioPlayed = true;
     listenBtn.classList.add("is-on");
     listenBtn.setAttribute("aria-pressed", "true");
+    setStatus("🔊 Speaking Answer...");
     var type = mime || "audio/wav";
+    var copy = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
     var blob = new Blob([bytes], { type: type });
     var url = URL.createObjectURL(blob);
 
@@ -252,23 +281,45 @@
       if (onDone) onDone();
     }
 
-    var el = player();
-    el.onended = done;
-    el.src = url;
-    el.playbackRate = 1;
-    var p = el.play();
-    if (p && p.catch) p.catch(function () {
-      if (!audioCtx) { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); return; }
-      audioCtx.decodeAudioData(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), function (buf) {
-        var src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        src.playbackRate.value = 1;
-        src.connect(audioCtx.destination);
-        playSource = src;
-        src.onended = done;
-        src.start(0);
-      }, function () { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); });
-    });
+    function viaElement() {
+      var el = player();
+      el.onended = done;
+      el.src = url;
+      el.playbackRate = 1;
+      var p = el.play();
+      if (p && p.catch) p.catch(function () {
+        done();
+        setStatus("🔊 Speaking Answer... tap ▶ Listen Answer if you hear nothing.");
+        speakDiagnosis(lastSpoken, lastLang);
+      });
+    }
+
+    if (ctx && ctx.decodeAudioData) {
+      try {
+        var pdec = ctx.decodeAudioData(copy);
+        if (pdec && pdec.then) {
+          pdec.then(function (buf) {
+            var src = ctx.createBufferSource();
+            src.buffer = buf;
+            src.connect(ctx.destination);
+            playSource = src;
+            src.onended = done;
+            src.start(0);
+          }).catch(viaElement);
+          return;
+        }
+        ctx.decodeAudioData(copy, function (buf) {
+          var src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          playSource = src;
+          src.onended = done;
+          src.start(0);
+        }, viaElement);
+        return;
+      } catch (e) { viaElement(); return; }
+    }
+    viaElement();
   }
 
   var UK_MALE_PREFS = [
@@ -785,12 +836,9 @@
 
   function stripFiller(text) {
     var t = String(text || "");
-    t = t.replace(/^Hello po\.\s*Ako ang Head Engineer[^.]*\.\s*Natutuwa[^.]*\.\s*/i, "");
-    t = t.replace(/^Hello[.,]?\s*I am the Head Engineer[\s\S]*?(?:company|ColdDirect)[^.]*\.\s*/i, "");
-    t = t.replace(/^I am (the )?head (engineer )?of (the )?(Cold\s*)?Direct[^.]*\.\s*/i, "");
-    t = t.replace(/^I'm the Head Engineer[^.]*\.\s*/i, "");
-    t = t.replace(/^سلام[^.]*کُلد دایرِکت هستم[^.]*\.\s*/g, "");
-    t = t.replace(/^سلام و درود[^.]*\.\s*/g, "");
+    t = t.replace(/^Alright mate[^.]*\.\s*/i, "");
+    t = t.replace(/^Don't panic[^.]*\.\s*/i, "");
+    t = t.replace(/^Cheers[^.]*\.\s*/i, "");
     return t.replace(/^\s+/, "");
   }
 
@@ -873,11 +921,12 @@
   }
 
   function speakDiagnosis(text, lang) {
-    var clean = stripFiller(text);
+    var clean = withGreet(stripFiller(text), lang);
     if (!clean) return false;
     lastSpoken = clean;
     lastLang = lang || lastLang || "en";
     dxSpeaking = true;
+    setStatus("🔊 Speaking Answer...");
     try { window.speechSynthesis.cancel(); } catch (e) {}
     return speakChunk(clean, lang);
   }
@@ -1042,6 +1091,18 @@
     return data.languageLabel ? ("Language: " + data.languageLabel) : "Diagnosis ready";
   }
 
+  function playVaultAudio(data) {
+    var b64 = data && (data.audio_base64 || (data.audio && data.audio.data));
+    var mime = (data && (data.audio_mime || (data.audio && data.audio.mime))) || "audio/wav";
+    if (!b64 || String(b64).length < 80) return false;
+    try {
+      playBytes(b64ToBytes(b64), mime);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function ask(text, audio) {
     var q = (text || "").replace(/\s+/g, " ").trim();
     if (!q && !(audio && audio.data)) {
@@ -1057,12 +1118,22 @@
     root.classList.add("is-busy");
     setStatus("Diagnosing fault...");
     var fast = instantDiagnose(q || "");
+    fast.spoken = withGreet(fast.spoken, fast.language);
     fillCard(fast);
     setStatus(langStatus(fast));
     root.classList.remove("is-busy");
-    var spoke = speakDiagnosis(fast.spoken, fast.language);
-    if (!spoke) requestVoice(fast, seq);
+    lastSpoken = fast.spoken;
+    lastLang = fast.language || "en";
     var hint = getLangHint() || fast.language || "";
+    var ttsLine = firstSentence(fast.spoken) || fast.spoken;
+    postVault({ mode: "tts", text: ttsLine, language: hint || fast.language, watermark: MARK }, TTS_MS).then(function (v) {
+      if (seq !== askSeq) return;
+      if (playing) return;
+      if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, fast.language);
+    }).catch(function () {
+      if (seq !== askSeq || playing) return;
+      speakDiagnosis(fast.spoken, fast.language);
+    });
     var payload = {
       mode: "diagnose",
       text: q,
@@ -1076,22 +1147,21 @@
       payload.mime = audio.mime || "audio/webm";
     }
     if (!q && !audio) return;
-    var wait = audio && audio.data ? 4500 : API_MS;
-    postVault(payload, wait).then(function (data) {
+    postVault(payload, DIAGNOSE_MS).then(function (data) {
       if (seq !== askSeq) return;
       if (data.transcript) input.value = data.transcript;
-      if (data.spoken) data.spoken = stripFiller(data.spoken);
+      if (data.spoken) data.spoken = withGreet(stripFiller(data.spoken), data.language || hint);
       var apiLang = String(data.language || "").slice(0, 2).toLowerCase();
-      if (langSel === "auto" && apiLang && apiLang !== "au") {
-        lastLang = apiLang;
-      }
+      if (langSel === "auto" && apiLang && apiLang !== "au") lastLang = apiLang;
       fillCard(data);
-      setStatus(langStatus(data));
-      if (apiLang && apiLang !== String(fast.language || "").slice(0, 2) && data.spoken) {
-        speakDiagnosis(data.spoken, data.language);
+      if (!playing) {
+        if (!playVaultAudio(data)) speakDiagnosis(data.spoken || fast.spoken, data.language || fast.language);
+      } else {
+        setStatus("🔊 Speaking Answer...");
       }
     }).catch(function () {
       if (seq !== askSeq) return;
+      if (!playing) speakDiagnosis(fast.spoken, fast.language);
     });
   }
 
@@ -1128,12 +1198,18 @@
     stopMeter();
     var rec = recorder;
     recorder = null;
-    if (!rec) { stopTracks(); if (onStopped) onStopped(null); return; }
+    if (!rec) {
+      stopTracks();
+      if (meterCtx) { try { meterCtx.close(); } catch (e4) {} meterCtx = null; }
+      if (onStopped) onStopped(null);
+      return;
+    }
     var done = false;
     rec.onstop = function () {
       if (done) return;
       done = true;
       stopTracks();
+      if (meterCtx) { try { meterCtx.close(); } catch (e3) {} meterCtx = null; }
       if (onStopped) onStopped(rec);
     };
     try {
@@ -1206,10 +1282,13 @@
   }
 
   function startMeter(stream) {
-    if (!audioCtx) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
     try {
-      meterSrc = audioCtx.createMediaStreamSource(stream);
-      var an = audioCtx.createAnalyser();
+      if (meterCtx) { try { meterCtx.close(); } catch (e0) {} meterCtx = null; }
+      meterCtx = new AC();
+      meterSrc = meterCtx.createMediaStreamSource(stream);
+      var an = meterCtx.createAnalyser();
       an.fftSize = 1024;
       meterSrc.connect(an);
       var buf = new Uint8Array(an.fftSize);
@@ -1545,7 +1624,10 @@
       });
     });
 
-    speakBtn.addEventListener("click", function () { primePlayer(); toggleSpeak(); });
+    function armSpeak() { unlockAudio(); primePlayer(); }
+    speakBtn.addEventListener("pointerdown", armSpeak);
+    speakBtn.addEventListener("touchstart", armSpeak, { passive: true });
+    speakBtn.addEventListener("click", function () { armSpeak(); toggleSpeak(); });
     listenBtn.addEventListener("click", playDiagnosis);
     $("#cd-voice-replay", root).addEventListener("click", function () { if (playing) stopPlayback(); playDiagnosis(); });
     toggleBtn.addEventListener("click", toggleDrawer);

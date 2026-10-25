@@ -48,3 +48,11 @@ Full verbatim text: `docs/ai-memory/OWNER_MASTER_PROMPT.md` (read it before SEO/
 - Nightly (24h) job = coexist + enforce, not rewrite: `tools/seo_integrity_check.py` verifies the LIVE site still has the optimized titles/meta/og/schema/audio/links.
 - 48h full backup: `.github/workflows/site-backup-48h.yml` + `tools/backup_site.py` (plain FTP, no secrets/App_Data/*.key in archives, SHA-256 manifest, 90-day artifact). Never commit backups into the webroot.
 - After every job: `tools/send_job_report.py` posts to the single rolling issue `📊 [ColdDirect Autopilot] Automated Job Reports & SEO Log`; `[LIVE SITE ALERT]` issues stay for critical failures only.
+
+## 5. VOICE AI RULE 0 — NEVER REGRESS (owner 2026-10-25)
+After `🎤 SPEAK` the widget MUST speak the answer aloud. A text-only card after microphone recording is a P0 bug. Do not undo these:
+1. Keep the polite Head Engineer greeting in every spoken_script (EN/FA exact strings in `docs/MEMORY.md`). No street slang.
+2. Male voices only. Persian = `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کُلد دایرِکت`). Never Urdu/Arabic fallback for `fa`. English = `en_GB-alan-medium`.
+3. On SPEAK tap: resume `window.__cdPlayCtx` and prime `window.__cdVoicePlayer`. When recording ends (tap or 3800ms silence): `stream.getTracks().forEach(t => t.stop())` and close the analyser AudioContext BEFORE playback. Do not close `__cdPlayCtx`.
+4. Diagnose JSON must include `audio_base64` (first spoken chunk). Play it with `AudioBufferSourceNode` on `__cdPlayCtx` first so a silence-timer stop never throws `NotAllowedError`. Status while playing: `🔊 Speaking Answer...`.
+5. Keep 3800ms silence after speech starts. Do not restore 700ms cutoff.

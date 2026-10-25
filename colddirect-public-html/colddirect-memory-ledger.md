@@ -16,7 +16,13 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25, NEVER regress)
+SPEAK must play voice, not text-only. Keep the Head Engineer greeting. No slang. Male voices only (Ganji fa, Alan en; never Urdu/Arabic for Persian). Stop mic tracks + close analyser context before play. Unlock `__cdPlayCtx` + `__cdVoicePlayer` on the SPEAK tap. Diagnose JSON includes `audio_base64`. Play via `AudioBufferSourceNode` first. Keep 3800ms silence.
+
 ---
+
+### [2026-10-25m] — Voice autoplay after SPEAK (`?v=20261025d`)
+- RULE 0 locked. Mic tracks + analyser ctx released before play. Diagnose embeds audio. `__cdPlayCtx` buffer playback. Greeting restored. SEO tags untouched.
 
 ### [2026-10-25k] — Voice same-language I/O (`?v=20261025c`)
 - Lang select + fa-IR SR + localized instant engine + vault langHint. SEO tags untouched. Commit `9f7792f`, deploy `40185770673`.

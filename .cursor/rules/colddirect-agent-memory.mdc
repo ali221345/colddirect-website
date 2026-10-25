@@ -63,3 +63,6 @@ Full verbatim text: `docs/ai-memory/OWNER_MASTER_PROMPT.md` (read it before SEO/
 - Nightly (24h) job = coexist + enforce, not rewrite: `tools/seo_integrity_check.py` verifies the LIVE site still has the optimized titles/meta/og/schema/audio/links.
 - 48h full backup: `.github/workflows/site-backup-48h.yml` + `tools/backup_site.py` (plain FTP, no secrets/App_Data/*.key in archives, SHA-256 manifest, 90-day artifact). Never commit backups into the webroot.
 - After every job: `tools/send_job_report.py` posts to the single rolling issue `📊 [ColdDirect Autopilot] Automated Job Reports & SEO Log`; `[LIVE SITE ALERT]` issues stay for critical failures only.
+
+## 5. VOICE AI RULE 0 — NEVER REGRESS (owner 2026-10-25)
+After SPEAK the widget MUST speak aloud. Keep the Head Engineer greeting. No slang. Male voices only (Ganji fa, Alan en; never Urdu/Arabic for Persian). Stop mic tracks + close analyser context before play. Unlock `__cdPlayCtx` + `__cdVoicePlayer` on the SPEAK tap. Diagnose JSON includes `audio_base64`. Play via `AudioBufferSourceNode` first. Keep 3800ms silence. See `docs/MEMORY.md`.

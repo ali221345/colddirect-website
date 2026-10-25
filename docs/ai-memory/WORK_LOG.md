@@ -16,7 +16,19 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25, NEVER regress)
+After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a microphone recording is a P0 bug.
+1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.`).
+2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
+3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کُلد دایرِکت`), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
+4. NEVER break auto-play after mic: stop every `MediaStreamTrack` and close the analyser `AudioContext` before playback; keep `window.__cdPlayCtx` (resumed on SPEAK tap) and `window.__cdVoicePlayer` alive; diagnose JSON must include `audio_base64`; play first via `AudioBufferSourceNode` on `__cdPlayCtx` so silence-timer auto-stop never hits `NotAllowedError`. Keep 3800ms silence (do not restore 700ms cutoff).
+
 ---
+
+### [2026-10-25m] — Voice autoplay after SPEAK (`?v=20261025d`) — RULE 0
+- Diagnose JSON now embeds first `audio_base64` via `SpeakFast` (Piper/Azure/Translate; skip Puck on this hop).
+- Widget: `__cdPlayCtx` unlocked on SPEAK pointerdown; analyser `AudioContext` is separate and closed with every mic track before play. `playBytes` uses `AudioBufferSourceNode` first. Status `🔊 Speaking Answer...`. Greeting restored. 3800ms silence kept.
+- Title/H1/meta/canonical/sitemap 122 unchanged.
 
 ### [2026-10-25k] — Voice same-language I/O (`?v=20261025c`)
 - Owner: Persian speech was getting English answers. Root cause: SpeechRecognition used `navigator.language` (en-GB), `instantDiagnose`/FAST_KB were English-only, and audio was discarded if any transcript existed.

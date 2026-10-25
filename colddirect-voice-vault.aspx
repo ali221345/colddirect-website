@@ -78,7 +78,7 @@ string SystemPrompt()
         + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Detect the language from the speech or typed text. Typed text is the transcript. "
         + "If the request names a selected language (fa, en, tr, ar, …), that language WINS even if SpeechRecognition text looks like English: answer 100% in the selected language. "
         + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100% in that same language, written as a native of that country. Never translate English word-for-word. Never mix English into another language except the company name ColdDirect where that language uses Latin letters. "
-        + "Do NOT introduce yourself. Do NOT say you are the Head Engineer. Do NOT start with Hello or any welcome filler. spoken_script starts with the diagnosis. "
+        + "spoken_script MUST start with the polite greeting in that language, then the diagnosis. English: 'Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.' Persian: 'سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.' Tagalog: 'Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.' Never skip it. No street slang. "
         + "Persian: fluent polite Iranian Farsi only. شما, complete verbs. Never Dari or Urdu. Write ColdDirect as کُلد دایرِکت and spell numbers and error codes in Persian words. "
         + "Answer the customer's exact fault clearly and accurately. No generic filler. One or two gentle checks they can do now. "
         + "Noise: fan hitting ice, worn fan bearings, or a clicking start relay — opening the door is a kind first check. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water: blocked drain or overflowing tray. Trip: motor shorting, burned plug, dead board. If they only say it is broken, give the top three causes gently. NEVER brush them off. "
@@ -244,7 +244,7 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
 
 string EnIntro(string sym)
 {
-    return "";
+    return "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ";
 }
 
 string EnLead(string sym)
@@ -292,7 +292,9 @@ string FallbackJson(string text, string hint)
     bool fosterE1 = code == "E1" && Has(q, "foster|فاستر");
 
     string first = syms[0];
-    string intro = "";
+    string intro = lc == "fa"
+        ? "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. "
+        : EnIntro(first);
     string outro = lc == "fa"
         ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این پاسخ برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
         : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this answer helped you, please tap Like or leave a five-star review on this page. Thank you.";
@@ -1042,6 +1044,28 @@ string[] TranslateTts(string lang, string text)
     }
 }
 
+// Fast first-chunk for diagnose embed: Piper / Azure / Translate (skip Gemini Puck — it is the 30s stall).
+string[] SpeakFast(string key, string lang, string text, out string voice)
+{
+    voice = "none";
+    if (string.IsNullOrEmpty(text)) return null;
+    lang = CanonLang(lang);
+    if (lang == "fa") text = NormalizePersianForSpeech(text);
+    List<string> groups = StreamGroups(text);
+    string first = groups.Count > 0 ? groups[0] : text;
+    if (first.Length > 240) first = first.Substring(0, 240);
+    string[] r = PiperTts(lang, first);
+    if (r != null) { voice = "piper-" + PiperModel(lang); return r; }
+    try { r = AzureTts(lang, first); } catch { r = null; }
+    if (r != null) { voice = "azure-neural"; return r; }
+    if (lang != "fa")
+    {
+        try { r = TranslateTts(lang, first); } catch { r = null; }
+        if (r != null) { voice = "cloud-neural-fallback"; return r; }
+    }
+    return null;
+}
+
 // OpenAI onyx (if a key is installed) -> Puck -> Piper (fa/en/tr/ar) -> Azure -> Google stream for every other language.
 string[] Speak(string key, string lang, string text, out string voice)
 {
@@ -1202,14 +1226,17 @@ protected void Page_Load(object sender, EventArgs e)
         result = FallbackJson(text, hint);
     }
 
-    // mode "diagnose" (current widget) returns text now and fetches Puck with a second mode "tts" call.
-    string voice = key == "" ? "browser-no-key" : "pending";
-    if (mode != "diagnose" && key != "")
+    string voice = "pending";
+    string v;
+    string[] spoken = SpeakFast(key, JsonField(result, "language"), JsonField(result, "spoken"), out v);
+    if (spoken == null && mode != "diagnose")
+        spoken = Speak(key, JsonField(result, "language"), JsonField(result, "spoken"), out v);
+    voice = spoken != null ? v : "browser-tts-failed";
+    if (spoken != null)
     {
-        string v;
-        string[] spoken = Speak(key, JsonField(result, "language"), JsonField(result, "spoken"), out v);
-        voice = spoken != null ? v : "browser-tts-failed";
-        if (spoken != null) result = AddField(result, "audio", "{\"mime\":\"" + spoken[0] + "\",\"data\":\"" + spoken[1] + "\"}");
+        result = AddField(result, "audio_mime", "\"" + spoken[0] + "\"");
+        result = AddField(result, "audio_base64", "\"" + spoken[1] + "\"");
+        result = AddField(result, "audio", "{\"mime\":\"" + spoken[0] + "\",\"data\":\"" + spoken[1] + "\"}");
     }
     result = AddField(result, "voice", "\"" + voice + "\"");
     Response.Write(result);
