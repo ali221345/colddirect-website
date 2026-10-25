@@ -715,93 +715,133 @@ string[] AzureTts(string lang, string text)
     return new string[] { "audio/mpeg", Convert.ToBase64String(mp3) };
 }
 
-List<string> TtsChunks(string text, int max)
+// Piper (open-source, runs on this server, no key, no quota). Every voice here is male; there is
+// deliberately no female engine anywhere in the chain. Files: App_Data/piper/piper.exe + voices/<model>.onnx(.json).
+static readonly System.Threading.SemaphoreSlim piperGate = new System.Threading.SemaphoreSlim(8);
+
+string PiperModel(string lang)
 {
-    List<string> chunks = new List<string>();
-    string clean = Regex.Replace(text ?? "", "\\s+", " ").Trim();
-    string[] sentences = Regex.Split(clean, "(?<=[.!?\u061F\u06D4\u2026])\\s+");
-    StringBuilder cur = new StringBuilder();
-    foreach (string s0 in sentences)
+    switch (lang)
     {
-        List<string> pieces = new List<string>();
-        if (s0.Length <= max) pieces.Add(s0);
-        else
+        case "fa": return "fa_IR-amir-medium";
+        case "en": return "en_GB-alan-medium";
+        case "tr": return "tr_TR-dfki-medium";
+        case "ar": return "ar_JO-kareem-medium";
+        default: return null;
+    }
+}
+
+// Amir is a light baritone; playing his WAV 7% slower lowers him to a deeper engineer's voice, and
+// a shorter length_scale keeps the speaking pace the same.
+double PiperDeepen(string lang) { return lang == "fa" ? 0.93 : 1.0; }
+
+byte[] PiperRun(string exe, string dir, string onnx, string line, double deepen)
+{
+    if (!piperGate.Wait(30000)) { ttsDiag = "piper-busy"; return null; }
+    try
+    {
+        string lengthScale = (1.05 * deepen).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+        System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(exe,
+            "-m \"" + onnx + "\" --output_raw --length_scale " + lengthScale + " --sentence_silence 0.25");
+        psi.WorkingDirectory = dir;
+        psi.UseShellExecute = false;
+        psi.CreateNoWindow = true;
+        psi.RedirectStandardInput = true;
+        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardError = true;
+        using (System.Diagnostics.Process p = System.Diagnostics.Process.Start(psi))
         {
-            StringBuilder p = new StringBuilder();
-            foreach (string w in Regex.Split(s0, "(?<=[,;:\u060C])\\s+|\\s+"))
+            p.ErrorDataReceived += delegate { };
+            p.BeginErrorReadLine();
+            MemoryStream pcm = new MemoryStream();
+            Stream stdout = p.StandardOutput.BaseStream;
+            System.Threading.Tasks.Task reader = System.Threading.Tasks.Task.Factory.StartNew(delegate { stdout.CopyTo(pcm); });
+            byte[] input = new UTF8Encoding(false).GetBytes(line + "\n");
+            p.StandardInput.BaseStream.Write(input, 0, input.Length);
+            p.StandardInput.BaseStream.Flush();
+            p.StandardInput.Close();
+            if (!reader.Wait(60000))
             {
-                if (p.Length > 0 && p.Length + 1 + w.Length > max) { pieces.Add(p.ToString()); p.Length = 0; }
-                if (p.Length > 0) p.Append(' ');
-                p.Append(w.Length > max ? w.Substring(0, max) : w);
+                try { p.Kill(); } catch { }
+                ttsDiag = "piper-timeout";
+                return null;
             }
-            if (p.Length > 0) pieces.Add(p.ToString());
-        }
-        foreach (string piece in pieces)
-        {
-            if (cur.Length > 0 && cur.Length + 1 + piece.Length > max) { chunks.Add(cur.ToString()); cur.Length = 0; }
-            if (cur.Length > 0) cur.Append(' ');
-            cur.Append(piece);
+            p.WaitForExit(5000);
+            byte[] raw = pcm.ToArray();
+            if (raw.Length < 2000) { ttsDiag = "piper-empty exit=" + (p.HasExited ? p.ExitCode.ToString() : "?"); return null; }
+            if ((raw.Length & 1) == 1) Array.Resize(ref raw, raw.Length - 1);
+            return raw;
         }
     }
-    if (cur.Length > 0) chunks.Add(cur.ToString());
-    return chunks;
+    catch (Exception ex) { ttsDiag = "piper " + ex.GetType().Name; return null; }
+    finally { piperGate.Release(); }
 }
 
-// Persian has no Google voice (HTTP 400 for fa), so it is read by the Urdu voice (same letters, close
-// vocabulary) and, failing that, by the Arabic voice after mapping the Persian-only letters.
-string PersianToArabic(string s)
+List<string> SentenceGroups(string text, int max)
 {
-    StringBuilder b = new StringBuilder(s.Length + 16);
-    foreach (char c in s)
+    List<string> groups = new List<string>();
+    StringBuilder cur = new StringBuilder();
+    foreach (string s in Regex.Split(text, "(?<=[.!?\u061F\u06D4\u2026])\\s+"))
     {
-        switch (c)
-        {
-            case '\u06A9': b.Append('\u0643'); break;
-            case '\u06CC': b.Append('\u064A'); break;
-            case '\u06AF': b.Append('\u0643'); break;
-            case '\u0686': b.Append("\u062A\u0634"); break;
-            case '\u067E': b.Append('\u0628'); break;
-            case '\u0698': b.Append('\u0632'); break;
-            case '\u200C': b.Append(' '); break;
-            default: b.Append(c); break;
-        }
+        if (s.Length == 0) continue;
+        if (cur.Length > 0 && cur.Length + 1 + s.Length > max) { groups.Add(cur.ToString()); cur.Length = 0; }
+        if (cur.Length > 0) cur.Append(' ');
+        cur.Append(s);
     }
-    return b.ToString();
+    if (cur.Length > 0) groups.Add(cur.ToString());
+    return groups;
 }
 
-string[] PersianBridgeTts(string text)
+// Each sentence group runs in its own Piper process in parallel, then the PCM is joined in order.
+string[] PiperTts(string lang, string text)
 {
-    string plain = (text ?? "").Replace('\u200C', ' ');
-    string[] r = null;
-    try { r = TranslateTts("ur", plain); } catch { r = null; }
-    if (r != null) return r;
-    try { r = TranslateTts("ar", PersianToArabic(plain)); } catch { r = null; }
-    return r;
-}
-
-string[] TranslateTts(string lang, string text)
-{
-    if (string.IsNullOrEmpty(text) || lang == "fa") return null;
-    string tl = lang == "en" || lang == "" ? "en-GB" : lang;
-    List<string> chunks = TtsChunks(text, 180);
-    if (chunks.Count == 0 || chunks.Count > 30) return null;
-    Dictionary<string, string> h = new Dictionary<string, string>();
-    h["Referer"] = "https://translate.google.com/";
+    string model = PiperModel(lang);
+    if (model == null || string.IsNullOrEmpty(text)) return null;
+    string dir = Server.MapPath("~/App_Data/piper");
+    string exe = Path.Combine(dir, "piper.exe");
+    string onnx = Path.Combine(dir, "voices", model + ".onnx");
+    if (!File.Exists(exe) || !File.Exists(onnx) || !File.Exists(onnx + ".json")) { ttsDiag = "piper-missing:" + model; return null; }
+    int rate = 22050;
+    try
+    {
+        Match sr = Regex.Match(File.ReadAllText(onnx + ".json"), "\"sample_rate\"\\s*:\\s*(\\d+)");
+        if (sr.Success) rate = int.Parse(sr.Groups[1].Value);
+    }
+    catch { }
+    List<string> groups = SentenceGroups(Regex.Replace(text, "\\s+", " ").Trim(), 120);
+    if (groups.Count == 0 || groups.Count > 24) return null;
+    double deepen = PiperDeepen(lang);
+    byte[][] parts = new byte[groups.Count][];
+    System.Threading.Tasks.Parallel.For(0, groups.Count, new System.Threading.Tasks.ParallelOptions { MaxDegreeOfParallelism = 6 },
+        delegate (int i) { parts[i] = PiperRun(exe, dir, onnx, groups[i], deepen); });
+    byte[] gap = new byte[(rate / 4) * 2];
     using (MemoryStream all = new MemoryStream())
     {
-        for (int i = 0; i < chunks.Count; i++)
+        for (int i = 0; i < parts.Length; i++)
         {
-            string url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + Uri.EscapeDataString(tl)
-                + "&total=" + chunks.Count + "&idx=" + i + "&textlen=" + chunks[i].Length + "&q=" + Uri.EscapeDataString(chunks[i]);
-            byte[] part = HttpBytes("GET", url, null, null, h, 15000) ?? HttpBytes("GET", url, null, null, h, 15000);
-            if (part == null || part.Length < 200) return null;
-            all.Write(part, 0, part.Length);
+            if (parts[i] == null) return null;
+            if (i > 0) all.Write(gap, 0, gap.Length);
+            all.Write(parts[i], 0, parts[i].Length);
         }
-        return new string[] { "audio/mpeg", Convert.ToBase64String(all.ToArray()) };
+        return new string[] { "audio/wav", Convert.ToBase64String(PcmToWav(all.ToArray(), (int)Math.Round(rate * deepen))) };
     }
 }
 
-// Puck (Gemini) first, then official Azure neural, then the Google Translate stream.
+// A short first part means the voice starts sooner; split a long opening sentence at its first comma.
+List<string> StreamGroups(string text)
+{
+    List<string> groups = SentenceGroups(Regex.Replace(text, "\\s+", " ").Trim(), 120);
+    int[] limits = { 70, 90 };
+    for (int i = 0; i < limits.Length && i < groups.Count; i++)
+    {
+        if (groups[i].Length <= limits[i]) continue;
+        Match m = Regex.Match(groups[i], "^(.{12," + limits[i] + "}[,\u060C;:!])\\s+(.+)$");
+        if (m.Success) { groups[i] = m.Groups[1].Value; groups.Insert(i + 1, m.Groups[2].Value); }
+    }
+    return groups;
+}
+
+// Puck (Gemini) first, then Piper on this server, then official Azure neural if a key is installed. All male.
 string[] Speak(string key, string lang, string text, out string voice)
 {
     voice = "none";
@@ -809,18 +849,13 @@ string[] Speak(string key, string lang, string text, out string voice)
     string[] r = null;
     try { r = GeminiTts(key, text); } catch { r = null; }
     if (r != null) { voice = "Puck"; return r; }
+    r = PiperTts(lang, text);
+    if (r != null) { voice = "piper-" + PiperModel(lang); return r; }
     try { r = AzureTts(lang, text); } catch { r = null; }
     if (r != null) { voice = "azure-neural"; return r; }
-    if (lang == "fa")
-    {
-        r = PersianBridgeTts(text);
-        if (r != null) { voice = "cloud-neural-fallback-fa"; return r; }
-        return null;
-    }
-    try { r = TranslateTts(lang, text); } catch { r = null; }
-    if (r != null) { voice = "cloud-neural-fallback"; return r; }
     return null;
 }
+
 
 protected void Page_Load(object sender, EventArgs e)
 {
@@ -885,13 +920,35 @@ protected void Page_Load(object sender, EventArgs e)
         if (lang.StartsWith("pes") || lang.StartsWith("prs") || lang.StartsWith("per") || lang.StartsWith("far")) lang = "fa";
         if (lang.Length > 2) lang = lang.Substring(0, 2);
         if (lang == "") lang = DetectLang(say)[0];
-        string v;
-        string[] spoken = Speak(key, lang, say, out v);
+        // Piper only renders the first sentence group; the widget fetches "more" (engine=piper) while it plays.
+        bool piperOnly = Str(req, "engine").ToLowerInvariant() == "piper";
+        string v = "none";
+        string[] spoken = null;
+        List<string> more = new List<string>();
+        if (!piperOnly)
+        {
+            try { spoken = GeminiTts(key, say); } catch { spoken = null; }
+            if (spoken != null) v = "Puck";
+        }
+        if (spoken == null && PiperModel(lang) != null)
+        {
+            List<string> groups = piperOnly ? new List<string> { Regex.Replace(say, "\\s+", " ").Trim() } : StreamGroups(say);
+            if (groups.Count > 0 && groups.Count <= 25)
+            {
+                spoken = PiperTts(lang, groups[0]);
+                if (spoken != null) { v = "piper-" + PiperModel(lang); more = groups.GetRange(1, groups.Count - 1); }
+            }
+        }
+        if (spoken == null && !piperOnly)
+        {
+            try { spoken = AzureTts(lang, say); } catch { spoken = null; }
+            if (spoken != null) v = "azure-neural";
+        }
         Dictionary<string, object> o = new Dictionary<string, object>();
         o["ok"] = spoken != null;
         o["voice"] = spoken != null ? v : "none";
         o["language"] = lang;
-        if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; }
+        if (spoken != null) { o["audio_mime"] = spoken[0]; o["audio_base64"] = spoken[1]; o["more"] = more; }
         else { o["error"] = "No voice available for this language right now."; o["detail"] = ttsDiag; }
         o["watermark"] = MARK;
         Response.Write(Json().Serialize(o));

@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25c] — Male-only: Piper on the server (fa Amir / en Alan / tr dfki / ar Kareem), `translate_tts` deleted, `?v=9`
+- The voice is always male; Google `translate_tts` was female and is removed for good. Piper lives in `App_Data/piper/` (`tools/upload_piper_ftp.py`), streamed sentence by sentence (`more` + `engine:"piper"`). The browser fallback is a strict male allowlist.
+
 ### [2026-10-25b] — Free Persian voice: Urdu/Arabic `translate_tts` bridge (homepage `?v=8`)
 - Persian `mode=tts` never returns ok:false any more (`voice:"cloud-neural-fallback-fa"`). Verified live 5/5. Edge `Sec-MS-GEC` was not used.
 

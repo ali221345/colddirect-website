@@ -47,7 +47,11 @@
   var voicePending = false;
   var lastSpoken = "";
   var lastLang = "en";
-  var lastAudio = null;
+  var parts = [];
+  var partIdx = 0;
+  var partsDone = true;
+  var queueOn = false;
+  var waitingNext = false;
   var playing = false;
   var playSource = null;
   var playEl = null;
@@ -138,19 +142,66 @@
     } catch (e) {}
   }
 
-  function stopPlayback() {
+  function stopCurrent() {
     playing = false;
     listenBtn.classList.remove("is-on");
     listenBtn.setAttribute("aria-pressed", "false");
-    try { if (playSource) playSource.stop(); } catch (e) {}
+    try { if (playSource) { playSource.onended = null; playSource.stop(); } } catch (e) {}
     playSource = null;
     if (playEl) {
+      playEl.onended = null;
       try { playEl.pause(); playEl.currentTime = 0; } catch (e2) {}
     }
   }
 
-  function playBytes(bytes, mime) {
-    stopPlayback();
+  function stopPlayback() {
+    queueOn = false;
+    waitingNext = false;
+    stopCurrent();
+  }
+
+  // The answer arrives as ordered parts (Piper sends sentence by sentence); play them back to back.
+  function playQueue() {
+    queueOn = true;
+    partIdx = 0;
+    playNextPart();
+  }
+
+  function playNextPart() {
+    if (!queueOn) return;
+    if (partIdx >= parts.length) {
+      if (!partsDone) {
+        waitingNext = true;
+        listenBtn.classList.add("is-on");
+        return;
+      }
+      queueOn = false;
+      listenBtn.classList.remove("is-on");
+      return;
+    }
+    var p = parts[partIdx++];
+    playBytes(b64ToBytes(p.data), p.mime, playNextPart);
+  }
+
+  function addPart(p) {
+    parts.push(p);
+    if (waitingNext && queueOn) {
+      waitingNext = false;
+      playNextPart();
+    }
+  }
+
+  function endParts() {
+    partsDone = true;
+    if (waitingNext && queueOn) {
+      waitingNext = false;
+      queueOn = false;
+      listenBtn.classList.remove("is-on");
+    }
+  }
+
+  function playBytes(bytes, mime, onDone) {
+    stopCurrent();
     unlockAudio();
     playing = true;
     listenBtn.classList.add("is-on");
@@ -164,6 +215,7 @@
       listenBtn.classList.remove("is-on");
       listenBtn.setAttribute("aria-pressed", "false");
       URL.revokeObjectURL(url);
+      if (onDone) onDone();
     }
 
     var el = player();
@@ -198,21 +250,30 @@
     /Arthur|Oliver|Reed|Rocky/i
   ];
 
+  // Only voices known to be male are ever used. Unknown or default voices are treated as female and
+  // skipped, so a device with no male voice stays silent (the answer is still written on the card).
+  var FEMALE_VOICE = /female|woman|girl|libby|sonia|maisie|hazel|susan|kate|serena|martha|fiona|karen|moira|samantha|victoria|zira|tessa|veena|allison|\bava\b|nicky|zoe|amelie|anna|ellen|joana|laura|luciana|monica|paulina|sara|yuna|alice|\balva\b|danielle|carmit|damayanti|ioana|kanya|lekha|mariska|melina|milena|nora|satu|zuzana|yelda|lana|dilara|zeina|salma|aria|jenny|emma|michelle|clara|elsa|natasha|heera|kalpana|neerja|swara|catherine|shelley|sandy|flo\b|grandma|emel|seda|hoda|zariyah|amina|elvira|katja|denise|isabella|elsa|dominika|agnieszka|paulina|alina|svetlana|polina|xiaoxiao|hiujin/i;
+  var MALE_VOICE = /\bmale\b|daniel|ryan|george|oliver|arthur|aaron|fred\b|\balex\b|majid|dariush|farid|thomas|alfie|david|\bmark\b|\bguy\b|james|rishi|\btom\b|gordon|\blee\b|reed|rocko|eddy|ralph|albert|bruce|jorge|diego|juan|carlos|xander|yannick|luca|maged|tarik|ahmet|hamed|madhur|prabhat|alvaro|pablo|raul|stefan|henri|conrad|killian|dmitry|ostap|marek|emil|duarte|antonio|asad|pradeep|ojas|yunxi|yunyang|cem\b/i;
+
+  function isMale(v) {
+    var n = v.name || "";
+    if (FEMALE_VOICE.test(n)) return false;
+    if (/^Google/i.test(n) && !/\bmale\b/i.test(n)) return false;
+    return MALE_VOICE.test(n);
+  }
+
   function pickVoice(code) {
     var voices = window.speechSynthesis.getVoices() || [];
-    var same = voices.filter(function (v) { return String(v.lang || "").slice(0, 2).toLowerCase() === code; });
-    var notFemale = function (v) { return !/female|woman|libby|sonia|maisie|hazel|susan|kate|serena|martha|fiona|karen|moira|samantha/i.test(v.name || ""); };
+    var same = voices.filter(function (v) { return String(v.lang || "").slice(0, 2).toLowerCase() === code && isMale(v); });
     if (code === "en") {
       var gb = same.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
       for (var i = 0; i < UK_MALE_PREFS.length; i++) {
         for (var j = 0; j < gb.length; j++) if (UK_MALE_PREFS[i].test(gb[j].name || "")) return gb[j];
       }
-      var natural = gb.filter(function (v) { return /natural|neural|online/i.test(v.name || "") && notFemale(v); });
-      return natural[0] || gb.filter(notFemale)[0] || gb[0] || same[0] || null;
+      return gb[0] || same[0] || null;
     }
-    var male = same.filter(function (v) { return /\bmale\b|farid|dariush|hamed|puck/i.test(v.name || "") && notFemale(v); });
-    var natural2 = same.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
-    return male[0] || natural2[0] || same[0] || null;
+    var natural = same.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
+    return natural[0] || same[0] || null;
   }
 
   function speakFallback(text, lang) {
@@ -224,7 +285,7 @@
       u.rate = 0.94;
       u.pitch = 0.96;
       u.voice = pickVoice(code);
-      if (!u.voice && code !== "en") return false;
+      if (!u.voice) return false;
       u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN" }[code] || "en-GB");
       u.onend = function () {
         playing = false;
@@ -243,18 +304,18 @@
 
   function playDiagnosis() {
     unlockAudio();
-    if (playing) {
+    if (playing || queueOn) {
       stopPlayback();
       try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
       return;
     }
-    if (lastAudio && lastAudio.data) {
-      playBytes(b64ToBytes(lastAudio.data), lastAudio.mime);
+    if (parts.length) {
+      playQueue();
       return;
     }
     if (voicePending) {
       primePlayer();
-      setStatus("Puck voice is on its way — it will play in a moment.");
+      setStatus("Head Engineer's voice is on its way — it will play in a moment.");
       return;
     }
     if (lastSpoken) {
@@ -278,7 +339,8 @@
     cardEls.box.hidden = false;
     lastSpoken = data.spoken || data.summary || "";
     lastLang = data.language || "en";
-    lastAudio = data.audio && data.audio.data ? data.audio : null;
+    parts = data.audio && data.audio.data ? [data.audio] : [];
+    partsDone = true;
   }
 
   function postVault(payload) {
@@ -323,22 +385,39 @@
       return;
     }
     voicePending = true;
-    setStatus(langStatus(data) + " — Puck voice on its way…");
-    postVault({ mode: "tts", text: data.spoken, language: data.language || "", watermark: MARK }).then(function (v) {
+    setStatus(langStatus(data) + " — Head Engineer's voice on its way…");
+    var lang = data.language || "";
+    postVault({ mode: "tts", text: data.spoken, language: lang, watermark: MARK }).then(function (v) {
       if (seq !== askSeq) return;
       voicePending = false;
       setStatus(langStatus(data));
       var got = v && v.audio_base64 ? { data: v.audio_base64, mime: v.audio_mime } : (v && v.audio && v.audio.data ? v.audio : null);
-      if (got) {
-        lastAudio = got;
-        playBytes(b64ToBytes(got.data), got.mime);
-      } else {
-        voiceFallback(data);
-      }
+      if (!got) { voiceFallback(data); return; }
+      parts = [got];
+      var rest = (v.more || []).slice();
+      partsDone = rest.length === 0;
+      playQueue();
+      fetchRest(rest, v.language || lang, seq);
     }).catch(function () {
       if (seq !== askSeq) return;
       voicePending = false;
       voiceFallback(data);
+    });
+  }
+
+  // One request at a time: Piper renders faster than real time, so the next part is ready before it is needed.
+  function fetchRest(rest, lang, seq) {
+    if (seq !== askSeq) return;
+    if (!rest.length) { endParts(); return; }
+    var text = rest.shift();
+    postVault({ mode: "tts", engine: "piper", text: text, language: lang, watermark: MARK }).then(function (v) {
+      if (seq !== askSeq) return;
+      if (!v || !v.audio_base64) { endParts(); return; }
+      if (v.more && v.more.length) rest = v.more.concat(rest);
+      addPart({ data: v.audio_base64, mime: v.audio_mime });
+      fetchRest(rest, lang, seq);
+    }).catch(function () {
+      if (seq === askSeq) endParts();
     });
   }
 
@@ -362,7 +441,8 @@
     openDrawer();
     stopPlayback();
     try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e0) {}
-    lastAudio = null;
+    parts = [];
+    partsDone = true;
     root.classList.add("is-busy");
     setStatus(audio ? "Head Engineer is listening to your recording…" : "Head Engineer is diagnosing…");
     var payload = {

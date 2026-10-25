@@ -18,6 +18,15 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25c] — Male-only voice: Piper on the server (Iranian Amir), Google Translate TTS removed, homepage `?v=9`
+- **Owner rule: the voice is ALWAYS male.** The Google `translate_tts` voices were measured as female (F0 225Hz fa-bridge, 208Hz en), so `translate_tts` is **deleted from the vault entirely** (no Urdu/Arabic bridge for Persian, no English fallback). Do not bring it back.
+- **Piper** (open source, rhasspy, MIT) runs on the IIS host: `App_Data/piper/piper.exe` (+ onnxruntime, espeak-ng-data) and `App_Data/piper/voices/` with `fa_IR-amir-medium`, `en_GB-alan-medium`, `tr_TR-dfki-medium`, `ar_JO-kareem-medium` (all measured male: 146 / 98 / 106 / 110 Hz). ~280MB, git-ignored, excluded from deploy, 404 from the web. Install/refresh with `python tools/upload_piper_ftp.py` (download → FTP with a size-skip → live check). The host allows Process.Start (Server 2019, the app pool is 32-bit but piper.exe is 64-bit; it works). CPU is capped per site, so parallel processes don't speed things up.
+- Chain (`mode=tts`): Puck → Piper → Azure (only with a key) → `ok:false` (the widget then uses only a verified male browser voice, otherwise text only).
+- **Streaming:** Piper renders only the first part (first sentence split at a comma ≤70 chars, second ≤90, then ≤120-char sentence groups). It returns `more:[...]`; the widget fetches each with `engine:"piper"` (no Puck, no split) while the previous part plays. Live: speech starts in ~1.6–3s for fa/en/tr, 0 stalls for fa/en. Arabic is slower (3–8s) because of tashkeel.
+- Amir is made deeper: the WAV is written at 0.93× sample rate and length_scale 1.05×0.93, so the pace stays the same and the pitch drops ~7%.
+- Widget: male allowlist + female blocklist (`isMale`): unknown/default voices and all `Google*` voices without "Male" are rejected (`logs/male_filter_test.js` 37/37). There's a playback queue (`parts`, `playQueue`, `fetchRest`); ▶ Listen Answer replays the whole queue.
+- **Not done (on purpose):** rotating several free Gemini keys to stack quota is against Google's Gemini API terms, so it wasn't built. Not needed: Piper has no limit.
+
 ### [2026-10-25b] — Free keyless Persian voice (bridge), homepage `?v=8`
 - In `colddirect-voice-vault.aspx`, `Speak()` for `fa` (and `pes` / `prs` / `fa-IR` / auto-detected): Puck → Azure (if a key exists) → `PersianBridgeTts`. That reads the Persian text with the Google `translate_tts` **Urdu** voice (`tl=ur`: same letters پ چ گ ژ ک ی, close vocabulary; ZWNJ → space), then falls back to `tl=ar` with `PersianToArabic` (ک→ك, ی→ي, گ→ك, چ→تش, پ→ب, ژ→ز). The response says `voice:"cloud-neural-fallback-fa"`.
 - Live result: 5/5 PASS (fa, pes, fa-IR, auto, plus a 633-char answer), 180KB / 574KB MP3, 22.6s / 71.7s, 0 decode errors, 0.6–1.6s. Test: `logs/fa_tts_live_test.py`.
