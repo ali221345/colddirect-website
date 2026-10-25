@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25w] — Ask Your Fault fixed at top-left while scrolling (`?v=20261025s`)
+- `#cd-voice-root` is `position:fixed; top:10px; left:10px; z-index:99999` on mobile and desktop. Transcript panel has ✕. Audio dock stays top-right. Title/H1/meta unchanged.
+
 ### [2026-10-25v] — Mobile Ask Your Fault in the dark top bar (`?v=20261025r`)
 - On `max-width:768px` the widget is in `.cd-topbar`, not `position:fixed` at the bottom, so Book a Consultation cannot cover SPEAK/LISTEN. Desktop layout unchanged. Title/H1/meta unchanged.
 

@@ -1,6 +1,6 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
-Owner 2026-10-25v: desktop stays top-left white header + top-right Listen player. On mobile (`max-width:768px`) Ask Your Fault sits in the dark top bar, never fixed to the bottom (`?v=20261025r`). `#cd-audio-dock` stays visible. Every spoken Vapi answer must end with the like/review closing.
+Owner 2026-10-25w: Ask Your Fault is `position:fixed; top:10px; left:10px; z-index:99999` on mobile and desktop (`?v=20261025s`). Never bottom-fixed. Transcript panel has ✕ close. `#cd-audio-dock` stays top-right. Every spoken Vapi answer must end with the like/review closing.
 
 1. Title `Ask Your Fault`. Badge `Lang: Auto`. SPEAK and LISTEN sit together in that compact box.
 2. SPEAK opens a dropdown panel under the box with live transcript (RTL Persian / LTR English).

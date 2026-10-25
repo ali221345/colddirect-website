@@ -17,9 +17,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-The live widgets are: compact **Ask Your Fault** top-left of the white header on desktop (`?v=20261025r`), **Listen · Welcome to Cold Direct** top-right, and on mobile Ask Your Fault sits in the dark top bar (never fixed to the bottom). Do not hide `#cd-audio-dock`.
+Ask Your Fault is `position:fixed; top:10px; left:10px; z-index:99999` (`?v=20261025s`) on mobile and desktop. `#cd-audio-dock` stays top-right. Do not hide it.
 
 ---
+
+### [2026-10-25w] — Ask Your Fault fixed at top-left while scrolling (`?v=20261025s`)
+- `position:fixed; top:10px; left:10px; z-index:99999`. Transcript ✕. Audio dock top-right. Title/H1/meta unchanged.
 
 ### [2026-10-25v] — Mobile Ask Your Fault in the dark top bar (`?v=20261025r`)
 - On `max-width:768px` the widget is in `.cd-topbar`, not fixed at the bottom. Desktop layout unchanged. Title/H1/meta unchanged.
