@@ -1,7 +1,7 @@
 /**
  * Live Voice-in → Voice-out: SPEAK tap, silence auto-stop, auto-play via __cdPlayCtx.
  */
-const { chromium } = require("playwright");
+import { chromium } from "playwright";
 
 const URL = process.env.VOICE_E2E_URL || "https://www.colddirect.co.uk/";
 
@@ -53,7 +53,7 @@ const URL = process.env.VOICE_E2E_URL || "https://www.colddirect.co.uk/";
       await page.selectOption("#cd-voice-lang", lang).catch(() => {});
     }
     await page.click("#cd-voice-speak");
-    await page.waitForTimeout(5500);
+    await page.waitForTimeout(16000);
     const shot = await page.evaluate(() => ({
       playState: window.__cdPlayCtx ? window.__cdPlayCtx.state : "missing",
       audioPlayed: !!window.__cdAudioPlayed,
