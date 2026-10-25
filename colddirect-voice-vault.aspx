@@ -76,6 +76,7 @@ string SystemPrompt()
     return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of commercial refrigeration experience in London only. "
         + "TONE: kind, gentle, polite and reassuring — a senior expert helping a valued client. No street slang, no 'mate', no 'cheers', no 'don't panic', no aggressive urgency. "
         + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Detect the language from the speech or typed text. Typed text is the transcript. "
+        + "If the request names a selected language (fa, en, tr, ar, …), that language WINS even if SpeechRecognition text looks like English: answer 100% in the selected language. "
         + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100% in that same language, written as a native of that country. Never translate English word-for-word. Never mix English into another language except the company name ColdDirect where that language uses Latin letters. "
         + "Do NOT introduce yourself. Do NOT say you are the Head Engineer. Do NOT start with Hello or any welcome filler. spoken_script starts with the diagnosis. "
         + "Persian: fluent polite Iranian Farsi only. شما, complete verbs. Never Dari or Urdu. Write ColdDirect as کُلد دایرِکت and spell numbers and error codes in Persian words. "
@@ -256,10 +257,10 @@ string EnUrgency(string sym)
     return "if you would like an engineer today";
 }
 
-string FallbackJson(string text)
+string FallbackJson(string text, string hint)
 {
     string[] lang = DetectLang(text);
-    string lc = lang[0] == "fa" ? "fa" : "en";
+    string lc = (hint == "fa" || lang[0] == "fa") ? "fa" : "en";
     string label = lc == "fa" ? "Persian" : "English";
     string q = (text ?? "").ToLowerInvariant();
 
@@ -513,13 +514,15 @@ string ParseModelJson(string text)
     return Json().Serialize(o);
 }
 
-string GeminiDiagnose(string key, string text, string audioB64, string mime)
+string GeminiDiagnose(string key, string text, string audioB64, string mime, string langHint)
 {
     List<object> parts = new List<object>();
     bool hasAudio = !string.IsNullOrEmpty(audioB64);
     string instr = hasAudio
         ? "The customer's question is in the attached audio recording. Transcribe it exactly in the native script of the language they actually spoke, detect that language from the speech, then answer 100% in that same language." + (text != "" ? " They also typed: " + text : "")
         : text;
+    if (!string.IsNullOrEmpty(langHint) && langHint != "auto")
+        instr = "The customer selected language '" + langHint + "'. Write transcript, summary, likely_cause, quick_checks and spoken_script 100% in that language. Do not answer in English unless they selected English. " + instr;
     Dictionary<string, object> tp = new Dictionary<string, object>();
     tp["text"] = instr;
     parts.Add(tp);
@@ -1175,10 +1178,11 @@ protected void Page_Load(object sender, EventArgs e)
         return;
     }
 
+    string hint = CanonLang(Str(req, "langHint", "language"));
     string result = null;
     if (key != "")
     {
-        try { result = GeminiDiagnose(key, text, audioIn, mime); } catch { result = null; }
+        try { result = GeminiDiagnose(key, text, audioIn, mime, hint); } catch { result = null; }
     }
     if (string.IsNullOrEmpty(result))
     {
@@ -1188,14 +1192,14 @@ protected void Page_Load(object sender, EventArgs e)
             Response.Write("{\"ok\":false,\"error\":\"Sorry, I couldn't make out that recording. Tap SPEAK and try again, or type the fault.\",\"watermark\":\"" + MARK + "\"}");
             return;
         }
-        string guess = DetectLang(text)[0];
+        string guess = hint != "" ? hint : DetectLang(text)[0];
         if (guess != "fa" && guess != "en")
         {
             Response.StatusCode = 502;
             Response.Write("{\"ok\":false,\"error\":\"Please tap Ask once more in a moment.\",\"watermark\":\"" + MARK + "\"}");
             return;
         }
-        result = FallbackJson(text);
+        result = FallbackJson(text, hint);
     }
 
     // mode "diagnose" (current widget) returns text now and fetches Puck with a second mode "tts" call.

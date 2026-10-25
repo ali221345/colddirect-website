@@ -31,8 +31,34 @@
   var TTS_RATE = 1.05;
   var SPEAK_LABEL = "🎤 SPEAK";
   var STOP_LABEL = "⏹ TAP WHEN DONE (Listening...)";
+  var LANG_STORE = "cd-voice-lang";
+  var BCP = { en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" };
+  var LANGS = [
+    { id: "auto", bcp: "", label: "Auto / خودکار" },
+    { id: "fa", bcp: "fa-IR", label: "فارسی · Persian" },
+    { id: "en", bcp: "en-GB", label: "English (UK)" },
+    { id: "tr", bcp: "tr-TR", label: "Türkçe · Turkish" },
+    { id: "ar", bcp: "ar-SA", label: "العربية · Arabic" },
+    { id: "tl", bcp: "fil-PH", label: "Tagalog" },
+    { id: "es", bcp: "es-ES", label: "Español" },
+    { id: "pl", bcp: "pl-PL", label: "Polski" },
+    { id: "ro", bcp: "ro-RO", label: "Română" },
+    { id: "hi", bcp: "hi-IN", label: "हिन्दी" },
+    { id: "fr", bcp: "fr-FR", label: "Français" },
+    { id: "pt", bcp: "pt-PT", label: "Português" },
+    { id: "ru", bcp: "ru-RU", label: "Русский" },
+    { id: "zh", bcp: "zh-CN", label: "中文" }
+  ];
+  var LANG_LABEL = { auto: "Auto", fa: "فارسی", en: "English", tr: "Türkçe", ar: "العربية", tl: "Tagalog", es: "Español", pl: "Polski", ro: "Română", hi: "हिन्दी", fr: "Français", pt: "Português", ru: "Русский", zh: "中文" };
+  var UI_LAB = {
+    en: { h3: "Engineer Diagnosis", cause: "Likely cause:", checks: "Quick checks" },
+    fa: { h3: "تشخیص مهندس", cause: "علت محتمل:", checks: "بررسی سریع" },
+    tr: { h3: "Mühendis teşhisi", cause: "Olası neden:", checks: "Hızlı kontroller" },
+    ar: { h3: "تشخيص المهندس", cause: "السبب المحتمل:", checks: "فحوصات سريعة" }
+  };
 
-  var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn;
+  var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn, langEl;
+  var langSel = "auto";
   var cardEls = {};
   var audioCtx = null;
   var unlocked = false;
@@ -293,7 +319,8 @@
 
   var FAST_KB = [
     {
-      re: /\b(e\s*1|e1)\b|foster.*\be1\b|dixell.*\be1\b|eliwell.*\be1\b/i,
+      id: "e1",
+      re: /\b(e\s*1|e1)\b|foster.*\be1\b|dixell.*\be1\b|eliwell.*\be1\b|کد\s*ئی?\s*۱|خطای?\s*ئی?\s*۱/i,
       language: "en", languageLabel: "English",
       summary: "E1 on a Dixell, Carel or Eliwell controller is a room-probe fault.",
       cause: "The room air probe is open-circuit, unplugged or shorted, so the controller cannot read cabinet temperature.",
@@ -301,6 +328,7 @@
       spoken: "E1 is a room probe fault on most commercial controllers. Check the probe plug is seated, then call 07983 759320 if the cabinet is warming."
     },
     {
+      id: "p1",
       re: /\b(p\s*1|p1)\b|room probe|air probe/i,
       language: "en", languageLabel: "English",
       summary: "P1 is the room / air probe alarm on Dixell and similar controllers.",
@@ -309,6 +337,7 @@
       spoken: "P1 is the room air probe alarm. Reseat the probe plug. If the fridge is still warming, call 07983 759320."
     },
     {
+      id: "p2",
       re: /\b(p\s*2|p2)\b|defrost probe|evaporator probe/i,
       language: "en", languageLabel: "English",
       summary: "P2 is the evaporator / defrost-probe alarm.",
@@ -317,6 +346,7 @@
       spoken: "P2 is the evaporator probe alarm. That probe sits on the coil and controls defrost. Call 07983 759320 if the coil is iced solid."
     },
     {
+      id: "ha",
       re: /\bha\b|high temp(?:erature)? alarm|\bhi\b alarm/i,
       language: "en", languageLabel: "English",
       summary: "HA / Hi is a high-temperature alarm — the cabinet or cold room has gone above the set limit.",
@@ -325,7 +355,8 @@
       spoken: "HA is a high temperature alarm. Close the door, check the seal, and call 07983 759320 if stock is warming."
     },
     {
-      re: /not cooling|no cooling|not getting cold|won't cool|wont cool|warm fridge|fridge.*warm|cabinet.*warm/i,
+      id: "not_cooling",
+      re: /not cooling|no cooling|not getting cold|won't cool|wont cool|warm fridge|fridge.*warm|cabinet.*warm|خنک\s*نمی|سرد\s*نمی|گرم\s*شده|یخچال.*گرم|soğutmuyor|لا\s*يبرد/i,
       language: "en", languageLabel: "English",
       summary: "A commercial fridge that is not cooling is usually airflow, condenser dirt, or a control/compressor fault.",
       cause: "Blocked condenser, seized evaporator fan, iced coil, or a tripped compressor.",
@@ -333,7 +364,8 @@
       spoken: "If the cabinet is not cooling, check the condenser is clean and the inner fan is spinning. Call 07983 759320 for same-day repair."
     },
     {
-      re: /icing up|ice[- ]up|iced up|frozen coil|evaporator.*ice|coil.*ice/i,
+      id: "icing",
+      re: /icing up|ice[- ]up|iced up|frozen coil|evaporator.*ice|coil.*ice|برفک|یخ\s*زده|یخ\s*زدگی/i,
       language: "en", languageLabel: "English",
       summary: "Icing up means humid air is getting in or defrost has failed.",
       cause: "Split door gasket, failed defrost heater or termination probe, or stock blocking the coil.",
@@ -341,7 +373,8 @@
       spoken: "Icing up is usually a door seal or a failed defrost. Do not smash the ice. Call 07983 759320."
     },
     {
-      re: /compressor (trip|tripping|overload|not starting)|overload trip|short cycl/i,
+      id: "compressor",
+      re: /compressor (trip|tripping|overload|not starting)|overload trip|short cycl|کمپرسور/i,
       language: "en", languageLabel: "English",
       summary: "A tripping compressor is overload, high head pressure, or a failed start device.",
       cause: "Dirty condenser, seized fan, weak start relay/capacitor, or a failing compressor.",
@@ -349,7 +382,8 @@
       spoken: "A compressor that keeps tripping needs a clean condenser and a start-device check. Call 07983 759320. Do not keep resetting it."
     },
     {
-      re: /ice machine|not making ice|no ice|hoshizaki|scotsman|ice-o-matic/i,
+      id: "ice_machine",
+      re: /ice machine|not making ice|no ice|hoshizaki|scotsman|ice-o-matic|یخ\s*ساز|دستگاه\s*یخ/i,
       language: "en", languageLabel: "English",
       summary: "An ice machine that is not making ice is usually scale, water inlet, or a harvest fault.",
       cause: "Scaled evaporator, closed water valve, failed inlet valve or dirty condenser.",
@@ -357,7 +391,8 @@
       spoken: "If the ice machine is not making ice, open the water tap and check for scale. Call 07983 759320 for a same-day engineer."
     },
     {
-      re: /cold room|walk[- ]in|chiller room/i,
+      id: "cold_room",
+      re: /cold room|walk[- ]in|chiller room|سردخانه|اتاق\s*سرد/i,
       language: "en", languageLabel: "English",
       summary: "A cold room climbing in temperature is door air, an iced evaporator, or a rooftop condensing unit fault.",
       cause: "Door left on the latch, torn gaskets, iced coil, dirty remote condenser, or a controller alarm.",
@@ -365,6 +400,7 @@
       spoken: "For a cold room losing temperature, close the door and look at the evaporator for ice. Call 07983 759320 for 24/7 dispatch."
     },
     {
+      id: "walk_in",
       re: /walk[- ]in|chiller room|سردخانه/i,
       language: "en", languageLabel: "English",
       summary: "A walk-in chiller climbing in temperature is door air, an iced evaporator, or the remote pack.",
@@ -373,6 +409,7 @@
       spoken: "A walk-in chiller that is warming is usually a door left on the latch, an iced evaporator, or a dirty remote condenser. Call 07983 759320."
     },
     {
+      id: "ice_cream",
       re: /ice cream|soft[- ]serve|بستنی/i,
       language: "en", languageLabel: "English",
       summary: "An ice cream machine that will not freeze is usually mix, beaters, or a dirty condenser.",
@@ -381,6 +418,7 @@
       spoken: "If the ice cream machine will not freeze, check the mix and clean the condenser. Call 07983 759320."
     },
     {
+      id: "cellar",
       re: /cellar|keg|beer cooler|خنک.?کننده.?سرداب/i,
       language: "en", languageLabel: "English",
       summary: "Cellar beer going warm is usually airflow, a glycol leak, or a tripped cellar pack.",
@@ -389,6 +427,7 @@
       spoken: "Warm cellar beer is usually a blocked cellar cooler or a tripped pack. Call 07983 759320."
     },
     {
+      id: "ac",
       re: /air.?cond|ac unit|vrv|vrf|daikin|mitsubishi|کولر|تهویه/i,
       language: "en", languageLabel: "English",
       summary: "Commercial AC blowing warm is usually a dirty filter, a failed outdoor fan, or low R32/R410A.",
@@ -397,6 +436,7 @@
       spoken: "If the air conditioning is blowing warm, clean the indoor filter and check the outdoor fan. Call 07983 759320."
     },
     {
+      id: "condenser",
       re: /condenser|grease|dust on the back|کندانسر/i,
       language: "en", languageLabel: "English",
       summary: "A dirty condenser makes the cabinet warm and the compressor trip on high pressure.",
@@ -405,6 +445,7 @@
       spoken: "A dirty condenser causes weak cooling and compressor trips. Switch off and brush it, then call 07983 759320 if it still trips."
     },
     {
+      id: "defrost",
       re: /defrost|dEF|heater|کلکسیون برفک|دیفراست/i,
       language: "en", languageLabel: "English",
       summary: "A failed defrost leaves the evaporator as a solid ice block.",
@@ -413,6 +454,7 @@
       spoken: "Failed defrost ices the coil solid. Do not smash the ice. Call 07983 759320."
     },
     {
+      id: "gas_leak",
       re: /gas leak|f-?gas|regas|refrigerant|low gas|نشت گاز/i,
       language: "en", languageLabel: "English",
       summary: "A refrigerant leak shows as weak cooling, oil stains, and a high-temperature alarm.",
@@ -421,6 +463,7 @@
       spoken: "A gas leak needs a proper leak test, not a top-up. Call 07983 759320."
     },
     {
+      id: "controller",
       re: /\b(e0|e2|hf|da|la|ah1)\b|carel|dixell|eliwell/i,
       language: "en", languageLabel: "English",
       summary: "Carel, Dixell and Eliwell alarms are probe, door or high-temperature faults — not a dead compressor yet.",
@@ -444,6 +487,302 @@
     return null;
   }
 
+  function readLangSel() {
+    try {
+      var s = localStorage.getItem(LANG_STORE) || "auto";
+      for (var i = 0; i < LANGS.length; i++) if (LANGS[i].id === s) return s;
+    } catch (e) {}
+    return "auto";
+  }
+
+  function saveLangSel(id) {
+    langSel = id || "auto";
+    try { localStorage.setItem(LANG_STORE, langSel); } catch (e) {}
+    if (langEl) langEl.value = langSel;
+  }
+
+  function markLangChips() {
+    if (!root) return;
+    root.querySelectorAll(".cd-voice-lchip").forEach(function (b) {
+      b.classList.toggle("is-on", b.getAttribute("data-lang") === langSel);
+    });
+  }
+
+  function detectLang(q) {
+    var t = String(q || "");
+    if (/[پچژگکی]/.test(t) || /یخچال|فریزر|سردخانه|یخ\s*ساز|کمپرسور|کندانسور|برفک|خنک/.test(t)) return "fa";
+    if (/[\u0600-\u06FF]/.test(t)) return "ar";
+    if (/[ğüşıöçĞÜŞİÖÇ]/.test(t) || /buzdolab|soğuk oda|buz makine|soğutmuyor/i.test(t)) return "tr";
+    if (/[\u0400-\u04FF]/.test(t)) return "ru";
+    if (/[\u4e00-\u9fff]/.test(t)) return "zh";
+    if (/[\u0900-\u097F]/.test(t)) return "hi";
+    if (/\b(nevera|congelador|c[aá]mara fr[ií]a|heladera)\b/i.test(t)) return "es";
+    if (/\b(lodówka|zamraż|chłodni)/i.test(t)) return "pl";
+    if (/\b(frigider|congelator|camera frigorifica)\b/i.test(t)) return "ro";
+    if (/\b(geladeira|c[aâ]mara fria|refrigerador)\b/i.test(t)) return "pt";
+    if (/\b(frigo|chambre froide|cong[eé]lateur)\b/i.test(t)) return "fr";
+    if (/\b(po|hindi|yung|malamig|yelo)\b/i.test(t)) return "tl";
+    return "en";
+  }
+
+  function resolveLang(q) {
+    if (langSel && langSel !== "auto") return langSel;
+    return detectLang(q);
+  }
+
+  function srLang() {
+    if (langSel && langSel !== "auto" && BCP[langSel]) return BCP[langSel];
+    if (lastLang && lastLang !== "en" && BCP[lastLang]) return BCP[lastLang];
+    return BCP.en;
+  }
+
+  function getLangHint() {
+    return (langSel && langSel !== "auto") ? langSel : "";
+  }
+
+  var PHONE_SAY = {
+    en: "07983 759320",
+    fa: "صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر",
+    tr: "sıfır yedi dokuz sekiz üç, yedi beş dokuz, üç iki sıfır",
+    ar: "صفر سبعة تسعة ثمانية ثلاثة، سبعة خمسة تسعة، ثلاثة اثنان صفر"
+  };
+
+  var DX = {
+    en: {},
+    fa: {
+      e1: {
+        summary: "کد E1 روی کنترلر دیکسل، کارل یا الیول یعنی خرابی سنسور دمای کابین.",
+        cause: "پراب هوای کابین قطع، شل یا اتصال‌کوتاه شده و کنترلر دما را نمی‌خواند.",
+        checks: ["فیش پراب را روی کنترلر جا بیندازید.", "سیم پراب را از نظر له شدن یا یخ بررسی کنید.", "اگر مواد غذایی گرم می‌شود با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "کد ای یک یعنی سنسور دمای کابین ایراد دارد. فیش پراب را بررسی کنید و اگر کابین گرم شد با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      p1: {
+        summary: "کد P1 هشدار پراب هوای کابین روی دیکسل و کنترلرهای مشابه است.",
+        cause: "پراب هوا قطع شده، یخ زده یا خارج از محدوده خوانده می‌شود.",
+        checks: ["فیش پراب P1 را دوباره وصل کنید.", "یخ دور حباب پراب را باز کنید.", "اگر دما بالا رفت با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "پی یک هشدار پراب هوای کابین است. فیش را جا بیندازید. اگر یخچال هنوز گرم است با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      p2: {
+        summary: "کد P2 هشدار پراب اواپراتور یا دیفراست است.",
+        cause: "پراب کویل قطع، اتصال‌کوتاه یا یخ‌زده است و دیفراست درست تمام نمی‌شود.",
+        checks: ["پراب P2 روی اواپراتور را بررسی کنید.", "اگر ایمن است یخ جامد کویل را آب کنید.", "برای بازدید همان‌روز با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "پی دو هشدار پراب اواپراتور است. این پراب دیفراست را کنترل می‌کند. اگر کویل یخ جامد است با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      ha: {
+        summary: "HA یا Hi هشدار دمای بالا است؛ کابین یا سردخانه از حد تنظیم گذشته.",
+        cause: "ورود هوای گرم، کندانسور کثیف، فن خراب، کمبود گاز یا درِ نیمه‌باز.",
+        checks: ["در را ببندید و واشر را چک کنید.", "ببینید کندانسور داغ و چرب است یا نه.", "مواد حساس را جابه‌جا کنید و با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "اچ ای هشدار دمای بالاست. در را ببندید، واشر را چک کنید و اگر موجودی گرم می‌شود با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      not_cooling: {
+        summary: "یخچال تجاری که خنک نمی‌کند معمولاً مشکل جریان هوا، کثیفی کندانسور یا کمپرسور/کنترلر دارد.",
+        cause: "کندانسور گرفته، فن اواپراتور گیر کرده، کویل یخ‌زده یا کمپرسور تریپ خورده.",
+        checks: ["کندانسور پشت یا بالای دستگاه چرب است؟", "فن داخل کابین می‌چرخد؟", "برای تشخیص همان‌روز با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "اگر کابین خنک نمی‌کند، کندانسور را تمیز کنید و ببینید فن داخلی می‌چرخد. برای تعمیر همان‌روز با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      icing: {
+        summary: "برفک یعنی هوای مرطوب وارد می‌شود یا دیفراست از کار افتاده.",
+        cause: "واشر در پاره، هیتر دیفراست خراب، یا چیدمان کالا جلوی کویل را گرفته.",
+        checks: ["واشر در را با آزمون کاغذ چک کنید.", "یخ را با میله فلزی نکنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید؛ هیتر دیفراست همراه داریم."],
+        spoken: "برفک معمولاً از واشر در یا خرابی دیفراست است. یخ را نشکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      compressor: {
+        summary: "کمپرسوری که مرتب تریپ می‌کند معمولاً اضافه‌بار، فشار بالا یا استارت خراب دارد.",
+        cause: "کندانسور کثیف، فن گیر کرده، رله یا خازن استارت ضعیف، یا کمپرسور در حال خرابی.",
+        checks: ["اگر هر چند ثانیه کلیک می‌کند خاموشش کنید.", "چربی کندانسور را بگیرید.", "مدام ریست نکنید؛ با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "کمپرسوری که تریپ می‌کند باید کندانسورش تمیز شود و استارت چک شود. مدام ریست نکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      ice_machine: {
+        summary: "یخ‌سازی که یخ نمی‌دهد معمولاً رسوب، آب ورودی یا سیکل برداشت خراب است.",
+        cause: "اواپراتور رسوب‌گرفته، شیر آب بسته، شیر ورودی خراب یا کندانسور کثیف.",
+        checks: ["شیر آب باز باشد.", "رسوب سفید روی صفحه را ببینید.", "برای بازدید یخ‌ساز تجاری با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "اگر یخ‌ساز یخ نمی‌دهد، شیر آب را باز کنید و رسوب را چک کنید. برای مهندس همان‌روز با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      cold_room: {
+        summary: "سردخانه‌ای که دما بالا می‌رود معمولاً درِ هوا، اواپراتور یخ‌زده یا یونیت بیرونی ایراد دارد.",
+        cause: "در روی زبانه مانده، نوار پاره، کویل یخ‌زده، کندانسور پشت‌بام کثیف یا آلارم کنترلر.",
+        checks: ["در را کامل ببندید و پرده نواری را چک کنید.", "اواپراتور را از نظر بلوک یخ ببینید.", "برای تعمیر ۲۴ساعته سردخانه با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "برای سردخانه‌ای که دما از دست می‌دهد، در را ببندید و اواپراتور را از نظر یخ ببینید. برای اعزام ۲۴ساعته با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      walk_in: {
+        summary: "واک‌این چیلری که گرم می‌شود معمولاً درِ نیمه‌باز، اواپراتور یخ‌زده یا پک بیرونی است.",
+        cause: "در روی زبانه، واشر پاره، کویل یخ‌زده یا کندانسور پشت‌بام کثیف.",
+        checks: ["در را ببندید و پرده نواری را چک کنید.", "اواپراتور را از نظر بلوک یخ ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "واک‌این چیلر گرم معمولاً درِ نیمه‌باز، اواپراتور یخ‌زده یا کندانسور کثیف است. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      ice_cream: {
+        summary: "دستگاه بستنی که فریز نمی‌کند معمولاً مخلوط، هم‌زن یا کندانسور کثیف است.",
+        cause: "مخلوط نامناسب، هم‌زن فرسوده یا کندانسور پر از گرد قند.",
+        checks: ["مخلوط تاریخ‌دار و مخزن پر باشد.", "پرهٔ کندانسور را پاک کنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "اگر دستگاه بستنی فریز نمی‌کند، مخلوط را چک کنید و کندانسور را تمیز کنید. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      cellar: {
+        summary: "گرم شدن آبجو سرداب معمولاً جریان هوا، نشتی گلیکول یا تریپ پک است.",
+        cause: "پرهٔ خنک‌کننده گرفته، کمبود گلیکول یا تریپ فشار بالا.",
+        checks: ["جلوی دریچهٔ خنک‌کننده را خالی کنید.", "ببینید پک کار می‌کند.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "آبجوی گرم سرداب معمولاً خنک‌کننده گرفته یا پک تریپ‌خورده است. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      ac: {
+        summary: "کولر تجاری که باد گرم می‌زند معمولاً فیلتر کثیف، فن بیرونی خراب یا کمبود مبرد است.",
+        cause: "فیلتر داخلی گرفته، یونیت بیرونی تریپ، یا نشتی گاز.",
+        checks: ["فیلتر داخلی را تمیز یا عوض کنید.", "فن یونیت بیرونی را ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "اگر تهویه باد گرم می‌زند، فیلتر داخلی را تمیز کنید و فن بیرونی را چک کنید. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      condenser: {
+        summary: "کندانسور کثیف کابین را گرم می‌کند و کمپرسور را با فشار بالا تریپ می‌دهد.",
+        cause: "چربی و پرز روی پره‌های کندانسور.",
+        checks: ["خاموش کنید و کندانسور را برس بکشید.", "پارچه خیس روی برق نزنید.", "اگر باز تریپ کرد با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "کندانسور کثیف سرما را ضعیف می‌کند و کمپرسور را تریپ می‌دهد. خاموش کنید، برس بکشید و اگر ادامه داشت با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      defrost: {
+        summary: "دیفراست خراب اواپراتور را به بلوک یخ تبدیل می‌کند.",
+        cause: "هیتر سوخته، پراب خاتمه خراب، یا کنترلر روی dEF گیر کرده.",
+        checks: ["یخ را با میله فلزی نکنید.", "کویل سفید و جامد را ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید؛ هیتر همراه داریم."],
+        spoken: "خرابی دیفراست کویل را یخ جامد می‌کند. یخ را نشکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      gas_leak: {
+        summary: "نشتی مبرد با سرمای ضعیف، لکه روغن و هشدار دمای بالا دیده می‌شود.",
+        cause: "نشتی روی اتصال، اواپراتور یا لوله ترک‌خورده؛ شارژ بدون تعمیر درست نیست.",
+        checks: ["گاز را پشت‌سرهم اضافه نکنید.", "دور اتصالات را از نظر روغن ببینید.", "برای تست نشتی و بازیافت F-Gas با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "نشتی گاز نیاز به تست نشتی دارد، نه شارژ دوباره. با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      controller: {
+        summary: "آلارم کارل، دیکسل و الیول معمولاً پراب، در یا دمای بالاست؛ هنوز کمپرسور سوخته نیست.",
+        cause: "خطای پراب (E0/E1/E2/P1/P2)، آلارم در (dA) یا دمای بالا (HA/HF/AH1).",
+        checks: ["کد دقیق روی نمایشگر را یادداشت کنید.", "فیش پراب‌ها را جا بیندازید.", "با همان کد به ۰۷۹۸۳ ۷۵۹۳۲۰ زنگ بزنید."],
+        spoken: "این کد کنترلر معمولاً پراب، در یا دمای بالاست. یادداشت کنید و با " + PHONE_SAY.fa + " تماس بگیرید."
+      },
+      generic: {
+        summary: "بیشتر عیب‌های تبرید تجاری به کندانسور کثیف، اواپراتور یخ‌زده یا تریپ کمپرسور/کنترلر برمی‌گردد.",
+        cause: "پرهٔ کندانسور گرفته، کویل یخ‌زده یا واشر در خراب، یا کمپرسور شورت‌سایکل.",
+        checks: ["اگر ایمن است دستگاه را جدا کنید و کندانسور را برس بکشید.", "واشر در و چرخش فن داخلی را چک کنید.", "برای مهندس همان‌روز لندن با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "علت محتمل: کندانسور کثیف، اواپراتور یخ‌زده یا تریپ کمپرسور. بررسی سریع: کندانسور را برس بکشید، ببینید در درست بسته می‌شود و فن داخلی می‌چرخد. اگر موجودی گرم می‌شود با " + PHONE_SAY.fa + " تماس بگیرید."
+      }
+    },
+    tr: {
+      generic: {
+        summary: "Ticari soğutmada çoğu arıza kirli kondenser, buzlu evaporatör veya kompresör/kontrolcü trip’idir.",
+        cause: "Tıkalı kondenser kanatları, buzlu serpantin veya bozuk kapı contası, ya da kısa çevrim yapan kompresör.",
+        checks: ["Güvenliyse kapatıp kondenseri fırçalayın.", "Kapı contasını ve iç fanı kontrol edin.", "Aynı gün Londra mühendisi için 07983 759320’i arayın."],
+        spoken: "Olası neden: kirli kondenser, buzlu evaporatör veya kompresör trip’i. Hızlı kontrol: kondenseri fırçalayın, kapının kapandığını ve iç fanın döndüğünü görün. Stok ısınıyorsa " + PHONE_SAY.tr + " numarayı arayın."
+      }
+    },
+    ar: {
+      generic: {
+        summary: "معظم أعطال التبريد التجاري تعود إلى مكثف متسخ أو مبخر متجمد أو تعثر الضاغط/المتحكم.",
+        cause: "زعانف مكثف مسدودة، ملف متجمد أو مانع باب تالف، أو ضاغط يعمل بدورات قصيرة.",
+        checks: ["افصل الجهاز إن كان آمناً وفرش المكثف.", "افحص مانع الباب ودوران المروحة الداخلية.", "لاتصال مهندس في لندن في نفس اليوم اتصل على 07983 759320."],
+        spoken: "السبب المحتمل: مكثف متسخ أو مبخر متجمد أو تعثر الضاغط. فحوصات سريعة: فرش المكثف، تأكد أن الباب يغلق وأن المروحة الداخلية تدور. إذا كانت البضاعة تسخن فاتصل على " + PHONE_SAY.ar + "."
+      }
+    },
+    tl: {
+      generic: {
+        summary: "Karamihan ng sira sa commercial refrigeration ay maruming condenser, nagyeyelong evaporator, o trip ng compressor.",
+        cause: "Baradong condenser, nagyeyelong coil o sira ang door seal, o short-cycle compressor.",
+        checks: ["Kung ligtas, i-isolate at broshahan ang condenser.", "Tingnan ang door gasket at kung umiikot ang inner fan.", "Tumawag sa 07983 759320 para sa same-day engineer sa London."],
+        spoken: "Malamang na sanhi: maruming condenser, nagyeyelong evaporator, o trip ng compressor. Mabilisang check: broshahan ang condenser, siguraduhing nagsasara ang pinto, at umiikot ang inner fan. Kung umiinit ang stock, tumawag sa 07983 759320."
+      }
+    },
+    es: {
+      generic: {
+        summary: "La mayoría de fallos de refrigeración comercial vienen de un condensador sucio, un evaporador helado o un disparo del compresor.",
+        cause: "Aletas del condensador tapadas, serpentín helado o junta de puerta rota, o un compresor en corto ciclo.",
+        checks: ["Si es seguro, aísle y cepille el condensador.", "Compruebe la junta de la puerta y el ventilador interior.", "Llame al 07983 759320 para un técnico en Londres el mismo día."],
+        spoken: "Causa probable: condensador sucio, evaporador helado o disparo del compresor. Si el género se calienta, llame al 07983 759320."
+      }
+    },
+    pl: {
+      generic: {
+        summary: "Większość awarii chłodnictwa gastronomicznego to brudny skraplacz, oblodzony parownik albo wyłączony sprężarka.",
+        cause: "Zatkane żebra skraplacza, lód na wężownicy albo uszczelka drzwi, albo sprężarka w krótkim cyklu.",
+        checks: ["Jeśli bezpiecznie, odłącz i wyszczotkuj skraplacz.", "Sprawdź uszczelkę drzwi i wentylator wewnątrz.", "Zadzwoń 07983 759320 po inżyniera w Londynie."],
+        spoken: "Prawdopodobna przyczyna: brudny skraplacz, oblodzony parownik albo trip sprężarki. Jeśli towar się grzeje, zadzwoń 07983 759320."
+      }
+    },
+    ro: {
+      generic: {
+        summary: "Cele mai multe defecte de refrigerare comercială sunt condensator murdar, evaporator înghețat sau compresor declanșat.",
+        cause: "Aripioare de condensator blocate, serpentină înghețată sau garnitură de ușă, ori compresor în ciclu scurt.",
+        checks: ["Dacă e sigur, izolați și periați condensatorul.", "Verificați garnitura ușii și ventilatorul interior.", "Sunați 07983 759320 pentru un inginer în Londra."],
+        spoken: "Cauză probabilă: condensator murdar, evaporator înghețat sau trip de compresor. Dacă marfa se încălzește, sunați 07983 759320."
+      }
+    },
+    hi: {
+      generic: {
+        summary: "व्यावसायिक रेफ्रिजरेशन की ज़्यादातर खराबी गंदे कंडेनसर, जमी इवेपोरेटर या कंप्रेसर ट्रिप से होती है।",
+        cause: "कंडेनसर पंख बंद, कॉइल पर बर्फ या दरवाज़े की सील खराब, या शॉर्ट-साइकल कंप्रेसर।",
+        checks: [" सुरक्षित हो तो बंद करके कंडेनसर ब्रश करें।", "डोर गैसकेट और अंदर का पंखा देखें।", "लंदन में उसी दिन इंजीनियर के लिए 07983 759320 पर कॉल करें।"],
+        spoken: "संभावित कारण: गंदा कंडेनसर, जमी इवेपोरेटर या कंप्रेसर ट्रिप। माल गर्म हो रहा हो तो 07983 759320 पर कॉल करें।"
+      }
+    },
+    fr: {
+      generic: {
+        summary: "La plupart des pannes frigorifiques commerciales viennent d’un condenseur sale, d’un évaporateur givré ou d’un déclenchement du compresseur.",
+        cause: "Ailettes de condenseur bouchées, batterie givrée ou joint de porte, ou compresseur en cycle court.",
+        checks: ["Si c’est sûr, isolez et brossez le condenseur.", "Vérifiez le joint de porte et le ventilateur intérieur.", "Appelez le 07983 759320 pour un technicien à Londres."],
+        spoken: "Cause probable : condenseur sale, évaporateur givré ou disjonction du compresseur. Si le stock se réchauffe, appelez le 07983 759320."
+      }
+    },
+    pt: {
+      generic: {
+        summary: "A maior parte das avarias de refrigeração comercial vem de condensador sujo, evaporador gelo ou disparo do compressor.",
+        cause: "Alhetas do condensador tapadas, serpentina gelo ou junta da porta, ou compressor em ciclo curto.",
+        checks: ["Se for seguro, isole e escove o condensador.", "Verifique a junta da porta e o ventilador interior.", "Ligue 07983 759320 para um técnico em Londres."],
+        spoken: "Causa provável: condensador sujo, evaporador gelo ou disparo do compressor. Se a mercadoria aquecer, ligue 07983 759320."
+      }
+    },
+    ru: {
+      generic: {
+        summary: "Большинство неисправностей коммерческого холода — грязный конденсатор, обледеневший испаритель или срабатывание компрессора.",
+        cause: "Забитые рёбра конденсатора, лёд на испарителе или уплотнитель двери, либо компрессор в коротком цикле.",
+        checks: ["Если безопасно, отключите и почистите конденсатор.", "Проверьте уплотнитель двери и внутренний вентилятор.", "Звоните 07983 759320 инженеру в Лондоне."],
+        spoken: "Вероятная причина: грязный конденсатор, обледеневший испаритель или срабатывание компрессора. Если продукт греется, звоните 07983 759320."
+      }
+    },
+    zh: {
+      generic: {
+        summary: "商用制冷多数故障来自脏冷凝器、结冰蒸发器，或压缩机过载跳停。",
+        cause: "冷凝器翅片堵塞、盘管结冰或门封损坏，或压缩机短循环。",
+        checks: ["安全的话先断电，刷冷凝器。", "检查门封和内风扇是否转。", "伦敦当日工程师请打 07983 759320。"],
+        spoken: "可能原因：脏冷凝器、结冰蒸发器或压缩机跳停。存货在升温就打 07983 759320。"
+      }
+    }
+  };
+
+  function localizeHit(hit, lang) {
+    var id = (hit && hit.id) || "generic";
+    var pack = (DX[lang] && (DX[lang][id] || DX[lang].generic)) || null;
+    if (pack) {
+      return {
+        language: lang,
+        languageLabel: LANG_LABEL[lang] || lang,
+        summary: pack.summary,
+        cause: pack.cause,
+        checks: pack.checks.slice(),
+        spoken: pack.spoken
+      };
+    }
+    if (hit && lang === "en") {
+      return {
+        language: "en",
+        languageLabel: "English",
+        summary: hit.summary,
+        cause: hit.cause,
+        checks: (hit.checks || []).slice(),
+        spoken: hit.spoken
+      };
+    }
+    var g = DX.en && DX.en.generic;
+    return {
+      language: lang,
+      languageLabel: LANG_LABEL[lang] || lang,
+      summary: (hit && hit.summary) || (g && g.summary) || "",
+      cause: (hit && hit.cause) || "",
+      checks: ((hit && hit.checks) || []).slice(),
+      spoken: (hit && hit.spoken) || ""
+    };
+  }
+
   function stripFiller(text) {
     var t = String(text || "");
     t = t.replace(/^Hello po\.\s*Ako ang Head Engineer[^.]*\.\s*Natutuwa[^.]*\.\s*/i, "");
@@ -456,45 +795,31 @@
   }
 
   function instantDiagnose(q) {
+    var lang = resolveLang(q);
     var hit = kbLookup(q);
-    if (hit) return hit;
-    var fa = /[\u0600-\u06FF]/.test(q || "");
-    if (fa) {
-      return {
-        language: "fa",
-        languageLabel: "Persian",
-        summary: "احتمال زیاد کندانسور کثیف، فن اواپراتور، یا نشتی/ضعف کمپرسور است.",
-        cause: "گرد و غبار روی کندانسور، یخ‌زدگی کویل، یا ایراد کنترلر.",
-        checks: ["کندانسور را بررسی کنید.", "در را ببندید و واشر را چک کنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "احتمال زیاد کندانسور کثیف است یا فن اواپراتور یخ زده. در را ببندید، کندانسور را تمیز کنید و اگر دما بالا رفت با صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید."
-      };
-    }
-    return {
-      language: "en",
-      languageLabel: "English",
-      summary: "Most commercial refrigeration faults come down to a dirty condenser, an iced evaporator, or a controller/compressor trip.",
-      cause: "Blocked condenser fins, iced coil or failed door seal, or a compressor that is short-cycling.",
-      checks: ["Brush the condenser if it is safe to isolate.", "Check the door gasket and that the inner fan is spinning.", "Call 07983 759320 for same-day London engineers."],
-      spoken: "Likely cause: a dirty condenser, an iced evaporator, or a compressor trip. Quick checks: isolate and brush the condenser, confirm the door shuts true, and see if the inner fan is spinning. If stock is warming, call 07983 759320."
-    };
+    return localizeHit(hit, lang);
   }
 
   function pickVoice(code) {
     var voices = window.speechSynthesis.getVoices() || [];
     var same = voices.filter(function (v) {
       var two = String(v.lang || "").slice(0, 2).toLowerCase();
-      var hit = two === code || (code === "tl" && (two === "tl" || two === "fil" || /tagalog|filipino/i.test(v.name || "")));
-      return hit && isMale(v);
+      var name = v.name || "";
+      var hit = two === code || (code === "tl" && (two === "tl" || two === "fil" || /tagalog|filipino/i.test(name)));
+      if (code === "fa" && /persian|farsi|iran|dariush|farid|majid/i.test(name + " " + (v.lang || ""))) hit = true;
+      if (code === "ar" && /arabic|arab/i.test(name)) hit = true;
+      return hit;
     });
+    var male = same.filter(isMale);
     if (code === "en") {
-      var gb = same.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
+      var gb = male.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
       for (var i = 0; i < UK_MALE_PREFS.length; i++) {
         for (var j = 0; j < gb.length; j++) if (UK_MALE_PREFS[i].test(gb[j].name || "")) return gb[j];
       }
-      return gb[0] || same[0] || null;
+      return gb[0] || male[0] || same[0] || null;
     }
-    var natural = same.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
-    return natural[0] || same[0] || null;
+    var natural = male.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
+    return natural[0] || male[0] || same[0] || null;
   }
 
   function speakChunk(text, lang, onend) {
@@ -508,11 +833,7 @@
       u.rate = TTS_RATE;
       u.pitch = 1;
       u.voice = pickVoice(code);
-      if (!u.voice) {
-        if (onend) onend();
-        return false;
-      }
-      u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" }[code] || code);
+      u.lang = (u.voice && u.voice.lang) || BCP[code] || code;
       u.onend = function () {
         playing = false;
         dxSpeaking = false;
@@ -594,7 +915,11 @@
   }
 
   function fillCard(data) {
-    cardEls.badge.textContent = data.languageLabel || data.language || "Detected";
+    var lab = UI_LAB[data.language] || UI_LAB.en;
+    if (cardEls.h3) cardEls.h3.textContent = lab.h3;
+    if (cardEls.causeLab) cardEls.causeLab.textContent = lab.cause;
+    if (cardEls.checksLab) cardEls.checksLab.textContent = lab.checks;
+    cardEls.badge.textContent = data.languageLabel || LANG_LABEL[data.language] || data.language || "Detected";
     cardEls.summary.textContent = data.summary || data.spoken || "";
     cardEls.cause.textContent = data.cause || "";
     cardEls.checks.innerHTML = "";
@@ -731,15 +1056,18 @@
     partsDone = true;
     root.classList.add("is-busy");
     setStatus("Diagnosing fault...");
-    var fast = instantDiagnose(q || "commercial refrigeration fault");
+    var fast = instantDiagnose(q || "");
     fillCard(fast);
     setStatus(langStatus(fast));
     root.classList.remove("is-busy");
-    speakDiagnosis(fast.spoken, fast.language);
+    var spoke = speakDiagnosis(fast.spoken, fast.language);
+    if (!spoke) requestVoice(fast, seq);
+    var hint = getLangHint() || fast.language || "";
     var payload = {
       mode: "diagnose",
       text: q,
-      langHint: (navigator.language || "").slice(0, 16),
+      language: hint,
+      langHint: hint,
       page: location.pathname,
       watermark: MARK
     };
@@ -748,12 +1076,20 @@
       payload.mime = audio.mime || "audio/webm";
     }
     if (!q && !audio) return;
-    postVault(payload, API_MS).then(function (data) {
+    var wait = audio && audio.data ? 4500 : API_MS;
+    postVault(payload, wait).then(function (data) {
       if (seq !== askSeq) return;
       if (data.transcript) input.value = data.transcript;
       if (data.spoken) data.spoken = stripFiller(data.spoken);
+      var apiLang = String(data.language || "").slice(0, 2).toLowerCase();
+      if (langSel === "auto" && apiLang && apiLang !== "au") {
+        lastLang = apiLang;
+      }
       fillCard(data);
       setStatus(langStatus(data));
+      if (apiLang && apiLang !== String(fast.language || "").slice(0, 2) && data.spoken) {
+        speakDiagnosis(data.spoken, data.language);
+      }
     }).catch(function () {
       if (seq !== askSeq) return;
     });
@@ -832,7 +1168,7 @@
       sr.interimResults = true;
       sr.continuous = true;
       sr.maxAlternatives = 1;
-      sr.lang = navigator.language || "en-GB";
+      sr.lang = srLang();
       sr.onresult = function (ev) {
         var finals = "";
         var inter = "";
@@ -845,6 +1181,10 @@
         }
         srText = (srFinal + " " + inter).replace(/\s+/g, " ").trim();
         if (input && srText) input.value = srText;
+        if (langSel === "auto" && srText) {
+          var guess = detectLang(srText);
+          if (guess && guess !== "en") lastLang = guess;
+        }
         if (!srText) return;
         if (srSilence) clearTimeout(srSilence);
         srSilence = setTimeout(function () {
@@ -923,9 +1263,10 @@
       startMeter(stream);
       recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
       var srOn = startSpeechRec();
+      var pick = langSel === "auto" ? "Auto — for Persian tap فارسی first" : (LANG_LABEL[langSel] || langSel);
       setStatus(srOn
-        ? "Listening… I’ll diagnose as soon as you pause, or tap STOP & SEND."
-        : "Listening in any language… pause briefly or tap STOP & SEND.");
+        ? ("Listening (" + pick + ")… pause or tap TAP WHEN DONE.")
+        : ("Listening (" + pick + ")… pause or tap TAP WHEN DONE."));
     }).catch(function () {
       recording = false;
       setSpeakUi(false);
@@ -952,22 +1293,21 @@
     var spoken = srText;
     stopSr();
     endCapture(function (rec) {
-      if (spoken && spoken.length >= 2) {
-        recChunks = [];
-        ask(spoken);
-        return;
-      }
       var type = String((rec && rec.mimeType) || pickMime() || "audio/webm");
       var blob = new Blob(recChunks, { type: type });
       recChunks = [];
-      if (blob.size < 2000) {
-        setStatus("That was too short — tap SPEAK and try again.");
-        return;
+      function go(audio) {
+        if (spoken && spoken.length >= 2) ask(spoken, audio);
+        else if (audio) ask("", audio);
+        else setStatus("That was too short — tap SPEAK and try again.");
       }
-      blobToB64(blob).then(function (b64) {
-        if (!b64) { setStatus("Couldn't read the recording — please try again."); return; }
-        ask("", { data: b64, mime: type });
-      });
+      if (blob.size >= 2000) {
+        blobToB64(blob).then(function (b64) {
+          go(b64 ? { data: b64, mime: type } : null);
+        });
+      } else {
+        go(null);
+      }
     });
   }
 
@@ -1027,6 +1367,12 @@
       "@keyframes cdVoicePulse{0%{box-shadow:0 0 0 0 rgba(56,189,248,.65);}70%{box-shadow:0 0 0 8px rgba(56,189,248,0);}100%{box-shadow:0 0 0 0 rgba(56,189,248,0);}}",
       "#cd-voice-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:650;color:#f8fafc;}",
       "#cd-voice-controls{display:flex;align-items:center;gap:6px;flex:0 0 auto;}",
+      "#cd-voice-root .cd-voice-langwrap{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 6px;border:1px solid #38bdf8;border-radius:6px;background:#082f49;color:#e0f2fe;}",
+      "#cd-voice-root .cd-voice-langlab{font:700 9px/1 system-ui,sans-serif;letter-spacing:.04em;color:#7dd3fc;}",
+      "#cd-voice-lang{height:22px;max-width:118px;border:0;background:#082f49;color:#f8fafc;font:700 11px/1 system-ui,sans-serif;}",
+      "#cd-voice-langchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;}",
+      "#cd-voice-root .cd-voice-lchip{height:28px;padding:0 10px;border:1px solid #334155;border-radius:999px;background:#111827;color:#e2e8f0;font:700 12px/1 system-ui,sans-serif;cursor:pointer;}",
+      "#cd-voice-root .cd-voice-lchip.is-on{background:#1d4ed8;border-color:#93c5fd;color:#fff;}",
       "#cd-voice-root button.cd-voice-btn{height:28px;padding:0 8px;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#f8fafc;font:700 10px/1 system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;display:inline-flex;align-items:center;gap:4px;}",
       "#cd-voice-root button.cd-voice-btn.is-on{background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
       "#cd-voice-root button.cd-voice-tog{width:28px;padding:0;justify-content:center;}",
@@ -1065,7 +1411,7 @@
       "#cd-voice-card p,#cd-voice-card li,#cd-voice-spoken,#cd-voice-legal{overflow-wrap:anywhere;word-break:break-word;}",
       "#cd-voice-card li{color:#e2e8f0 !important;opacity:1 !important;}",
       "#cd-voice-root button.cd-voice-btn#cd-voice-replay{height:32px;margin:0 0 8px;padding:0 12px;font-size:12px;background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
-      "@media (max-width:480px){#cd-voice-bar{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));gap:6px;}#cd-voice-title{font-size:10px;}#cd-voice-controls{gap:4px;}#cd-voice-root button.cd-voice-btn{padding:0 6px;font-size:9.5px;letter-spacing:0;}#cd-voice-root button.cd-voice-tog{width:26px;}#cd-voice-input{font-size:16px;}#cd-voice-drawer{padding:8px max(8px,env(safe-area-inset-right,0px)) 10px max(8px,env(safe-area-inset-left,0px));}}",
+      "@media (max-width:480px){#cd-voice-bar{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));gap:6px;}#cd-voice-title{font-size:10px;}#cd-voice-controls{gap:4px;}#cd-voice-lang{max-width:92px;font-size:10px;}#cd-voice-root button.cd-voice-btn{padding:0 6px;font-size:9.5px;letter-spacing:0;}#cd-voice-root button.cd-voice-tog{width:26px;}#cd-voice-input{font-size:16px;}#cd-voice-drawer{padding:8px max(8px,env(safe-area-inset-right,0px)) 10px max(8px,env(safe-area-inset-left,0px));}}",
       "@media (max-width:360px){#cd-voice-dot{display:none;}#cd-voice-title{font-size:9.5px;}}"
     ].join("");
   }
@@ -1079,6 +1425,12 @@
           '<span id="cd-voice-title">' + TITLE + "</span>" +
         "</div>" +
         '<div id="cd-voice-controls">' +
+          '<label class="cd-voice-langwrap"><span class="cd-voice-langlab">Lang</span>' +
+          '<select id="cd-voice-lang" aria-label="Answer language">' +
+          LANGS.map(function (L) {
+            return '<option value="' + L.id + '">' + L.label + "</option>";
+          }).join("") +
+          "</select></label>" +
           '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false" aria-label="Speak">🎤 SPEAK</button>' +
           '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false" aria-label="Listen">🔊 LISTEN</button>' +
           '<button type="button" class="cd-voice-btn cd-voice-tog" id="cd-voice-toggle" aria-expanded="false" aria-label="Open diagnosis drawer">▼</button>' +
@@ -1089,16 +1441,23 @@
           '<input id="cd-voice-input" type="text" maxlength="2000" autocomplete="off" placeholder="Type a fault in any language…">' +
           '<button type="button" class="cd-voice-btn" id="cd-voice-ask">Ask</button>' +
         "</div>" +
+        '<div id="cd-voice-langchips">' +
+          '<button type="button" class="cd-voice-lchip" data-lang="fa">فارسی</button>' +
+          '<button type="button" class="cd-voice-lchip" data-lang="en">English</button>' +
+          '<button type="button" class="cd-voice-lchip" data-lang="tr">Türkçe</button>' +
+          '<button type="button" class="cd-voice-lchip" data-lang="ar">العربية</button>' +
+          '<button type="button" class="cd-voice-lchip" data-lang="auto">Auto</button>' +
+        "</div>" +
         '<div id="cd-voice-chips">' +
           CHIPS.map(function (c) { return '<button type="button" class="cd-voice-chip" data-chip="' + c.replace(/"/g, "") + '">' + c + "</button>"; }).join("") +
         "</div>" +
         '<div id="cd-voice-status" role="status"></div>' +
         '<div id="cd-voice-card" hidden>' +
           '<span id="cd-voice-badge">Language</span>' +
-          "<h3>Engineer Diagnosis</h3>" +
+          '<h3 id="cd-voice-card-h">Engineer Diagnosis</h3>' +
           '<p id="cd-voice-summary"></p>' +
-          "<p><strong>Likely cause:</strong> <span id=\"cd-voice-cause\"></span></p>" +
-          "<p><strong>Quick checks</strong></p>" +
+          "<p><strong id=\"cd-voice-cause-lab\">Likely cause:</strong> <span id=\"cd-voice-cause\"></span></p>" +
+          "<p><strong id=\"cd-voice-checks-lab\">Quick checks</strong></p>" +
           '<ul id="cd-voice-checks"></ul>' +
           '<p id="cd-voice-spoken"></p>' +
           '<button type="button" class="cd-voice-btn" id="cd-voice-replay">▶ Listen Answer</button>' +
@@ -1152,14 +1511,39 @@
     speakBtn = $("#cd-voice-speak", root);
     listenBtn = $("#cd-voice-listen", root);
     toggleBtn = $("#cd-voice-toggle", root);
+    langEl = $("#cd-voice-lang", root);
     cardEls = {
       box: $("#cd-voice-card", root),
       badge: $("#cd-voice-badge", root),
+      h3: $("#cd-voice-card-h", root),
       summary: $("#cd-voice-summary", root),
+      causeLab: $("#cd-voice-cause-lab", root),
       cause: $("#cd-voice-cause", root),
+      checksLab: $("#cd-voice-checks-lab", root),
       checks: $("#cd-voice-checks", root),
       spoken: $("#cd-voice-spoken", root)
     };
+
+    langSel = readLangSel();
+    if (langEl) langEl.value = langSel;
+    markLangChips();
+    if (langEl) {
+      langEl.addEventListener("change", function () {
+        saveLangSel(langEl.value);
+        markLangChips();
+        if (langSel !== "auto") lastLang = langSel;
+        setStatus("Language: " + (LANG_LABEL[langSel] || langSel) + " — answers stay in this language.");
+      });
+    }
+    root.querySelectorAll(".cd-voice-lchip").forEach(function (b) {
+      b.addEventListener("click", function () {
+        saveLangSel(b.getAttribute("data-lang") || "auto");
+        markLangChips();
+        if (langSel !== "auto") lastLang = langSel;
+        openDrawer();
+        setStatus("Language: " + (LANG_LABEL[langSel] || langSel) + " — speak or type in this language.");
+      });
+    });
 
     speakBtn.addEventListener("click", function () { primePlayer(); toggleSpeak(); });
     listenBtn.addEventListener("click", playDiagnosis);
