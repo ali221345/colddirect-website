@@ -17,9 +17,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-Call `vapi.start(ASSISTANT_ID)` with no `assistantOverrides` (`?v=20261025w`). Never auto-stop on speech-end/timer. Ignore non-fatal daily-js warnings. On mobile Welcome is LEFT and Ask Your Fault RIGHT. Never overlay phones, email, logo, or Menu. Desktop Ask Your Fault stays fixed top-left.
+`vapi.start('e31c40c7-a45b-4dff-833c-320c54250743')` with no overrides (`?v=20261025x`). Dashboard v6 owns prompt/maxTokens. Never auto-stop. Pulse Like CTA on speech-end. Ignore daily-js false errors.
 
 ---
+
+### [2026-10-25aa] — SPEAK starts with assistant id only (`?v=20261025x`)
+- No assistantOverrides. Title/H1/meta unchanged.
 
 ### [2026-10-25z] — Start Vapi with assistant id only (`?v=20261025w`)
 - No partial assistantOverrides. Title/H1/meta unchanged.

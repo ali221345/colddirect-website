@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25aa] — SPEAK starts with assistant id only; ignore Daily false errors (`?v=20261025x`)
+- `vapi.start('e31c40c7-a45b-4dff-833c-320c54250743')` — no assistantOverrides. speech-end pulses Like CTA. No auto-stop. Error handler logs and does not kill a starting/live call on daily-js noise. Title/H1/meta unchanged.
+
 ### [2026-10-25z] — Start Vapi with assistant id only (`?v=20261025w`)
 - Removed partial `assistantOverrides` from `vapi.start(ASSISTANT_ID)` (400 reject). Still never auto-stop on speech-end/timer. Error handler logs details and ignores non-fatal daily-js warnings. Title/H1/meta unchanged.
 

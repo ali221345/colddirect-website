@@ -174,21 +174,9 @@
     if (type === "warning") return true;
     if (err.level === "warning") return true;
     if (blob.indexOf("non-fatal") !== -1 || blob.indexOf("nonfatal") !== -1) return true;
-    if (blob.indexOf("daily-js") !== -1 || blob.indexOf("dailyiframe") !== -1) {
-      if (/warn|duplicate|already (left|destroyed|ended)|meeting has ended|ejection/.test(blob)) return true;
-    }
+    if (blob.indexOf("daily") !== -1) return true;
+    if (/cam-|camera|video track|getusermedia/.test(blob)) return true;
     return false;
-  }
-
-  function injectClosingRule() {
-    if (!vapi) return;
-    try {
-      vapi.send({
-        type: "add-message",
-        message: { role: "system", content: CLOSING_RULE },
-        triggerResponseEnabled: false
-      });
-    } catch (e1) {}
   }
 
   function addRow(role, text, partial) {
@@ -350,9 +338,7 @@
     if (speakBtn) speakBtn.disabled = true;
     if (listenBtn) listenBtn.disabled = true;
     setStatus("connecting", "Requesting microphone access…");
-    Promise.resolve(vapi.start(ASSISTANT_ID)).then(function () {
-      injectClosingRule();
-    }).catch(function (err) {
+    Promise.resolve(vapi.start("e31c40c7-a45b-4dff-833c-320c54250743")).catch(function (err) {
       try { console.error("ColdDirect Vapi start error", err); } catch (e1) {}
       setIdleState();
       setStatus("error", "The call could not start. Check microphone permission.");
@@ -493,7 +479,6 @@
     listenBtn.addEventListener("click", listenNow);
     vapi.on("call-start", function () {
       setLiveState();
-      injectClosingRule();
     });
     vapi.on("call-end", function () {
       setIdleState();
@@ -515,6 +500,7 @@
     vapi.on("error", function (err) {
       try { console.error("ColdDirect Vapi error", err); } catch (e1) {}
       if (isNonFatalDailyWarning(err)) return;
+      if (callActive || callStarting) return;
       setIdleState();
       setStatus("error", "A voice connection error occurred. Please try again.");
     });
