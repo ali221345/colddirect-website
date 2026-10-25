@@ -334,17 +334,12 @@
   }
 
   function placeRoot(node) {
-    var hero = document.querySelector("section.hero .wrap, .hero .wrap, .blackbox, section.hero, .page-header .wrap, .inner-banner .wrap");
-    if (hero) {
-      var h1 = hero.querySelector("h1");
-      if (h1) {
-        hero.insertBefore(node, h1);
-        return;
-      }
-      hero.insertBefore(node, hero.firstChild);
+    var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
+    var hero = document.querySelector("section.hero, .hero, .blackbox, .page-header, .inner-banner");
+    if (hero && hero.parentNode) {
+      hero.parentNode.insertBefore(node, hero);
       return;
     }
-    var header = document.querySelector(".cd-main-header, header.site, .site-header");
     if (header && header.parentNode) {
       if (header.nextSibling) header.parentNode.insertBefore(node, header.nextSibling);
       else header.parentNode.appendChild(node);
@@ -399,6 +394,10 @@
     });
   }
 
-  if (document.body) mount();
-  else document.addEventListener("DOMContentLoaded", mount);
+  function boot() { mount(); }
+  if (document.body) boot();
+  document.addEventListener("DOMContentLoaded", boot);
+  window.addEventListener("load", boot);
+  setTimeout(boot, 60);
+  setTimeout(boot, 500);
 })();
