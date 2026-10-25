@@ -107,6 +107,13 @@
     return !!(key && key !== "YOUR_PUBLIC_API_KEY" && key.length > 8);
   }
 
+  function vapiCtor(mod) {
+    var x = mod && (mod.default || mod.Vapi || mod);
+    if (x && typeof x !== "function" && x.default) x = x.default;
+    if (x && typeof x !== "function" && x.Vapi) x = x.Vapi;
+    return typeof x === "function" ? x : null;
+  }
+
   function fetchJson(url) {
     return fetch(url, { credentials: "same-origin", cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("config");
@@ -211,12 +218,17 @@
       import(SDK)
     ]).then(function (parts) {
       var key = parts[0];
-      var mod = parts[1];
-      var Vapi = mod && (mod.default || mod.Vapi || mod);
+      var Vapi = vapiCtor(parts[1]);
       if (!Vapi) throw new Error("sdk");
       bindCall(new Vapi(key));
-    }).catch(function () {
-      setStatus("error", "Add your Vapi Public API Key to the HTML before using the widget.");
+      setIdleState();
+    }).catch(function (err) {
+      var msg = String(err && err.message || err);
+      if (msg === "missing-key" || msg.indexOf("config") !== -1) {
+        setStatus("error", "Add your Vapi Public API Key to the HTML before using the widget.");
+      } else {
+        setStatus("error", "The voice widget could not load. Please refresh and try again.");
+      }
     });
   }
 
