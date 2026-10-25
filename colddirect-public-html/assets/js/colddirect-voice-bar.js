@@ -33,8 +33,9 @@
 
   function css() {
     return [
-      "#cd-audio-dock{display:none !important;visibility:hidden !important;pointer-events:none !important;opacity:0 !important;}",
       ".cd-main-header,.cd-header-inner,header.site,.site-header{overflow:visible !important;}",
+      "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}",
+      "@media (max-width:640px){#cd-audio-dock{width:min(175px,46vw) !important;top:8px !important;right:8px !important;}}",
       "#cd-voice-root{position:absolute;left:10px;top:12px;z-index:400;width:auto;max-width:min(420px,calc(100vw - 24px));margin:0;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0;}",
       "#cd-voice-root *{box-sizing:border-box;}",
       "#cd-voice-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:7px 9px;background:linear-gradient(90deg,#0b1120 0%,#0f172a 100%);border:1px solid #38bdf8;border-radius:10px;box-shadow:0 8px 22px rgba(15,23,42,.28);white-space:nowrap;}",
@@ -386,12 +387,22 @@
     });
   }
 
-  function hideAudioDock() {
+  function restoreAudioDock() {
     var dock = document.getElementById("cd-audio-dock");
-    if (dock) {
-      dock.setAttribute("hidden", "hidden");
-      dock.setAttribute("aria-hidden", "true");
-      dock.style.setProperty("display", "none", "important");
+    if (!dock) return;
+    dock.removeAttribute("hidden");
+    dock.removeAttribute("aria-hidden");
+    dock.style.removeProperty("display");
+    var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
+    if (header && dock.parentNode !== header) header.appendChild(dock);
+    if (!document.getElementById("cd-audio-dock-restore")) {
+      var style = document.createElement("style");
+      style.id = "cd-audio-dock-restore";
+      style.textContent = [
+        "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}",
+        "@media (max-width:640px){#cd-audio-dock{width:min(175px,46vw) !important;top:8px !important;right:8px !important;max-height:none !important;overflow:visible !important;}}"
+      ].join("");
+      (document.body || document.documentElement).appendChild(style);
     }
   }
 
@@ -405,6 +416,7 @@
   }
 
   function mount() {
+    restoreAudioDock();
     if (document.getElementById("cd-voice-root")) return;
     document.documentElement.classList.remove("cd-voice-on");
     var float = document.querySelector(".vapi-widget");
@@ -423,9 +435,8 @@
     root.setAttribute("role", "region");
     root.setAttribute("aria-label", TITLE);
     root.innerHTML = html();
-    hideAudioDock();
     placeRoot(root);
-    hideAudioDock();
+    restoreAudioDock();
 
     speakBtn = document.getElementById("cd-voice-speak");
     listenBtn = document.getElementById("cd-voice-listen");

@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25u] — Restore top-right Listen welcome player (`?v=20261025q`)
+- `#cd-audio-dock` is visible again in the white header, right of WRITE A REVIEW. Ask Your Fault stays top-left. Title/H1/meta unchanged.
+
 ### [2026-10-25t] — Spoken like/review closing + CTA pulse (`?v=20261025p`)
 - `vapi.start(assistantId, assistantOverrides)` plus a system `add-message` so every spoken answer ends with the like/review line (EN/FA/other). `#cd-voice-cta` pulses on `speech-end`. Title/H1/meta unchanged.
 
