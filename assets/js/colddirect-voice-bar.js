@@ -24,35 +24,38 @@
 
   function css() {
     return [
-      "#cd-voice-root{position:relative;z-index:50;width:100%;max-width:100vw;margin:0 0 14px;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0;}",
+      "#cd-audio-dock{display:none !important;visibility:hidden !important;pointer-events:none !important;opacity:0 !important;}",
+      ".cd-main-header,.cd-header-inner,header.site,.site-header{overflow:visible !important;}",
+      "#cd-voice-root{position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:400;width:auto;max-width:min(420px,calc(100vw - 24px));margin:0;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0;}",
       "#cd-voice-root *{box-sizing:border-box;}",
-      "#cd-voice-bar{min-height:44px;padding:6px 12px;display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#0b1120 0%,#0f172a 100%);border:1px solid #1e293b;border-radius:10px;width:100%;}",
-      "#cd-voice-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;}",
+      "#cd-voice-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:7px 9px;background:linear-gradient(90deg,#0b1120 0%,#0f172a 100%);border:1px solid #38bdf8;border-radius:10px;box-shadow:0 8px 22px rgba(15,23,42,.28);white-space:nowrap;}",
+      "#cd-voice-left{display:flex;align-items:center;gap:6px;min-width:0;}",
       "#cd-voice-dot{width:8px;height:8px;border-radius:50%;background:#38bdf8;box-shadow:0 0 0 0 rgba(56,189,248,.7);animation:cdVoicePulse 1.6s infinite;flex:0 0 8px;}",
       "#cd-voice-root.is-busy #cd-voice-dot{background:#fbbf24;}",
       "#cd-voice-root.is-live #cd-voice-dot{background:#22c55e;}",
       "@keyframes cdVoicePulse{0%{box-shadow:0 0 0 0 rgba(56,189,248,.65);}70%{box-shadow:0 0 0 8px rgba(56,189,248,0);}100%{box-shadow:0 0 0 0 rgba(56,189,248,0);}}",
-      "#cd-voice-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:700;color:#f8fafc;}",
-      "#cd-voice-controls{display:flex;align-items:center;gap:6px;flex:0 0 auto;}",
-      "#cd-voice-root .cd-voice-langwrap{display:inline-flex;align-items:center;height:28px;padding:0 8px;border:1px solid #38bdf8;border-radius:6px;background:#082f49;color:#e0f2fe;font:700 11px/1 system-ui,sans-serif;}",
-      "#cd-voice-root button.cd-voice-btn{height:28px;padding:0 10px;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#f8fafc;font:700 10px/1 system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;display:inline-flex;align-items:center;gap:4px;}",
+      "#cd-voice-title{white-space:nowrap;font-size:12px;font-weight:800;color:#f8fafc;}",
+      "#cd-voice-controls{display:flex;align-items:center;gap:5px;flex:0 0 auto;}",
+      "#cd-voice-root .cd-voice-langwrap{display:inline-flex;align-items:center;height:26px;padding:0 7px;border:1px solid #38bdf8;border-radius:6px;background:#082f49;color:#e0f2fe;font:700 10px/1 system-ui,sans-serif;}",
+      "#cd-voice-root button.cd-voice-btn{height:26px;padding:0 8px;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#f8fafc;font:700 10px/1 system-ui,sans-serif;letter-spacing:.03em;cursor:pointer;display:inline-flex;align-items:center;gap:3px;}",
       "#cd-voice-root button.cd-voice-btn.is-on{background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
       "#cd-voice-root button.cd-voice-btn#cd-voice-speak.is-on{background:#dc2626;border-color:#f87171;color:#fff;}",
-      "#cd-voice-panel{display:none;margin-top:8px;padding:12px;background:#0b1120;border:1px solid #1e293b;border-radius:10px;}",
-      "#cd-voice-root.is-open #cd-voice-panel{display:block;}",
+      "#cd-voice-panel{display:none;position:absolute;left:0;top:calc(100% + 8px);width:min(420px,calc(100vw - 20px));padding:12px;background:#0b1120;border:1px solid #1e293b;border-radius:12px;box-shadow:0 18px 40px rgba(2,6,23,.35);transform:translateY(-6px);opacity:0;}",
+      "#cd-voice-root.is-open #cd-voice-panel{display:block;animation:cdVoiceDrop .18s ease forwards;}",
+      "@keyframes cdVoiceDrop{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}",
       "#cd-voice-status{min-height:18px;margin:0 0 10px;color:#7dd3fc;font:500 12px/1.4 system-ui,sans-serif;}",
       "#cd-voice-status.is-error{color:#fca5a5;}",
-      "#cd-voice-log{max-height:min(42vh,360px);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 8px;}",
+      "#cd-voice-log{max-height:min(42vh,320px);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 8px;}",
       "#cd-voice-log .cd-voice-row{max-width:92%;padding:8px 10px;border-radius:10px;font:400 14px/1.5 system-ui,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;}",
       "#cd-voice-log .cd-voice-row.is-user{align-self:flex-end;background:#1e3a5f;color:#e0f2fe;}",
       "#cd-voice-log .cd-voice-row.is-bot{align-self:flex-start;background:#111827;color:#f8fafc;border:1px solid #334155;}",
       "#cd-voice-log .cd-voice-row.is-partial{opacity:.78;}",
       "#cd-voice-log .cd-voice-who{display:block;margin:0 0 4px;font:700 10px/1 system-ui,sans-serif;letter-spacing:.04em;color:#93c5fd;}",
-      "#cd-voice-cta{display:none;margin-top:12px;width:100%;min-height:48px;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:0;border-radius:10px;background:#14532d;color:#bbf7d0;font:700 14px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;}",
-      "#cd-voice-root.is-open #cd-voice-cta{display:flex;}",
+      "#cd-voice-cta{display:flex;margin-top:12px;width:100%;min-height:44px;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border:0;border-radius:10px;background:#14532d;color:#bbf7d0;font:700 13px/1.3 system-ui,sans-serif;text-decoration:none;cursor:pointer;}",
       "#cd-voice-cta.is-hot{background:#16a34a;color:#fff;box-shadow:0 0 0 3px rgba(34,197,94,.45);animation:cdVoiceCta 1.2s ease-in-out 3;}",
       "@keyframes cdVoiceCta{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}",
-      "@media (max-width:480px){#cd-voice-bar{padding:6px 8px;gap:6px;}#cd-voice-title{font-size:12px;}#cd-voice-root button.cd-voice-btn{padding:0 7px;font-size:9.5px;letter-spacing:0;}#cd-voice-dot{display:none;}#cd-voice-cta{font-size:13px;}}"
+      "@media (max-width:900px){#cd-voice-root{left:8px;max-width:min(360px,calc(100vw - 16px));}#cd-voice-title{font-size:11px;}}",
+      "@media (max-width:640px){#cd-voice-root{position:fixed;left:8px;top:auto;bottom:12px;transform:none;z-index:400;}#cd-voice-panel{top:auto;bottom:calc(100% + 8px);}}"
     ].join("");
   }
 
@@ -72,7 +75,7 @@
       '<div id="cd-voice-panel">' +
         '<div id="cd-voice-status" role="status">Ready to start a voice conversation.</div>' +
         '<div id="cd-voice-log" aria-live="polite"></div>' +
-        '<a id="cd-voice-cta" href="' + REVIEW_HREF + '">👍 Like &amp; Leave a 5-Star Review · ثبت لایک و نظر</a>' +
+        '<a id="cd-voice-cta" href="' + REVIEW_HREF + '">👍 Like &amp; Leave a 5-Star Review</a>' +
       "</div>"
     );
   }
@@ -333,16 +336,19 @@
     });
   }
 
+  function hideAudioDock() {
+    var dock = document.getElementById("cd-audio-dock");
+    if (dock) {
+      dock.setAttribute("hidden", "hidden");
+      dock.setAttribute("aria-hidden", "true");
+      dock.style.setProperty("display", "none", "important");
+    }
+  }
+
   function placeRoot(node) {
     var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
-    var hero = document.querySelector("section.hero, .hero, .blackbox, .page-header, .inner-banner");
-    if (hero && hero.parentNode) {
-      hero.parentNode.insertBefore(node, hero);
-      return;
-    }
-    if (header && header.parentNode) {
-      if (header.nextSibling) header.parentNode.insertBefore(node, header.nextSibling);
-      else header.parentNode.appendChild(node);
+    if (header) {
+      header.appendChild(node);
       return;
     }
     document.body.insertBefore(node, document.body.firstChild);
@@ -367,7 +373,9 @@
     root.setAttribute("role", "region");
     root.setAttribute("aria-label", TITLE);
     root.innerHTML = html();
+    hideAudioDock();
     placeRoot(root);
+    hideAudioDock();
 
     speakBtn = document.getElementById("cd-voice-speak");
     listenBtn = document.getElementById("cd-voice-listen");

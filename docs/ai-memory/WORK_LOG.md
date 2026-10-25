@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25r] — Compact Ask Your Fault in the white header (`?v=20261025m`)
+- Compact dark box in the top-left of `.cd-main-header`, left of the logo. Full-width bar removed. `#cd-audio-dock` hidden visually. SPEAK opens a dropdown transcript + like CTA. Title/H1/meta unchanged.
+
 ### [2026-10-25q] — Hero-top Ask Your Fault + live transcript + like CTA (`?v=20261025j`)
 - Bar sits in the hero wrap immediately before H1 (below nav, above the headline). SPEAK opens a dark transcript panel. Vapi `transcript` / `conversation-update` type live (RTL for Persian). Like/review CTA highlights when the assistant finishes. Title/H1/meta unchanged.
 
