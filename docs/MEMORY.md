@@ -1,6 +1,6 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
-Owner 2026-10-25o replaced the custom top bar with the Vapi **Ask Your Fault** widget (`?v=20261025f`). Do not restore the old SPEAK/LISTEN top bar.
+Owner 2026-10-25o replaced the custom top bar with the Vapi **Ask Your Fault** widget (`?v=20261025g`). Do not restore the old SPEAK/LISTEN top bar.
 
 1. Widget title is exactly `Ask Your Fault`. Language badge is exactly `Lang: Auto` (never `/ خودکار`).
 2. Browser SDK: `@vapi-ai/web` + assistant `e31c40c7-a45b-4dff-833c-320c54250743`.

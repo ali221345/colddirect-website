@@ -129,13 +129,16 @@
     });
   }
 
-  function bindCall(instance) {
-    vapi = instance;
+  function bindChrome() {
     launcher.addEventListener("click", function () {
       if (panel.classList.contains("is-open")) closePanel();
       else openPanel();
     });
     closeButton.addEventListener("click", closePanel);
+  }
+
+  function bindCall(instance) {
+    vapi = instance;
     callButton.addEventListener("click", function () {
       if (callStarting) return;
       if (callActive) {
@@ -201,6 +204,7 @@
     callLabel = document.getElementById("vapiCallLabel");
     statusText = document.getElementById("vapiStatus");
     statusDot = document.getElementById("vapiStatusDot");
+    bindChrome();
 
     Promise.all([
       resolvePublicKey(),
