@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25g] — Voice widget rolled out sitewide (`?v=13`)
+- Owner approved the polite greeting. Removed the JS homepage-only path guard. Injected `<script src="/assets/js/colddirect-voice-bar.js?v=13" defer></script>` on every public HTML page (root + folder index + public-html mirror), 514 files, via `tools/inject_voice_bar.py`. Idempotent; 0 missing; 0 title/h1/meta/canonical/JSON-LD/V4 diffs. Guards all green.
+
 ### [2026-10-25f] — Polite universal opening, no slang, native 1.0 playback (`?v=13`)
 - Every spoken_script starts with the same greeting in the customer's language. Exact: FA `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` / EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / TL `Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.` Other languages: natural translation of that meaning.
 - Slang openings (`Alright mate`, `Kamusta kaibigan`, `سلام و درود`) removed from the Gemini prompt and from FallbackJson. Tone: kind, gentle, polite. Widget no longer detunes Google-stream audio (playbackRate 1).

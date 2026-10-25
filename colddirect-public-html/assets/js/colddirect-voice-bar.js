@@ -1,13 +1,10 @@
-/* ColdDirect Voice Bar — homepage-only test widget
+/* ColdDirect Voice Bar — sitewide widget
  * Watermark: CD-UK-IP-2026-994821-VOICE-AI
  * Owner: ColdDirect Ltd, colddirect.co.uk, 27 Felixstowe Road, Enfield, London N9 0DX
  * UK Copyright Act 1988 & UK Trade Secrets Regulations 2018
  */
 (function () {
   "use strict";
-
-  var path = String(location.pathname || "/").replace(/\/index\.html?$/i, "/");
-  if (path !== "/" && path !== "") return;
 
   var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
   var TITLE = "Ask me anything with your language about refrigeration and catering diagnosing";

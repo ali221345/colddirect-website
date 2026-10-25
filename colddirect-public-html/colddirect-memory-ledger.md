@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25g] — Voice bar on every public HTML page (`?v=13`)
+- Homepage-only guard removed. Script injected sitewide. SEO tags untouched.
+
 ### [2026-10-25f] — Universal polite opening, no slang, `?v=13`
 - Exact FA/EN/TL greetings verified live. Playback at 1.0. Slang openings deleted.
 
