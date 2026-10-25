@@ -17,14 +17,29 @@
     "/api/colddirect-voice-vault.php",
     "/api/colddirect-voice-vault.js"
   ];
-  var GREET_EN = "Hello. I am the Head Engineer at Cold Direct. I am glad you chose our company. ";
+  var GREET_EN = "Hello. I am the Senior Engineer at Cold Direct. I am glad you chose our company. ";
   var FA_DISPLAY_OPEN = "درود، من مهندس ارشد در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.";
   var FA_DISPLAY_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره 0203 952 4822 یا موبایل 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر ۵ ستاره را در پایین همین کادر بزنید.";
-  var FA_AUDIO_OPEN = "دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. ";
-  var FA_AUDIO_CLOSE = "چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.";
-  var CLOSING_EN = "If this advice helped you, please click the green Like and 5-Star Review button right below in this box to help our website grow.";
+  var FA_AUDIO_OPEN = "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. ";
+  var FA_AUDIO_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
+  var GREET = {
+    en: GREET_EN,
+    fa: FA_DISPLAY_OPEN + " ",
+    tr: "Merhaba. Cold Direct'te kıdemli mühendisim ve bizi seçtiğiniz için memnunum. ",
+    tl: "Kumusta. Ako ang Senior Engineer sa Cold Direct at natutuwa akong pinili ninyo kami. ",
+    ar: "مرحبا. أنا المهندس الأول في كولد دايركت ويسعدني أنكم اخترتمونا. ",
+    es: "Hola. Soy el ingeniero sénior de Cold Direct y me alegra que nos hayan elegido. "
+  };
+  var CLOSE_D = {
+    en: " For a same-day engineer in London, call 0203 952 4822 or mobile 07983 759320. If this helped, please click the green Like & 5-Star Review button below.",
+    fa: " " + FA_DISPLAY_CLOSE,
+    tr: " Londra'da acil teknisyen için 0203 952 4822 veya cep 07983 759320'yi arayın. Bu öneri işinize yaradıysa aşağıdaki yeşil Beğen ve 5 yıldızlı yorum düğmesine tıklayın.",
+    tl: " Para sa agarang technician sa London, tawagan ang 0203 952 4822 o mobile 07983 759320. Kung nakatulong ito, paki-click ang berdeng Like at 5-Star Review button sa ibaba.",
+    ar: " لإرسال فني فوري في لندن اتصلوا على 0203 952 4822 أو الموبايل 07983 759320. إذا أفادتكم النصيحة، اضغطوا زر الإعجاب الأخضر وتقييم الخمس نجوم في أسفل هذا المربع.",
+    es: " Para un técnico urgente en Londres llame al 0203 952 4822 o al móvil 07983 759320. Si esto le ayudó, pulse el botón verde de Like y reseña de 5 estrellas abajo."
+  };
   var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
-  var DIAGNOSE_MS = 20000;
+  var DIAGNOSE_MS = 28000;
   var TTS_MS = 18000;
   var MAX_MS = 60000;
 
@@ -208,6 +223,7 @@
   function stripPersianFrame(text) {
     var s = westDigits(text);
     s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
+    s = s.replace(/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u, "");
     s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
     s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
     s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
@@ -245,10 +261,39 @@
 
   function ttsPayload(text, lang) {
     if (lang === "fa" || hasPersian(text)) {
-      if (String(text || "").indexOf("دُرود بر شُما") === 0) return String(text);
+      var t = String(text || "");
+      if (t.indexOf("درود بر شما") === 0 || t.indexOf("دُرود بر شُما") === 0) return t;
       return persianAudioText(text);
     }
     return String(text || "");
+  }
+
+  function canonLang(code) {
+    var c = String(code || "").toLowerCase().replace("_", "-");
+    if (c.indexOf("fil") === 0 || c === "tagalog" || c.indexOf("tl") === 0) return "tl";
+    if (c.indexOf("fa") === 0 || c.indexOf("per") === 0 || c.indexOf("far") === 0) return "fa";
+    if (c.length > 2 && c.charAt(2) === "-") return c.slice(0, 2);
+    return c.slice(0, 2);
+  }
+
+  function detectRequestedLang(text) {
+    var t = String(text || "");
+    if (/t[uü]rk|turkish|به\s*ترکی|ترکی\s*بگو|sa\s+turkish|sa\s+turko/i.test(t)) return "tr";
+    if (/persian|farsi|فارسی|به\s*فارسی/i.test(t)) return "fa";
+    if (/tagalog|filipino|pilipino|تاگالوگ/i.test(t)) return "tl";
+    if (/arabic|عربي|عربی|به\s*عربی/i.test(t)) return "ar";
+    if (/spanish|espa[nñ]ol|castellano|اسپانیایی/i.test(t)) return "es";
+    if (/\benglish\b|انگلیسی|به\s*انگلیسی/i.test(t)) return "en";
+    if (/french|fran[cç]ais|فرانسه/i.test(t)) return "fr";
+    return "";
+  }
+
+  function hasPhones(s) {
+    return /759320|952\s*4822|0203|07983|seven nine eight|s[iı]f[iı]r yedi|صفر هفت|cero siete|zero seven nine/i.test(s || "");
+  }
+
+  function hasLike(s) {
+    return /like|review|5-star|five.star|لایک|ستاره|be[gğ]eni|y[iı]ld[iı]z|bituin|estrellas|نجمة|إعجاب|bintang/i.test(s || "");
   }
 
   function telHref(display) {
@@ -321,19 +366,19 @@
   function withGreet(text, lang) {
     var fa = lang === "fa" || hasPersian(text);
     if (fa) return wrapPersianDisplay(text);
-    var g = GREET_EN;
+    var g = GREET[lang] || GREET.en;
     var t = String(text || "").replace(/^\s+/, "");
-    t = t.replace(/^Hello\.\s*I am the Head Engineer[^.]*\.\s*/i, "");
-    if (!t) return g.trim();
-    if (/^Hello\.\s*I am the Head Engineer/i.test(t)) return t;
+    t = t.replace(/^Hello\.\s*I am the (?:Head|Senior) Engineer[^.]*\.\s*/i, "");
+    if (!t) return g.replace(/\s+$/, "");
+    if (/Cold Direct|ColdDirect|کولد|کُلد/i.test(t)) return t;
     return g + t;
   }
 
   function ensureClosing(text, lang) {
     if (lang === "fa" || hasPersian(text)) return wrapPersianDisplay(text);
     var t = String(text || "");
-    if (/like|review|5-star|five.star/i.test(t)) return t;
-    return (t ? t.replace(/\s+$/, "") + " " : "") + CLOSING_EN;
+    if (hasPhones(t) && hasLike(t)) return t;
+    return (t ? t.replace(/\s+$/, "") : "") + (CLOSE_D[lang] || CLOSE_D.en);
   }
 
   function playCtx() {
@@ -743,11 +788,12 @@
     stopPlayback();
     if (q) upsertLive("user", q, true);
     setStatus("connecting", "Diagnosing fault...");
+    var langHint = detectRequestedLang(q);
     var payload = {
       mode: "diagnose",
       text: q,
-      language: "",
-      langHint: "",
+      language: langHint,
+      langHint: langHint,
       page: location.pathname,
       watermark: MARK
     };
@@ -757,17 +803,18 @@
     }
     postVault(payload, DIAGNOSE_MS).then(function (data) {
       if (seq !== askSeq) return;
-      var lang = String(data.language || "").slice(0, 2).toLowerCase() || (hasPersian(data.spoken || data.transcript) ? "fa" : "en");
+      var rawSpoken = data.display_text || data.spoken || data.summary || "";
+      var lang = canonLang(data.language || data.target_language_code || langHint) || (hasPersian(rawSpoken) ? "fa" : "en");
+      if (hasPersian(rawSpoken) && !langHint) lang = "fa";
+      if (langHint) lang = langHint;
       lastLang = lang;
       if (data.transcript) upsertLive("user", data.transcript, true);
-      var rawSpoken = data.spoken || data.summary || "";
-      var fa = lang === "fa" || hasPersian(rawSpoken);
-      if (fa) lang = "fa";
-      lastLang = lang;
+      var fa = lang === "fa";
       var spokenOut = fa ? wrapPersianDisplay(rawSpoken) : ensureClosing(withGreet(rawSpoken, lang), lang);
+      var serverTts = String(data.tts_text || data.spoken_text || "");
       var ttsOut = fa
-        ? ((data.tts_text && String(data.tts_text).indexOf("دُرود بر شُما") === 0) ? String(data.tts_text) : persianAudioText(rawSpoken))
-        : spokenOut;
+        ? ((serverTts.indexOf("درود بر شما") === 0 || serverTts.indexOf("دُرود بر شُما") === 0) ? serverTts : persianAudioText(rawSpoken))
+        : (serverTts || spokenOut);
       lastSpoken = spokenOut;
       lastTtsText = ttsOut;
       upsertLive("bot", spokenOut, true);

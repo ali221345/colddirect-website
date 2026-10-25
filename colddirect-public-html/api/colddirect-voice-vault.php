@@ -107,25 +107,10 @@ function cd_load_key(): string
 function cd_system_prompt(): string
 {
     return <<<'PROMPT'
-You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of hands-on commercial refrigeration and catering-equipment experience across London kitchens, pubs, hotels and shops.
-
-CRITICAL LANGUAGE LOCK — ZERO MIXING:
-1. Detect the exact language the customer spoke or typed.
-2. If English: reply 100% in warm, friendly conversational British English. Never mix Farsi or any other language into an English reply.
-3. If Persian / Farsi: reply 100% in warm everyday colloquial Tehran spoken Persian (تهرانی محاوره‌ای و صمیمی). Do not use formal or bookish words such as «می‌باشد». Do not mix English except brand names and error codes.
-4. If any other language (Arabic, Turkish, Spanish, Hindi, etc.): reply 100% in that exact language only.
-
-Every spoken answer MUST:
-- Begin Persian replies exactly with: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.
-- Explain the fault warmly and clearly for a busy kitchen manager
-- Spell numbers and error codes phonetically (E1 = "E one")
-- End Persian replies exactly with: اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید.
-- The speech layer pronounces کولد دایرکت as کُلد دایرِکت so it sounds like Cold Direct, never cool directed. Phone digits stay as 07983 759320 / 0203 952 4822 / 0800 112 3427 in written JSON.
-
-Scope: commercial refrigeration and catering only (Foster, Williams, True, Polar, Gram, Hoshizaki, ice machines, cold rooms, cellar coolers, blast chillers). No domestic household appliances. If the customer asks something outside this, steer them back and offer a London engineer. Write the company name as کولد دایرکت. When giving a phone number, write the digits exactly as 07983 759320, 0203 952 4822 or 0800 112 3427 — never as one giant numeral. The speech layer converts those digits to Persian number-words.
-
-Return STRICT JSON only:
-{"language":"en","languageLabel":"English","spoken":"full spoken-style monologue for TTS","summary":"short card summary","cause":"likely cause","checks":["check 1","check 2","check 3"]}
+You are the Senior Engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. 30 years of commercial refrigeration in London only. Kind, polite, no slang.
+Return STRICT JSON only with exactly these keys:
+{"target_language_code":"BCP-47 code of the language the reply MUST be in (e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA, es-ES). CRITICAL RULE: If the user asks to translate into a specific language (e.g. translate to Turkish / به ترکی بگو) or speaks a language, set target_language_code to THAT requested language and write the ENTIRE response in that language!","transcript":"exact customer words in their own script","display_text":"The full text shown on screen in target_language_code. MUST include all 3 parts: (1) Greeting as Senior Engineer at Cold Direct, (2) Concise 2-3 sentence technical troubleshooting answer or requested translation, (3) Closing sentence with clean phone numbers 0203 952 4822 and 07983 759320 AND a clear request to click the green Like & 5-Star Review button below.","spoken_text":"The exact text to be read out loud by TTS in target_language_code. Same 3 mandatory parts as display_text, EXCEPT phone numbers MUST be written out in natural spoken words in that target language (never raw digits!). For Persian (fa-IR), write: درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. [پاسخ فنی کوتاه]. برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید."}
+Never mix English into a non-English reply. Never skip the phones or the Like request, including Tagalog/Filipino, Turkish, Arabic and Spanish. Commercial refrigeration only, London only.
 PROMPT;
 }
 
@@ -358,19 +343,42 @@ function cd_parse_model_json(string $text): ?array
         $text = $m[0];
     }
     $json = json_decode($text, true);
-    if (!is_array($json) || empty($json['spoken']) && empty($json['summary'])) {
+    if (!is_array($json)) {
         return null;
+    }
+    $display = (string) ($json['display_text'] ?? $json['spoken'] ?? $json['summary'] ?? '');
+    $spokenTts = (string) ($json['spoken_text'] ?? $json['tts_text'] ?? '');
+    if (!is_array($json) || ($display === '' && $spokenTts === '')) {
+        return null;
+    }
+    if ($display === '') {
+        $display = $spokenTts;
+    }
+    $code = strtolower((string) ($json['target_language_code'] ?? $json['language'] ?? 'en'));
+    if (strpos($code, 'fil') === 0 || strpos($code, 'tl') === 0) {
+        $code = 'tl';
+    } elseif (strlen($code) > 2) {
+        $code = substr($code, 0, 2);
+    }
+    if ($spokenTts === '') {
+        $spokenTts = $display;
+    }
+    if (!preg_match('/759320|952\s*4822|0203|07983/u', $display) || !preg_match('/like|review|لایک|ستاره|beğeni|bituin|estrellas|نجمة/iu', $display)) {
+        $display .= ' 0203 952 4822 / 07983 759320. Like & 5-Star Review.';
     }
     return [
         'ok' => true,
-        'language' => (string) ($json['language'] ?? 'en'),
+        'language' => $code,
         'languageLabel' => (string) ($json['languageLabel'] ?? 'Detected'),
-        'spoken' => (string) ($json['spoken'] ?? $json['summary'] ?? ''),
-        'summary' => (string) ($json['summary'] ?? $json['spoken'] ?? ''),
-        'cause' => (string) ($json['cause'] ?? ''),
-        'checks' => array_values(array_filter(array_map('strval', (array) ($json['checks'] ?? [])))),
+        'spoken' => $display,
+        'display_text' => $display,
+        'tts_text' => $spokenTts,
+        'spoken_text' => $spokenTts,
+        'summary' => (string) ($json['summary'] ?? $display),
+        'cause' => (string) ($json['cause'] ?? $json['likely_cause'] ?? ''),
+        'checks' => array_values(array_filter(array_map('strval', (array) ($json['checks'] ?? $json['quick_checks'] ?? [])))),
         'watermark' => CD_VOICE_MARK,
-        'source' => 'gemini',
+        'source' => 'llm',
     ];
 }
 
@@ -411,6 +419,7 @@ function cd_strip_persian_frame(string $text): string
 {
     $s = $text;
     $s = preg_replace('/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u', '', $s);
+    $s = preg_replace('/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u', '', $s);
     $s = preg_replace('/^درود[^.!?؟]*[.!?؟]?\s*/u', '', $s);
     $s = preg_replace('/^سلام[^.!?؟]*[.!?؟]?\s*/u', '', $s);
     $s = preg_replace('/\s*برای اعزام فوری[\s\S]*$/u', '', $s);
@@ -430,7 +439,7 @@ function cd_strip_persian_frame(string $text): string
 
 function cd_persian_tts_text(string $text): string
 {
-    if (strpos($text, 'دُرود بر شُما') === 0) {
+    if (strpos($text, 'درود بر شما') === 0 || strpos($text, 'دُرود بر شُما') === 0) {
         return $text;
     }
     $s = cd_strip_persian_frame($text);
@@ -441,9 +450,9 @@ function cd_persian_tts_text(string $text): string
     $s = str_replace('کندانسور', 'کُندانسور', $s);
     $s = str_replace('اواپراتور', 'اِواپُراتور', $s);
     $s = preg_replace('/کولد\s*دایرکت|ColdDirect|Cold Direct/iu', 'کُلد دایرِکت', $s);
-    return 'دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. '
+    return 'درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. '
         . trim($s) . ' '
-        . 'چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.';
+        . 'برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.';
 }
 
 function cd_gemini_tts(string $key, string $spoken): ?array
@@ -507,11 +516,11 @@ function cd_voice_selftest(): bool
     $en = cd_detect_lang('Foster fridge E1 alarm');
     $pack = cd_fallback_pack('Foster Fridge E1');
     $tts = cd_persian_tts_text('کندانسور کثیف است. لاستیک در را چک کنید. 07983 759320');
-    $phonesOk = strpos($tts, 'دُرود بر شُما') !== false
-        && strpos($tts, 'صِفر دِویست و سه') !== false
+    $phonesOk = strpos($tts, 'درود بر شما') !== false
+        && strpos($tts, 'صفر دویست و سه') !== false
         && strpos($tts, 'کُندانسور') !== false
         && strpos($tts, '07983') === false;
-    return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'ZERO MIXING') !== false && $phonesOk;
+    return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'target_language_code') !== false && $phonesOk;
 }
 
 $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');

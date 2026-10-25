@@ -21,6 +21,9 @@ No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the 
 
 ---
 
+### [2026-10-25af] — Universal multilingual voice JSON (`?v=20261025af`)
+- One JSON schema for every language. Phones + Like close guaranteed. Translate-to-X wins. Persian TTS FaridNeural/Edge/Piper only. Title/H1/meta unchanged.
+
 ### [2026-10-25ae] — Exact vocalized FA wrap (`?v=20261025ae`)
 - Hardcoded display + TTS scripts. FaridNeural/onyx. No English audio on Persian. Title/H1/meta unchanged.
 

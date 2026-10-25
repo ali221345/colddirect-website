@@ -10,19 +10,10 @@ var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
 var DENY = "UK IP VIOLATION: Commercial License Required from ColdDirect.co.uk";
 
 var SYSTEM_PROMPT = [
-  "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX.",
-  "You have 30 years of hands-on commercial refrigeration and catering-equipment experience across London.",
-  "CRITICAL LANGUAGE LOCK — ZERO MIXING:",
-  "1. Detect the exact language the customer spoke or typed.",
-  "2. If English: reply 100% in warm conversational British English. Never mix Farsi or any other language.",
-  "3. If Persian / Farsi: reply 100% in warm everyday colloquial Tehran spoken Persian. No bookish words such as می‌باشد.",
-  "4. If any other language: reply 100% in that exact language only.",
-  "Persian replies must open exactly: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.",
-  "Persian replies must close by asking them to click the green Like and 5-Star Review button below.",
-  "TTS pronounces کولد دایرکت as کُلد دایرِکت. Never read a phone number as one giant numeral.",
-  "Write the company name as کولد دایرکت. Phone numbers must be written as 07983 759320, 0203 952 4822 or 0800 112 3427 — never as one giant numeral.",
-  "Commercial refrigeration and catering only. Return STRICT JSON:",
-  '{"language":"en","languageLabel":"English","spoken":"...","summary":"...","cause":"...","checks":["..."]}'
+  "You are the Senior Engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. 30 years of commercial refrigeration in London only. Kind, polite, no slang.",
+  "Return STRICT JSON only with exactly these keys:",
+  '{"target_language_code":"BCP-47 code of the language the reply MUST be in (e.g. fa-IR, tr-TR, fil-PH, en-GB, ar-SA). CRITICAL RULE: If the user asks to translate into a specific language (e.g. translate to Turkish / به ترکی بگو) or speaks a language, set target_language_code to THAT requested language and write the ENTIRE response in that language!","transcript":"exact customer words in their own script","display_text":"The full text shown on screen in target_language_code. MUST include all 3 parts: (1) Greeting as Senior Engineer at Cold Direct, (2) Concise 2-3 sentence technical troubleshooting answer or requested translation, (3) Closing sentence with clean phone numbers 0203 952 4822 and 07983 759320 AND a clear request to click the green Like & 5-Star Review button below.","spoken_text":"The exact text to be read out loud by TTS in target_language_code. Same 3 mandatory parts as display_text, EXCEPT phone numbers MUST be written out in natural spoken words in that target language (never raw digits!). For Persian (fa-IR) use native Iranian phrasing with کُلد دایرِکت and spoken number-words for both phone numbers plus the Like & 5-Star Review close."}',
+  "Never mix English into a non-English reply. Never skip the phones or the Like request, including Tagalog/Filipino, Turkish, Arabic and Spanish. Commercial refrigeration only, London only."
 ].join(" ");
 
 function hostOk(value) {
@@ -169,17 +160,30 @@ function parseModelJson(text) {
   if (!m) return null;
   try {
     var json = JSON.parse(m[0]);
-    if (!json.spoken && !json.summary) return null;
+    var display = json.display_text || json.spoken || json.summary || "";
+    var spokenTts = json.spoken_text || json.tts_text || "";
+    if (!display && !spokenTts) return null;
+    if (!display) display = spokenTts;
+    var code = String(json.target_language_code || json.language || "en").toLowerCase();
+    if (code.indexOf("fil") === 0 || code.indexOf("tl") === 0) code = "tl";
+    else if (code.length > 2) code = code.slice(0, 2);
+    if (!spokenTts) spokenTts = display;
+    if (!/759320|952\s*4822|0203|07983/.test(display) || !/like|review|لایک|ستاره|beğeni|bituin|estrellas|نجمة/i.test(display)) {
+      display += " 0203 952 4822 / 07983 759320. Like & 5-Star Review.";
+    }
     return {
       ok: true,
-      language: json.language || "en",
+      language: code,
       languageLabel: json.languageLabel || "Detected",
-      spoken: json.spoken || json.summary || "",
-      summary: json.summary || json.spoken || "",
-      cause: json.cause || "",
-      checks: Array.isArray(json.checks) ? json.checks.map(String) : [],
+      spoken: display,
+      display_text: display,
+      tts_text: spokenTts,
+      spoken_text: spokenTts,
+      summary: json.summary || display,
+      cause: json.cause || json.likely_cause || "",
+      checks: Array.isArray(json.checks) ? json.checks.map(String) : (Array.isArray(json.quick_checks) ? json.quick_checks.map(String) : []),
       watermark: MARK,
-      source: "gemini"
+      source: "llm"
     };
   } catch (e) {
     return null;
@@ -217,8 +221,9 @@ async function diagnose(key, text, audio, mime) {
 
 function persianTtsText(text) {
   var s = String(text || "");
-  if (s.indexOf("دُرود بر شُما") === 0) return s;
+  if (s.indexOf("درود بر شما") === 0 || s.indexOf("دُرود بر شُما") === 0) return s;
   s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
+  s = s.replace(/^درود بر شما[\s\S]*?انتخاب کردید\.?\s*/u, "");
   s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
   s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
   s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
@@ -233,9 +238,9 @@ function persianTtsText(text) {
   s = s.replace(/اواپراتور/g, "اِواپُراتور");
   s = s.replace(/کولد\s*دایرکت|ColdDirect|Cold Direct/gi, "کُلد دایرِکت");
   s = s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-  return "دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. "
+  return "درود بر شما. من مهندس ارشد شرکت کُلد دایرِکت هستم و خوشحالم که ما را انتخاب کردید. "
     + s + " "
-    + "چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.";
+    + "برای اعزام فوری تکنسین در لندن، با شماره تلفن صفر دویست و سه، نهصد و پنجاه و دو، چهل و هشت، بیست و دو، و یا موبایل صفر هفت نه هشت سه، هفتصد و پنجاه و نه، سیصد و بیست تماس بگیرید. اگر این راهنمایی برای شما مفید بود، ممنون می‌شویم دکمه سبز لایک و ثبت نظر پنج ستاره را در پایین همین کادر بزنید.";
 }
 
 async function tts(key, spoken) {

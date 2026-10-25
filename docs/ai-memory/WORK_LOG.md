@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25af] — Universal multilingual voice JSON (`?v=20261025af`)
+- Replaced fragmented language rules with one `gpt-4o-mini` JSON object: `target_language_code`, `display_text`, `spoken_text`. Server `EnsureDisplay`/`EnsureSpoken` appends phones + Like close for every language (Tagalog/Turkish/Arabic/Spanish/English/Persian). `RequestedLang` makes “translate to Turkish” / «به ترکی بگو» win. Persian TTS is Azure/Edge FaridNeural then Piper Ganji — OpenAI onyx removed from `SpeakFa`. Fallback never 502s non-en/fa. Title/H1/meta unchanged.
+
 ### [2026-10-25ae] — Exact hardcoded Persian display + vocalized TTS wrap (`?v=20261025ae`)
 - LLM Persian output is only 2 technical sentences. Opening, phones and closing are copy-pasted vocalized script. Audio: `fa-IR-FaridNeural` then `gpt-4o-mini-tts` onyx. No English sentence after Persian audio. Title/H1/meta unchanged.
 
