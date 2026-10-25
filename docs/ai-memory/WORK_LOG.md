@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25v] — Mobile Ask Your Fault in the dark top bar (`?v=20261025r`)
+- On `max-width:768px` the widget is in `.cd-topbar`, not `position:fixed` at the bottom, so Book a Consultation cannot cover SPEAK/LISTEN. Desktop layout unchanged. Title/H1/meta unchanged.
+
 ### [2026-10-25u] — Restore top-right Listen welcome player (`?v=20261025q`)
 - `#cd-audio-dock` is visible again in the white header, right of WRITE A REVIEW. Ask Your Fault stays top-left. Title/H1/meta unchanged.
 
