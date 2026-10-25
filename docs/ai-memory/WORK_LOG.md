@@ -25,6 +25,10 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25n] — Same-language greeting, Auto label, کولد دایرکت (`?v=20261025e`)
+- Lang select: `Auto` only (removed `/ خودکار`). Never prepend the English Head Engineer greeting to a Persian/non-English answer. Instant TTS uses the full spoken script, not the first English sentence.
+- Persian greeting: `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.` Brand: `کولد دایرکت`. Closing like-CTA required. Title/H1/meta/canonical unchanged.
+
 ### [2026-10-25m] — Voice autoplay after SPEAK (`?v=20261025d`) — RULE 0
 - Diagnose JSON now embeds first `audio_base64` via `SpeakFast` (Piper/Azure/Translate; skip Puck on this hop).
 - Widget: `__cdPlayCtx` unlocked on SPEAK pointerdown; analyser `AudioContext` is separate and closed with every mic track before play. `playBytes` uses `AudioBufferSourceNode` first. Status `🔊 Speaking Answer...`. Greeting restored. 3800ms silence kept.

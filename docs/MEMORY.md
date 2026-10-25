@@ -4,9 +4,11 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 1. NEVER remove the polite universal greeting:
    - EN: `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.`
-   - FA: `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.`
+   - FA: `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.`
+   Never prepend the English greeting to a non-English answer. Selector label is `Auto`, not `Auto / خودکار`.
+   Brand in Persian is `کولد دایرکت` (never `کل دایرکت`).
 2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
-3. NEVER use female voices or Urdu/Arabic fallback for Persian (`fa`). Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کُلد دایرِکت`), `en_GB-alan-medium`, Piper / Google-stream male for Tagalog and other languages.
+3. NEVER use female voices or Urdu/Arabic fallback for Persian (`fa`). Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کولد دایرکت`), `en_GB-alan-medium`, Piper / Google-stream male for Tagalog and other languages.
 4. NEVER break auto-play after microphone recording:
    - Stop every `MediaStreamTrack` and close the analyser `AudioContext` before playback.
    - Keep `window.__cdPlayCtx` (resumed on the SPEAK tap) and `window.__cdVoicePlayer` alive.

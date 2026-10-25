@@ -73,17 +73,17 @@ string LoadKey()
 
 string SystemPrompt()
 {
-    return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of commercial refrigeration experience in London only. "
-        + "TONE: kind, gentle, polite and reassuring — a senior expert helping a valued client. No street slang, no 'mate', no 'cheers', no 'don't panic', no aggressive urgency. "
-        + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Detect the language from the speech or typed text. Typed text is the transcript. "
-        + "If the request names a selected language (fa, en, tr, ar, …), that language WINS even if SpeechRecognition text looks like English: answer 100% in the selected language. "
-        + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100% in that same language, written as a native of that country. Never translate English word-for-word. Never mix English into another language except the company name ColdDirect where that language uses Latin letters. "
-        + "spoken_script MUST start with the polite Head Engineer greeting in the customer language, then the diagnosis. English: Hello. I am the Head Engineer at ColdDirect. I am glad you chose our company. Never skip the greeting. No street slang. "
-        + "Persian: fluent polite Iranian Farsi only. شما, complete verbs. Never Dari or Urdu. Write ColdDirect as کُلد دایرِکت and spell numbers and error codes in Persian words. "
-        + "Answer the customer's exact fault clearly and accurately. No generic filler. One or two gentle checks they can do now. "
-        + "Noise: fan hitting ice, worn fan bearings, or a clicking start relay — opening the door is a kind first check. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water: blocked drain or overflowing tray. Trip: motor shorting, burned plug, dead board. If they only say it is broken, give the top three causes gently. NEVER brush them off. "
-        + "End gently: offer help on 07983 759320 in that language's own number words (English: 'zero seven nine eight three, seven five nine, three two zero'; Persian: 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر') and politely ask for a like or five-star review on this page if the answer helped. Never call it a video. London only. "
-        + "spoken_script: one paragraph under 130 words. summary names the cause. No fillers or stammers. Commercial refrigeration and catering only. "
+    return "You are the head engineer at Cold Direct Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of commercial refrigeration experience in London only. "
+        + "LANGUAGE MATCHING: Always reply 100 percent in the same language the user speaks. If the user speaks Persian, reply ONLY in Persian from the very first word. Never open a non-English answer with an English greeting. Never mix English into another language. "
+        + "If the request names a selected language (fa, en, tr, ar), that language WINS even if SpeechRecognition text looks like English. "
+        + "NATURAL PERSIAN: polite professional conversational Iranian Persian. شما and complete verbs. Never Dari or Urdu. Never robotic literal translations such as بررسی اولیه مهربانانه for gentle first check. Write the company name exactly as کولد دایرکت (never کل دایرکت, never کُلد). "
+        + "GREETING: start spoken_script with a warm welcome as the head engineer at Cold Direct. Persian exactly: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. English: Hello. I am the head engineer at Cold Direct. I am glad you chose our company. "
+        + "CLOSING: at the end of EVERY spoken_script politely ask for a like to help the site grow. Persian exactly: اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید. "
+        + "TONE: kind, gentle, polite. No street slang, no mate, no cheers, no don't panic. "
+        + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Typed text is the transcript. "
+        + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100 percent in that same language. "
+        + "Answer the exact fault clearly. One or two natural checks they can do now. Offer 07983 759320 in that language's number words. London only. Never call it a video. "
+        + "spoken_script: one continuous paragraph under 130 words, greeting then diagnosis then like request, no pause fillers. "
         + "Return STRICT JSON only: {\"transcript\":\"exact customer words in their script\",\"language_code\":\"ISO 639-1 such as fa, en, tl, ar, tr, es, hi, pl, fr, zh, ru, pt, bn, ku\",\"language_name\":\"English name, e.g. Tagalog\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
 
@@ -293,11 +293,11 @@ string FallbackJson(string text, string hint)
 
     string first = syms[0];
     string intro = lc == "fa"
-        ? "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. "
+        ? "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. "
         : EnIntro(first);
     string outro = lc == "fa"
-        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این پاسخ برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
-        : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this answer helped you, please tap Like or leave a five-star review on this page. Thank you.";
+        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید."
+        : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this guidance helped you and you would like to support the site, please leave us a like.";
 
     StringBuilder spoken = new StringBuilder(intro);
     string summary = "", cause = "";
@@ -760,7 +760,7 @@ static readonly Dictionary<char, string> FA_LETTERS = new Dictionary<char, strin
 
 // Latin brand and trade words -> Persian script. Longest first so "cold room" wins over "cold".
 static readonly string[,] FA_LATIN = {
-    {"colddirect\\.co\\.uk", "کُلد دایرِکت"}, {"cold\\s*direct(\\s*ltd)?", "کُلد دایرِکت"},
+    {"colddirect\\.co\\.uk", "کولد دایرکت"}, {"cold\\s*direct(\\s*ltd)?", "کولد دایرکت"},
     {"foster", "فاسْتِر"}, {"williams", "ویلیامْز"}, {"hoshizaki", "هوشیزاکی"}, {"scotsman", "اِسکاتْس‌مَن"},
     {"polar", "پولار"}, {"gram", "گِرام"}, {"gamko", "گامْکو"}, {"adande", "آدانْد"}, {"precision", "پْرِسیژِن"},
     {"electrolux", "اِلِکْتْرولوکْس"}, {"samsung", "سامْسونْگ"}, {"daikin", "دایْکین"}, {"liebherr", "لیبْهِر"},
@@ -774,7 +774,7 @@ static readonly string[,] FA_LATIN = {
 
 // Persian spellings that eSpeak reads with wrong vowels unless they carry diacritics.
 static readonly string[,] FA_LEXICON = {
-    {"کلد\\s*\u200C?\\s*دایرکت", "کُلد دایرِکت"}, {"کمپرسور", "کُمپْرِسُر"}, {"اواپراتور", "اِواپْراتُر"},
+    {"کُلد\\s*\u200C?\\s*دایرِکت", "کولد دایرکت"}, {"کلد\\s*\u200C?\\s*دایرکت", "کولد دایرکت"}, {"کل\\s*\u200C?\\s*دایرکت", "کولد دایرکت"}, {"کمپرسور", "کُمپْرِسُر"}, {"اواپراتور", "اِواپْراتُر"},
     {"فاستر", "فاسْتِر"}, {"ویلیامز", "ویلیامْز"}, {"اسکاتس\u200C?\\s*من", "اِسکاتْس‌مَن"}, {"تکنسین", "تِکْنِسین"} };
 
 string NumFa(long n)
@@ -958,7 +958,7 @@ string[] PiperTts(string lang, string text)
     byte[][] parts = new byte[groups.Count][];
     System.Threading.Tasks.Parallel.For(0, groups.Count, new System.Threading.Tasks.ParallelOptions { MaxDegreeOfParallelism = 6 },
         delegate (int i) { parts[i] = PiperRun(exe, dir, onnx, groups[i], args); });
-    byte[] gap = new byte[(rate / 4) * 2];
+        byte[] gap = new byte[Math.Max(2, (rate / 50) * 2)];
     using (MemoryStream all = new MemoryStream())
     {
         for (int i = 0; i < parts.Length; i++)
@@ -1209,7 +1209,7 @@ protected void Page_Load(object sender, EventArgs e)
     {
         string lang = JsonField(result, "language");
         string say = JsonField(result, "spoken");
-        if (say.Length > 220) say = say.Substring(0, 220);
+        if (say.Length > 900) say = say.Substring(0, 900);
         if (lang == "fa") say = NormalizePersianForSpeech(say);
         string[] clip = null;
         try { clip = PiperTts(lang, say); } catch { clip = null; }

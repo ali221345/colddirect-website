@@ -31,7 +31,7 @@
   var DIAGNOSE_MS = 15000;
   var GREET = {
     en: "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ",
-    fa: "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. ",
+    fa: "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. ",
     tr: "Merhaba. ColdDirect başmühendisiyim. Şirketimizi seçtiğiniz için memnunum. ",
     ar: "مرحباً. أنا كبير المهندسين في كولد دايركت. يسعدني أنكم اخترتم شركتنا. ",
     tl: "Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya. "
@@ -43,7 +43,7 @@
   var LANG_STORE = "cd-voice-lang";
   var BCP = { en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" };
   var LANGS = [
-    { id: "auto", bcp: "", label: "Auto / خودکار" },
+    { id: "auto", bcp: "", label: "Auto" },
     { id: "fa", bcp: "fa-IR", label: "فارسی · Persian" },
     { id: "en", bcp: "en-GB", label: "English (UK)" },
     { id: "tr", bcp: "tr-TR", label: "Türkçe · Turkish" },
@@ -127,13 +127,52 @@
     } catch (e) { /* iOS unlock is best-effort */ }
   }
 
+  var CTA = {
+    fa: "اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید.",
+    en: "If this guidance helped you and you would like to support the site, please leave us a like.",
+    tr: "Bu rehber işinize yaradıysa ve siteye destek olmak isterseniz, lütfen bir beğeni bırakın.",
+    ar: "إذا أفادكم هذا التوجيه وترغبون في دعم الموقع، نرجو ترك إعجاب.",
+    tl: "Kung nakatulong ito at gusto ninyong suportahan ang site, mag-like po kayo."
+  };
+
+  function stripWrongGreet(text, lang) {
+    var t = String(text || "");
+    var code = String(lang || "").slice(0, 2).toLowerCase();
+    if (code && code !== "en") {
+      t = t.replace(/^Hello[.,]?\s*I am the Head Engineer[\s\S]*?(?:company|ColdDirect)[^.]*\.\s*/i, "");
+      t = t.replace(/^I am (the )?head (engineer )?of (the )?(Cold\s*)?Direct[^.]*\.\s*/i, "");
+      t = t.replace(/^I'm the Head Engineer[^.]*\.\s*/i, "");
+    }
+    return t.replace(/^\s+/, "");
+  }
+
   function withGreet(text, lang) {
-    var code = String(lang || "en").slice(0, 2).toLowerCase();
-    var g = GREET[code] || GREET.en;
-    var t = String(text || "").replace(/^\s+/, "");
+    var code = String(lang || "").slice(0, 2).toLowerCase();
+    var t = stripWrongGreet(text, code);
+    if (code === "en") {
+      var ge = GREET.en;
+      if (!t) return ge.trim();
+      if (/^Hello[.,]?\s*I am the Head Engineer/i.test(t)) return t;
+      return ge + t;
+    }
+    var g = GREET[code] || "";
+    if (!g) return t;
     if (!t) return g.trim();
-    if (t.indexOf(g.slice(0, 18)) === 0 || /^سلام\.\s*من سرمهندس/.test(t) || /^Hello\.\s*I am the Head Engineer/i.test(t)) return t;
+    if (t.indexOf(g.slice(0, 10)) === 0 || /^درود/.test(t) || /^سلام/.test(t)) return t;
     return g + t;
+  }
+
+  function withClose(text, lang) {
+    var code = String(lang || "en").slice(0, 2).toLowerCase();
+    var c = CTA[code] || CTA.en;
+    var t = String(text || "").replace(/\s+$/, "");
+    if (!t) return c;
+    if (t.indexOf(c.slice(0, 18)) !== -1) return t;
+    return t + " " + c;
+  }
+
+  function finishSpoken(text, lang) {
+    return withClose(withGreet(stripFiller(text), lang), lang);
   }
 
   function setStatus(msg) {
@@ -921,7 +960,7 @@
   }
 
   function speakDiagnosis(text, lang) {
-    var clean = withGreet(stripFiller(text), lang);
+    var clean = finishSpoken(text, lang);
     if (!clean) return false;
     lastSpoken = clean;
     lastLang = lang || lastLang || "en";
@@ -1117,23 +1156,36 @@
     partsDone = true;
     root.classList.add("is-busy");
     setStatus("Diagnosing fault...");
+    var lang = resolveLang(q || "");
     var fast = instantDiagnose(q || "");
-    fast.spoken = withGreet(fast.spoken, fast.language);
+    fast.language = lang;
+    fast.languageLabel = LANG_LABEL[lang] || fast.languageLabel;
+    fast.spoken = finishSpoken(fast.spoken, lang);
     fillCard(fast);
     setStatus(langStatus(fast));
     root.classList.remove("is-busy");
     lastSpoken = fast.spoken;
-    lastLang = fast.language || "en";
-    var hint = getLangHint() || fast.language || "";
-    var ttsLine = firstSentence(fast.spoken) || fast.spoken;
-    postVault({ mode: "tts", text: ttsLine, language: hint || fast.language, watermark: MARK }, TTS_MS).then(function (v) {
-      if (seq !== askSeq) return;
-      if (playing) return;
-      if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, fast.language);
-    }).catch(function () {
-      if (seq !== askSeq || playing) return;
-      speakDiagnosis(fast.spoken, fast.language);
-    });
+    lastLang = lang;
+    var hint = getLangHint() || lang || "";
+    var confident = (langSel && langSel !== "auto") || detectLang(q) !== "en" || !(audio && audio.data);
+    if (confident && lang !== "en") {
+      postVault({ mode: "tts", text: fast.spoken, language: lang, watermark: MARK }, TTS_MS).then(function (v) {
+        if (seq !== askSeq) return;
+        if (playing) return;
+        if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, lang);
+      }).catch(function () {
+        if (seq !== askSeq || playing) return;
+        speakDiagnosis(fast.spoken, lang);
+      });
+    } else if (confident && lang === "en") {
+      postVault({ mode: "tts", text: fast.spoken, language: "en", watermark: MARK }, TTS_MS).then(function (v) {
+        if (seq !== askSeq || playing) return;
+        if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, "en");
+      }).catch(function () {
+        if (seq !== askSeq || playing) return;
+        speakDiagnosis(fast.spoken, "en");
+      });
+    }
     var payload = {
       mode: "diagnose",
       text: q,
@@ -1150,18 +1202,23 @@
     postVault(payload, DIAGNOSE_MS).then(function (data) {
       if (seq !== askSeq) return;
       if (data.transcript) input.value = data.transcript;
-      if (data.spoken) data.spoken = withGreet(stripFiller(data.spoken), data.language || hint);
-      var apiLang = String(data.language || "").slice(0, 2).toLowerCase();
+      var apiLang = String(data.language || hint || lang || "").slice(0, 2).toLowerCase();
+      if (data.spoken) data.spoken = finishSpoken(data.spoken, apiLang);
       if (langSel === "auto" && apiLang && apiLang !== "au") lastLang = apiLang;
       fillCard(data);
-      if (!playing) {
-        if (!playVaultAudio(data)) speakDiagnosis(data.spoken || fast.spoken, data.language || fast.language);
+      var wrongLangPlaying = playing && lastLang === "en" && apiLang && apiLang !== "en";
+      if (wrongLangPlaying) {
+        stopPlayback();
+        try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e5) {}
+      }
+      if (!playing || wrongLangPlaying) {
+        if (!playVaultAudio(data)) speakDiagnosis(data.spoken || fast.spoken, apiLang || lang);
       } else {
         setStatus("🔊 Speaking Answer...");
       }
     }).catch(function () {
       if (seq !== askSeq) return;
-      if (!playing) speakDiagnosis(fast.spoken, fast.language);
+      if (!playing && confident) speakDiagnosis(fast.spoken, lang);
     });
   }
 

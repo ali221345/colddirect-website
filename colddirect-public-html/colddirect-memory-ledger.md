@@ -21,6 +21,9 @@ SPEAK must play voice, not text-only. Keep the Head Engineer greeting. No slang.
 
 ---
 
+### [2026-10-25n] — Same-language greeting (`?v=20261025e`)
+- `Auto` label only. No English greeting before Persian. `کولد دایرکت`. Like-CTA. SEO tags untouched.
+
 ### [2026-10-25m] — Voice autoplay after SPEAK (`?v=20261025d`)
 - RULE 0 locked. Mic tracks + analyser ctx released before play. Diagnose embeds audio. `__cdPlayCtx` buffer playback. Greeting restored. SEO tags untouched.
 
