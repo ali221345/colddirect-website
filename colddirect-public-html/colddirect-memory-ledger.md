@@ -17,9 +17,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-On mobile (`?v=20261025u`) Welcome is LEFT and Ask Your Fault RIGHT in `#cd-voice-mobile-strip` under the logo/menu. Never overlay phones, email, logo, or Menu. Desktop Ask Your Fault stays fixed top-left.
+Never auto-stop the Vapi call (`?v=20261025v`). `model.maxTokens: 600`, `silenceTimeoutSeconds: 45`. Keep the last transcript words. Mobile LISTEN stays inside the screen. On mobile Welcome is LEFT and Ask Your Fault RIGHT in `#cd-voice-mobile-strip`. Never overlay phones, email, logo, or Menu. Desktop Ask Your Fault stays fixed top-left.
 
 ---
+
+### [2026-10-25y] — Finish closing sentence; no auto-stop; mobile LISTEN fit (`?v=20261025v`)
+- maxTokens 600, silence 45s, merge final transcript + conversation-update. Title/H1/meta unchanged.
 
 ### [2026-10-25x] — Mobile widget strip, Welcome left / Ask Your Fault right (`?v=20261025u`)
 - In-flow strip under logo/menu. No overlay on phones/logo/menu. Title/H1/meta unchanged.

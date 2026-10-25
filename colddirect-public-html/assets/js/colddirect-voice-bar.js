@@ -14,14 +14,16 @@
     "/colddirect-vapi-config.aspx",
     "/api/colddirect-vapi-config.aspx"
   ];
-  var CLOSING_EN = "If this advice helped you, please click the Like and 5-Star Review button right below in this box to help our website grow.";
+  var CLOSING_EN = "If this advice helped you, please click the green Like and 5-Star Review button right below in this box to help our website grow.";
   var CLOSING_FA = "اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم دکمه لایک و ثبت نظر را در پایین همین صفحه بزنید.";
+  var KEEP_OPEN = "Keep your technical diagnostic response concise (3 to 4 sentences max) so you always have plenty of room to finish your complete closing sentence clearly: '" + CLOSING_EN + "' NEVER trigger any end-call tool while answering a question—wait for the user to reply.";
   var CLOSING_RULE = [
     "MANDATORY CLOSING RULE FOR EVERY RESPONSE: At the very end of EVERY single answer you give (regardless of the language), you MUST verbally ask the user to click the Like / Review button inside the box to help our website grow.",
     "Never skip this spoken closing. Say it out loud after the technical answer. Do not only show it as text.",
     "If speaking English, always end by saying: \"" + CLOSING_EN + "\"",
     "If speaking Persian, always end by saying: \"" + CLOSING_FA + "\"",
-    "If speaking any other language, translate that exact closing sentence naturally into that language."
+    "If speaking any other language, translate that exact closing sentence naturally into that language.",
+    KEEP_OPEN
   ].join(" ");
 
   var vapi = null;
@@ -71,13 +73,16 @@
       "@media (max-width:768px){" +
         ".cd-main-header{height:auto !important;overflow:visible !important;}" +
         ".cd-header-inner{height:auto !important;min-height:64px !important;}" +
-        "#cd-voice-mobile-strip{display:flex !important;align-items:stretch;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;padding:6px 8px 8px;background:#0f172a;position:relative;z-index:120;overflow:visible;}" +
-        "#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;float:none !important;width:auto !important;max-width:none !important;flex:1 1 42%;margin:0 !important;z-index:1 !important;max-height:none !important;overflow:visible !important;}" +
-        "#cd-voice-root{position:static !important;top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 55%;z-index:2 !important;margin:0;}" +
-        "#cd-voice-bar{flex-wrap:wrap;white-space:normal;width:100%;}" +
+        "#cd-voice-mobile-strip{display:flex !important;align-items:stretch;justify-content:space-between;gap:6px;width:100%;max-width:100%;box-sizing:border-box;padding:6px;background:#0f172a;position:relative;z-index:120;overflow:visible;}" +
+        "#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;float:none !important;width:auto !important;max-width:none !important;flex:1 1 40%;min-width:0;margin:0 !important;z-index:1 !important;max-height:none !important;overflow:hidden !important;box-sizing:border-box;}" +
+        "#cd-voice-root{position:static !important;top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;width:auto !important;max-width:100% !important;flex:1 1 52%;min-width:0;box-sizing:border-box;z-index:2 !important;margin:0;overflow:visible;}" +
+        "#cd-voice-bar{display:flex;flex-direction:column;align-items:stretch;flex-wrap:nowrap;white-space:normal;width:100%;max-width:100%;box-sizing:border-box;gap:4px;padding:6px;overflow:hidden;}" +
+        "#cd-voice-left{width:100%;min-width:0;}" +
         "#cd-voice-title{font-size:11px;}" +
-        "#cd-voice-root button.cd-voice-btn{height:32px;min-height:32px;padding:0 8px;font-size:11px;}" +
-        "#cd-voice-mobile-strip #cd-voice-panel{position:absolute;left:8px;right:8px;width:auto;max-width:none;top:100%;margin-top:6px;max-height:min(70vh,520px);overflow:auto;z-index:200;}" +
+        "#cd-voice-controls{display:flex;flex-wrap:nowrap;align-items:center;width:100%;max-width:100%;min-width:0;gap:4px;box-sizing:border-box;}" +
+        "#cd-voice-root .cd-voice-langwrap{flex:1 1 0;min-width:0;height:28px;padding:0 4px;font-size:9px;justify-content:center;overflow:hidden;text-overflow:ellipsis;}" +
+        "#cd-voice-root button.cd-voice-btn{flex:1 1 0;min-width:0;height:28px;min-height:28px;padding:0 4px;font-size:9px;justify-content:center;}" +
+        "#cd-voice-mobile-strip #cd-voice-panel{position:absolute;left:8px;right:8px;width:auto;max-width:none;top:100%;margin-top:6px;max-height:min(70vh,520px);overflow:auto;z-index:200;box-sizing:border-box;}" +
       "}"
     ].join("");
   }
@@ -162,8 +167,28 @@
   function assistantOverrides() {
     return {
       variableValues: {
-        closingRule: CLOSING_RULE
-      }
+        closingRule: CLOSING_RULE,
+        keepCallOpen: KEEP_OPEN
+      },
+      model: {
+        maxTokens: 600
+      },
+      silenceTimeoutSeconds: 45,
+      endCallFunctionEnabled: false,
+      endCallPhrases: [],
+      modelOutputInMessagesEnabled: true,
+      clientMessages: [
+        "transcript",
+        "conversation-update",
+        "model-output",
+        "speech-update",
+        "status-update",
+        "hang",
+        "function-call",
+        "tool-calls",
+        "user-interrupted",
+        "voice-input"
+      ]
     };
   }
 
@@ -196,16 +221,54 @@
     return { row: row, body: body };
   }
 
+  function lastRowText(role) {
+    if (!logEl) return "";
+    var sel = role === "user" ? ".cd-voice-row.is-user" : ".cd-voice-row.is-bot";
+    var rows = logEl.querySelectorAll(sel);
+    if (!rows.length) return "";
+    var body = rows[rows.length - 1].querySelector(".cd-voice-txt");
+    return body ? String(body.textContent || "") : "";
+  }
+
+  function preferLonger(prev, next) {
+    prev = String(prev || "");
+    next = String(next || "");
+    if (!next) return prev;
+    if (!prev) return next;
+    if (next.length >= prev.length) return next;
+    if (prev.indexOf(next) === 0) return prev;
+    return next;
+  }
+
+  function livePointer(role, row) {
+    var body = row && row.querySelector(".cd-voice-txt");
+    var cur = { row: row, body: body };
+    if (role === "user") liveUser = cur;
+    else liveBot = cur;
+    return cur;
+  }
+
   function upsertLive(role, text, final) {
+    text = String(text || "");
     var cur = role === "user" ? liveUser : liveBot;
-    if (!cur) {
-      cur = addRow(role, text, !final);
-      if (role === "user") liveUser = cur;
-      else liveBot = cur;
-    } else {
+    if (cur) {
+      text = preferLonger(cur.body.textContent, text);
       cur.body.textContent = text || "";
       applyDir(cur.body, text);
       cur.row.classList.toggle("is-partial", !final);
+    } else {
+      var prev = lastRowText(role);
+      text = preferLonger(prev, text);
+      if (prev && (text.indexOf(prev) === 0 || prev.indexOf(text) === 0)) {
+        patchLastRow(role, text);
+        var sel = role === "user" ? ".cd-voice-row.is-user" : ".cd-voice-row.is-bot";
+        var rows = logEl ? logEl.querySelectorAll(sel) : [];
+        if (rows.length) cur = livePointer(role, rows[rows.length - 1]);
+      } else {
+        cur = addRow(role, text, !final);
+        if (role === "user") liveUser = cur;
+        else liveBot = cur;
+      }
     }
     if (final) {
       if (role === "user") liveUser = null;
@@ -308,7 +371,9 @@
   }
 
   function stopCall() {
+    // NEVER call this from speech-end, message, hang, or a timer. User END / ✕ only.
     if (!vapi) return;
+    if (!callActive && !callStarting) return;
     if (speakBtn) speakBtn.disabled = true;
     setStatus("connecting", "Ending the conversation…");
     try { vapi.stop(); } catch (e1) {}
@@ -342,14 +407,45 @@
     if (!msg) return "";
     if (typeof msg.transcript === "string") return msg.transcript;
     if (typeof msg.text === "string") return msg.text;
+    if (typeof msg.content === "string") return msg.content;
+    if (Array.isArray(msg.content)) {
+      return msg.content.map(function (part) {
+        if (typeof part === "string") return part;
+        return (part && (part.text || part.content || part.transcript)) || "";
+      }).join("");
+    }
+    if (typeof msg.output === "string") return msg.output;
     if (msg.message && typeof msg.message.content === "string") return msg.message.content;
     if (msg.message && typeof msg.message.transcript === "string") return msg.message.transcript;
     return "";
   }
 
+  function isFinalTranscript(msg, type) {
+    var tt = String((msg && (msg.transcriptType || msg.transcript_type)) || "").toLowerCase();
+    return tt === "final" || type === "transcript-final" || !!(msg && (msg.isFinal === true || msg.is_final === true));
+  }
+
+  function patchLastRow(role, text) {
+    if (!logEl || !text) return;
+    var sel = role === "user" ? ".cd-voice-row.is-user" : ".cd-voice-row.is-bot";
+    var rows = logEl.querySelectorAll(sel);
+    if (!rows.length) {
+      addRow(role, text, false);
+      return;
+    }
+    var body = rows[rows.length - 1].querySelector(".cd-voice-txt");
+    if (!body) return;
+    var merged = preferLonger(body.textContent, text);
+    body.textContent = merged;
+    applyDir(body, merged);
+    rows[rows.length - 1].classList.remove("is-partial");
+  }
+
   function handleConversation(msg) {
     var conv = msg.conversation || msg.messages || (msg.message && msg.message.messages);
     if (!Array.isArray(conv) || !logEl) return;
+    var keptBot = lastRowText("bot");
+    var keptUser = lastRowText("user");
     logEl.innerHTML = "";
     liveUser = null;
     liveBot = null;
@@ -358,20 +454,31 @@
       var text = textFrom(item) || (typeof item.content === "string" ? item.content : "");
       if (text) addRow(role, text, false);
     });
+    patchLastRow("bot", keptBot);
+    patchLastRow("user", keptUser);
   }
 
   function handleMessage(msg) {
     if (!msg) return;
     var type = String(msg.type || "").toLowerCase();
+    if (type === "hang") return;
     if (type === "conversation-update") {
       handleConversation(msg);
+      return;
+    }
+    if (type === "model-output") {
+      var chunk = textFrom(msg);
+      if (!chunk) return;
+      var prev = (liveBot && liveBot.body && liveBot.body.textContent) || lastRowText("bot");
+      var next = chunk.indexOf(prev) === 0 ? chunk : preferLonger(prev, prev + chunk);
+      upsertLive("bot", next, false);
       return;
     }
     if (type === "transcript" || type === "transcript-final" || type.indexOf("transcript") !== -1) {
       var role = roleFrom(msg) || (String(msg.transcriptType || "").indexOf("assistant") !== -1 ? "bot" : "user");
       var text = textFrom(msg);
       if (!text) return;
-      var final = msg.transcriptType === "final" || type === "transcript-final" || msg.isFinal === true;
+      var final = isFinalTranscript(msg, type);
       upsertLive(role, text, final);
       if (final && role === "bot") highlightCta(true);
       return;
@@ -405,6 +512,17 @@
     });
     vapi.on("speech-end", onSpeechEnd);
     vapi.on("message", handleMessage);
+    vapi.on("transcript", function (msg) {
+      if (typeof msg === "string") msg = { type: "transcript", transcript: msg, transcriptType: "final" };
+      else if (!msg || typeof msg !== "object") msg = { type: "transcript" };
+      else if (!msg.type) msg = Object.assign({ type: "transcript" }, msg);
+      handleMessage(msg);
+    });
+    vapi.on("conversation-update", function (msg) {
+      if (!msg || typeof msg !== "object") msg = { type: "conversation-update" };
+      else if (!msg.type) msg = Object.assign({ type: "conversation-update" }, msg);
+      handleMessage(msg);
+    });
     vapi.on("error", function () {
       setIdleState();
       setStatus("error", "A voice connection error occurred. Please try again.");
@@ -430,7 +548,7 @@
       style.textContent = [
         "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}",
         "@media (min-width:769px){#cd-audio-dock{position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}}",
-        "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 42%;margin:0 !important;z-index:1 !important;}}"
+        "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 40%;min-width:0;margin:0 !important;z-index:1 !important;overflow:hidden !important;box-sizing:border-box;}}"
       ].join("");
       (document.body || document.documentElement).appendChild(style);
     }
@@ -508,6 +626,7 @@
       ev.preventDefault();
       ev.stopPropagation();
       closePanel();
+      if (callActive || callStarting) stopCall();
     });
 
     Promise.all([

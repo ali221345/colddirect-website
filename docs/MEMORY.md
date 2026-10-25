@@ -1,6 +1,6 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
-Owner 2026-10-25x: Desktop Ask Your Fault stays `position:fixed` top-left. On mobile (`max-width:768px`) a dedicated `#cd-voice-mobile-strip` sits in-flow under the logo/menu: Welcome LEFT, Ask Your Fault RIGHT. Never overlay phones, email, logo, or Menu (`?v=20261025u`). Transcript ✕. Every spoken Vapi answer must end with the like/review closing.
+Owner 2026-10-25y: Never auto `vapi.stop()` on speech-end/message/timer. `model.maxTokens: 600`, `silenceTimeoutSeconds: 45`. Keep the last transcript words from `transcript` final + `conversation-update`. Mobile LISTEN must stay inside the screen (`?v=20261025v`). Desktop Ask Your Fault stays `position:fixed` top-left. On mobile Welcome LEFT, Ask Your Fault RIGHT in `#cd-voice-mobile-strip`. Never overlay phones, email, logo, or Menu. Every spoken Vapi answer must finish the full like/review closing.
 
 1. Title `Ask Your Fault`. Badge `Lang: Auto`. SPEAK and LISTEN sit together in that compact box.
 2. SPEAK opens a dropdown panel under the box with live transcript (RTL Persian / LTR English).
