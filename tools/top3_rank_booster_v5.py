@@ -41,9 +41,33 @@ EQUIP = {
 HOME_EQUIP = "Commercial refrigeration"
 
 
+def _lower_first(equip: str) -> str:
+    return equip[0].lower() + equip[1:] if equip else equip
+
+
+def already_commercial(equip: str) -> bool:
+    """True when the equipment label already starts with 'commercial'."""
+    return _lower_first(equip).casefold().startswith("commercial")
+
+
+def cheap_schema_label(equip: str) -> str:
+    """Never emit 'commercial commercial …' when the label already starts that way."""
+    el = equip.lower()
+    if already_commercial(equip):
+        return f"Cheap affordable {el} repair in London"
+    return f"Cheap affordable commercial {el} repair in London"
+
+
+def covers_lead(el: str) -> str:
+    """Sentence lead for the TOP3 intro. Skip the extra 'commercial' prefix when el has it."""
+    if el.casefold().startswith("commercial"):
+        return f"<p>Cold Direct covers <strong>{md.esc(el)} repair London</strong> and "
+    return f"<p>Cold Direct covers commercial <strong>{md.esc(el)} repair London</strong> and "
+
+
 def offer_names(equip: str) -> list[str]:
     e = equip
-    el = e[0].lower() + e[1:] if e else e
+    el = _lower_first(e)
     return [
         f"{e} repair London",
         f"{e} repairs London",
@@ -83,7 +107,7 @@ CSS = (
 
 def body_block(equip: str, slug: str | None) -> str:
     e = equip
-    el = e[0].lower() + e[1:]
+    el = _lower_first(e)
     href = f"/{slug}/" if slug else "/"
     phone = f'<a href="{md.PHONE_TEL}">{md.PHONE_DISPLAY}</a>'
     rows = [
@@ -101,8 +125,8 @@ def body_block(equip: str, slug: str | None) -> str:
             CSS,
             f"<h2>{md.esc(e)} Repair, Repairs, Service &amp; Emergency Call-Out in London</h2>",
             (
-                f"<p>Cold Direct covers commercial <strong>{md.esc(el)} repair London</strong> and "
-                f"<strong>{md.esc(el)} repairs London</strong>, plus ongoing "
+                covers_lead(el)
+                + f"<strong>{md.esc(el)} repairs London</strong>, plus ongoing "
                 f"<strong>{md.esc(el)} service</strong> and <strong>{md.esc(el)} services</strong> for restaurants, "
                 "pubs, shops, hotels and catering kitchens. Trade equipment only — never domestic appliances.</p>"
             ),
@@ -153,7 +177,7 @@ def schema_block(equip: str, slug: str | None) -> str:
                     f"{equip} services",
                     f"Emergency {equip.lower()} repair",
                     f"Same day {equip.lower()} service",
-                    f"Cheap affordable commercial {equip.lower()} repair in London",
+                    cheap_schema_label(equip),
                 ],
                 "url": url,
                 "provider": {"@id": md.SITE + "/#business"},
@@ -364,11 +388,26 @@ def selftest() -> None:
     expand_money_offers()
     b = body_block("Fridge", "fridge-repair-london")
     assert START in b and "Cheap fridge repair London" in b
+    assert "covers commercial <strong>fridge repair London</strong>" in b
+    assert "commercial commercial" not in b.lower()
     s = schema_block("Fridge", "fridge-repair-london")
     data = json.loads(s.split("<script", 1)[1].split(">", 1)[1].split("</script>")[0])
     assert data["@graph"][0]["@type"] == "Service"
     assert "#business" in data["@graph"][0]["provider"]["@id"]
     assert data["@graph"][1]["@type"] == "FAQPage"
+    assert "commercial commercial" not in s.lower()
+    for label, slug in (
+        ("Commercial fridge", "commercial-fridge-repair-london"),
+        ("Commercial freezer", "commercial-freezer-repair-london"),
+        ("Commercial catering", "commercial-appliances-repair-london"),
+        ("Commercial refrigeration", None),
+    ):
+        bb = body_block(label, slug)
+        ss = schema_block(label, slug)
+        assert "commercial commercial" not in bb.lower(), label
+        assert "commercial commercial" not in ss.lower(), label
+        assert f"Cold Direct covers <strong>{label[0].lower() + label[1:]} repair London</strong>" in bb
+        assert cheap_schema_label(label) in ss
     print("top3_rank_booster_v5 selftest OK")
 
 
