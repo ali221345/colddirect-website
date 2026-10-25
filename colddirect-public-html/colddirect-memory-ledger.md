@@ -21,6 +21,9 @@ No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the 
 
 ---
 
+### [2026-10-25ae] — Exact vocalized FA wrap (`?v=20261025ae`)
+- Hardcoded display + TTS scripts. FaridNeural/onyx. No English audio on Persian. Title/H1/meta unchanged.
+
 ### [2026-10-25ad] — درود greeting + green Like close (`?v=20261025aa`)
 - Custom TTS, not Vapi. Display `کولد دایرکت` / digit phones; audio `کُلد دایرِکت` + number-word groups. Title/H1/meta unchanged.
 

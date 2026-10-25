@@ -407,32 +407,43 @@ function cd_gemini_diagnose(string $key, string $text, ?string $audioB64, ?strin
     return null;
 }
 
+function cd_strip_persian_frame(string $text): string
+{
+    $s = $text;
+    $s = preg_replace('/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u', '', $s);
+    $s = preg_replace('/^درود[^.!?؟]*[.!?؟]?\s*/u', '', $s);
+    $s = preg_replace('/^سلام[^.!?؟]*[.!?؟]?\s*/u', '', $s);
+    $s = preg_replace('/\s*برای اعزام فوری[\s\S]*$/u', '', $s);
+    $s = preg_replace('/\s*چِنانچه مُشکِل[\s\S]*$/u', '', $s);
+    $s = preg_replace('/\s*اگر این راهنمایی[\s\S]*$/u', '', $s);
+    $s = preg_replace('/\s*اَگَر این راهْنَمایی[\s\S]*$/u', '', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/', ' ', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/', ' ', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/', ' ', $s);
+    $s = trim(preg_replace('/\s+/u', ' ', $s));
+    $parts = preg_split('/(?<=[.!?؟])\s+/u', $s);
+    if (is_array($parts) && count($parts) > 2) {
+        $s = trim($parts[0] . ' ' . $parts[1]);
+    }
+    return $s;
+}
+
 function cd_persian_tts_text(string $text): string
 {
-    $map = ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9',
-            '٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9'];
-    $s = strtr($text, $map);
-    $s = preg_replace('/کولد\s*\x{200C}?\s*دایرکت|کلد\s*\x{200C}?\s*دایرکت|کل\s*\x{200C}?\s*دایرکت|ColdDirect|Cold\s*Direct/iu', 'کُلد دایرِکت', $s);
-    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/', ' صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر ', $s);
-    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/', ' صفر دو صفر سه، نه پنج دو، چهار هشت دو دو ', $s);
-    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/', ' صفر هشتصد، یک یک دو، سه چهار دو هفت ', $s);
-    $words = ['0'=>'صفر','1'=>'یک','2'=>'دو','3'=>'سه','4'=>'چهار','5'=>'پنج','6'=>'شش','7'=>'هفت','8'=>'هشت','9'=>'نه'];
-    $s = preg_replace_callback('/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/', static function ($m) use ($words) {
-        $digits = preg_replace('/\D/', '', str_replace('+44', '0', $m[1]));
-        if (strlen($digits) < 7) {
-            return $m[0];
-        }
-        $groups = [];
-        foreach (str_split($digits, 4) as $chunk) {
-            $parts = [];
-            foreach (str_split($chunk) as $ch) {
-                $parts[] = $words[$ch] ?? $ch;
-            }
-            $groups[] = implode(' ', $parts);
-        }
-        return ' ' . implode('، ', $groups) . ' ';
-    }, $s);
-    return trim(preg_replace('/\s+/u', ' ', $s));
+    if (strpos($text, 'دُرود بر شُما') === 0) {
+        return $text;
+    }
+    $s = cd_strip_persian_frame($text);
+    $s = str_replace('سردخانه', 'سَردخانه', $s);
+    $s = str_replace('یخچال', 'یَخچالِ', $s);
+    $s = str_replace('کمپرسور', 'کُمپرِسور', $s);
+    $s = str_replace('ترموستات', 'تِرموستات', $s);
+    $s = str_replace('کندانسور', 'کُندانسور', $s);
+    $s = str_replace('اواپراتور', 'اِواپُراتور', $s);
+    $s = preg_replace('/کولد\s*دایرکت|ColdDirect|Cold Direct/iu', 'کُلد دایرِکت', $s);
+    return 'دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. '
+        . trim($s) . ' '
+        . 'چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.';
 }
 
 function cd_gemini_tts(string $key, string $spoken): ?array
@@ -495,12 +506,11 @@ function cd_voice_selftest(): bool
     $fa = cd_detect_lang('یخچال فاستر کد خطا');
     $en = cd_detect_lang('Foster fridge E1 alarm');
     $pack = cd_fallback_pack('Foster Fridge E1');
-    $tts = cd_persian_tts_text('شرکت کولد دایرکت. 07983 759320. 0203 952 4822. 0800 112 3427.');
-    $phonesOk = strpos($tts, 'کُلد دایرِکت') !== false
-        && strpos($tts, 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر') !== false
-        && strpos($tts, 'صفر دو صفر سه، نه پنج دو، چهار هشت دو دو') !== false
-        && strpos($tts, 'صفر هشتصد، یک یک دو، سه چهار دو هفت') !== false
-        && !preg_match('/\d/', $tts);
+    $tts = cd_persian_tts_text('کندانسور کثیف است. لاستیک در را چک کنید. 07983 759320');
+    $phonesOk = strpos($tts, 'دُرود بر شُما') !== false
+        && strpos($tts, 'صِفر دِویست و سه') !== false
+        && strpos($tts, 'کُندانسور') !== false
+        && strpos($tts, '07983') === false;
     return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'ZERO MIXING') !== false && $phonesOk;
 }
 

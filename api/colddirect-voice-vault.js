@@ -216,30 +216,26 @@ async function diagnose(key, text, audio, mime) {
 }
 
 function persianTtsText(text) {
-  var s = String(text || "").replace(/[\u06F0-\u06F9]/g, function (c) {
-    return String(c.charCodeAt(0) - 0x06F0);
-  }).replace(/[\u0660-\u0669]/g, function (c) {
-    return String(c.charCodeAt(0) - 0x0660);
-  });
-  var digitsFa = ["صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
-  s = s.replace(/کولد\s*\u200C?\s*دایرکت|کلد\s*\u200C?\s*دایرکت|کل\s*\u200C?\s*دایرکت|ColdDirect|Cold\s*Direct/gi, "کُلد دایرِکت");
-  s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, " صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر ");
-  s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, " صفر دو صفر سه، نه پنج دو، چهار هشت دو دو ");
-  s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/g, " صفر هشتصد، یک یک دو، سه چهار دو هفت ");
-  s = s.replace(/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/g, function (m) {
-    var digits = m.replace(/\+44/g, "0").replace(/\D/g, "");
-    var groups = [];
-    var i, j, chunk, parts;
-    if (digits.length < 7) return m;
-    for (i = 0; i < digits.length; i += 4) {
-      chunk = digits.slice(i, i + 4);
-      parts = [];
-      for (j = 0; j < chunk.length; j++) parts.push(digitsFa[chunk.charCodeAt(j) - 48]);
-      groups.push(parts.join(" "));
-    }
-    return " " + groups.join("، ") + " ";
-  });
-  return s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+  var s = String(text || "");
+  if (s.indexOf("دُرود بر شُما") === 0) return s;
+  s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
+  s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
+  s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
+  s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
+  s = s.replace(/\s*چِنانچه مُشکِل[\s\S]*$/u, "");
+  s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, " ");
+  s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, " ");
+  s = s.replace(/سردخانه/g, "سَردخانه");
+  s = s.replace(/یخچال/g, "یَخچالِ");
+  s = s.replace(/کمپرسور/g, "کُمپرِسور");
+  s = s.replace(/ترموستات/g, "تِرموستات");
+  s = s.replace(/کندانسور/g, "کُندانسور");
+  s = s.replace(/اواپراتور/g, "اِواپُراتور");
+  s = s.replace(/کولد\s*دایرکت|ColdDirect|Cold Direct/gi, "کُلد دایرِکت");
+  s = s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+  return "دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. "
+    + s + " "
+    + "چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.";
 }
 
 async function tts(key, spoken) {

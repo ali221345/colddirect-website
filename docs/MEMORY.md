@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25ae: Do NOT let the LLM invent Persian opening/phones/closing. LLM outputs 2 technical sentences only. Display wrap and vocalized TTS wrap are hardcoded (`دُرود بر شُما…کُلد دایرِکت…صِفر دِویست و سه…`). Persian audio = FaridNeural then onyx; never append English audio. Script `?v=20261025ae`.
+
 Owner 2026-10-25ad: Live widget is custom record-stop-reply, not Vapi. Persian MUST open `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.` (audio pronounces `کُلد دایرِکت`) and close by asking for the green Like & 5-Star Review button. Phones in audio: mobile `صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر` / office `صفر دو صفر سه، نه پنج دو، چهار هشت دو دو` / free `صفر هشتصد، یک یک دو، سه چهار دو هفت`. Script `?v=20261025aa`.
 
 Owner 2026-10-25ac: Persian display vs TTS split (`?v=20261025z`). On-screen transcript keeps `کولد دایرکت` and `07983 759320` / `0203 952 4822` / `0800 112 3427`. TTS audio input uses `کُلد دایرِکت` and the spoken Persian number-word groups. `NormalizePersianForSpeech` must never reverse the phonetic brand and must never run `NumFa` on leftover phone digits.

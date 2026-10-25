@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25ae] — Exact hardcoded Persian display + vocalized TTS wrap (`?v=20261025ae`)
+- LLM Persian output is only 2 technical sentences. Opening, phones and closing are copy-pasted vocalized script. Audio: `fa-IR-FaridNeural` then `gpt-4o-mini-tts` onyx. No English sentence after Persian audio. Title/H1/meta unchanged.
+
 ### [2026-10-25ad] — Force درود greeting + green Like close on live custom TTS (`?v=20261025aa`)
 - Live widget is not Vapi. Vault/JS now always open Persian with `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.` (TTS `کُلد دایرِکت`) and close on the green Like & 5-Star Review button. Phone word-groups unchanged. Title/H1/meta unchanged.
 

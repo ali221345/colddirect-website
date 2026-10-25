@@ -18,18 +18,14 @@
     "/api/colddirect-voice-vault.js"
   ];
   var GREET_EN = "Hello. I am the Head Engineer at Cold Direct. I am glad you chose our company. ";
-  var GREET_FA = "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. ";
-  var FA_PHONE_DIGITS = ["صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
-  var PHONE_TTS = {
-    mobile: "صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر",
-    office: "صفر دو صفر سه، نه پنج دو، چهار هشت دو دو",
-    free: "صفر هشتصد، یک یک دو، سه چهار دو هفت"
-  };
+  var FA_DISPLAY_OPEN = "درود، من مهندس ارشد در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.";
+  var FA_DISPLAY_CLOSE = "برای اعزام فوری تکنسین در لندن، با شماره 0203 952 4822 یا موبایل 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر ۵ ستاره را در پایین همین کادر بزنید.";
+  var FA_AUDIO_OPEN = "دُرود بر شُما. مَن مُهَندِسِ اَرشَدِ شِرکَتِ کُلد دایرِکت هَستَم، و خوشحالَم که ما را اِنتِخاب کَردید. ";
+  var FA_AUDIO_CLOSE = "چِنانچه مُشکِل بَرطَرَف نَشُد، بَرایِ اِعزامِ فوریِ تِکنِسیَن دَر لَندَن، با شُماره تِلِفُنِ، صِفر دِویست و سه، نُهصَد و پَنجاه و دو، چِهِل و هَشت، بیست و دو، و یا شُماره موبایلِ، صِفر هَفت نُه هَشت سه، هَفتصَد و پَنجاه و نُه، سیصَد و بیست، تَماس بَگیرید. اَگَر این راهْنَمایی بَرایِ شُما مُفید بود، مَمنون می‌شَویم دُکمه‌یِ سَبزِ لایک و ثَبتِ نَظَر را دَر پایینِ هَمین کادر بَزَنید.";
   var CLOSING_EN = "If this advice helped you, please click the green Like and 5-Star Review button right below in this box to help our website grow.";
-  var CLOSING_FA = "اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید.";
   var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
   var DIAGNOSE_MS = 20000;
-  var TTS_MS = 12000;
+  var TTS_MS = 18000;
   var MAX_MS = 60000;
 
   var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
@@ -50,6 +46,7 @@
   var srFinal = "";
   var askSeq = 0;
   var lastSpoken = "";
+  var lastTtsText = "";
   var lastLang = "en";
   var lastAudio = null;
   var recBeganAt = 0;
@@ -200,50 +197,58 @@
     });
   }
 
-  function displayBrandAndPhones(text) {
+  function twoSentences(text) {
+    var s = String(text || "").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+    if (!s) return "";
+    var parts = s.split(/(?<=[.!?؟])\s+/);
+    if (parts.length <= 2) return s;
+    return (parts[0] + " " + parts[1]).replace(/^\s+|\s+$/g, "");
+  }
+
+  function stripPersianFrame(text) {
     var s = westDigits(text);
-    s = s.replace(/کُلد\s*\u200C?\s*دایرِکت/g, "کولد دایرکت");
-    s = s.replace(/کلد\s*\u200C?\s*دایرکت/g, "کولد دایرکت");
-    s = s.replace(/کل\s*\u200C?\s*دایرکت/g, "کولد دایرکت");
-    s = s.replace(/ColdDirect/gi, "Cold Direct");
-    s = s.replace(/صفر\s+هفت\s+نُ?ه\s+هشت\s+سه[،,]?\s*هفت\s+پنج\s+نُ?ه[،,]?\s*سه\s+دو\s+صفر/g, "07983 759320");
-    s = s.replace(/صفر\s+دو\s+صفر\s+سه[،,]?\s*نه\s+پنج\s+دو[،,]?\s*چهار\s+هشت\s+دو\s+دو/g, "0203 952 4822");
-    s = s.replace(/صفر\s+هشتصد[،,]?\s*یک\s+یک\s+دو[،,]?\s*سه\s+چهار\s+دو\s+هفت/g, "0800 112 3427");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, "07983 759320");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, "0203 952 4822");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/g, "0800 112 3427");
+    s = s.replace(/^دُرود بر شُما[\s\S]*?اِنتِخاب کَردید\.?\s*/u, "");
+    s = s.replace(/^درود[^.!?؟]*[.!?؟]?\s*/u, "");
+    s = s.replace(/^سلام[^.!?؟]*[.!?؟]?\s*/u, "");
+    s = s.replace(/\s*برای اعزام فوری[\s\S]*$/u, "");
+    s = s.replace(/\s*چِنانچه مُشکِل[\s\S]*$/u, "");
+    s = s.replace(/\s*اگر این راهنمایی[\s\S]*$/u, "");
+    s = s.replace(/\s*اَگَر این راهْنَمایی[\s\S]*$/u, "");
+    s = s.replace(/\s*برای هماهنگی[\s\S]{0,80}تماس بگیرید\.?/gu, " ");
+    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, " ");
+    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, " ");
+    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/g, " ");
+    s = s.replace(/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/g, " ");
+    return twoSentences(s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, ""));
+  }
+
+  function cleanTechnicalAnswerForTTS(text) {
+    var s = stripPersianFrame(text);
+    s = s.replace(/سردخانه/g, "سَردخانه");
+    s = s.replace(/یخچال/g, "یَخچالِ");
+    s = s.replace(/کمپرسور/g, "کُمپرِسور");
+    s = s.replace(/ترموستات/g, "تِرموستات");
+    s = s.replace(/کندانسور/g, "کُندانسور");
+    s = s.replace(/اواپراتور/g, "اِواپُراتور");
+    s = s.replace(/کولد\s*دایرکت|ColdDirect|Cold Direct/gi, "کُلد دایرِکت");
     return s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
   }
 
-  function digitsFa(digits) {
-    var out = [];
-    var i, n;
-    for (i = 0; i < digits.length; i++) {
-      n = digits.charCodeAt(i) - 48;
-      if (n >= 0 && n <= 9) out.push(FA_PHONE_DIGITS[n]);
-    }
-    return out.join(" ");
+  function wrapPersianDisplay(text) {
+    var tech = stripPersianFrame(text);
+    return FA_DISPLAY_OPEN + "\n" + tech + "\n" + FA_DISPLAY_CLOSE;
   }
 
-  function persianTtsText(text) {
-    var s = westDigits(text);
-    s = s.replace(/کولد\s*\u200C?\s*دایرکت|کلد\s*\u200C?\s*دایرکت|کل\s*\u200C?\s*دایرکت|ColdDirect|Cold\s*Direct/gi, "کُلد دایرِکت");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/g, " " + PHONE_TTS.mobile + " ");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/g, " " + PHONE_TTS.office + " ");
-    s = s.replace(/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/g, " " + PHONE_TTS.free + " ");
-    s = s.replace(/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/g, function (m) {
-      var digits = m.replace(/\+44/g, "0").replace(/\D/g, "");
-      var groups = [];
-      var i;
-      if (digits.length < 7) return m;
-      for (i = 0; i < digits.length; i += 4) groups.push(digitsFa(digits.slice(i, i + 4)));
-      return " " + groups.join("، ") + " ";
-    });
-    return s.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+  function persianAudioText(text) {
+    return FA_AUDIO_OPEN + cleanTechnicalAnswerForTTS(text) + " " + FA_AUDIO_CLOSE;
   }
 
   function ttsPayload(text, lang) {
-    return (lang === "fa" || hasPersian(text)) ? persianTtsText(text) : String(text || "");
+    if (lang === "fa" || hasPersian(text)) {
+      if (String(text || "").indexOf("دُرود بر شُما") === 0) return String(text);
+      return persianAudioText(text);
+    }
+    return String(text || "");
   }
 
   function telHref(display) {
@@ -315,12 +320,9 @@
 
   function withGreet(text, lang) {
     var fa = lang === "fa" || hasPersian(text);
-    var g = fa ? GREET_FA : GREET_EN;
+    if (fa) return wrapPersianDisplay(text);
+    var g = GREET_EN;
     var t = String(text || "").replace(/^\s+/, "");
-    if (fa) {
-      t = t.replace(/^(سلام|درود)[^.!?؟]*[.!?؟]?\s*/, "");
-      return (t ? g + t : g.trim());
-    }
     t = t.replace(/^Hello\.\s*I am the Head Engineer[^.]*\.\s*/i, "");
     if (!t) return g.trim();
     if (/^Hello\.\s*I am the Head Engineer/i.test(t)) return t;
@@ -328,9 +330,10 @@
   }
 
   function ensureClosing(text, lang) {
+    if (lang === "fa" || hasPersian(text)) return wrapPersianDisplay(text);
     var t = String(text || "");
-    if (/like|review|لایک|ستاره|5-star|five.star/i.test(t)) return t;
-    return (t ? t.replace(/\s+$/, "") + " " : "") + ((lang === "fa" || hasPersian(t)) ? CLOSING_FA : CLOSING_EN);
+    if (/like|review|5-star|five.star/i.test(t)) return t;
+    return (t ? t.replace(/\s+$/, "") + " " : "") + CLOSING_EN;
   }
 
   function playCtx() {
@@ -421,7 +424,8 @@
       }
       URL.revokeObjectURL(url);
       highlightCta(true);
-      setStatus("active", "If this helped, please leave a like and a 5-star review.");
+      if (lastLang !== "fa") setStatus("active", "If this helped, please leave a like and a 5-star review.");
+      else setStatus("active", "");
       if (onDone) onDone();
     }
 
@@ -756,12 +760,19 @@
       var lang = String(data.language || "").slice(0, 2).toLowerCase() || (hasPersian(data.spoken || data.transcript) ? "fa" : "en");
       lastLang = lang;
       if (data.transcript) upsertLive("user", data.transcript, true);
-      var spokenOut = ensureClosing(withGreet(data.spoken || data.summary || "", lang), lang);
-      var displayOut = (lang === "fa" || hasPersian(spokenOut)) ? displayBrandAndPhones(spokenOut) : spokenOut;
-      lastSpoken = displayOut;
-      upsertLive("bot", displayOut, true);
+      var rawSpoken = data.spoken || data.summary || "";
+      var fa = lang === "fa" || hasPersian(rawSpoken);
+      if (fa) lang = "fa";
+      lastLang = lang;
+      var spokenOut = fa ? wrapPersianDisplay(rawSpoken) : ensureClosing(withGreet(rawSpoken, lang), lang);
+      var ttsOut = fa
+        ? ((data.tts_text && String(data.tts_text).indexOf("دُرود بر شُما") === 0) ? String(data.tts_text) : persianAudioText(rawSpoken))
+        : spokenOut;
+      lastSpoken = spokenOut;
+      lastTtsText = ttsOut;
+      upsertLive("bot", spokenOut, true);
       if (playVaultAudio(data)) return;
-      return postVault({ mode: "tts", text: ttsPayload(spokenOut, lang), language: lang, watermark: MARK }, TTS_MS).then(function (v) {
+      return postVault({ mode: "tts", text: ttsOut, language: lang, watermark: MARK }, TTS_MS).then(function (v) {
         if (seq !== askSeq) return;
         if (!playVaultAudio(v)) {
           highlightCta(true);
@@ -797,7 +808,7 @@
     }
     if (lastSpoken) {
       setStatus("connecting", "Preparing the Head Engineer's voice…");
-      postVault({ mode: "tts", text: ttsPayload(lastSpoken, lastLang), language: lastLang, watermark: MARK }, TTS_MS).then(function (v) {
+      postVault({ mode: "tts", text: lastTtsText || ttsPayload(lastSpoken, lastLang), language: lastLang, watermark: MARK }, TTS_MS).then(function (v) {
         if (!playVaultAudio(v)) setStatus("active", lastSpoken);
       }).catch(function () {
         setStatus("active", lastSpoken);
