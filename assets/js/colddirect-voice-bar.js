@@ -23,11 +23,14 @@
     "Cold Room Ice-Up"
   ];
   var MAX_MS = 60000;
-  var SILENCE_MS = 3000;
+  var SILENCE_MS = 700;
+  var SR_SILENCE_MS = 700;
   var NO_SPEECH_MS = 9000;
   var PACE = 1;
+  var TTS_RATE = 1.05;
   var SPEAK_LABEL = "🎤 SPEAK";
   var STOP_LABEL = "⏹ STOP & SEND";
+  var GREET_EN = "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.";
 
   var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn;
   var cardEls = {};
@@ -52,6 +55,11 @@
   var playing = false;
   var playSource = null;
   var playEl = null;
+  var sr = null;
+  var srText = "";
+  var srSilence = null;
+  var kbCache = {};
+  var voicesReady = false;
 
   function $(sel, el) { return (el || document).querySelector(sel); }
 
@@ -257,6 +265,118 @@
     return MALE_VOICE.test(n);
   }
 
+  function warmVoices() {
+    if (!window.speechSynthesis) return;
+    try {
+      var list = window.speechSynthesis.getVoices() || [];
+      if (list.length) voicesReady = true;
+      if (typeof window.speechSynthesis.onvoiceschanged !== "undefined") {
+        window.speechSynthesis.onvoiceschanged = function () {
+          window.speechSynthesis.getVoices();
+          voicesReady = true;
+        };
+      }
+    } catch (e) {}
+  }
+
+  function firstSentence(text) {
+    var t = String(text || "").replace(/\s+/g, " ").trim();
+    if (!t) return "";
+    var m = t.match(/^[\s\S]{12,220}?([.!?؟。]|[.]\s)/);
+    if (m) return m[0].trim();
+    var cut = t.split(/(?<=[.!?؟。])\s+/)[0];
+    return (cut && cut.length >= 8 ? cut : t).slice(0, 180).trim();
+  }
+
+  var FAST_KB = [
+    {
+      re: /\b(e\s*1|e1)\b|foster.*\be1\b|dixell.*\be1\b|eliwell.*\be1\b/i,
+      language: "en", languageLabel: "English",
+      summary: "E1 on a Dixell, Carel or Eliwell controller is a room-probe fault.",
+      cause: "The room air probe is open-circuit, unplugged or shorted, so the controller cannot read cabinet temperature.",
+      checks: ["Seat the probe plug on the controller.", "Look for a crushed or iced probe lead.", "If high-risk food is warming, call 07983 759320."],
+      spoken: GREET_EN + " E1 is a room probe fault on most commercial controllers. Check the probe plug is seated, then call 07983 759320 if the cabinet is warming."
+    },
+    {
+      re: /\b(p\s*1|p1)\b|room probe|air probe/i,
+      language: "en", languageLabel: "English",
+      summary: "P1 is the room / air probe alarm on Dixell and similar controllers.",
+      cause: "The cabinet air probe is disconnected, iced, or reading out of range.",
+      checks: ["Reseat the P1 probe connector.", "Thaw any ice around the probe bulb.", "Call 07983 759320 if temperature is still climbing."],
+      spoken: GREET_EN + " P1 is the room air probe alarm. Reseat the probe plug. If the fridge is still warming, call 07983 759320."
+    },
+    {
+      re: /\b(p\s*2|p2)\b|defrost probe|evaporator probe/i,
+      language: "en", languageLabel: "English",
+      summary: "P2 is the evaporator / defrost-probe alarm.",
+      cause: "The coil probe is open, shorted or iced, so defrost cannot terminate correctly.",
+      checks: ["Check the P2 probe on the evaporator.", "Clear solid ice from the coil if it is safe to do so.", "Call 07983 759320 for a same-day visit."],
+      spoken: GREET_EN + " P2 is the evaporator probe alarm. That probe sits on the coil and controls defrost. Call 07983 759320 if the coil is iced solid."
+    },
+    {
+      re: /\bha\b|high temp(?:erature)? alarm|\bhi\b alarm/i,
+      language: "en", languageLabel: "English",
+      summary: "HA / Hi is a high-temperature alarm — the cabinet or cold room has gone above the set limit.",
+      cause: "Warm air ingress, a dirty condenser, a failed fan, low gas, or a door left ajar.",
+      checks: ["Close the door and check the gasket.", "Feel if the condenser is hot and clogged with grease.", "Move high-risk food and call 07983 759320."],
+      spoken: GREET_EN + " HA is a high temperature alarm. Close the door, check the seal, and call 07983 759320 if stock is warming."
+    },
+    {
+      re: /not cooling|no cooling|not getting cold|won't cool|wont cool|warm fridge|fridge.*warm|cabinet.*warm/i,
+      language: "en", languageLabel: "English",
+      summary: "A commercial fridge that is not cooling is usually airflow, condenser dirt, or a control/compressor fault.",
+      cause: "Blocked condenser, seized evaporator fan, iced coil, or a tripped compressor.",
+      checks: ["Is the condenser at the back or top caked in grease?", "Is the evaporator fan spinning inside?", "Call 07983 759320 for same-day diagnosis."],
+      spoken: GREET_EN + " If the cabinet is not cooling, check the condenser is clean and the inner fan is spinning. Call 07983 759320 for same-day repair."
+    },
+    {
+      re: /icing up|ice[- ]up|iced up|frozen coil|evaporator.*ice|coil.*ice/i,
+      language: "en", languageLabel: "English",
+      summary: "Icing up means humid air is getting in or defrost has failed.",
+      cause: "Split door gasket, failed defrost heater or termination probe, or stock blocking the coil.",
+      checks: ["Check the door gasket with a paper test.", "Do not chip ice with a metal bar.", "Call 07983 759320 — we carry defrost heaters."],
+      spoken: GREET_EN + " Icing up is usually a door seal or a failed defrost. Do not smash the ice. Call 07983 759320."
+    },
+    {
+      re: /compressor (trip|tripping|overload|not starting)|overload trip|short cycl/i,
+      language: "en", languageLabel: "English",
+      summary: "A tripping compressor is overload, high head pressure, or a failed start device.",
+      cause: "Dirty condenser, seized fan, weak start relay/capacitor, or a failing compressor.",
+      checks: ["Switch off if it is clicking every few seconds.", "Clear grease from the condenser.", "Call 07983 759320 — do not keep resetting it."],
+      spoken: GREET_EN + " A compressor that keeps tripping needs a clean condenser and a start-device check. Call 07983 759320. Do not keep resetting it."
+    },
+    {
+      re: /ice machine|not making ice|no ice|hoshizaki|scotsman|ice-o-matic/i,
+      language: "en", languageLabel: "English",
+      summary: "An ice machine that is not making ice is usually scale, water inlet, or a harvest fault.",
+      cause: "Scaled evaporator, closed water valve, failed inlet valve or dirty condenser.",
+      checks: ["Confirm the water tap is open.", "Look for heavy white scale on the plate.", "Call 07983 759320 for a commercial ice-machine visit."],
+      spoken: GREET_EN + " If the ice machine is not making ice, open the water tap and check for scale. Call 07983 759320 for a same-day engineer."
+    },
+    {
+      re: /cold room|walk[- ]in|chiller room/i,
+      language: "en", languageLabel: "English",
+      summary: "A cold room climbing in temperature is door air, an iced evaporator, or a rooftop condensing unit fault.",
+      cause: "Door left on the latch, torn gaskets, iced coil, dirty remote condenser, or a controller alarm.",
+      checks: ["Close the door fully and check strip curtains.", "Look at the evaporator for a solid ice block.", "Call 07983 759320 for 24/7 cold room repair."],
+      spoken: GREET_EN + " For a cold room losing temperature, close the door and look at the evaporator for ice. Call 07983 759320 for 24/7 dispatch."
+    }
+  ];
+
+  function kbLookup(q) {
+    var t = String(q || "").replace(/\s+/g, " ").trim();
+    if (t.length < 2) return null;
+    var key = t.toLowerCase();
+    if (kbCache[key]) return kbCache[key];
+    for (var i = 0; i < FAST_KB.length; i++) {
+      if (FAST_KB[i].re.test(t)) {
+        kbCache[key] = FAST_KB[i];
+        return FAST_KB[i];
+      }
+    }
+    return null;
+  }
+
   function pickVoice(code) {
     var voices = window.speechSynthesis.getVoices() || [];
     var same = voices.filter(function (v) {
@@ -275,21 +395,27 @@
     return natural[0] || same[0] || null;
   }
 
-  function speakFallback(text, lang) {
-    if (!text || !window.speechSynthesis) return false;
+  function speakChunk(text, lang, onend) {
+    if (!text || !window.speechSynthesis) {
+      if (onend) onend();
+      return false;
+    }
     try {
-      window.speechSynthesis.cancel();
       var code = String(lang || lastLang || "en").slice(0, 2).toLowerCase();
       var u = new SpeechSynthesisUtterance(text);
-      u.rate = 1;
+      u.rate = TTS_RATE;
       u.pitch = 1;
       u.voice = pickVoice(code);
-      if (!u.voice) return false;
+      if (!u.voice) {
+        if (onend) onend();
+        return false;
+      }
       u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" }[code] || code);
       u.onend = function () {
         playing = false;
         listenBtn.classList.remove("is-on");
         listenBtn.setAttribute("aria-pressed", "false");
+        if (onend) onend();
       };
       playing = true;
       listenBtn.classList.add("is-on");
@@ -297,8 +423,30 @@
       window.speechSynthesis.speak(u);
       return true;
     } catch (e) {
+      if (onend) onend();
       return false;
     }
+  }
+
+  function speakFallback(text, lang) {
+    if (!text || !window.speechSynthesis) return false;
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    return speakChunk(text, lang);
+  }
+
+  function speakStream(full, lang) {
+    lastSpoken = full || "";
+    lastLang = lang || lastLang || "en";
+    var first = firstSentence(full);
+    var rest = String(full || "").slice(first.length).trim();
+    if (!first) return false;
+    return speakChunk(first, lang, function () {
+      if (parts.length) {
+        playQueue();
+        return;
+      }
+      if (rest) speakChunk(rest, lang);
+    });
   }
 
   function playDiagnosis() {
@@ -378,25 +526,36 @@
   }
 
   function requestVoice(data, seq) {
-    if (!data.spoken || data.voice === "browser-no-key") {
+    var full = data.spoken || data.summary || "";
+    var first = firstSentence(full);
+    var rest = full.slice(first.length).trim();
+    lastSpoken = full;
+    lastLang = data.language || lastLang || "en";
+    if (first) {
+      speakChunk(first, lastLang, function () {
+        if (parts.length) playQueue();
+        else if (rest && !voicePending) speakChunk(rest, lastLang);
+      });
+    }
+    if (!data.spoken || data.voice === "browser-no-key" || !rest) {
       voicePending = false;
-      if (data.spoken) voiceFallback(data);
+      if (!first && data.spoken) voiceFallback(data);
       return;
     }
     voicePending = true;
     setStatus(langStatus(data) + " — Head Engineer's voice on its way…");
     var lang = data.language || "";
-    postVault({ mode: "tts", text: data.spoken, language: lang, watermark: MARK }).then(function (v) {
+    postVault({ mode: "tts", text: rest, language: lang, watermark: MARK }).then(function (v) {
       if (seq !== askSeq) return;
       voicePending = false;
       setStatus(langStatus(data));
       var got = v && v.audio_base64 ? { data: v.audio_base64, mime: v.audio_mime } : (v && v.audio && v.audio.data ? v.audio : null);
       if (!got) { voiceFallback(data); return; }
       parts = [got];
-      var rest = (v.more || []).slice();
-      partsDone = rest.length === 0;
-      playQueue();
-      fetchRest(rest, v.language || lang, seq);
+      var more = (v.more || []).slice();
+      partsDone = more.length === 0;
+      if (!playing) playQueue();
+      fetchRest(more, v.language || lang, seq);
     }).catch(function () {
       if (seq !== askSeq) return;
       voicePending = false;
@@ -443,7 +602,16 @@
     parts = [];
     partsDone = true;
     root.classList.add("is-busy");
-    setStatus(audio ? "Head Engineer is listening to your recording…" : "Head Engineer is diagnosing…");
+    setStatus("Diagnosing fault...");
+    var fast = kbLookup(q);
+    if (fast) {
+      if (seq !== askSeq) return;
+      fillCard(fast);
+      setStatus(langStatus(fast));
+      root.classList.remove("is-busy");
+      speakStream(fast.spoken, fast.language);
+      return;
+    }
     var payload = {
       mode: "diagnose",
       text: q,
@@ -521,8 +689,56 @@
   }
 
   function cancelRec(msg) {
+    stopSr();
     endCapture(function () { recChunks = []; });
     setStatus(msg);
+  }
+
+  function stopSr() {
+    if (srSilence) { clearTimeout(srSilence); srSilence = null; }
+    if (sr) {
+      try { sr.onresult = null; sr.onend = null; sr.onerror = null; sr.stop(); } catch (e) {}
+      sr = null;
+    }
+  }
+
+  function startSpeechRec() {
+    var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Ctor) return false;
+    try {
+      srText = "";
+      sr = new Ctor();
+      sr.interimResults = true;
+      sr.continuous = false;
+      sr.maxAlternatives = 1;
+      sr.lang = navigator.language || "en-GB";
+      sr.onresult = function (ev) {
+        var piece = "";
+        for (var i = 0; i < ev.results.length; i++) {
+          piece += ev.results[i][0].transcript;
+        }
+        piece = piece.replace(/\s+/g, " ").trim();
+        if (piece) {
+          srText = piece;
+          if (input) input.value = piece;
+        }
+        if (srSilence) clearTimeout(srSilence);
+        srSilence = setTimeout(function () {
+          srSilence = null;
+          try { if (sr) sr.stop(); } catch (e2) {}
+          finishRec();
+        }, SR_SILENCE_MS);
+      };
+      sr.onerror = function () { /* MediaRecorder / type-in still work */ };
+      sr.onend = function () {
+        if (recording && srText) finishRec();
+      };
+      sr.start();
+      return true;
+    } catch (e) {
+      sr = null;
+      return false;
+    }
   }
 
   function startMeter(stream) {
@@ -556,6 +772,7 @@
   function startRec() {
     unlockAudio();
     openDrawer();
+    stopSr();
     try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e0) {}
     stopPlayback();
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
@@ -581,7 +798,10 @@
       recorder.start(250);
       startMeter(stream);
       recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
-      setStatus("Listening in any language… pause for 3 seconds or tap STOP & SEND.");
+      var srOn = startSpeechRec();
+      setStatus(srOn
+        ? "Listening… I’ll diagnose as soon as you pause, or tap STOP & SEND."
+        : "Listening in any language… pause briefly or tap STOP & SEND.");
     }).catch(function () {
       recording = false;
       setSpeakUi(false);
@@ -604,8 +824,15 @@
 
   function finishRec() {
     if (!recording) return;
-    setStatus("Sending your voice to the Head Engineer…");
+    setStatus("Diagnosing fault...");
+    var spoken = srText;
+    stopSr();
     endCapture(function (rec) {
+      if (spoken && spoken.length >= 2) {
+        recChunks = [];
+        ask(spoken);
+        return;
+      }
       var type = String((rec && rec.mimeType) || pickMime() || "audio/webm");
       var blob = new Blob(recChunks, { type: type });
       recChunks = [];
@@ -840,7 +1067,7 @@
     });
 
     bindFeedback();
-    try { window.speechSynthesis && window.speechSynthesis.getVoices(); } catch (e) {}
+    warmVoices();
   }
 
   if (document.body) mount();

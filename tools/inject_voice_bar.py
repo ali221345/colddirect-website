@@ -12,10 +12,11 @@ SKIP_DIRS = {
     "tools", "scripts", "logs", "App_Data", "images", "css", "js", "assets",
 }
 SKIP_PREFIX = ("_backup", "gsc-analysis", "AUDIT-", "audit-")
-SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=13" defer></script>'
+SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=14" defer></script>'
 MARKER = "<!-- CD-VOICE-BAR-V1 -->"
 BLOCK = MARKER + "\n" + SCRIPT + "\n"
 HAS_SCRIPT = re.compile(r"colddirect-voice-bar\.js\?v=\d+", re.I)
+BUMP_V = re.compile(r'(src="/assets/js/colddirect-voice-bar\.js)\?v=\d+"', re.I)
 BODY = re.compile(r"</body\s*>", re.I)
 HOVER = re.compile(r'(<script[^>]+cd-hover-card\.js[^>]*></script>)', re.I)
 V4 = re.compile(r"<!--\s*AUTO-SEO-V4-2026\s*-->")
@@ -44,10 +45,13 @@ def targets():
 
 
 def inject(text):
+    bumped = BUMP_V.sub(r'\1?v=14"', text, count=1)
+    changed = bumped != text
+    text = bumped
     if HAS_SCRIPT.search(text):
         # Keep the existing script; only tidy a leftover homepage-only comment.
         tidy = re.sub(r"<!--\s*CD-VOICE-BAR-V1 homepage-only test\s*-->\s*", MARKER + "\n", text, count=1)
-        return tidy, tidy != text
+        return tidy, changed or tidy != text
     if not BODY.search(text) or "<html" not in text.lower():
         return text, False
     if HOVER.search(text):
