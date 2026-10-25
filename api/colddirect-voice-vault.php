@@ -121,7 +121,7 @@ Every spoken answer MUST:
 - Spell numbers and error codes phonetically (E1 = "E one")
 - End by kindly asking the customer to tap the Like button or leave a 5-star review so ColdDirect can improve and grow
 
-Scope: commercial refrigeration and catering only (Foster, Williams, True, Polar, Gram, Hoshizaki, ice machines, cold rooms, cellar coolers, blast chillers). No domestic household appliances. If the customer asks something outside this, steer them back and offer a London engineer on 07983 759320.
+Scope: commercial refrigeration and catering only (Foster, Williams, True, Polar, Gram, Hoshizaki, ice machines, cold rooms, cellar coolers, blast chillers). No domestic household appliances. If the customer asks something outside this, steer them back and offer a London engineer. Write the company name as کولد دایرکت. When giving a phone number, write the digits exactly as 07983 759320, 0203 952 4822 or 0800 112 3427 — never as one giant numeral. The speech layer converts those digits to Persian number-words.
 
 Return STRICT JSON only:
 {"language":"en","languageLabel":"English","spoken":"full spoken-style monologue for TTS","summary":"short card summary","cause":"likely cause","checks":["check 1","check 2","check 3"]}
@@ -214,25 +214,25 @@ function cd_fallback_pack(string $text): array
         ],
         'fa' => [
             'e1' => [
-                'spoken' => 'سلام رفیق، من سرمهندس کلد دایرکت‌ام، سی ساله تو لندن روی یخچال و سردخونه و کترینگ کار کردم. گفتی فاستر کد ای‌وان نشون می‌ده — ای مثل حرف ای، وان یعنی عدد یک. معمولاً یعنی کابین گرم شده یا سنسور دما شل شده یا یخ زده. اول کندانسور بالای دستگاه رو ببین گردوخاک نبسته باشه، لاستیک در رو چک کن و ببین باد برگشتی بسته نشده. اگه دمای داخل از هشت درجه بالاتر رفته همون روز می‌آیم. لطفاً دکمه لایک یا پنج ستاره رو بزن تا کلد دایرکت بتونه رشد کنه. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'سلام. من سرمهندس شرکت کولد دایرکت هستم، سی ساله تو لندن روی یخچال و سردخونه و کترینگ کار کردم. گفتی فاستر کد ای‌وان نشون می‌ده — ای مثل حرف ای، وان یعنی عدد یک. معمولاً یعنی کابین گرم شده یا سنسور دما شل شده یا یخ زده. اول کندانسور بالای دستگاه رو ببین گردوخاک نبسته باشه، لاستیک در رو چک کن و ببین باد برگشتی بسته نشده. اگه دمای داخل از هشت درجه بالاتر رفته همون روز می‌آیم. لطفاً دکمه لایک یا پنج ستاره رو بزن تا کولد دایرکت بتونه رشد کنه. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'کد ای‌وان فاستر معمولاً آلارم دمای بالا یا خرابی سنسور کابینه. یا یخچال گرم شده، یا پراب درست نمی‌خونه.',
                 'cause' => 'کندانسور کثیف، در باز مونده یا لاستیک ضعیف، جریان هوا بسته، یا سنسور خراب.',
                 'checks' => ['کندانسور بالا رو تمیز کن.', 'ببین در کامل بسته می‌شه و فن‌ها می‌چرخن.', 'اگه دما بالای ۸ درجه است با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیر.'],
             ],
             'ice' => [
-                'spoken' => 'اگه یخساز یخ نمی‌ده اول آب و رسوب و گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یخ نازک می‌زنه و دیگه رها نمی‌کنه. لایک یا پنج ستاره بزن تا کمک کنی رشد کنیم. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'اگه یخساز یخ نمی‌ده اول آب و رسوب و گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یخ نازک می‌زنه و دیگه رها نمی‌کنه. لایک یا پنج ستاره بزن تا کمک کنی رشد کنیم. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'نبودن یخ معمولاً از آب، رسوب اواپراتور، کندانسور کثیف یا سوییچ مخزنه؛ لزوماً کمپرسور نمرده.',
                 'cause' => 'شیر بسته، فیلتر گرفته، رسوب، کندانسور کثیف یا ترموستات مخزن که فکر می‌کنه پره.',
                 'checks' => ['ببین آب به دستگاه می‌رسه.', 'اگه ورقه یخ نازک و ناهماهنگه، رسوبه.', 'کندانسور رو تمیز کن و اگر درست نشد ۰۷۹۸۳ ۷۵۹۳۲۰.'],
             ],
             'room' => [
-                'spoken' => 'یخ زدن اواپراتور یعنی اتاق نفس نمی‌کشه. یا هوای گرم داره می‌آد تو، یا برفک‌زدایی خوابیده. در و پرده و لاستیک رو ببین، کویل رو لمس کن ببین یخ سفید یکدست شده یا نه. اگه کویل یخ زده جامد، یخ رو نشکون — دستگاه رو خاموش کن، در رو یک‌کم باز بذار و بذار ما درست جمعش کنیم. لایک یا پنج ستاره بزن لطفاً. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'یخ زدن اواپراتور یعنی اتاق نفس نمی‌کشه. یا هوای گرم داره می‌آد تو، یا برفک‌زدایی خوابیده. در و پرده و لاستیک رو ببین، کویل رو لمس کن ببین یخ سفید یکدست شده یا نه. اگه کویل یخ زده جامد، یخ رو نشکون — دستگاه رو خاموش کن، در رو یک‌کم باز بذار و بذار ما درست جمعش کنیم. لایک یا پنج ستاره بزن لطفاً. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'یخ زدن سردخانه معمولاً از نفوذ هوا از در یا خوابیدن سیکل دیفراسته.',
                 'cause' => 'در باز، لاستیک ضعیف، هیتر یا پراب دیفراست خراب، یا درین گرفته.',
                 'checks' => ['در، پرده و لاستیک رو چک کن.', 'ببین لوله درین بازه.', 'موجودی رو حفظ کن و به ۰۷۹۸۳ ۷۵۹۳۲۰ زنگ بزن.'],
             ],
             'generic' => [
-                'spoken' => 'سلام رفیق، من سرمهندس کلد دایرکت‌ام، سی ساله تو لندن روی سرمایش تجاری و کترینگ کار کردم. برند، کد خطا و اینکه کابین هنوز سرده یا نه رو بگو تا قدم‌به‌قدم راهنمایی‌ت کنم. اول کندانسور تمیز، در درست و جریان هوا. اگه مواد غذایی داره گرم می‌شه همون روز می‌رسیم. لطفاً لایک یا پنج ستاره بزن تا کلد دایرکت رشد کنه. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'سلام. من سرمهندس شرکت کولد دایرکت هستم، سی ساله تو لندن روی سرمایش تجاری و کترینگ کار کردم. برند، کد خطا و اینکه کابین هنوز سرده یا نه رو بگو تا قدم‌به‌قدم راهنمایی‌ت کنم. اول کندانسور تمیز، در درست و جریان هوا. اگه مواد غذایی داره گرم می‌شه همون روز می‌رسیم. لطفاً لایک یا پنج ستاره بزن تا کولد دایرکت رشد کنه. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'برند، کد خطا و دمای فعلی رو بگو. بیشتر خرابی‌های صنفی از کندانسور، در و جریان هوا شروع می‌شه.',
                 'cause' => 'بدون برند و کد خطا دقیق نمی‌شه گفت؛ معمولاً کندانسور، کنترلر، گاز یا لاستیک در.',
                 'checks' => ['برند و کد روی کنترلر رو یادداشت کن.', 'کندانسور و لاستیک در رو چک کن.', 'اگه موجودی گرم می‌شه ۰۷۹۸۳ ۷۵۹۳۲۰.'],
@@ -406,8 +406,39 @@ function cd_gemini_diagnose(string $key, string $text, ?string $audioB64, ?strin
     return null;
 }
 
+function cd_persian_tts_text(string $text): string
+{
+    $map = ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9',
+            '٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9'];
+    $s = strtr($text, $map);
+    $s = preg_replace('/کولد\s*\x{200C}?\s*دایرکت|کلد\s*\x{200C}?\s*دایرکت|کل\s*\x{200C}?\s*دایرکت|ColdDirect|Cold\s*Direct/iu', 'کُلد دایرِکت', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*7983[\s\-]*759[\s\-]*320/', ' صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر ', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*203[\s\-]*952[\s\-]*4822/', ' صفر دو صفر سه، نه پنج دو، چهار هشت دو دو ', $s);
+    $s = preg_replace('/(?:\+44\s*\(?0?\)?|0)\s*800[\s\-]*112[\s\-]*3427/', ' صفر هشتصد، یک یک دو، سه چهار دو هفت ', $s);
+    $words = ['0'=>'صفر','1'=>'یک','2'=>'دو','3'=>'سه','4'=>'چهار','5'=>'پنج','6'=>'شش','7'=>'هفت','8'=>'هشت','9'=>'نه'];
+    $s = preg_replace_callback('/(?<!\d)(\+?\d[\d\s\-]{6,}\d)(?!\d)/', static function ($m) use ($words) {
+        $digits = preg_replace('/\D/', '', str_replace('+44', '0', $m[1]));
+        if (strlen($digits) < 7) {
+            return $m[0];
+        }
+        $groups = [];
+        foreach (str_split($digits, 4) as $chunk) {
+            $parts = [];
+            foreach (str_split($chunk) as $ch) {
+                $parts[] = $words[$ch] ?? $ch;
+            }
+            $groups[] = implode(' ', $parts);
+        }
+        return ' ' . implode('، ', $groups) . ' ';
+    }, $s);
+    return trim(preg_replace('/\s+/u', ' ', $s));
+}
+
 function cd_gemini_tts(string $key, string $spoken): ?array
 {
+    if (preg_match('/[\x{0600}-\x{06FF}]/u', $spoken)) {
+        $spoken = cd_persian_tts_text($spoken);
+    }
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=' . rawurlencode($key);
     $line = 'Speak as a warm, calm, experienced male Head Engineer. Conversational pace, never rushed. Read this exactly:\n\n' . $spoken;
     [$code, $json] = cd_http_json($url, [
@@ -463,7 +494,13 @@ function cd_voice_selftest(): bool
     $fa = cd_detect_lang('یخچال فاستر کد خطا');
     $en = cd_detect_lang('Foster fridge E1 alarm');
     $pack = cd_fallback_pack('Foster Fridge E1');
-    return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'ZERO MIXING') !== false;
+    $tts = cd_persian_tts_text('شرکت کولد دایرکت. 07983 759320. 0203 952 4822. 0800 112 3427.');
+    $phonesOk = strpos($tts, 'کُلد دایرِکت') !== false
+        && strpos($tts, 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر') !== false
+        && strpos($tts, 'صفر دو صفر سه، نه پنج دو، چهار هشت دو دو') !== false
+        && strpos($tts, 'صفر هشتصد، یک یک دو، سه چهار دو هفت') !== false
+        && !preg_match('/\d/', $tts);
+    return $ok && $fa[0] === 'fa' && $en[0] === 'en' && !empty($pack['spoken']) && strpos(cd_system_prompt(), 'ZERO MIXING') !== false && $phonesOk;
 }
 
 $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');

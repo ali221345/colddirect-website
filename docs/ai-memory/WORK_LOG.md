@@ -18,12 +18,16 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25, NEVER regress)
 After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a microphone recording is a P0 bug.
-1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.`).
+1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA display `سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` — TTS speaks `کُلد دایرِکت`).
 2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
-3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کُلد دایرِکت`), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
+3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` / `کولد دایرکت` → `کُلد دایرِکت` for audio only), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
 4. NEVER break auto-play after mic: stop every `MediaStreamTrack` and close the analyser `AudioContext` before playback; keep `window.__cdPlayCtx` (resumed on SPEAK tap) and `window.__cdVoicePlayer` alive; diagnose JSON must include `audio_base64`; play first via `AudioBufferSourceNode` on `__cdPlayCtx` so silence-timer auto-stop never hits `NotAllowedError`. Keep 3800ms silence (do not restore 700ms cutoff).
+5. Persian display vs TTS: on-screen keeps `کولد دایرکت` and `07983 759320` / `0203 952 4822` / `0800 112 3427`. Audio input uses `کُلد دایرِکت` and the spoken Persian number-word groups. Never reverse the phonetic brand in FA_LEXICON. Never run `NumFa` on leftover phone digits.
 
 ---
+
+### [2026-10-25ac] — Persian display vs TTS brand and phone numbers (`?v=20261025z`)
+- Transcript shows `کولد دایرکت` and clickable `07983 759320` / `0203 952 4822` / `0800 112 3427`. TTS/Piper input uses `کُلد دایرِکت` plus `صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر` / `صفر دو صفر سه، نه پنج دو، چهار هشت دو دو` / `صفر هشتصد، یک یک دو، سه چهار دو هفت`. Leftover 7+ digit runs are spelled digit-by-digit. Title/H1/meta unchanged.
 
 ### [2026-10-25ab] — Instant record-stop-reply, mic off while the engineer speaks (`?v=20261025y`)
 - Removed Vapi WebRTC. SPEAK starts MediaRecorder immediately; STOP & SEND kills every mic track then POSTs `/colddirect-voice-vault.aspx` diagnose. Playback is buffered `__cdPlayCtx` / HTML5 audio. No silence auto-stop. Like CTA pulses when audio ends. Title/H1/meta unchanged.

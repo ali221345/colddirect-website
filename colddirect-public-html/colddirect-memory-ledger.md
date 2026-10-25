@@ -17,9 +17,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
 ### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
-No Vapi WebRTC (`?v=20261025y`). SPEAK records instantly; STOP & SEND kills the mic then diagnose+TTS. Play via AudioBufferSourceNode / HTML5 audio so mobile does not chop. Pulse Like CTA when the answer ends.
+No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the mic then diagnose+TTS. Play via AudioBufferSourceNode / HTML5 audio so mobile does not chop. Pulse Like CTA when the answer ends. Persian on-screen: `کولد دایرکت` + digit phones. Persian audio: `کُلد دایرِکت` + number-word groups.
 
 ---
+
+### [2026-10-25ac] — Persian display vs TTS brand/phones (`?v=20261025z`)
+- Transcript digits stay clickable. TTS uses phonetic brand and Persian number words. Title/H1/meta unchanged.
 
 ### [2026-10-25ab] — Instant record-stop-reply (`?v=20261025y`)
 - Mic off before playback. Title/H1/meta unchanged.

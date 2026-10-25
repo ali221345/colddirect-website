@@ -82,7 +82,7 @@ string SystemPrompt()
         + "TONE: kind, gentle, polite. No street slang, no mate, no cheers, no don't panic. "
         + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Typed text is the transcript. "
         + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100 percent in that same language. "
-        + "Answer the exact fault clearly. One or two natural checks they can do now. Offer 07983 759320 in that language's number words. London only. Never call it a video. "
+        + "Answer the exact fault clearly. One or two natural checks they can do now. When giving a phone number in spoken_script, write the digits exactly as 07983 759320, 0203 952 4822 or 0800 112 3427 — never as one giant numeral and never as English words. The speech layer converts those digits to Persian number-words. London only. Never call it a video. "
         + "spoken_script: one continuous paragraph under 130 words, greeting then diagnosis then like request, no pause fillers. "
         + "Return STRICT JSON only: {\"transcript\":\"exact customer words in their script\",\"language_code\":\"ISO 639-1 such as fa, en, tl, ar, tr, es, hi, pl, fr, zh, ru, pt, bn, ku\",\"language_name\":\"English name, e.g. Tagalog\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
@@ -296,7 +296,7 @@ string FallbackJson(string text, string hint)
         ? "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. "
         : EnIntro(first);
     string outro = lc == "fa"
-        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید."
+        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید."
         : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this guidance helped you and you would like to support the site, please leave us a like.";
 
     StringBuilder spoken = new StringBuilder(intro);
@@ -337,12 +337,6 @@ string FallbackJson(string text, string hint)
         }
     }
     spoken.Append(outro);
-    if (lc == "fa")
-    {
-        string clean = NormalizePersianForSpeech(spoken.ToString());
-        spoken.Length = 0;
-        spoken.Append(clean);
-    }
 
     StringBuilder cj = new StringBuilder("[");
     for (int k = 0; k < checks.Count; k++) cj.Append(k > 0 ? "," : "").Append("\"").Append(Esc(checks[k])).Append("\"");
@@ -497,10 +491,9 @@ string ParseModelJson(string text)
 
     if (!Regex.IsMatch(spoken, "759|seven,? five,? nine|هفت،? پنج،? نه|۷۵۹", RegexOptions.IgnoreCase))
     {
-        if (code == "fa") spoken += " برای هماهنگی، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید.";
-        else if (code == "en") spoken += " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero.";
+        if (code == "fa") spoken += " برای هماهنگی، با شماره‌ی 07983 759320 تماس بگیرید.";
+        else if (code == "en") spoken += " If you would like our help, please call 07983 759320.";
     }
-    if (code == "fa") spoken = NormalizePersianForSpeech(spoken);
 
     Dictionary<string, object> o = new Dictionary<string, object>();
     o["ok"] = true;
@@ -749,6 +742,7 @@ string[] AzureTts(string lang, string text)
 // dayerakat"). Everything sent to a Persian voice goes through here first, so it receives only Persian
 // script. The diacritised spellings were checked against the eSpeak phonemes Piper actually produces.
 static readonly string[] FA_ONES = { "صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نُه" };
+static readonly string[] FA_PHONE_DIGITS = { "صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه" };
 static readonly string[] FA_TEENS = { "ده", "یازده", "دوازده", "سیزده", "چهارده", "پانزده", "شانزده", "هفده", "هجده", "نوزده" };
 static readonly string[] FA_TENS = { "", "", "بیست", "سی", "چهل", "پنجاه", "شصت", "هفتاد", "هشتاد", "نود" };
 static readonly string[] FA_HUNDREDS = { "", "صد", "دویست", "سیصد", "چهارصد", "پانصد", "ششصد", "هفتصد", "هشتصد", "نهصد" };
@@ -760,7 +754,7 @@ static readonly Dictionary<char, string> FA_LETTERS = new Dictionary<char, strin
 
 // Latin brand and trade words -> Persian script. Longest first so "cold room" wins over "cold".
 static readonly string[,] FA_LATIN = {
-    {"colddirect\\.co\\.uk", "کولد دایرکت"}, {"cold\\s*direct(\\s*ltd)?", "کولد دایرکت"},
+    {"colddirect\\.co\\.uk", "کُلد دایرِکت"}, {"cold\\s*direct(\\s*ltd)?", "کُلد دایرِکت"},
     {"foster", "فاسْتِر"}, {"williams", "ویلیامْز"}, {"hoshizaki", "هوشیزاکی"}, {"scotsman", "اِسکاتْس‌مَن"},
     {"polar", "پولار"}, {"gram", "گِرام"}, {"gamko", "گامْکو"}, {"adande", "آدانْد"}, {"precision", "پْرِسیژِن"},
     {"electrolux", "اِلِکْتْرولوکْس"}, {"samsung", "سامْسونْگ"}, {"daikin", "دایْکین"}, {"liebherr", "لیبْهِر"},
@@ -774,7 +768,7 @@ static readonly string[,] FA_LATIN = {
 
 // Persian spellings that eSpeak reads with wrong vowels unless they carry diacritics.
 static readonly string[,] FA_LEXICON = {
-    {"کُلد\\s*\u200C?\\s*دایرِکت", "کولد دایرکت"}, {"کلد\\s*\u200C?\\s*دایرکت", "کولد دایرکت"}, {"کل\\s*\u200C?\\s*دایرکت", "کولد دایرکت"}, {"کمپرسور", "کُمپْرِسُر"}, {"اواپراتور", "اِواپْراتُر"},
+    {"کولد\\s*\u200C?\\s*دایرکت", "کُلد دایرِکت"}, {"کلد\\s*\u200C?\\s*دایرکت", "کُلد دایرِکت"}, {"کل\\s*\u200C?\\s*دایرکت", "کُلد دایرِکت"}, {"کمپرسور", "کُمپْرِسُر"}, {"اواپراتور", "اِواپْراتُر"},
     {"فاستر", "فاسْتِر"}, {"ویلیامز", "ویلیامْز"}, {"اسکاتس\u200C?\\s*من", "اِسکاتْس‌مَن"}, {"تکنسین", "تِکْنِسین"} };
 
 string NumFa(long n)
@@ -791,7 +785,7 @@ string NumFa(long n)
 string DigitsFa(string digits)
 {
     StringBuilder sb = new StringBuilder();
-    foreach (char c in digits) if (c >= '0' && c <= '9') sb.Append(sb.Length > 0 ? " " : "").Append(FA_ONES[c - '0']);
+    foreach (char c in digits) if (c >= '0' && c <= '9') sb.Append(sb.Length > 0 ? " " : "").Append(FA_PHONE_DIGITS[c - '0']);
     return sb.ToString();
 }
 
@@ -818,11 +812,19 @@ string NormalizePersianForSpeech(string text)
 
     s = Regex.Replace(s, "https?://\\S+|www\\.\\S+", " ", ci);
     s = Regex.Replace(s, "[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+", " ایمیل ما ");
-    s = Regex.Replace(s, "(\\+44\\s*\\(?0?\\)?|0)\\s*7983[\\s-]*759[\\s-]*320", " صفر هفت نُه هشت سه، هفت پنج نُه، سه دو صفر ");
+    s = Regex.Replace(s, "(\\+44\\s*\\(?0?\\)?|0)\\s*7983[\\s-]*759[\\s-]*320", " صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر ");
+    s = Regex.Replace(s, "(\\+44\\s*\\(?0?\\)?|0)\\s*203[\\s-]*952[\\s-]*4822", " صفر دو صفر سه، نه پنج دو، چهار هشت دو دو ");
+    s = Regex.Replace(s, "(\\+44\\s*\\(?0?\\)?|0)\\s*800[\\s-]*112[\\s-]*3427", " صفر هشتصد، یک یک دو، سه چهار دو هفت ");
     s = Regex.Replace(s, "(?<!\\d)(\\+?\\d[\\d\\s-]{6,}\\d)(?!\\d)", delegate (Match m)
     {
+        string digits = Regex.Replace(m.Value.Replace("+44", "0"), "\\D", "");
+        if (digits.Length < 7) return m.Value;
         List<string> groups = new List<string>();
-        foreach (string g in Regex.Split(m.Value.Replace("+44", "0"), "[\\s-]+")) if (g.Length > 0) groups.Add(DigitsFa(g));
+        for (int i = 0; i < digits.Length; i += 4)
+        {
+            int n = Math.Min(4, digits.Length - i);
+            groups.Add(DigitsFa(digits.Substring(i, n)));
+        }
         return " " + string.Join("، ", groups.ToArray()) + " ";
     });
     s = Regex.Replace(s, "([-\u2212]?)(\\d+)\\s*°\\s*[CcFf]?", delegate (Match m)
@@ -842,14 +844,14 @@ string NormalizePersianForSpeech(string text)
         return " " + LettersFa(m.Groups[1].Value) + " " + NumFa(long.Parse(m.Groups[2].Value)) + " ";
     });
     s = Regex.Replace(s, NOT_LATIN_BEFORE + "[A-Z]{2,4}" + NOT_LATIN_AFTER, delegate (Match m) { return " " + LettersFa(m.Value) + " "; });
-    s = Regex.Replace(s, "\\d+", delegate (Match m) { return m.Value.Length <= 6 ? " " + NumFa(long.Parse(m.Value)) + " " : " " + DigitsFa(m.Value) + " "; });
+    s = Regex.Replace(s, "\\d+", delegate (Match m)
+    {
+        if (m.Value.Length >= 4 || m.Value[0] == '0') return " " + DigitsFa(m.Value) + " ";
+        return " " + NumFa(long.Parse(m.Value)) + " ";
+    });
     s = Regex.Replace(s, "[A-Za-z][A-Za-z'\\-.]*", " ");
 
     for (int i = 0; i < FA_LEXICON.GetLength(0); i++) s = Regex.Replace(s, FA_LEXICON[i, 0], FA_LEXICON[i, 1]);
-    const string FA_NUM = "(صفر|یک|دو|سه|چهار|پنج|شش|هفت|هشت|نه|نُه)";
-    s = Regex.Replace(s, "(?<=(?<![\u0600-\u06FF])" + FA_NUM + "[\\s،]+)نه(?![\u0600-\u06FF])", "نُه");
-    s = Regex.Replace(s, "(?<![\u0600-\u06FF])نه(?=[\\s،]+" + FA_NUM + "(?![\u0600-\u06FF]))", "نُه");
-    s = Regex.Replace(s, "(?<![\u0600-\u06FF])نه(?=\\s+(درجه|سال|دقیقه|ساعت|ماه|روز))", "نُه");
 
     s = s.Replace(':', '،').Replace(';', '؛').Replace(',', '،').Replace('?', '؟');
     s = Regex.Replace(s, "[^\u0600-\u06FF\u200C\\s.!،؛؟]", " ");
