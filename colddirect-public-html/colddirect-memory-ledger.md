@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25j] — Voice cutoff / filler / delay (`?v=20261025b`) — supersedes 25i
+- 3800ms silence after speech, `continuous=true`, 60s max, TAP WHEN DONE. No Head Engineer intro. Instant local diagnosis + speak; API 1800ms background only. SEO tags untouched. Commit `bc85a1e`, deploy `40184436415`.
+
 ### [2026-10-25i] — Voice latency cut (`?v=14`)
 - 700ms end-of-speech, first-sentence TTS, voice prewarm, local fault KB, instant "Diagnosing fault...". SEO tags untouched. Commit `f2770bf`, deploy `40183369543`.
 

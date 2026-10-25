@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25j] — Voice mic cutoff + filler + 30s delay (`?v=20261025b`) — supersedes 25i
+- Mic: SpeechRecognition `continuous=true`, `interimResults=true`; silence auto-submit **3800ms after speech has started** (was 700ms). MediaRecorder meter also 3800ms. Max record 60s. Button while listening: `⏹ TAP WHEN DONE (Listening...)`. Second tap or Ask submits immediately. Phrases accumulate across pauses.
+- Filler deleted: no GREET_EN, vault `EnIntro`/`EnLead` empty, prompt “Do NOT introduce yourself / Do NOT start with Hello”. Client `stripFiller()` strips leftover Head Engineer greetings. `speakDiagnosis()` speaks the full diagnosis once; Chrome keep-alive pause/resume every 10s. `cancel()` only on a new user tap or a new ask.
+- Delay: `instantDiagnose()` always (<200ms) + speak immediately. Vault AbortController **1800ms**, card enrich only — never re-speak. Title/H1/meta/canonical/sitemap 122 unchanged. Deploy `40184436415` success. Commit `bc85a1e`. Live homepage script `?v=20261025b`.
+
 ### [2026-10-25i] — Voice widget ultra-low-latency (`?v=14`)
 - After SPEAK: SpeechRecognition `interimResults=true`, `continuous=false`, 700ms silence auto-stop; second SPEAK tap submits immediately. MediaRecorder silence also 700ms (was 3s). Status `Diagnosing fault...` within 100ms.
 - First sentence spoken immediately via `speechSynthesis` (rate 1.05, pre-warmed `getVoices`/`voiceschanged`). Remaining TTS queues in the background.
