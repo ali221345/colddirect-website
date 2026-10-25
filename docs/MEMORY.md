@@ -1,17 +1,10 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
-After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a microphone recording is a P0 bug.
+Owner 2026-10-25o replaced the custom top bar with the Vapi **Ask Your Fault** widget (`?v=20261025f`). Do not restore the old SPEAK/LISTEN top bar.
 
-1. NEVER remove the polite universal greeting:
-   - EN: `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.`
-   - FA: `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.`
-   Never prepend the English greeting to a non-English answer. Selector label is `Auto`, not `Auto / خودکار`.
-   Brand in Persian is `کولد دایرکت` (never `کل دایرکت`).
-2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
-3. NEVER use female voices or Urdu/Arabic fallback for Persian (`fa`). Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` → `کولد دایرکت`), `en_GB-alan-medium`, Piper / Google-stream male for Tagalog and other languages.
-4. NEVER break auto-play after microphone recording:
-   - Stop every `MediaStreamTrack` and close the analyser `AudioContext` before playback.
-   - Keep `window.__cdPlayCtx` (resumed on the SPEAK tap) and `window.__cdVoicePlayer` alive.
-   - Diagnose JSON includes `audio_base64`.
-   - Play first via `AudioBufferSourceNode` on `__cdPlayCtx` so silence-timer auto-stop never hits `NotAllowedError`.
-   - Keep 3800ms silence after speech starts (do not restore 700ms cutoff).
+1. Widget title is exactly `Ask Your Fault`. Language badge is exactly `Lang: Auto` (never `/ خودکار`).
+2. Browser SDK: `@vapi-ai/web` + assistant `e31c40c7-a45b-4dff-833c-320c54250743`.
+3. Public API key is NOT in git. Serve it from `App_Data/vapi-public.key` via `/colddirect-vapi-config.aspx` (or `window.CD_VAPI_PUBLIC_KEY`). Never commit or print the key. Never put a private/server Vapi key in browser JS.
+4. Do not apply the widget's `body { background }` styles to the whole site. Scope CSS to `.vapi-widget`.
+5. Do not add `html.cd-voice-on` top padding. The launcher is bottom-right.
+6. Vapi assistant prompt (in the Vapi dashboard, not this repo) still owns language matching, `کولد دایرکت`, the Head Engineer greeting, and the like CTA. No slang. Male voices only.

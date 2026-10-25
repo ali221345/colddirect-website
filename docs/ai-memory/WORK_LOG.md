@@ -25,6 +25,10 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25o] — Replace custom voice bar with Vapi Ask Your Fault (`?v=20261025f`)
+- Sitewide floating widget: title `Ask Your Fault`, badge `Lang: Auto` only. Old top SPEAK bar removed. CSS scoped to `.vapi-widget` (no page `body` reset).
+- Assistant `e31c40c7-a45b-4dff-833c-320c54250743`. Public key from `App_Data/vapi-public.key` via `/colddirect-vapi-config.aspx` (not in git). Title/H1/meta/canonical unchanged.
+
 ### [2026-10-25n] — Same-language greeting, Auto label, کولد دایرکت (`?v=20261025e`)
 - Lang select: `Auto` only (removed `/ خودکار`). Never prepend the English Head Engineer greeting to a Persian/non-English answer. Instant TTS uses the full spoken script, not the first English sentence.
 - Persian greeting: `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.` Brand: `کولد دایرکت`. Closing like-CTA required. Title/H1/meta/canonical unchanged.

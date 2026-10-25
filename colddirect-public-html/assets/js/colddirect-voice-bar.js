@@ -1,1720 +1,219 @@
-/* ColdDirect Voice Bar — sitewide widget
+/* ColdDirect Voice — Vapi Ask Your Fault widget
  * Watermark: CD-UK-IP-2026-994821-VOICE-AI
- * Owner: ColdDirect Ltd, colddirect.co.uk, 27 Felixstowe Road, Enfield, London N9 0DX
- * UK Copyright Act 1988 & UK Trade Secrets Regulations 2018
+ * Owner: ColdDirect Ltd, colddirect.co.uk
  */
 (function () {
   "use strict";
 
-  var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
-  var TITLE = "Ask me anything with your language about refrigeration and catering diagnosing";
-  var PHONE_DISPLAY = "07983 759320";
-  var PHONE_HREF = "tel:07983759320";
-  var MAIL_HREF = "mailto:info@colddirect.co.uk";
-  var LICENSE_HREF = "mailto:info@colddirect.co.uk?subject=Official%20B2B%20License%20Request%20-%20ColdDirect%20Voice%20AI";
-  var ENDPOINTS = [
-    "/colddirect-voice-vault.aspx",
-    "/api/colddirect-voice-vault.php",
-    "/api/colddirect-voice-vault.js"
-  ];
-  var CHIPS = [
-    "Foster Fridge E1",
-    "Ice Machine Not Making Ice",
-    "Cold Room Ice-Up"
-  ];
-  var MAX_MS = 60000;
-  var SILENCE_MS = 3800;
-  var SR_SILENCE_MS = 3800;
-  var NO_SPEECH_MS = 9000;
-  var API_MS = 1800;
-  var TTS_MS = 8000;
-  var DIAGNOSE_MS = 15000;
-  var GREET = {
-    en: "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ",
-    fa: "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. ",
-    tr: "Merhaba. ColdDirect başmühendisiyim. Şirketimizi seçtiğiniz için memnunum. ",
-    ar: "مرحباً. أنا كبير المهندسين في كولد دايركت. يسعدني أنكم اخترتم شركتنا. ",
-    tl: "Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya. "
-  };
-  var PACE = 1;
-  var TTS_RATE = 1.05;
-  var SPEAK_LABEL = "🎤 SPEAK";
-  var STOP_LABEL = "⏹ TAP WHEN DONE (Listening...)";
-  var LANG_STORE = "cd-voice-lang";
-  var BCP = { en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" };
-  var LANGS = [
-    { id: "auto", bcp: "", label: "Auto" },
-    { id: "fa", bcp: "fa-IR", label: "فارسی · Persian" },
-    { id: "en", bcp: "en-GB", label: "English (UK)" },
-    { id: "tr", bcp: "tr-TR", label: "Türkçe · Turkish" },
-    { id: "ar", bcp: "ar-SA", label: "العربية · Arabic" },
-    { id: "tl", bcp: "fil-PH", label: "Tagalog" },
-    { id: "es", bcp: "es-ES", label: "Español" },
-    { id: "pl", bcp: "pl-PL", label: "Polski" },
-    { id: "ro", bcp: "ro-RO", label: "Română" },
-    { id: "hi", bcp: "hi-IN", label: "हिन्दी" },
-    { id: "fr", bcp: "fr-FR", label: "Français" },
-    { id: "pt", bcp: "pt-PT", label: "Português" },
-    { id: "ru", bcp: "ru-RU", label: "Русский" },
-    { id: "zh", bcp: "zh-CN", label: "中文" }
-  ];
-  var LANG_LABEL = { auto: "Auto", fa: "فارسی", en: "English", tr: "Türkçe", ar: "العربية", tl: "Tagalog", es: "Español", pl: "Polski", ro: "Română", hi: "हिन्दी", fr: "Français", pt: "Português", ru: "Русский", zh: "中文" };
-  var UI_LAB = {
-    en: { h3: "Engineer Diagnosis", cause: "Likely cause:", checks: "Quick checks" },
-    fa: { h3: "تشخیص مهندس", cause: "علت محتمل:", checks: "بررسی سریع" },
-    tr: { h3: "Mühendis teşhisi", cause: "Olası neden:", checks: "Hızlı kontroller" },
-    ar: { h3: "تشخيص المهندس", cause: "السبب المحتمل:", checks: "فحوصات سريعة" }
-  };
-
-  var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn, langEl;
-  var langSel = "auto";
-  var cardEls = {};
-  var audioCtx = null;
-  var meterCtx = null;
-  var unlocked = false;
-  var recStream = null;
-  var recorder = null;
-  var recChunks = [];
-  var recTimer = null;
-  var meterTimer = null;
-  var meterSrc = null;
-  var recording = false;
-  var askSeq = 0;
-  var voicePending = false;
-  var lastSpoken = "";
-  var lastLang = "en";
-  var parts = [];
-  var partIdx = 0;
-  var partsDone = true;
-  var queueOn = false;
-  var waitingNext = false;
-  var playing = false;
-  var playSource = null;
-  var playEl = null;
-  var sr = null;
-  var srText = "";
-  var srSilence = null;
-  var kbCache = {};
-  var voicesReady = false;
-  var dxSpeaking = false;
-  var keepAliveT = null;
-  var srFinal = "";
-
-  function $(sel, el) { return (el || document).querySelector(sel); }
-
-  function playCtx() {
-    var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return null;
-    if (!window.__cdPlayCtx) window.__cdPlayCtx = new AC();
-    if (window.__cdPlayCtx.state === "suspended") {
-      try { window.__cdPlayCtx.resume(); } catch (e) {}
-    }
-    audioCtx = window.__cdPlayCtx;
-    return window.__cdPlayCtx;
-  }
-
-  function unlockAudio() {
-    try {
-      var ctx = playCtx();
-      if (ctx && !unlocked) {
-        var buf = ctx.createBuffer(1, 1, 22050);
-        var src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.connect(ctx.destination);
-        src.start(0);
-        unlocked = true;
-      }
-    } catch (e) { /* iOS unlock is best-effort */ }
-  }
-
-  var CTA = {
-    fa: "اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید.",
-    en: "If this guidance helped you and you would like to support the site, please leave us a like.",
-    tr: "Bu rehber işinize yaradıysa ve siteye destek olmak isterseniz, lütfen bir beğeni bırakın.",
-    ar: "إذا أفادكم هذا التوجيه وترغبون في دعم الموقع، نرجو ترك إعجاب.",
-    tl: "Kung nakatulong ito at gusto ninyong suportahan ang site, mag-like po kayo."
-  };
-
-  function stripWrongGreet(text, lang) {
-    var t = String(text || "");
-    var code = String(lang || "").slice(0, 2).toLowerCase();
-    if (code && code !== "en") {
-      t = t.replace(/^Hello[.,]?\s*I am the Head Engineer[\s\S]*?(?:company|ColdDirect)[^.]*\.\s*/i, "");
-      t = t.replace(/^I am (the )?head (engineer )?of (the )?(Cold\s*)?Direct[^.]*\.\s*/i, "");
-      t = t.replace(/^I'm the Head Engineer[^.]*\.\s*/i, "");
-    }
-    return t.replace(/^\s+/, "");
-  }
-
-  function withGreet(text, lang) {
-    var code = String(lang || "").slice(0, 2).toLowerCase();
-    var t = stripWrongGreet(text, code);
-    if (code === "en") {
-      var ge = GREET.en;
-      if (!t) return ge.trim();
-      if (/^Hello[.,]?\s*I am the Head Engineer/i.test(t)) return t;
-      return ge + t;
-    }
-    var g = GREET[code] || "";
-    if (!g) return t;
-    if (!t) return g.trim();
-    if (t.indexOf(g.slice(0, 10)) === 0 || /^درود/.test(t) || /^سلام/.test(t)) return t;
-    return g + t;
-  }
-
-  function withClose(text, lang) {
-    var code = String(lang || "en").slice(0, 2).toLowerCase();
-    var c = CTA[code] || CTA.en;
-    var t = String(text || "").replace(/\s+$/, "");
-    if (!t) return c;
-    if (t.indexOf(c.slice(0, 18)) !== -1) return t;
-    return t + " " + c;
-  }
-
-  function finishSpoken(text, lang) {
-    return withClose(withGreet(stripFiller(text), lang), lang);
-  }
-
-  function setStatus(msg) {
-    if (statusEl) statusEl.textContent = msg || "";
-  }
-
-  function openDrawer() {
-    root.classList.add("is-open");
-    toggleBtn.setAttribute("aria-expanded", "true");
-    toggleBtn.textContent = "▲";
-  }
-
-  function closeDrawer() {
-    root.classList.remove("is-open");
-    toggleBtn.setAttribute("aria-expanded", "false");
-    toggleBtn.textContent = "▼";
-  }
-
-  function toggleDrawer() {
-    if (root.classList.contains("is-open")) closeDrawer();
-    else openDrawer();
-  }
-
-  function showShield(extra) {
-    var modal = $("#cd-voice-ip-modal");
-    if (!modal) return;
-    $("#cd-voice-ip-extra").textContent = extra || "This Voice AI widget is protected UK intellectual property of ColdDirect Ltd.";
-    modal.hidden = false;
-  }
-
-  function hideShield() {
-    var modal = $("#cd-voice-ip-modal");
-    if (modal) modal.hidden = true;
-  }
-
-  function b64ToBytes(b64) {
-    var bin = atob(b64);
-    var out = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-    return out;
-  }
-
-  var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
-
-  function player() {
-    if (!window.__cdVoicePlayer) {
-      var a = new Audio();
-      a.setAttribute("playsinline", "true");
-      a.setAttribute("webkit-playsinline", "true");
-      a.preload = "auto";
-      window.__cdVoicePlayer = a;
-    }
-    playEl = window.__cdVoicePlayer;
-    return playEl;
-  }
-
-  // iOS only lets an element play later (after a fetch) if it already played inside a tap.
-  function primePlayer() {
-    unlockAudio();
-    var a = player();
-    if (playing) return;
-    try {
-      a.src = SILENT_WAV;
-      var p = a.play();
-      if (p && p.catch) p.catch(function () {});
-    } catch (e) {}
-  }
-
-  function stopCurrent() {
-    playing = false;
-    listenBtn.classList.remove("is-on");
-    listenBtn.setAttribute("aria-pressed", "false");
-    try { if (playSource) { playSource.onended = null; playSource.stop(); } } catch (e) {}
-    playSource = null;
-    if (playEl) {
-      playEl.onended = null;
-      try { playEl.pause(); playEl.currentTime = 0; } catch (e2) {}
-    }
-  }
-
-  function stopPlayback() {
-    queueOn = false;
-    waitingNext = false;
-    stopCurrent();
-  }
-
-  // The answer arrives as ordered parts (Piper sends sentence by sentence); play them back to back.
-  function playQueue() {
-    queueOn = true;
-    partIdx = 0;
-    playNextPart();
-  }
-
-  function playNextPart() {
-    if (!queueOn) return;
-    if (partIdx >= parts.length) {
-      if (!partsDone) {
-        waitingNext = true;
-        listenBtn.classList.add("is-on");
-        return;
-      }
-      queueOn = false;
-      listenBtn.classList.remove("is-on");
-      return;
-    }
-    var p = parts[partIdx++];
-    playBytes(b64ToBytes(p.data), p.mime, playNextPart);
-  }
-
-  function addPart(p) {
-    parts.push(p);
-    if (waitingNext && queueOn) {
-      waitingNext = false;
-      playNextPart();
-    }
-  }
-
-  function endParts() {
-    partsDone = true;
-    if (waitingNext && queueOn) {
-      waitingNext = false;
-      queueOn = false;
-      listenBtn.classList.remove("is-on");
-    }
-  }
-
-  function playBytes(bytes, mime, onDone) {
-    stopCurrent();
-    var ctx = playCtx();
-    playing = true;
-    window.__cdAudioPlayed = true;
-    listenBtn.classList.add("is-on");
-    listenBtn.setAttribute("aria-pressed", "true");
-    setStatus("🔊 Speaking Answer...");
-    var type = mime || "audio/wav";
-    var copy = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-    var blob = new Blob([bytes], { type: type });
-    var url = URL.createObjectURL(blob);
-
-    function done() {
-      playing = false;
-      listenBtn.classList.remove("is-on");
-      listenBtn.setAttribute("aria-pressed", "false");
-      URL.revokeObjectURL(url);
-      if (onDone) onDone();
-    }
-
-    function viaElement() {
-      var el = player();
-      el.onended = done;
-      el.src = url;
-      el.playbackRate = 1;
-      var p = el.play();
-      if (p && p.catch) p.catch(function () {
-        done();
-        setStatus("🔊 Speaking Answer... tap ▶ Listen Answer if you hear nothing.");
-        speakDiagnosis(lastSpoken, lastLang);
-      });
-    }
-
-    if (ctx && ctx.decodeAudioData) {
-      try {
-        var pdec = ctx.decodeAudioData(copy);
-        if (pdec && pdec.then) {
-          pdec.then(function (buf) {
-            var src = ctx.createBufferSource();
-            src.buffer = buf;
-            src.connect(ctx.destination);
-            playSource = src;
-            src.onended = done;
-            src.start(0);
-          }).catch(viaElement);
-          return;
-        }
-        ctx.decodeAudioData(copy, function (buf) {
-          var src = ctx.createBufferSource();
-          src.buffer = buf;
-          src.connect(ctx.destination);
-          playSource = src;
-          src.onended = done;
-          src.start(0);
-        }, viaElement);
-        return;
-      } catch (e) { viaElement(); return; }
-    }
-    viaElement();
-  }
-
-  var UK_MALE_PREFS = [
-    /Google UK English Male/i,
-    /Microsoft Ryan Online \(Natural\)/i,
-    /Microsoft Thomas Online \(Natural\)/i,
-    /Microsoft Alfie Online \(Natural\)/i,
-    /Microsoft Oliver Online \(Natural\)/i,
-    /Microsoft George/i,
-    /^Daniel/i,
-    /Arthur|Oliver|Reed|Rocky/i
+  var TITLE = "Ask Your Fault";
+  var LANG_BADGE = "Lang: Auto";
+  var ASSISTANT_ID = "e31c40c7-a45b-4dff-833c-320c54250743";
+  var SDK = "https://cdn.jsdelivr.net/npm/@vapi-ai/web/+esm";
+  var CONFIG_URLS = [
+    "/colddirect-vapi-config.aspx",
+    "/api/colddirect-vapi-config.aspx"
   ];
 
-  // Only voices known to be male are ever used. Unknown or default voices are treated as female and
-  // skipped, so a device with no male voice stays silent (the answer is still written on the card).
-  var FEMALE_VOICE = /female|woman|girl|libby|sonia|maisie|hazel|susan|kate|serena|martha|fiona|karen|moira|samantha|victoria|zira|tessa|veena|allison|\bava\b|nicky|zoe|amelie|anna|ellen|joana|laura|luciana|monica|paulina|sara|yuna|alice|\balva\b|danielle|carmit|damayanti|ioana|kanya|lekha|mariska|melina|milena|nora|satu|zuzana|yelda|lana|dilara|zeina|salma|aria|jenny|emma|michelle|clara|elsa|natasha|heera|kalpana|neerja|swara|catherine|shelley|sandy|flo\b|grandma|emel|seda|hoda|zariyah|amina|elvira|katja|denise|isabella|elsa|dominika|agnieszka|paulina|alina|svetlana|polina|xiaoxiao|hiujin/i;
-  var MALE_VOICE = /\bmale\b|daniel|ryan|george|oliver|arthur|aaron|fred\b|\balex\b|majid|dariush|farid|thomas|alfie|david|\bmark\b|\bguy\b|james|rishi|\btom\b|gordon|\blee\b|reed|rocko|eddy|ralph|albert|bruce|jorge|diego|juan|carlos|xander|yannick|luca|maged|tarik|ahmet|hamed|madhur|prabhat|alvaro|pablo|raul|stefan|henri|conrad|killian|dmitry|ostap|marek|emil|duarte|antonio|asad|pradeep|ojas|yunxi|yunyang|cem\b/i;
-
-  function isMale(v) {
-    var n = v.name || "";
-    if (FEMALE_VOICE.test(n)) return false;
-    if (/^Google/i.test(n) && !/\bmale\b/i.test(n)) return false;
-    return MALE_VOICE.test(n);
-  }
-
-  function warmVoices() {
-    if (!window.speechSynthesis) return;
-    try {
-      var list = window.speechSynthesis.getVoices() || [];
-      if (list.length) voicesReady = true;
-      if (typeof window.speechSynthesis.onvoiceschanged !== "undefined") {
-        window.speechSynthesis.onvoiceschanged = function () {
-          window.speechSynthesis.getVoices();
-          voicesReady = true;
-        };
-      }
-    } catch (e) {}
-  }
-
-  function firstSentence(text) {
-    var t = String(text || "").replace(/\s+/g, " ").trim();
-    if (!t) return "";
-    var m = t.match(/^[\s\S]{12,220}?([.!?؟。]|[.]\s)/);
-    if (m) return m[0].trim();
-    var cut = t.split(/(?<=[.!?؟。])\s+/)[0];
-    return (cut && cut.length >= 8 ? cut : t).slice(0, 180).trim();
-  }
-
-  var FAST_KB = [
-    {
-      id: "e1",
-      re: /\b(e\s*1|e1)\b|foster.*\be1\b|dixell.*\be1\b|eliwell.*\be1\b|کد\s*ئی?\s*۱|خطای?\s*ئی?\s*۱/i,
-      language: "en", languageLabel: "English",
-      summary: "E1 on a Dixell, Carel or Eliwell controller is a room-probe fault.",
-      cause: "The room air probe is open-circuit, unplugged or shorted, so the controller cannot read cabinet temperature.",
-      checks: ["Seat the probe plug on the controller.", "Look for a crushed or iced probe lead.", "If high-risk food is warming, call 07983 759320."],
-      spoken: "E1 is a room probe fault on most commercial controllers. Check the probe plug is seated, then call 07983 759320 if the cabinet is warming."
-    },
-    {
-      id: "p1",
-      re: /\b(p\s*1|p1)\b|room probe|air probe/i,
-      language: "en", languageLabel: "English",
-      summary: "P1 is the room / air probe alarm on Dixell and similar controllers.",
-      cause: "The cabinet air probe is disconnected, iced, or reading out of range.",
-      checks: ["Reseat the P1 probe connector.", "Thaw any ice around the probe bulb.", "Call 07983 759320 if temperature is still climbing."],
-      spoken: "P1 is the room air probe alarm. Reseat the probe plug. If the fridge is still warming, call 07983 759320."
-    },
-    {
-      id: "p2",
-      re: /\b(p\s*2|p2)\b|defrost probe|evaporator probe/i,
-      language: "en", languageLabel: "English",
-      summary: "P2 is the evaporator / defrost-probe alarm.",
-      cause: "The coil probe is open, shorted or iced, so defrost cannot terminate correctly.",
-      checks: ["Check the P2 probe on the evaporator.", "Clear solid ice from the coil if it is safe to do so.", "Call 07983 759320 for a same-day visit."],
-      spoken: "P2 is the evaporator probe alarm. That probe sits on the coil and controls defrost. Call 07983 759320 if the coil is iced solid."
-    },
-    {
-      id: "ha",
-      re: /\bha\b|high temp(?:erature)? alarm|\bhi\b alarm/i,
-      language: "en", languageLabel: "English",
-      summary: "HA / Hi is a high-temperature alarm — the cabinet or cold room has gone above the set limit.",
-      cause: "Warm air ingress, a dirty condenser, a failed fan, low gas, or a door left ajar.",
-      checks: ["Close the door and check the gasket.", "Feel if the condenser is hot and clogged with grease.", "Move high-risk food and call 07983 759320."],
-      spoken: "HA is a high temperature alarm. Close the door, check the seal, and call 07983 759320 if stock is warming."
-    },
-    {
-      id: "not_cooling",
-      re: /not cooling|no cooling|not getting cold|won't cool|wont cool|warm fridge|fridge.*warm|cabinet.*warm|خنک\s*نمی|سرد\s*نمی|گرم\s*شده|یخچال.*گرم|soğutmuyor|لا\s*يبرد/i,
-      language: "en", languageLabel: "English",
-      summary: "A commercial fridge that is not cooling is usually airflow, condenser dirt, or a control/compressor fault.",
-      cause: "Blocked condenser, seized evaporator fan, iced coil, or a tripped compressor.",
-      checks: ["Is the condenser at the back or top caked in grease?", "Is the evaporator fan spinning inside?", "Call 07983 759320 for same-day diagnosis."],
-      spoken: "If the cabinet is not cooling, check the condenser is clean and the inner fan is spinning. Call 07983 759320 for same-day repair."
-    },
-    {
-      id: "icing",
-      re: /icing up|ice[- ]up|iced up|frozen coil|evaporator.*ice|coil.*ice|برفک|یخ\s*زده|یخ\s*زدگی/i,
-      language: "en", languageLabel: "English",
-      summary: "Icing up means humid air is getting in or defrost has failed.",
-      cause: "Split door gasket, failed defrost heater or termination probe, or stock blocking the coil.",
-      checks: ["Check the door gasket with a paper test.", "Do not chip ice with a metal bar.", "Call 07983 759320 — we carry defrost heaters."],
-      spoken: "Icing up is usually a door seal or a failed defrost. Do not smash the ice. Call 07983 759320."
-    },
-    {
-      id: "compressor",
-      re: /compressor (trip|tripping|overload|not starting)|overload trip|short cycl|کمپرسور/i,
-      language: "en", languageLabel: "English",
-      summary: "A tripping compressor is overload, high head pressure, or a failed start device.",
-      cause: "Dirty condenser, seized fan, weak start relay/capacitor, or a failing compressor.",
-      checks: ["Switch off if it is clicking every few seconds.", "Clear grease from the condenser.", "Call 07983 759320 — do not keep resetting it."],
-      spoken: "A compressor that keeps tripping needs a clean condenser and a start-device check. Call 07983 759320. Do not keep resetting it."
-    },
-    {
-      id: "ice_machine",
-      re: /ice machine|not making ice|no ice|hoshizaki|scotsman|ice-o-matic|یخ\s*ساز|دستگاه\s*یخ/i,
-      language: "en", languageLabel: "English",
-      summary: "An ice machine that is not making ice is usually scale, water inlet, or a harvest fault.",
-      cause: "Scaled evaporator, closed water valve, failed inlet valve or dirty condenser.",
-      checks: ["Confirm the water tap is open.", "Look for heavy white scale on the plate.", "Call 07983 759320 for a commercial ice-machine visit."],
-      spoken: "If the ice machine is not making ice, open the water tap and check for scale. Call 07983 759320 for a same-day engineer."
-    },
-    {
-      id: "cold_room",
-      re: /cold room|walk[- ]in|chiller room|سردخانه|اتاق\s*سرد/i,
-      language: "en", languageLabel: "English",
-      summary: "A cold room climbing in temperature is door air, an iced evaporator, or a rooftop condensing unit fault.",
-      cause: "Door left on the latch, torn gaskets, iced coil, dirty remote condenser, or a controller alarm.",
-      checks: ["Close the door fully and check strip curtains.", "Look at the evaporator for a solid ice block.", "Call 07983 759320 for 24/7 cold room repair."],
-      spoken: "For a cold room losing temperature, close the door and look at the evaporator for ice. Call 07983 759320 for 24/7 dispatch."
-    },
-    {
-      id: "walk_in",
-      re: /walk[- ]in|chiller room|سردخانه/i,
-      language: "en", languageLabel: "English",
-      summary: "A walk-in chiller climbing in temperature is door air, an iced evaporator, or the remote pack.",
-      cause: "Door on the latch, torn gaskets, iced coil, or a dirty rooftop condenser.",
-      checks: ["Close the door and check strip curtains.", "Look at the evaporator for a solid ice block.", "Call 07983 759320."],
-      spoken: "A walk-in chiller that is warming is usually a door left on the latch, an iced evaporator, or a dirty remote condenser. Call 07983 759320."
-    },
-    {
-      id: "ice_cream",
-      re: /ice cream|soft[- ]serve|بستنی/i,
-      language: "en", languageLabel: "English",
-      summary: "An ice cream machine that will not freeze is usually mix, beaters, or a dirty condenser.",
-      cause: "Wrong mix, worn beaters, or a condenser choked with sugar dust.",
-      checks: ["Confirm the mix is in date and the hoppers are full.", "Wipe the condenser fins.", "Call 07983 759320."],
-      spoken: "If the ice cream machine will not freeze, check the mix and clean the condenser. Call 07983 759320."
-    },
-    {
-      id: "cellar",
-      re: /cellar|keg|beer cooler|خنک.?کننده.?سرداب/i,
-      language: "en", languageLabel: "English",
-      summary: "Cellar beer going warm is usually airflow, a glycol leak, or a tripped cellar pack.",
-      cause: "Blocked cellar cooler fins, low glycol, or a high-pressure trip.",
-      checks: ["Clear stock off the cellar cooler grille.", "Feel if the pack is running.", "Call 07983 759320."],
-      spoken: "Warm cellar beer is usually a blocked cellar cooler or a tripped pack. Call 07983 759320."
-    },
-    {
-      id: "ac",
-      re: /air.?cond|ac unit|vrv|vrf|daikin|mitsubishi|کولر|تهویه/i,
-      language: "en", languageLabel: "English",
-      summary: "Commercial AC blowing warm is usually a dirty filter, a failed outdoor fan, or low R32/R410A.",
-      cause: "Blocked indoor filter, outdoor unit in trip, or a refrigerant leak.",
-      checks: ["Clean or replace the indoor filter.", "Look at the outdoor fan.", "Call 07983 759320."],
-      spoken: "If the air conditioning is blowing warm, clean the indoor filter and check the outdoor fan. Call 07983 759320."
-    },
-    {
-      id: "condenser",
-      re: /condenser|grease|dust on the back|کندانسر/i,
-      language: "en", languageLabel: "English",
-      summary: "A dirty condenser makes the cabinet warm and the compressor trip on high pressure.",
-      cause: "Grease and fluff blocking condenser fins.",
-      checks: ["Switch off and brush the condenser.", "Do not use a wet cloth on live electrics.", "Call 07983 759320 if it still trips."],
-      spoken: "A dirty condenser causes weak cooling and compressor trips. Switch off and brush it, then call 07983 759320 if it still trips."
-    },
-    {
-      id: "defrost",
-      re: /defrost|dEF|heater|کلکسیون برفک|دیفراست/i,
-      language: "en", languageLabel: "English",
-      summary: "A failed defrost leaves the evaporator as a solid ice block.",
-      cause: "Burnt defrost heater, failed termination probe, or a controller stuck in dEF.",
-      checks: ["Do not chip ice with a metal bar.", "Look for a solid white coil.", "Call 07983 759320 — we carry heaters."],
-      spoken: "Failed defrost ices the coil solid. Do not smash the ice. Call 07983 759320."
-    },
-    {
-      id: "gas_leak",
-      re: /gas leak|f-?gas|regas|refrigerant|low gas|نشت گاز/i,
-      language: "en", languageLabel: "English",
-      summary: "A refrigerant leak shows as weak cooling, oil stains, and a high-temperature alarm.",
-      cause: "A leak on a joint, evaporator, or cracked line — not a job for a top-up without a repair.",
-      checks: ["Do not keep adding gas.", "Look for oil around joints.", "Call 07983 759320 for leak test and F-Gas recovery."],
-      spoken: "A gas leak needs a proper leak test, not a top-up. Call 07983 759320."
-    },
-    {
-      id: "controller",
-      re: /\b(e0|e2|hf|da|la|ah1)\b|carel|dixell|eliwell/i,
-      language: "en", languageLabel: "English",
-      summary: "Carel, Dixell and Eliwell alarms are probe, door or high-temperature faults — not a dead compressor yet.",
-      cause: "Probe error (E0/E1/E2/P1/P2), door alarm (dA), or high-temperature (HA/HF/AH1).",
-      checks: ["Write down the exact code on the display.", "Reseat the probe plugs.", "Call 07983 759320 with the code."],
-      spoken: "That controller code is usually a probe, door or high-temperature alarm. Write it down and call 07983 759320."
-    }
-  ];
-
-  function kbLookup(q) {
-    var t = String(q || "").replace(/\s+/g, " ").trim();
-    if (t.length < 2) return null;
-    var key = t.toLowerCase();
-    if (kbCache[key]) return kbCache[key];
-    for (var i = 0; i < FAST_KB.length; i++) {
-      if (FAST_KB[i].re.test(t)) {
-        kbCache[key] = FAST_KB[i];
-        return FAST_KB[i];
-      }
-    }
-    return null;
-  }
-
-  function readLangSel() {
-    try {
-      var s = localStorage.getItem(LANG_STORE) || "auto";
-      for (var i = 0; i < LANGS.length; i++) if (LANGS[i].id === s) return s;
-    } catch (e) {}
-    return "auto";
-  }
-
-  function saveLangSel(id) {
-    langSel = id || "auto";
-    try { localStorage.setItem(LANG_STORE, langSel); } catch (e) {}
-    if (langEl) langEl.value = langSel;
-  }
-
-  function markLangChips() {
-    if (!root) return;
-    root.querySelectorAll(".cd-voice-lchip").forEach(function (b) {
-      b.classList.toggle("is-on", b.getAttribute("data-lang") === langSel);
-    });
-  }
-
-  function detectLang(q) {
-    var t = String(q || "");
-    if (/[پچژگکی]/.test(t) || /یخچال|فریزر|سردخانه|یخ\s*ساز|کمپرسور|کندانسور|برفک|خنک/.test(t)) return "fa";
-    if (/[\u0600-\u06FF]/.test(t)) return "ar";
-    if (/[ğüşıöçĞÜŞİÖÇ]/.test(t) || /buzdolab|soğuk oda|buz makine|soğutmuyor/i.test(t)) return "tr";
-    if (/[\u0400-\u04FF]/.test(t)) return "ru";
-    if (/[\u4e00-\u9fff]/.test(t)) return "zh";
-    if (/[\u0900-\u097F]/.test(t)) return "hi";
-    if (/\b(nevera|congelador|c[aá]mara fr[ií]a|heladera)\b/i.test(t)) return "es";
-    if (/\b(lodówka|zamraż|chłodni)/i.test(t)) return "pl";
-    if (/\b(frigider|congelator|camera frigorifica)\b/i.test(t)) return "ro";
-    if (/\b(geladeira|c[aâ]mara fria|refrigerador)\b/i.test(t)) return "pt";
-    if (/\b(frigo|chambre froide|cong[eé]lateur)\b/i.test(t)) return "fr";
-    if (/\b(po|hindi|yung|malamig|yelo)\b/i.test(t)) return "tl";
-    return "en";
-  }
-
-  function resolveLang(q) {
-    if (langSel && langSel !== "auto") return langSel;
-    return detectLang(q);
-  }
-
-  function srLang() {
-    if (langSel && langSel !== "auto" && BCP[langSel]) return BCP[langSel];
-    if (lastLang && lastLang !== "en" && BCP[lastLang]) return BCP[lastLang];
-    return BCP.en;
-  }
-
-  function getLangHint() {
-    return (langSel && langSel !== "auto") ? langSel : "";
-  }
-
-  var PHONE_SAY = {
-    en: "07983 759320",
-    fa: "صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر",
-    tr: "sıfır yedi dokuz sekiz üç, yedi beş dokuz, üç iki sıfır",
-    ar: "صفر سبعة تسعة ثمانية ثلاثة، سبعة خمسة تسعة، ثلاثة اثنان صفر"
-  };
-
-  var DX = {
-    en: {},
-    fa: {
-      e1: {
-        summary: "کد E1 روی کنترلر دیکسل، کارل یا الیول یعنی خرابی سنسور دمای کابین.",
-        cause: "پراب هوای کابین قطع، شل یا اتصال‌کوتاه شده و کنترلر دما را نمی‌خواند.",
-        checks: ["فیش پراب را روی کنترلر جا بیندازید.", "سیم پراب را از نظر له شدن یا یخ بررسی کنید.", "اگر مواد غذایی گرم می‌شود با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "کد ای یک یعنی سنسور دمای کابین ایراد دارد. فیش پراب را بررسی کنید و اگر کابین گرم شد با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      p1: {
-        summary: "کد P1 هشدار پراب هوای کابین روی دیکسل و کنترلرهای مشابه است.",
-        cause: "پراب هوا قطع شده، یخ زده یا خارج از محدوده خوانده می‌شود.",
-        checks: ["فیش پراب P1 را دوباره وصل کنید.", "یخ دور حباب پراب را باز کنید.", "اگر دما بالا رفت با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "پی یک هشدار پراب هوای کابین است. فیش را جا بیندازید. اگر یخچال هنوز گرم است با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      p2: {
-        summary: "کد P2 هشدار پراب اواپراتور یا دیفراست است.",
-        cause: "پراب کویل قطع، اتصال‌کوتاه یا یخ‌زده است و دیفراست درست تمام نمی‌شود.",
-        checks: ["پراب P2 روی اواپراتور را بررسی کنید.", "اگر ایمن است یخ جامد کویل را آب کنید.", "برای بازدید همان‌روز با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "پی دو هشدار پراب اواپراتور است. این پراب دیفراست را کنترل می‌کند. اگر کویل یخ جامد است با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      ha: {
-        summary: "HA یا Hi هشدار دمای بالا است؛ کابین یا سردخانه از حد تنظیم گذشته.",
-        cause: "ورود هوای گرم، کندانسور کثیف، فن خراب، کمبود گاز یا درِ نیمه‌باز.",
-        checks: ["در را ببندید و واشر را چک کنید.", "ببینید کندانسور داغ و چرب است یا نه.", "مواد حساس را جابه‌جا کنید و با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "اچ ای هشدار دمای بالاست. در را ببندید، واشر را چک کنید و اگر موجودی گرم می‌شود با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      not_cooling: {
-        summary: "یخچال تجاری که خنک نمی‌کند معمولاً مشکل جریان هوا، کثیفی کندانسور یا کمپرسور/کنترلر دارد.",
-        cause: "کندانسور گرفته، فن اواپراتور گیر کرده، کویل یخ‌زده یا کمپرسور تریپ خورده.",
-        checks: ["کندانسور پشت یا بالای دستگاه چرب است؟", "فن داخل کابین می‌چرخد؟", "برای تشخیص همان‌روز با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "اگر کابین خنک نمی‌کند، کندانسور را تمیز کنید و ببینید فن داخلی می‌چرخد. برای تعمیر همان‌روز با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      icing: {
-        summary: "برفک یعنی هوای مرطوب وارد می‌شود یا دیفراست از کار افتاده.",
-        cause: "واشر در پاره، هیتر دیفراست خراب، یا چیدمان کالا جلوی کویل را گرفته.",
-        checks: ["واشر در را با آزمون کاغذ چک کنید.", "یخ را با میله فلزی نکنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید؛ هیتر دیفراست همراه داریم."],
-        spoken: "برفک معمولاً از واشر در یا خرابی دیفراست است. یخ را نشکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      compressor: {
-        summary: "کمپرسوری که مرتب تریپ می‌کند معمولاً اضافه‌بار، فشار بالا یا استارت خراب دارد.",
-        cause: "کندانسور کثیف، فن گیر کرده، رله یا خازن استارت ضعیف، یا کمپرسور در حال خرابی.",
-        checks: ["اگر هر چند ثانیه کلیک می‌کند خاموشش کنید.", "چربی کندانسور را بگیرید.", "مدام ریست نکنید؛ با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "کمپرسوری که تریپ می‌کند باید کندانسورش تمیز شود و استارت چک شود. مدام ریست نکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      ice_machine: {
-        summary: "یخ‌سازی که یخ نمی‌دهد معمولاً رسوب، آب ورودی یا سیکل برداشت خراب است.",
-        cause: "اواپراتور رسوب‌گرفته، شیر آب بسته، شیر ورودی خراب یا کندانسور کثیف.",
-        checks: ["شیر آب باز باشد.", "رسوب سفید روی صفحه را ببینید.", "برای بازدید یخ‌ساز تجاری با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "اگر یخ‌ساز یخ نمی‌دهد، شیر آب را باز کنید و رسوب را چک کنید. برای مهندس همان‌روز با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      cold_room: {
-        summary: "سردخانه‌ای که دما بالا می‌رود معمولاً درِ هوا، اواپراتور یخ‌زده یا یونیت بیرونی ایراد دارد.",
-        cause: "در روی زبانه مانده، نوار پاره، کویل یخ‌زده، کندانسور پشت‌بام کثیف یا آلارم کنترلر.",
-        checks: ["در را کامل ببندید و پرده نواری را چک کنید.", "اواپراتور را از نظر بلوک یخ ببینید.", "برای تعمیر ۲۴ساعته سردخانه با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "برای سردخانه‌ای که دما از دست می‌دهد، در را ببندید و اواپراتور را از نظر یخ ببینید. برای اعزام ۲۴ساعته با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      walk_in: {
-        summary: "واک‌این چیلری که گرم می‌شود معمولاً درِ نیمه‌باز، اواپراتور یخ‌زده یا پک بیرونی است.",
-        cause: "در روی زبانه، واشر پاره، کویل یخ‌زده یا کندانسور پشت‌بام کثیف.",
-        checks: ["در را ببندید و پرده نواری را چک کنید.", "اواپراتور را از نظر بلوک یخ ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "واک‌این چیلر گرم معمولاً درِ نیمه‌باز، اواپراتور یخ‌زده یا کندانسور کثیف است. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      ice_cream: {
-        summary: "دستگاه بستنی که فریز نمی‌کند معمولاً مخلوط، هم‌زن یا کندانسور کثیف است.",
-        cause: "مخلوط نامناسب، هم‌زن فرسوده یا کندانسور پر از گرد قند.",
-        checks: ["مخلوط تاریخ‌دار و مخزن پر باشد.", "پرهٔ کندانسور را پاک کنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "اگر دستگاه بستنی فریز نمی‌کند، مخلوط را چک کنید و کندانسور را تمیز کنید. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      cellar: {
-        summary: "گرم شدن آبجو سرداب معمولاً جریان هوا، نشتی گلیکول یا تریپ پک است.",
-        cause: "پرهٔ خنک‌کننده گرفته، کمبود گلیکول یا تریپ فشار بالا.",
-        checks: ["جلوی دریچهٔ خنک‌کننده را خالی کنید.", "ببینید پک کار می‌کند.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "آبجوی گرم سرداب معمولاً خنک‌کننده گرفته یا پک تریپ‌خورده است. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      ac: {
-        summary: "کولر تجاری که باد گرم می‌زند معمولاً فیلتر کثیف، فن بیرونی خراب یا کمبود مبرد است.",
-        cause: "فیلتر داخلی گرفته، یونیت بیرونی تریپ، یا نشتی گاز.",
-        checks: ["فیلتر داخلی را تمیز یا عوض کنید.", "فن یونیت بیرونی را ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "اگر تهویه باد گرم می‌زند، فیلتر داخلی را تمیز کنید و فن بیرونی را چک کنید. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      condenser: {
-        summary: "کندانسور کثیف کابین را گرم می‌کند و کمپرسور را با فشار بالا تریپ می‌دهد.",
-        cause: "چربی و پرز روی پره‌های کندانسور.",
-        checks: ["خاموش کنید و کندانسور را برس بکشید.", "پارچه خیس روی برق نزنید.", "اگر باز تریپ کرد با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "کندانسور کثیف سرما را ضعیف می‌کند و کمپرسور را تریپ می‌دهد. خاموش کنید، برس بکشید و اگر ادامه داشت با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      defrost: {
-        summary: "دیفراست خراب اواپراتور را به بلوک یخ تبدیل می‌کند.",
-        cause: "هیتر سوخته، پراب خاتمه خراب، یا کنترلر روی dEF گیر کرده.",
-        checks: ["یخ را با میله فلزی نکنید.", "کویل سفید و جامد را ببینید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید؛ هیتر همراه داریم."],
-        spoken: "خرابی دیفراست کویل را یخ جامد می‌کند. یخ را نشکنید. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      gas_leak: {
-        summary: "نشتی مبرد با سرمای ضعیف، لکه روغن و هشدار دمای بالا دیده می‌شود.",
-        cause: "نشتی روی اتصال، اواپراتور یا لوله ترک‌خورده؛ شارژ بدون تعمیر درست نیست.",
-        checks: ["گاز را پشت‌سرهم اضافه نکنید.", "دور اتصالات را از نظر روغن ببینید.", "برای تست نشتی و بازیافت F-Gas با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "نشتی گاز نیاز به تست نشتی دارد، نه شارژ دوباره. با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      controller: {
-        summary: "آلارم کارل، دیکسل و الیول معمولاً پراب، در یا دمای بالاست؛ هنوز کمپرسور سوخته نیست.",
-        cause: "خطای پراب (E0/E1/E2/P1/P2)، آلارم در (dA) یا دمای بالا (HA/HF/AH1).",
-        checks: ["کد دقیق روی نمایشگر را یادداشت کنید.", "فیش پراب‌ها را جا بیندازید.", "با همان کد به ۰۷۹۸۳ ۷۵۹۳۲۰ زنگ بزنید."],
-        spoken: "این کد کنترلر معمولاً پراب، در یا دمای بالاست. یادداشت کنید و با " + PHONE_SAY.fa + " تماس بگیرید."
-      },
-      generic: {
-        summary: "بیشتر عیب‌های تبرید تجاری به کندانسور کثیف، اواپراتور یخ‌زده یا تریپ کمپرسور/کنترلر برمی‌گردد.",
-        cause: "پرهٔ کندانسور گرفته، کویل یخ‌زده یا واشر در خراب، یا کمپرسور شورت‌سایکل.",
-        checks: ["اگر ایمن است دستگاه را جدا کنید و کندانسور را برس بکشید.", "واشر در و چرخش فن داخلی را چک کنید.", "برای مهندس همان‌روز لندن با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
-        spoken: "علت محتمل: کندانسور کثیف، اواپراتور یخ‌زده یا تریپ کمپرسور. بررسی سریع: کندانسور را برس بکشید، ببینید در درست بسته می‌شود و فن داخلی می‌چرخد. اگر موجودی گرم می‌شود با " + PHONE_SAY.fa + " تماس بگیرید."
-      }
-    },
-    tr: {
-      generic: {
-        summary: "Ticari soğutmada çoğu arıza kirli kondenser, buzlu evaporatör veya kompresör/kontrolcü trip’idir.",
-        cause: "Tıkalı kondenser kanatları, buzlu serpantin veya bozuk kapı contası, ya da kısa çevrim yapan kompresör.",
-        checks: ["Güvenliyse kapatıp kondenseri fırçalayın.", "Kapı contasını ve iç fanı kontrol edin.", "Aynı gün Londra mühendisi için 07983 759320’i arayın."],
-        spoken: "Olası neden: kirli kondenser, buzlu evaporatör veya kompresör trip’i. Hızlı kontrol: kondenseri fırçalayın, kapının kapandığını ve iç fanın döndüğünü görün. Stok ısınıyorsa " + PHONE_SAY.tr + " numarayı arayın."
-      }
-    },
-    ar: {
-      generic: {
-        summary: "معظم أعطال التبريد التجاري تعود إلى مكثف متسخ أو مبخر متجمد أو تعثر الضاغط/المتحكم.",
-        cause: "زعانف مكثف مسدودة، ملف متجمد أو مانع باب تالف، أو ضاغط يعمل بدورات قصيرة.",
-        checks: ["افصل الجهاز إن كان آمناً وفرش المكثف.", "افحص مانع الباب ودوران المروحة الداخلية.", "لاتصال مهندس في لندن في نفس اليوم اتصل على 07983 759320."],
-        spoken: "السبب المحتمل: مكثف متسخ أو مبخر متجمد أو تعثر الضاغط. فحوصات سريعة: فرش المكثف، تأكد أن الباب يغلق وأن المروحة الداخلية تدور. إذا كانت البضاعة تسخن فاتصل على " + PHONE_SAY.ar + "."
-      }
-    },
-    tl: {
-      generic: {
-        summary: "Karamihan ng sira sa commercial refrigeration ay maruming condenser, nagyeyelong evaporator, o trip ng compressor.",
-        cause: "Baradong condenser, nagyeyelong coil o sira ang door seal, o short-cycle compressor.",
-        checks: ["Kung ligtas, i-isolate at broshahan ang condenser.", "Tingnan ang door gasket at kung umiikot ang inner fan.", "Tumawag sa 07983 759320 para sa same-day engineer sa London."],
-        spoken: "Malamang na sanhi: maruming condenser, nagyeyelong evaporator, o trip ng compressor. Mabilisang check: broshahan ang condenser, siguraduhing nagsasara ang pinto, at umiikot ang inner fan. Kung umiinit ang stock, tumawag sa 07983 759320."
-      }
-    },
-    es: {
-      generic: {
-        summary: "La mayoría de fallos de refrigeración comercial vienen de un condensador sucio, un evaporador helado o un disparo del compresor.",
-        cause: "Aletas del condensador tapadas, serpentín helado o junta de puerta rota, o un compresor en corto ciclo.",
-        checks: ["Si es seguro, aísle y cepille el condensador.", "Compruebe la junta de la puerta y el ventilador interior.", "Llame al 07983 759320 para un técnico en Londres el mismo día."],
-        spoken: "Causa probable: condensador sucio, evaporador helado o disparo del compresor. Si el género se calienta, llame al 07983 759320."
-      }
-    },
-    pl: {
-      generic: {
-        summary: "Większość awarii chłodnictwa gastronomicznego to brudny skraplacz, oblodzony parownik albo wyłączony sprężarka.",
-        cause: "Zatkane żebra skraplacza, lód na wężownicy albo uszczelka drzwi, albo sprężarka w krótkim cyklu.",
-        checks: ["Jeśli bezpiecznie, odłącz i wyszczotkuj skraplacz.", "Sprawdź uszczelkę drzwi i wentylator wewnątrz.", "Zadzwoń 07983 759320 po inżyniera w Londynie."],
-        spoken: "Prawdopodobna przyczyna: brudny skraplacz, oblodzony parownik albo trip sprężarki. Jeśli towar się grzeje, zadzwoń 07983 759320."
-      }
-    },
-    ro: {
-      generic: {
-        summary: "Cele mai multe defecte de refrigerare comercială sunt condensator murdar, evaporator înghețat sau compresor declanșat.",
-        cause: "Aripioare de condensator blocate, serpentină înghețată sau garnitură de ușă, ori compresor în ciclu scurt.",
-        checks: ["Dacă e sigur, izolați și periați condensatorul.", "Verificați garnitura ușii și ventilatorul interior.", "Sunați 07983 759320 pentru un inginer în Londra."],
-        spoken: "Cauză probabilă: condensator murdar, evaporator înghețat sau trip de compresor. Dacă marfa se încălzește, sunați 07983 759320."
-      }
-    },
-    hi: {
-      generic: {
-        summary: "व्यावसायिक रेफ्रिजरेशन की ज़्यादातर खराबी गंदे कंडेनसर, जमी इवेपोरेटर या कंप्रेसर ट्रिप से होती है।",
-        cause: "कंडेनसर पंख बंद, कॉइल पर बर्फ या दरवाज़े की सील खराब, या शॉर्ट-साइकल कंप्रेसर।",
-        checks: [" सुरक्षित हो तो बंद करके कंडेनसर ब्रश करें।", "डोर गैसकेट और अंदर का पंखा देखें।", "लंदन में उसी दिन इंजीनियर के लिए 07983 759320 पर कॉल करें।"],
-        spoken: "संभावित कारण: गंदा कंडेनसर, जमी इवेपोरेटर या कंप्रेसर ट्रिप। माल गर्म हो रहा हो तो 07983 759320 पर कॉल करें।"
-      }
-    },
-    fr: {
-      generic: {
-        summary: "La plupart des pannes frigorifiques commerciales viennent d’un condenseur sale, d’un évaporateur givré ou d’un déclenchement du compresseur.",
-        cause: "Ailettes de condenseur bouchées, batterie givrée ou joint de porte, ou compresseur en cycle court.",
-        checks: ["Si c’est sûr, isolez et brossez le condenseur.", "Vérifiez le joint de porte et le ventilateur intérieur.", "Appelez le 07983 759320 pour un technicien à Londres."],
-        spoken: "Cause probable : condenseur sale, évaporateur givré ou disjonction du compresseur. Si le stock se réchauffe, appelez le 07983 759320."
-      }
-    },
-    pt: {
-      generic: {
-        summary: "A maior parte das avarias de refrigeração comercial vem de condensador sujo, evaporador gelo ou disparo do compressor.",
-        cause: "Alhetas do condensador tapadas, serpentina gelo ou junta da porta, ou compressor em ciclo curto.",
-        checks: ["Se for seguro, isole e escove o condensador.", "Verifique a junta da porta e o ventilador interior.", "Ligue 07983 759320 para um técnico em Londres."],
-        spoken: "Causa provável: condensador sujo, evaporador gelo ou disparo do compressor. Se a mercadoria aquecer, ligue 07983 759320."
-      }
-    },
-    ru: {
-      generic: {
-        summary: "Большинство неисправностей коммерческого холода — грязный конденсатор, обледеневший испаритель или срабатывание компрессора.",
-        cause: "Забитые рёбра конденсатора, лёд на испарителе или уплотнитель двери, либо компрессор в коротком цикле.",
-        checks: ["Если безопасно, отключите и почистите конденсатор.", "Проверьте уплотнитель двери и внутренний вентилятор.", "Звоните 07983 759320 инженеру в Лондоне."],
-        spoken: "Вероятная причина: грязный конденсатор, обледеневший испаритель или срабатывание компрессора. Если продукт греется, звоните 07983 759320."
-      }
-    },
-    zh: {
-      generic: {
-        summary: "商用制冷多数故障来自脏冷凝器、结冰蒸发器，或压缩机过载跳停。",
-        cause: "冷凝器翅片堵塞、盘管结冰或门封损坏，或压缩机短循环。",
-        checks: ["安全的话先断电，刷冷凝器。", "检查门封和内风扇是否转。", "伦敦当日工程师请打 07983 759320。"],
-        spoken: "可能原因：脏冷凝器、结冰蒸发器或压缩机跳停。存货在升温就打 07983 759320。"
-      }
-    }
-  };
-
-  function localizeHit(hit, lang) {
-    var id = (hit && hit.id) || "generic";
-    var pack = (DX[lang] && (DX[lang][id] || DX[lang].generic)) || null;
-    if (pack) {
-      return {
-        language: lang,
-        languageLabel: LANG_LABEL[lang] || lang,
-        summary: pack.summary,
-        cause: pack.cause,
-        checks: pack.checks.slice(),
-        spoken: pack.spoken
-      };
-    }
-    if (hit && lang === "en") {
-      return {
-        language: "en",
-        languageLabel: "English",
-        summary: hit.summary,
-        cause: hit.cause,
-        checks: (hit.checks || []).slice(),
-        spoken: hit.spoken
-      };
-    }
-    var g = DX.en && DX.en.generic;
-    return {
-      language: lang,
-      languageLabel: LANG_LABEL[lang] || lang,
-      summary: (hit && hit.summary) || (g && g.summary) || "",
-      cause: (hit && hit.cause) || "",
-      checks: ((hit && hit.checks) || []).slice(),
-      spoken: (hit && hit.spoken) || ""
-    };
-  }
-
-  function stripFiller(text) {
-    var t = String(text || "");
-    t = t.replace(/^Alright mate[^.]*\.\s*/i, "");
-    t = t.replace(/^Don't panic[^.]*\.\s*/i, "");
-    t = t.replace(/^Cheers[^.]*\.\s*/i, "");
-    return t.replace(/^\s+/, "");
-  }
-
-  function instantDiagnose(q) {
-    var lang = resolveLang(q);
-    var hit = kbLookup(q);
-    return localizeHit(hit, lang);
-  }
-
-  function pickVoice(code) {
-    var voices = window.speechSynthesis.getVoices() || [];
-    var same = voices.filter(function (v) {
-      var two = String(v.lang || "").slice(0, 2).toLowerCase();
-      var name = v.name || "";
-      var hit = two === code || (code === "tl" && (two === "tl" || two === "fil" || /tagalog|filipino/i.test(name)));
-      if (code === "fa" && /persian|farsi|iran|dariush|farid|majid/i.test(name + " " + (v.lang || ""))) hit = true;
-      if (code === "ar" && /arabic|arab/i.test(name)) hit = true;
-      return hit;
-    });
-    var male = same.filter(isMale);
-    if (code === "en") {
-      var gb = male.filter(function (v) { return /en[-_]gb/i.test(v.lang || ""); });
-      for (var i = 0; i < UK_MALE_PREFS.length; i++) {
-        for (var j = 0; j < gb.length; j++) if (UK_MALE_PREFS[i].test(gb[j].name || "")) return gb[j];
-      }
-      return gb[0] || male[0] || same[0] || null;
-    }
-    var natural = male.filter(function (v) { return /natural|neural|online/i.test(v.name || ""); });
-    return natural[0] || male[0] || same[0] || null;
-  }
-
-  function speakChunk(text, lang, onend) {
-    if (!text || !window.speechSynthesis) {
-      if (onend) onend();
-      return false;
-    }
-    try {
-      var code = String(lang || lastLang || "en").slice(0, 2).toLowerCase();
-      var u = new SpeechSynthesisUtterance(text);
-      u.rate = TTS_RATE;
-      u.pitch = 1;
-      u.voice = pickVoice(code);
-      u.lang = (u.voice && u.voice.lang) || BCP[code] || code;
-      u.onend = function () {
-        playing = false;
-        dxSpeaking = false;
-        stopKeepAlive();
-        listenBtn.classList.remove("is-on");
-        listenBtn.setAttribute("aria-pressed", "false");
-        if (onend) onend();
-      };
-      playing = true;
-      listenBtn.classList.add("is-on");
-      listenBtn.setAttribute("aria-pressed", "true");
-      window.speechSynthesis.speak(u);
-      startKeepAlive();
-      return true;
-    } catch (e) {
-      if (onend) onend();
-      return false;
-    }
-  }
-
-  function stopKeepAlive() {
-    if (keepAliveT) { clearInterval(keepAliveT); keepAliveT = null; }
-  }
-
-  function startKeepAlive() {
-    stopKeepAlive();
-    keepAliveT = setInterval(function () {
-      if (!window.speechSynthesis || !window.speechSynthesis.speaking) {
-        stopKeepAlive();
-        return;
-      }
-      try {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.resume();
-      } catch (e) {}
-    }, 10000);
-  }
-
-  function speakDiagnosis(text, lang) {
-    var clean = finishSpoken(text, lang);
-    if (!clean) return false;
-    lastSpoken = clean;
-    lastLang = lang || lastLang || "en";
-    dxSpeaking = true;
-    setStatus("🔊 Speaking Answer...");
-    try { window.speechSynthesis.cancel(); } catch (e) {}
-    return speakChunk(clean, lang);
-  }
-
-  function speakFallback(text, lang) {
-    if (dxSpeaking && window.speechSynthesis && window.speechSynthesis.speaking) return true;
-    return speakDiagnosis(text, lang);
-  }
-
-  function speakStream(full, lang) {
-    return speakDiagnosis(full, lang);
-  }
-
-  function playDiagnosis() {
-    unlockAudio();
-    if (playing || queueOn) {
-      stopPlayback();
-      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
-      return;
-    }
-    if (parts.length) {
-      playQueue();
-      return;
-    }
-    if (voicePending) {
-      primePlayer();
-      setStatus("Head Engineer's voice is on its way — it will play in a moment.");
-      return;
-    }
-    if (lastSpoken) {
-      if (!speakFallback(lastSpoken, lastLang)) setStatus("Voice is busy right now — your answer is written below.");
-      return;
-    }
-    setStatus("Ask a question first, then tap LISTEN.");
-  }
-
-  function fillCard(data) {
-    var lab = UI_LAB[data.language] || UI_LAB.en;
-    if (cardEls.h3) cardEls.h3.textContent = lab.h3;
-    if (cardEls.causeLab) cardEls.causeLab.textContent = lab.cause;
-    if (cardEls.checksLab) cardEls.checksLab.textContent = lab.checks;
-    cardEls.badge.textContent = data.languageLabel || LANG_LABEL[data.language] || data.language || "Detected";
-    cardEls.summary.textContent = data.summary || data.spoken || "";
-    cardEls.cause.textContent = data.cause || "";
-    cardEls.checks.innerHTML = "";
-    (data.checks || []).forEach(function (c) {
-      var li = document.createElement("li");
-      li.textContent = c;
-      cardEls.checks.appendChild(li);
-    });
-    cardEls.spoken.textContent = stripFiller(data.spoken || "");
-    cardEls.box.hidden = false;
-    lastSpoken = stripFiller(data.spoken || data.summary || "");
-    lastLang = data.language || "en";
-    parts = data.audio && data.audio.data ? [data.audio] : [];
-    partsDone = true;
-  }
-
-  function postVault(payload, timeoutMs) {
-    var i = 0;
-    var ms = timeoutMs == null ? API_MS : timeoutMs;
-    function tryNext(err) {
-      if (i >= ENDPOINTS.length) {
-        return Promise.reject(err || new Error("Voice vault unavailable"));
-      }
-      var url = ENDPOINTS[i++];
-      var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-      var timer = ms && ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e0) {} }, ms) : null;
-      return fetch(url, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CD-IP": MARK,
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(payload),
-        signal: ctrl ? ctrl.signal : undefined
-      }).then(function (res) {
-        if (res.status === 404 || res.status === 405) return tryNext(new Error("skip"));
-        return res.text().then(function (txt) {
-          var json = {};
-          try { json = txt ? JSON.parse(txt) : {}; } catch (e) { json = { error: txt }; }
-          if (!res.ok) {
-            var msg = json.error || json.message || ("HTTP " + res.status);
-            throw new Error(msg);
-          }
-          return json;
-        });
-      }).catch(function (e) {
-        if (e && e.name === "AbortError") throw e;
-        if (i < ENDPOINTS.length) return tryNext(e);
-        throw e;
-      }).finally(function () {
-        if (timer) clearTimeout(timer);
-      });
-    }
-    return tryNext();
-  }
-
-  function requestVoice(data, seq) {
-    var full = stripFiller(data.spoken || data.summary || "");
-    if (dxSpeaking && window.speechSynthesis && window.speechSynthesis.speaking) {
-      lastSpoken = full || lastSpoken;
-      return;
-    }
-    var first = firstSentence(full);
-    var rest = full.slice(first.length).trim();
-    lastSpoken = full;
-    lastLang = data.language || lastLang || "en";
-    if (first) {
-      speakDiagnosis(full, lastLang);
-    }
-    if (!data.spoken || data.voice === "browser-no-key" || !rest) {
-      voicePending = false;
-      if (!first && data.spoken) voiceFallback(data);
-      return;
-    }
-    voicePending = true;
-    setStatus(langStatus(data) + " — Head Engineer's voice on its way…");
-    var lang = data.language || "";
-    postVault({ mode: "tts", text: rest, language: lang, watermark: MARK }).then(function (v) {
-      if (seq !== askSeq) return;
-      voicePending = false;
-      setStatus(langStatus(data));
-      var got = v && v.audio_base64 ? { data: v.audio_base64, mime: v.audio_mime } : (v && v.audio && v.audio.data ? v.audio : null);
-      if (!got) { voiceFallback(data); return; }
-      parts = [got];
-      var more = (v.more || []).slice();
-      partsDone = more.length === 0;
-      if (!playing) playQueue();
-      fetchRest(more, v.language || lang, seq);
-    }).catch(function () {
-      if (seq !== askSeq) return;
-      voicePending = false;
-      voiceFallback(data);
-    });
-  }
-
-  // One request at a time: Piper renders faster than real time, so the next part is ready before it is needed.
-  function fetchRest(rest, lang, seq) {
-    if (seq !== askSeq) return;
-    if (!rest.length) { endParts(); return; }
-    var text = rest.shift();
-    postVault({ mode: "tts", engine: "piper", text: text, language: lang, watermark: MARK }).then(function (v) {
-      if (seq !== askSeq) return;
-      if (!v || !v.audio_base64) { endParts(); return; }
-      if (v.more && v.more.length) rest = v.more.concat(rest);
-      addPart({ data: v.audio_base64, mime: v.audio_mime });
-      fetchRest(rest, lang, seq);
-    }).catch(function () {
-      if (seq === askSeq) endParts();
-    });
-  }
-
-  function voiceFallback(data) {
-    if (speakFallback(data.spoken, data.language)) setStatus(langStatus(data));
-    else setStatus(langStatus(data) + " — voice is busy right now, your answer is written below.");
-  }
-
-  function langStatus(data) {
-    return data.languageLabel ? ("Language: " + data.languageLabel) : "Diagnosis ready";
-  }
-
-  function playVaultAudio(data) {
-    var b64 = data && (data.audio_base64 || (data.audio && data.audio.data));
-    var mime = (data && (data.audio_mime || (data.audio && data.audio.mime))) || "audio/wav";
-    if (!b64 || String(b64).length < 80) return false;
-    try {
-      playBytes(b64ToBytes(b64), mime);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function ask(text, audio) {
-    var q = (text || "").replace(/\s+/g, " ").trim();
-    if (!q && !(audio && audio.data)) {
-      setStatus("Type a fault or tap SPEAK.");
-      return;
-    }
-    var seq = ++askSeq;
-    unlockAudio();
-    openDrawer();
-    stopPlayback();
-    parts = [];
-    partsDone = true;
-    root.classList.add("is-busy");
-    setStatus("Diagnosing fault...");
-    var lang = resolveLang(q || "");
-    var fast = instantDiagnose(q || "");
-    fast.language = lang;
-    fast.languageLabel = LANG_LABEL[lang] || fast.languageLabel;
-    fast.spoken = finishSpoken(fast.spoken, lang);
-    fillCard(fast);
-    setStatus(langStatus(fast));
-    root.classList.remove("is-busy");
-    lastSpoken = fast.spoken;
-    lastLang = lang;
-    var hint = getLangHint() || lang || "";
-    var confident = (langSel && langSel !== "auto") || detectLang(q) !== "en" || !(audio && audio.data);
-    if (confident && lang !== "en") {
-      postVault({ mode: "tts", text: fast.spoken, language: lang, watermark: MARK }, TTS_MS).then(function (v) {
-        if (seq !== askSeq) return;
-        if (playing) return;
-        if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, lang);
-      }).catch(function () {
-        if (seq !== askSeq || playing) return;
-        speakDiagnosis(fast.spoken, lang);
-      });
-    } else if (confident && lang === "en") {
-      postVault({ mode: "tts", text: fast.spoken, language: "en", watermark: MARK }, TTS_MS).then(function (v) {
-        if (seq !== askSeq || playing) return;
-        if (!playVaultAudio(v)) speakDiagnosis(fast.spoken, "en");
-      }).catch(function () {
-        if (seq !== askSeq || playing) return;
-        speakDiagnosis(fast.spoken, "en");
-      });
-    }
-    var payload = {
-      mode: "diagnose",
-      text: q,
-      language: hint,
-      langHint: hint,
-      page: location.pathname,
-      watermark: MARK
-    };
-    if (audio && audio.data) {
-      payload.audio = audio.data;
-      payload.mime = audio.mime || "audio/webm";
-    }
-    if (!q && !audio) return;
-    postVault(payload, DIAGNOSE_MS).then(function (data) {
-      if (seq !== askSeq) return;
-      if (data.transcript) input.value = data.transcript;
-      var apiLang = String(data.language || hint || lang || "").slice(0, 2).toLowerCase();
-      if (data.spoken) data.spoken = finishSpoken(data.spoken, apiLang);
-      if (langSel === "auto" && apiLang && apiLang !== "au") lastLang = apiLang;
-      fillCard(data);
-      var wrongLangPlaying = playing && lastLang === "en" && apiLang && apiLang !== "en";
-      if (wrongLangPlaying) {
-        stopPlayback();
-        try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e5) {}
-      }
-      if (!playing || wrongLangPlaying) {
-        if (!playVaultAudio(data)) speakDiagnosis(data.spoken || fast.spoken, apiLang || lang);
-      } else {
-        setStatus("🔊 Speaking Answer...");
-      }
-    }).catch(function () {
-      if (seq !== askSeq) return;
-      if (!playing && confident) speakDiagnosis(fast.spoken, lang);
-    });
-  }
-
-  function pickMime() {
-    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
-    var types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"];
-    for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported(types[i])) return types[i];
-    return "";
-  }
-
-  function setSpeakUi(on) {
-    speakBtn.classList.toggle("is-on", on);
-    speakBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    speakBtn.textContent = on ? STOP_LABEL : SPEAK_LABEL;
-  }
-
-  function stopMeter() {
-    if (meterTimer) { clearInterval(meterTimer); meterTimer = null; }
-    try { if (meterSrc) meterSrc.disconnect(); } catch (e) {}
-    meterSrc = null;
-  }
-
-  function stopTracks() {
-    if (recStream) {
-      recStream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) {} });
-      recStream = null;
-    }
-  }
-
-  function endCapture(onStopped) {
-    recording = false;
-    setSpeakUi(false);
-    if (recTimer) { clearTimeout(recTimer); recTimer = null; }
-    stopMeter();
-    var rec = recorder;
-    recorder = null;
-    if (!rec) {
-      stopTracks();
-      if (meterCtx) { try { meterCtx.close(); } catch (e4) {} meterCtx = null; }
-      if (onStopped) onStopped(null);
-      return;
-    }
-    var done = false;
-    rec.onstop = function () {
-      if (done) return;
-      done = true;
-      stopTracks();
-      if (meterCtx) { try { meterCtx.close(); } catch (e3) {} meterCtx = null; }
-      if (onStopped) onStopped(rec);
-    };
-    try {
-      if (rec.state !== "inactive") rec.stop();
-      else rec.onstop();
-    } catch (e) { rec.onstop(); }
-  }
-
-  function cancelRec(msg) {
-    stopSr();
-    endCapture(function () { recChunks = []; });
-    setStatus(msg);
-  }
-
-  function stopSr() {
-    if (srSilence) { clearTimeout(srSilence); srSilence = null; }
-    if (sr) {
-      try { sr.onresult = null; sr.onend = null; sr.onerror = null; sr.stop(); } catch (e) {}
-      sr = null;
-    }
-  }
-
-  function startSpeechRec(keep) {
-    var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Ctor) return false;
-    try {
-      if (!keep) {
-        srText = "";
-        srFinal = "";
-      }
-      sr = new Ctor();
-      sr.interimResults = true;
-      sr.continuous = true;
-      sr.maxAlternatives = 1;
-      sr.lang = srLang();
-      sr.onresult = function (ev) {
-        var finals = "";
-        var inter = "";
-        for (var i = 0; i < ev.results.length; i++) {
-          if (ev.results[i].isFinal) finals += ev.results[i][0].transcript + " ";
-          else inter += ev.results[i][0].transcript;
-        }
-        if (finals.replace(/\s+/g, " ").trim()) {
-          srFinal = (srFinal + " " + finals).replace(/\s+/g, " ").trim();
-        }
-        srText = (srFinal + " " + inter).replace(/\s+/g, " ").trim();
-        if (input && srText) input.value = srText;
-        if (langSel === "auto" && srText) {
-          var guess = detectLang(srText);
-          if (guess && guess !== "en") lastLang = guess;
-        }
-        if (!srText) return;
-        if (srSilence) clearTimeout(srSilence);
-        srSilence = setTimeout(function () {
-          srSilence = null;
-          finishRec();
-        }, SR_SILENCE_MS);
-      };
-      sr.onerror = function () { /* MediaRecorder / type-in still work */ };
-      sr.onend = function () {
-        if (!recording) return;
-        try { sr.start(); } catch (e2) { startSpeechRec(true); }
-      };
-      sr.start();
-      return true;
-    } catch (e) {
-      sr = null;
-      return false;
-    }
-  }
-
-  function startMeter(stream) {
-    var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    try {
-      if (meterCtx) { try { meterCtx.close(); } catch (e0) {} meterCtx = null; }
-      meterCtx = new AC();
-      meterSrc = meterCtx.createMediaStreamSource(stream);
-      var an = meterCtx.createAnalyser();
-      an.fftSize = 1024;
-      meterSrc.connect(an);
-      var buf = new Uint8Array(an.fftSize);
-      var floor = 0;
-      var heard = false;
-      var started = Date.now();
-      var lastVoice = started;
-      meterTimer = setInterval(function () {
-        if (!recording) return;
-        an.getByteTimeDomainData(buf);
-        var sum = 0;
-        for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; }
-        var rms = Math.sqrt(sum / buf.length);
-        var now = Date.now();
-        if (now - started < 500) { floor = Math.max(floor, rms); return; }
-        var thr = Math.min(0.06, Math.max(0.015, floor * 2));
-        if (rms > thr) { heard = true; lastVoice = now; }
-        if (heard && now - lastVoice > SILENCE_MS) finishRec();
-        else if (!heard && now - started > NO_SPEECH_MS) cancelRec("I didn't hear anything — tap SPEAK and try again, or type the fault.");
-      }, 100);
-    } catch (e) { stopMeter(); }
-  }
-
-  function startRec() {
-    unlockAudio();
-    openDrawer();
-    stopSr();
-    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e0) {}
-    stopPlayback();
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
-      setStatus("Voice recording isn't supported on this browser — type the fault instead.");
-      return;
-    }
-    recording = true;
-    recChunks = [];
-    setSpeakUi(true);
-    setStatus("Starting the microphone…");
-    navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-    }).then(function (stream) {
-      if (!recording) { stream.getTracks().forEach(function (t) { t.stop(); }); return; }
-      recStream = stream;
-      var mime = pickMime();
-      try {
-        recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-      } catch (e) {
-        recorder = new MediaRecorder(stream);
-      }
-      recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) recChunks.push(ev.data); };
-      recorder.start(250);
-      startMeter(stream);
-      recTimer = setTimeout(function () { if (recording) finishRec(); }, MAX_MS);
-      var srOn = startSpeechRec();
-      var pick = langSel === "auto" ? "Auto — for Persian tap فارسی first" : (LANG_LABEL[langSel] || langSel);
-      setStatus(srOn
-        ? ("Listening (" + pick + ")… pause or tap TAP WHEN DONE.")
-        : ("Listening (" + pick + ")… pause or tap TAP WHEN DONE."));
-    }).catch(function () {
-      recording = false;
-      setSpeakUi(false);
-      setStatus("Microphone blocked — allow the mic or type the fault.");
-    });
-  }
-
-  function blobToB64(blob) {
-    return new Promise(function (resolve) {
-      var r = new FileReader();
-      r.onload = function () {
-        var s = String(r.result || "");
-        var i = s.indexOf(",");
-        resolve(i >= 0 ? s.slice(i + 1) : "");
-      };
-      r.onerror = function () { resolve(""); };
-      r.readAsDataURL(blob);
-    });
-  }
-
-  function finishRec() {
-    if (!recording) return;
-    setStatus("Diagnosing fault...");
-    var spoken = srText;
-    stopSr();
-    endCapture(function (rec) {
-      var type = String((rec && rec.mimeType) || pickMime() || "audio/webm");
-      var blob = new Blob(recChunks, { type: type });
-      recChunks = [];
-      function go(audio) {
-        if (spoken && spoken.length >= 2) ask(spoken, audio);
-        else if (audio) ask("", audio);
-        else setStatus("That was too short — tap SPEAK and try again.");
-      }
-      if (blob.size >= 2000) {
-        blobToB64(blob).then(function (b64) {
-          go(b64 ? { data: b64, mime: type } : null);
-        });
-      } else {
-        go(null);
-      }
-    });
-  }
-
-  function toggleSpeak() {
-    if (recording) finishRec();
-    else startRec();
-  }
-
-  function starHtml() {
-    var s = "";
-    for (var i = 1; i <= 5; i++) {
-      s += '<button type="button" class="cd-voice-star" data-star="' + i + '" aria-label="' + i + ' star">★</button>';
-    }
-    return s;
-  }
-
-  function bindFeedback() {
-    var like = $("#cd-voice-like");
-    var stars = root.querySelectorAll(".cd-voice-star");
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem("cd-voice-fb") || "{}") || {}; } catch (e) { saved = {}; }
-    if (saved.like) like.classList.add("is-on");
-    if (saved.stars) {
-      stars.forEach(function (b) {
-        if (Number(b.getAttribute("data-star")) <= saved.stars) b.classList.add("is-on");
-      });
-    }
-    like.addEventListener("click", function () {
-      like.classList.toggle("is-on");
-      saved.like = like.classList.contains("is-on");
-      try { localStorage.setItem("cd-voice-fb", JSON.stringify(saved)); } catch (e) {}
-      setStatus(saved.like ? "Thank you — that helps ColdDirect grow." : "");
-    });
-    stars.forEach(function (b) {
-      b.addEventListener("click", function () {
-        var n = Number(b.getAttribute("data-star"));
-        saved.stars = n;
-        stars.forEach(function (x) {
-          x.classList.toggle("is-on", Number(x.getAttribute("data-star")) <= n);
-        });
-        try { localStorage.setItem("cd-voice-fb", JSON.stringify(saved)); } catch (e2) {}
-        setStatus(n === 5 ? "Five stars — thank you for supporting ColdDirect." : "Thanks for the rating.");
-      });
-    });
-  }
+  var vapi = null;
+  var panel, launcher, closeButton, callButton, callLabel, statusText, statusDot;
+  var callActive = false;
+  var callStarting = false;
 
   function css() {
     return [
-      "html.cd-voice-on{padding-top:calc(44px + env(safe-area-inset-top,0px));}",
-      "html.cd-voice-on .cd-main-header,html.cd-voice-on .site-header,html.cd-voice-on header.site{top:calc(44px + env(safe-area-inset-top,0px)) !important;}",
-      "@media (min-width:769px){html.cd-voice-on #cd-audio-dock{top:calc(92px + env(safe-area-inset-top,0px)) !important;}}",
-      "#cd-voice-root{position:fixed;top:0;left:0;right:0;z-index:99999;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,sans-serif;color:#e2e8f0;}",
-      "#cd-voice-root *{box-sizing:border-box;}",
-      "#cd-voice-bar{height:calc(44px + env(safe-area-inset-top,0px));padding:0 10px;padding-top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#0b1120 0%,#0f172a 100%);border-bottom:1px solid #1e293b;}",
-      "#cd-voice-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;}",
-      "#cd-voice-dot{width:8px;height:8px;border-radius:50%;background:#38bdf8;box-shadow:0 0 0 0 rgba(56,189,248,.7);animation:cdVoicePulse 1.6s infinite;flex:0 0 8px;}",
-      "@keyframes cdVoicePulse{0%{box-shadow:0 0 0 0 rgba(56,189,248,.65);}70%{box-shadow:0 0 0 8px rgba(56,189,248,0);}100%{box-shadow:0 0 0 0 rgba(56,189,248,0);}}",
-      "#cd-voice-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:650;color:#f8fafc;}",
-      "#cd-voice-controls{display:flex;align-items:center;gap:6px;flex:0 0 auto;}",
-      "#cd-voice-root .cd-voice-langwrap{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 6px;border:1px solid #38bdf8;border-radius:6px;background:#082f49;color:#e0f2fe;}",
-      "#cd-voice-root .cd-voice-langlab{font:700 9px/1 system-ui,sans-serif;letter-spacing:.04em;color:#7dd3fc;}",
-      "#cd-voice-lang{height:22px;max-width:118px;border:0;background:#082f49;color:#f8fafc;font:700 11px/1 system-ui,sans-serif;}",
-      "#cd-voice-langchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;}",
-      "#cd-voice-root .cd-voice-lchip{height:28px;padding:0 10px;border:1px solid #334155;border-radius:999px;background:#111827;color:#e2e8f0;font:700 12px/1 system-ui,sans-serif;cursor:pointer;}",
-      "#cd-voice-root .cd-voice-lchip.is-on{background:#1d4ed8;border-color:#93c5fd;color:#fff;}",
-      "#cd-voice-root button.cd-voice-btn{height:28px;padding:0 8px;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#f8fafc;font:700 10px/1 system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;display:inline-flex;align-items:center;gap:4px;}",
-      "#cd-voice-root button.cd-voice-btn.is-on{background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
-      "#cd-voice-root button.cd-voice-tog{width:28px;padding:0;justify-content:center;}",
-      "#cd-voice-drawer{display:none;max-height:min(70vh,560px);overflow:auto;background:#0f172a;border-bottom:1px solid #1e293b;padding:10px 12px 12px;}",
-      "#cd-voice-root.is-open #cd-voice-drawer{display:block;}",
-      "#cd-voice-askrow{display:flex;gap:6px;}",
-      "#cd-voice-input{flex:1;min-width:0;height:36px;border:1px solid #334155;border-radius:8px;background:#0b1120;color:#f8fafc;padding:0 10px;font:400 16px/1.3 system-ui,sans-serif;}",
-      "#cd-voice-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}",
-      "#cd-voice-root .cd-voice-chip{height:28px;padding:0 10px;border:1px solid #334155;border-radius:999px;background:#111827;color:#cbd5e1;font:600 11px/1 system-ui,sans-serif;cursor:pointer;}",
-      "#cd-voice-status{min-height:16px;margin:2px 0 8px;color:#7dd3fc;font:500 11px/1.3 system-ui,sans-serif;}",
-      "#cd-voice-card{background:#111827;border:1px solid #1e293b;border-radius:10px;padding:10px;}",
-      "#cd-voice-badge{display:inline-block;background:#1d4ed8;color:#fff;border-radius:999px;padding:2px 8px;font:700 10px/1.4 system-ui,sans-serif;margin-bottom:6px;}",
-      "#cd-voice-card h3{margin:0 0 6px;font-size:13px;color:#f8fafc;}",
-      "#cd-voice-card p,#cd-voice-spoken{margin:0 0 8px;font:400 13px/1.45 system-ui,sans-serif;color:#e2e8f0;}",
-      "#cd-voice-card ul{margin:0 0 10px;padding-left:18px;color:#cbd5e1;font:400 13px/1.4 system-ui,sans-serif;}",
-      "#cd-voice-ctas{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}",
-      "#cd-voice-ctas a{display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:7px;text-decoration:none;font:700 12px/1 system-ui,sans-serif;}",
-      "#cd-voice-ctas a.call{background:#16a34a;color:#fff;}",
-      "#cd-voice-ctas a.mail{background:#1e293b;color:#e2e8f0;border:1px solid #334155;}",
-      "#cd-voice-fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;}",
-      "#cd-voice-like{height:30px;padding:0 10px;border:1px solid #334155;border-radius:7px;background:#0b1120;color:#e2e8f0;cursor:pointer;font:700 12px/1 system-ui,sans-serif;}",
-      "#cd-voice-like.is-on{background:#14532d;border-color:#22c55e;color:#bbf7d0;}",
-      "#cd-voice-root .cd-voice-star{border:0;background:transparent;color:#475569;font-size:18px;cursor:pointer;padding:0 1px;}",
-      "#cd-voice-root .cd-voice-star.is-on{color:#fbbf24;}",
-      "#cd-voice-legal{margin-top:10px;font:500 10px/1.4 system-ui,sans-serif;color:#64748b;}",
-      "#cd-voice-legal a{color:#93c5fd;}",
-      "#cd-voice-ip-modal{position:fixed;inset:0;z-index:100000;background:rgba(2,6,23,.72);display:flex;align-items:center;justify-content:center;padding:16px;}",
-      "#cd-voice-ip-modal[hidden]{display:none !important;}",
-      "#cd-voice-ip-box{max-width:420px;background:#0b1120;color:#e2e8f0;border:1px solid #334155;border-radius:12px;padding:16px;}",
-      "#cd-voice-ip-box h2{margin:0 0 8px;font-size:16px;}",
-      "#cd-voice-ip-box p{margin:0 0 10px;font:400 13px/1.45 system-ui,sans-serif;}",
-      "#cd-voice-root.is-busy #cd-voice-dot{background:#fbbf24;}",
-      "#cd-voice-root,#cd-voice-bar,#cd-voice-drawer{width:100%;max-width:100vw;box-sizing:border-box;overflow-x:hidden;}",
-      "#cd-voice-root button.cd-voice-btn#cd-voice-speak.is-on{background:#dc2626;border-color:#f87171;color:#fff;}",
-      "#cd-voice-askrow,#cd-voice-card,#cd-voice-chips,#cd-voice-ctas,#cd-voice-fb{max-width:100%;min-width:0;}",
-      "#cd-voice-card p,#cd-voice-card li,#cd-voice-spoken,#cd-voice-legal{overflow-wrap:anywhere;word-break:break-word;}",
-      "#cd-voice-card li{color:#e2e8f0 !important;opacity:1 !important;}",
-      "#cd-voice-root button.cd-voice-btn#cd-voice-replay{height:32px;margin:0 0 8px;padding:0 12px;font-size:12px;background:#0ea5e9;border-color:#38bdf8;color:#04111f;}",
-      "@media (max-width:480px){#cd-voice-bar{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));gap:6px;}#cd-voice-title{font-size:10px;}#cd-voice-controls{gap:4px;}#cd-voice-lang{max-width:92px;font-size:10px;}#cd-voice-root button.cd-voice-btn{padding:0 6px;font-size:9.5px;letter-spacing:0;}#cd-voice-root button.cd-voice-tog{width:26px;}#cd-voice-input{font-size:16px;}#cd-voice-drawer{padding:8px max(8px,env(safe-area-inset-right,0px)) 10px max(8px,env(safe-area-inset-left,0px));}}",
-      "@media (max-width:360px){#cd-voice-dot{display:none;}#cd-voice-title{font-size:9.5px;}}"
+      ".vapi-widget{position:fixed;right:24px;bottom:24px;z-index:999999;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;}",
+      ".vapi-widget *,.vapi-widget *::before,.vapi-widget *::after{box-sizing:border-box;}",
+      ".vapi-widget{--vapi-primary:#111827;--vapi-primary-hover:#1f2937;--vapi-accent:#22c55e;--vapi-surface:#ffffff;--vapi-text:#111827;--vapi-muted:#6b7280;--vapi-border:#e5e7eb;--vapi-shadow:0 18px 45px rgba(17,24,39,.18);}",
+      ".vapi-panel{width:min(360px,calc(100vw - 32px));overflow:hidden;background:var(--vapi-surface);border:1px solid var(--vapi-border);border-radius:18px;box-shadow:var(--vapi-shadow);opacity:0;visibility:hidden;transform:translateY(12px) scale(.98);transform-origin:bottom right;transition:opacity 180ms ease,transform 180ms ease,visibility 180ms ease;}",
+      ".vapi-panel.is-open{opacity:1;visibility:visible;transform:translateY(0) scale(1);}",
+      ".vapi-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;color:#fff;background:var(--vapi-primary);}",
+      ".vapi-heading{display:flex;align-items:center;gap:10px;min-width:0;}",
+      ".vapi-heading h2{margin:0;overflow:hidden;font-size:16px;font-weight:700;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;color:#fff;}",
+      ".vapi-language-badge{flex:0 0 auto;padding:4px 8px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);border-radius:999px;font-size:12px;font-weight:700;line-height:1;}",
+      ".vapi-close{width:32px;height:32px;padding:0;color:#fff;background:transparent;border:0;border-radius:8px;cursor:pointer;font-size:22px;line-height:1;}",
+      ".vapi-close:hover{background:rgba(255,255,255,.12);}",
+      ".vapi-body{padding:22px 18px 18px;text-align:center;}",
+      ".vapi-status-dot{width:12px;height:12px;margin:0 auto 12px;background:#94a3b8;border-radius:50%;}",
+      ".vapi-status-dot.is-connecting{background:#f59e0b;animation:vapi-pulse 1s infinite;}",
+      ".vapi-status-dot.is-active{background:var(--vapi-accent);animation:vapi-pulse 1.4s infinite;}",
+      ".vapi-status-dot.is-error{background:#ef4444;}",
+      "@keyframes vapi-pulse{0%,100%{box-shadow:0 0 0 0 currentColor;opacity:1;}50%{box-shadow:0 0 0 8px transparent;opacity:.75;}}",
+      ".vapi-status{min-height:22px;margin:0 0 18px;color:var(--vapi-muted);font-size:14px;line-height:1.5;}",
+      ".vapi-call-button{display:inline-flex;min-width:190px;min-height:48px;align-items:center;justify-content:center;gap:9px;padding:12px 18px;color:#fff;background:var(--vapi-primary);border:0;border-radius:12px;cursor:pointer;font:inherit;font-size:15px;font-weight:700;transition:background 150ms ease,transform 150ms ease;}",
+      ".vapi-call-button:hover:not(:disabled){background:var(--vapi-primary-hover);transform:translateY(-1px);}",
+      ".vapi-call-button:disabled{cursor:wait;opacity:.65;}",
+      ".vapi-call-button.is-active{background:#dc2626;}",
+      ".vapi-launcher{display:inline-flex;min-height:56px;align-items:center;justify-content:center;gap:10px;padding:0 20px;color:#fff;background:var(--vapi-primary);border:0;border-radius:999px;box-shadow:var(--vapi-shadow);cursor:pointer;font:inherit;font-size:15px;font-weight:750;transition:background 150ms ease,transform 150ms ease;}",
+      ".vapi-launcher:hover{background:var(--vapi-primary-hover);transform:translateY(-2px);}",
+      ".vapi-icon{width:20px;height:20px;fill:currentColor;}",
+      "@media (max-width:520px){.vapi-widget{right:16px;bottom:16px;left:16px;align-items:stretch;}.vapi-panel{width:100%;}.vapi-launcher{width:100%;}}"
     ].join("");
   }
 
   function html() {
     return (
-      '<!-- ' + MARK + ' ColdDirect Ltd -->' +
-      '<div id="cd-voice-bar">' +
-        '<div id="cd-voice-left">' +
-          '<span id="cd-voice-dot" aria-hidden="true"></span>' +
-          '<span id="cd-voice-title">' + TITLE + "</span>" +
-        "</div>" +
-        '<div id="cd-voice-controls">' +
-          '<label class="cd-voice-langwrap"><span class="cd-voice-langlab">Lang</span>' +
-          '<select id="cd-voice-lang" aria-label="Answer language">' +
-          LANGS.map(function (L) {
-            return '<option value="' + L.id + '">' + L.label + "</option>";
-          }).join("") +
-          "</select></label>" +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false" aria-label="Speak">🎤 SPEAK</button>' +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false" aria-label="Listen">🔊 LISTEN</button>' +
-          '<button type="button" class="cd-voice-btn cd-voice-tog" id="cd-voice-toggle" aria-expanded="false" aria-label="Open diagnosis drawer">▼</button>' +
-        "</div>" +
-      "</div>" +
-      '<div id="cd-voice-drawer">' +
-        '<div id="cd-voice-askrow">' +
-          '<input id="cd-voice-input" type="text" maxlength="2000" autocomplete="off" placeholder="Type a fault in any language…">' +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-ask">Ask</button>' +
-        "</div>" +
-        '<div id="cd-voice-langchips">' +
-          '<button type="button" class="cd-voice-lchip" data-lang="fa">فارسی</button>' +
-          '<button type="button" class="cd-voice-lchip" data-lang="en">English</button>' +
-          '<button type="button" class="cd-voice-lchip" data-lang="tr">Türkçe</button>' +
-          '<button type="button" class="cd-voice-lchip" data-lang="ar">العربية</button>' +
-          '<button type="button" class="cd-voice-lchip" data-lang="auto">Auto</button>' +
-        "</div>" +
-        '<div id="cd-voice-chips">' +
-          CHIPS.map(function (c) { return '<button type="button" class="cd-voice-chip" data-chip="' + c.replace(/"/g, "") + '">' + c + "</button>"; }).join("") +
-        "</div>" +
-        '<div id="cd-voice-status" role="status"></div>' +
-        '<div id="cd-voice-card" hidden>' +
-          '<span id="cd-voice-badge">Language</span>' +
-          '<h3 id="cd-voice-card-h">Engineer Diagnosis</h3>' +
-          '<p id="cd-voice-summary"></p>' +
-          "<p><strong id=\"cd-voice-cause-lab\">Likely cause:</strong> <span id=\"cd-voice-cause\"></span></p>" +
-          "<p><strong id=\"cd-voice-checks-lab\">Quick checks</strong></p>" +
-          '<ul id="cd-voice-checks"></ul>' +
-          '<p id="cd-voice-spoken"></p>' +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-replay">▶ Listen Answer</button>' +
-          '<div id="cd-voice-ctas">' +
-            '<a class="call" href="' + PHONE_HREF + '">Call ' + PHONE_DISPLAY + "</a>" +
-            '<a class="mail" href="' + MAIL_HREF + '">Email info@colddirect.co.uk</a>' +
+      '<section id="vapiPanel" class="vapi-panel" role="dialog" aria-labelledby="vapiTitle" aria-hidden="true">' +
+        '<header class="vapi-header">' +
+          '<div class="vapi-heading">' +
+            '<h2 id="vapiTitle">' + TITLE + "</h2>" +
+            '<span class="vapi-language-badge">' + LANG_BADGE + "</span>" +
           "</div>" +
-          '<div id="cd-voice-fb">' +
-            '<button type="button" id="cd-voice-like">Helpful 👍</button>' +
-            '<span>' + starHtml() + "</span>" +
-          "</div>" +
+          '<button id="vapiClose" class="vapi-close" type="button" aria-label="Close">&times;</button>' +
+        "</header>" +
+        '<div class="vapi-body">' +
+          '<div id="vapiStatusDot" class="vapi-status-dot"></div>' +
+          '<p id="vapiStatus" class="vapi-status" aria-live="polite">Ready to start a voice conversation.</p>' +
+          '<button id="vapiCallButton" class="vapi-call-button" type="button">' +
+            '<svg class="vapi-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.46 15.46 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg>' +
+            '<span id="vapiCallLabel">' + TITLE + "</span>" +
+          "</button>" +
         "</div>" +
-        '<div id="cd-voice-legal">' +
-          '<a href="#cd-uk-ip" id="cd-voice-ip-link">UK IP Shield</a> · ' +
-          '<a href="' + LICENSE_HREF + '">Request Official B2B License</a><br>' +
-          MARK + " · ColdDirect Ltd · 27 Felixstowe Road, Enfield, London N9 0DX" +
-        "</div>" +
-      "</div>" +
-      '<div id="cd-voice-ip-modal" hidden>' +
-        '<div id="cd-voice-ip-box">' +
-          "<h2>UK IP Shield</h2>" +
-          "<p id=\"cd-voice-ip-extra\"></p>" +
-          "<p>Protected under the UK Copyright Act 1988 and the UK Trade Secrets Regulations 2018. Unauthorised cloning, scraping or commercial reuse of ColdDirect Voice AI requires an official B2B licence from ColdDirect Ltd (colddirect.co.uk).</p>" +
-          "<p>Watermark: " + MARK + "</p>" +
-          '<p><a href="' + LICENSE_HREF + '">Request Official B2B License</a></p>' +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-ip-close">Close</button>' +
-        "</div>" +
-      "</div>"
+      "</section>" +
+      '<button id="vapiLauncher" class="vapi-launcher" type="button" aria-controls="vapiPanel" aria-expanded="false">' +
+        '<svg class="vapi-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a9 9 0 0 0-9 9v3a3 3 0 0 0 3 3h1v-6H5a7 7 0 1 1 14 0h-2v7h-3v2h3a4 4 0 0 0 4-4v-5a9 9 0 0 0-9-9Z"/></svg>' +
+        "<span>" + TITLE + "</span>" +
+      "</button>"
     );
   }
 
+  function openPanel() {
+    panel.classList.add("is-open");
+    panel.setAttribute("aria-hidden", "false");
+    launcher.setAttribute("aria-expanded", "true");
+  }
+
+  function closePanel() {
+    panel.classList.remove("is-open");
+    panel.setAttribute("aria-hidden", "true");
+    launcher.setAttribute("aria-expanded", "false");
+  }
+
+  function setStatus(state, message) {
+    statusDot.className = "vapi-status-dot";
+    if (state) statusDot.classList.add("is-" + state);
+    statusText.textContent = message;
+  }
+
+  function setIdleState() {
+    callActive = false;
+    callStarting = false;
+    callButton.disabled = false;
+    callButton.classList.remove("is-active");
+    callLabel.textContent = TITLE;
+    setStatus("", "Ready to start a voice conversation.");
+  }
+
+  function keyLooksReady(key) {
+    return !!(key && key !== "YOUR_PUBLIC_API_KEY" && key.length > 8);
+  }
+
+  function fetchJson(url) {
+    return fetch(url, { credentials: "same-origin", cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("config");
+      return r.json();
+    });
+  }
+
+  function resolvePublicKey() {
+    if (keyLooksReady(window.CD_VAPI_PUBLIC_KEY)) {
+      return Promise.resolve(String(window.CD_VAPI_PUBLIC_KEY).trim());
+    }
+    var chain = Promise.reject(new Error("start"));
+    CONFIG_URLS.forEach(function (url) {
+      chain = chain.catch(function () { return fetchJson(url); });
+    });
+    return chain.then(function (data) {
+      var key = data && (data.publicKey || data.public_key || data.key);
+      if (keyLooksReady(key)) return String(key).trim();
+      throw new Error("missing-key");
+    });
+  }
+
+  function bindCall(instance) {
+    vapi = instance;
+    launcher.addEventListener("click", function () {
+      if (panel.classList.contains("is-open")) closePanel();
+      else openPanel();
+    });
+    closeButton.addEventListener("click", closePanel);
+    callButton.addEventListener("click", function () {
+      if (callStarting) return;
+      if (callActive) {
+        callButton.disabled = true;
+        callLabel.textContent = "Ending…";
+        setStatus("connecting", "Ending the conversation…");
+        try { vapi.stop(); } catch (e1) {}
+        return;
+      }
+      callStarting = true;
+      callButton.disabled = true;
+      callLabel.textContent = "Connecting…";
+      setStatus("connecting", "Requesting microphone access…");
+      Promise.resolve(vapi.start(ASSISTANT_ID)).catch(function (error) {
+        console.error("Unable to start Vapi call:", error);
+        setIdleState();
+        setStatus("error", "The call could not start. Check microphone permission and the Public API Key.");
+      });
+    });
+    vapi.on("call-start", function () {
+      callStarting = false;
+      callActive = true;
+      callButton.disabled = false;
+      callButton.classList.add("is-active");
+      callLabel.textContent = "End conversation";
+      setStatus("active", "Connected — speak in Persian or English.");
+    });
+    vapi.on("call-end", function () { setIdleState(); });
+    vapi.on("error", function (error) {
+      console.error("Vapi error:", error);
+      callStarting = false;
+      callActive = false;
+      callButton.disabled = false;
+      callButton.classList.remove("is-active");
+      callLabel.textContent = TITLE;
+      setStatus("error", "A voice connection error occurred. Please try again.");
+    });
+  }
+
   function mount() {
-    if (document.getElementById("cd-voice-root")) return;
-    document.documentElement.classList.add("cd-voice-on");
+    if (document.querySelector(".vapi-widget")) return;
+    document.documentElement.classList.remove("cd-voice-on");
+    var old = document.getElementById("cd-voice-root");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var oldCss = document.getElementById("cd-voice-bar-css");
+    if (oldCss && oldCss.parentNode) oldCss.parentNode.removeChild(oldCss);
+
     var style = document.createElement("style");
     style.id = "cd-voice-bar-css";
     style.textContent = css();
     document.head.appendChild(style);
 
-    root = document.createElement("div");
-    root.id = "cd-voice-root";
-    root.setAttribute("data-cd-ip", MARK);
-    root.setAttribute("role", "region");
-    root.setAttribute("aria-label", TITLE);
+    var root = document.createElement("div");
+    root.className = "vapi-widget";
+    root.setAttribute("data-cd-ip", "CD-UK-IP-2026-994821-VOICE-AI");
     root.innerHTML = html();
-    document.body.insertBefore(root, document.body.firstChild);
+    document.body.appendChild(root);
 
-    drawer = $("#cd-voice-drawer", root);
-    input = $("#cd-voice-input", root);
-    statusEl = $("#cd-voice-status", root);
-    speakBtn = $("#cd-voice-speak", root);
-    listenBtn = $("#cd-voice-listen", root);
-    toggleBtn = $("#cd-voice-toggle", root);
-    langEl = $("#cd-voice-lang", root);
-    cardEls = {
-      box: $("#cd-voice-card", root),
-      badge: $("#cd-voice-badge", root),
-      h3: $("#cd-voice-card-h", root),
-      summary: $("#cd-voice-summary", root),
-      causeLab: $("#cd-voice-cause-lab", root),
-      cause: $("#cd-voice-cause", root),
-      checksLab: $("#cd-voice-checks-lab", root),
-      checks: $("#cd-voice-checks", root),
-      spoken: $("#cd-voice-spoken", root)
-    };
+    panel = document.getElementById("vapiPanel");
+    launcher = document.getElementById("vapiLauncher");
+    closeButton = document.getElementById("vapiClose");
+    callButton = document.getElementById("vapiCallButton");
+    callLabel = document.getElementById("vapiCallLabel");
+    statusText = document.getElementById("vapiStatus");
+    statusDot = document.getElementById("vapiStatusDot");
 
-    langSel = readLangSel();
-    if (langEl) langEl.value = langSel;
-    markLangChips();
-    if (langEl) {
-      langEl.addEventListener("change", function () {
-        saveLangSel(langEl.value);
-        markLangChips();
-        if (langSel !== "auto") lastLang = langSel;
-        setStatus("Language: " + (LANG_LABEL[langSel] || langSel) + " — answers stay in this language.");
-      });
-    }
-    root.querySelectorAll(".cd-voice-lchip").forEach(function (b) {
-      b.addEventListener("click", function () {
-        saveLangSel(b.getAttribute("data-lang") || "auto");
-        markLangChips();
-        if (langSel !== "auto") lastLang = langSel;
-        openDrawer();
-        setStatus("Language: " + (LANG_LABEL[langSel] || langSel) + " — speak or type in this language.");
-      });
+    Promise.all([
+      resolvePublicKey(),
+      import(SDK)
+    ]).then(function (parts) {
+      var key = parts[0];
+      var mod = parts[1];
+      var Vapi = mod && (mod.default || mod.Vapi || mod);
+      if (!Vapi) throw new Error("sdk");
+      bindCall(new Vapi(key));
+    }).catch(function () {
+      setStatus("error", "Add your Vapi Public API Key to the HTML before using the widget.");
     });
-
-    function armSpeak() { unlockAudio(); primePlayer(); }
-    speakBtn.addEventListener("pointerdown", armSpeak);
-    speakBtn.addEventListener("touchstart", armSpeak, { passive: true });
-    speakBtn.addEventListener("click", function () { armSpeak(); toggleSpeak(); });
-    listenBtn.addEventListener("click", playDiagnosis);
-    $("#cd-voice-replay", root).addEventListener("click", function () { if (playing) stopPlayback(); playDiagnosis(); });
-    toggleBtn.addEventListener("click", toggleDrawer);
-    $("#cd-voice-ask", root).addEventListener("click", function () { primePlayer(); ask(input.value); });
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") { e.preventDefault(); primePlayer(); ask(input.value); }
-    });
-    root.querySelectorAll(".cd-voice-chip").forEach(function (b) {
-      b.addEventListener("click", function () {
-        primePlayer();
-        input.value = b.getAttribute("data-chip") || b.textContent;
-        ask(input.value);
-      });
-    });
-    $("#cd-voice-ip-link", root).addEventListener("click", function (e) {
-      e.preventDefault();
-      showShield("UK intellectual property of ColdDirect Ltd. Commercial licence required for any copy or reuse.");
-    });
-    $("#cd-voice-ip-close", root).addEventListener("click", hideShield);
-    $("#cd-voice-ip-modal", root).addEventListener("click", function (e) {
-      if (e.target.id === "cd-voice-ip-modal") hideShield();
-    });
-
-    root.addEventListener("contextmenu", function (e) {
-      e.preventDefault();
-      showShield("Unauthorised inspection or copying of this widget is blocked. UK Copyright Act 1988 & UK Trade Secrets Regulations 2018.");
-    });
-
-    bindFeedback();
-    warmVoices();
   }
 
   if (document.body) mount();
