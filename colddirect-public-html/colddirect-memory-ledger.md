@@ -21,6 +21,9 @@ No Vapi WebRTC (`?v=20261025z`). SPEAK records instantly; STOP & SEND kills the 
 
 ---
 
+### [2026-10-25ad] — درود greeting + green Like close (`?v=20261025aa`)
+- Custom TTS, not Vapi. Display `کولد دایرکت` / digit phones; audio `کُلد دایرِکت` + number-word groups. Title/H1/meta unchanged.
+
 ### [2026-10-25ac] — Persian display vs TTS brand/phones (`?v=20261025z`)
 - Transcript digits stay clickable. TTS uses phonetic brand and Persian number words. Title/H1/meta unchanged.
 

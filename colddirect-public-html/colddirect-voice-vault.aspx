@@ -77,8 +77,8 @@ string SystemPrompt()
         + "LANGUAGE MATCHING: Always reply 100 percent in the same language the user speaks. If the user speaks Persian, reply ONLY in Persian from the very first word. Never open a non-English answer with an English greeting. Never mix English into another language. "
         + "If the request names a selected language (fa, en, tr, ar), that language WINS even if SpeechRecognition text looks like English. "
         + "NATURAL PERSIAN: polite professional conversational Iranian Persian. شما and complete verbs. Never Dari or Urdu. Never robotic literal translations such as بررسی اولیه مهربانانه for gentle first check. Write the company name exactly as کولد دایرکت (never کل دایرکت, never کُلد). "
-        + "GREETING: start spoken_script with a warm welcome as the head engineer at Cold Direct. Persian exactly: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. English: Hello. I am the head engineer at Cold Direct. I am glad you chose our company. "
-        + "CLOSING: at the end of EVERY spoken_script politely ask for a like to help the site grow. Persian exactly: اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید. "
+        + "GREETING: start spoken_script with a warm welcome as the head engineer at Cold Direct. Persian exactly: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. English: Hello. I am the head engineer at Cold Direct. I am glad you chose our company. The speech layer pronounces کولد دایرکت as کُلد دایرِکت so it sounds like Cold Direct, never cool directed. "
+        + "CLOSING: at the end of EVERY spoken_script ask them to click the green Like and 5-Star Review button below. Persian exactly: اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید. "
         + "TONE: kind, gentle, polite. No street slang, no mate, no cheers, no don't panic. "
         + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Typed text is the transcript. "
         + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100 percent in that same language. "
@@ -296,7 +296,7 @@ string FallbackJson(string text, string hint)
         ? "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. "
         : EnIntro(first);
     string outro = lc == "fa"
-        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم برای ما یک لایک بگذارید."
+        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی 07983 759320 تماس بگیرید. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید."
         : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this guidance helped you and you would like to support the site, please leave us a like.";
 
     StringBuilder spoken = new StringBuilder(intro);
@@ -470,6 +470,23 @@ string LabelFor(string code, string name)
     }
 }
 
+const string GREET_FA_SCRIPT = "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. ";
+const string CLOSE_FA_SCRIPT = "اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید.";
+
+string EnsureSpokenFrame(string spoken, string code)
+{
+    if (spoken == null) spoken = "";
+    if (code == "fa")
+    {
+        spoken = Regex.Replace(spoken, "^\\s*(سلام|درود)[^.!?؟]*[.!?؟]?\\s*", "");
+        spoken = GREET_FA_SCRIPT + spoken.TrimStart();
+        if (!Regex.IsMatch(spoken, "لایک|ستاره|دکمه سبز"))
+            spoken = spoken.TrimEnd() + " " + CLOSE_FA_SCRIPT;
+        return spoken.Trim();
+    }
+    return spoken;
+}
+
 // Accepts any language. Only an empty or brush-off answer is rejected; a missing phone line is appended, never rejected.
 string ParseModelJson(string text)
 {
@@ -494,6 +511,7 @@ string ParseModelJson(string text)
         if (code == "fa") spoken += " برای هماهنگی، با شماره‌ی 07983 759320 تماس بگیرید.";
         else if (code == "en") spoken += " If you would like our help, please call 07983 759320.";
     }
+    if (code == "fa") spoken = EnsureSpokenFrame(spoken, code);
 
     Dictionary<string, object> o = new Dictionary<string, object>();
     o["ok"] = true;

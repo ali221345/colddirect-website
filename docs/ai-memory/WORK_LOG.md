@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25ad] — Force درود greeting + green Like close on live custom TTS (`?v=20261025aa`)
+- Live widget is not Vapi. Vault/JS now always open Persian with `درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.` (TTS `کُلد دایرِکت`) and close on the green Like & 5-Star Review button. Phone word-groups unchanged. Title/H1/meta unchanged.
+
 ### [2026-10-25ac] — Persian display vs TTS brand and phone numbers (`?v=20261025z`)
 - Transcript shows `کولد دایرکت` and clickable `07983 759320` / `0203 952 4822` / `0800 112 3427`. TTS/Piper input uses `کُلد دایرِکت` plus `صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر` / `صفر دو صفر سه، نه پنج دو، چهار هشت دو دو` / `صفر هشتصد، یک یک دو، سه چهار دو هفت`. Leftover 7+ digit runs are spelled digit-by-digit. Title/H1/meta unchanged.
 

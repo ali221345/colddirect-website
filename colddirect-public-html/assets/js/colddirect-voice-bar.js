@@ -17,8 +17,8 @@
     "/api/colddirect-voice-vault.php",
     "/api/colddirect-voice-vault.js"
   ];
-  var GREET_EN = "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ";
-  var GREET_FA = "سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید. ";
+  var GREET_EN = "Hello. I am the Head Engineer at Cold Direct. I am glad you chose our company. ";
+  var GREET_FA = "درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. ";
   var FA_PHONE_DIGITS = ["صفر", "یک", "دو", "سه", "چهار", "پنج", "شش", "هفت", "هشت", "نه"];
   var PHONE_TTS = {
     mobile: "صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر",
@@ -26,7 +26,7 @@
     free: "صفر هشتصد، یک یک دو، سه چهار دو هفت"
   };
   var CLOSING_EN = "If this advice helped you, please click the green Like and 5-Star Review button right below in this box to help our website grow.";
-  var CLOSING_FA = "اگر این راهنمایی برای شما مفید بود و دوست دارید به رشد سایت ما کمک کنید، ممنون می‌شویم دکمه لایک و ثبت نظر را در پایین همین صفحه بزنید.";
+  var CLOSING_FA = "اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید.";
   var SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
   var DIAGNOSE_MS = 20000;
   var TTS_MS = 12000;
@@ -317,9 +317,13 @@
     var fa = lang === "fa" || hasPersian(text);
     var g = fa ? GREET_FA : GREET_EN;
     var t = String(text || "").replace(/^\s+/, "");
+    if (fa) {
+      t = t.replace(/^(سلام|درود)[^.!?؟]*[.!?؟]?\s*/, "");
+      return (t ? g + t : g.trim());
+    }
+    t = t.replace(/^Hello\.\s*I am the Head Engineer[^.]*\.\s*/i, "");
     if (!t) return g.trim();
-    if (t.indexOf(g.slice(0, 18)) === 0) return t;
-    if (/^سلام/.test(t) || /^Hello\.\s*I am the Head Engineer/i.test(t) || /^درود،/.test(t)) return t;
+    if (/^Hello\.\s*I am the Head Engineer/i.test(t)) return t;
     return g + t;
   }
 

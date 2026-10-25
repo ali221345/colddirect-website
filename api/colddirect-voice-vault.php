@@ -116,10 +116,11 @@ CRITICAL LANGUAGE LOCK — ZERO MIXING:
 4. If any other language (Arabic, Turkish, Spanish, Hindi, etc.): reply 100% in that exact language only.
 
 Every spoken answer MUST:
-- Begin by introducing yourself as the Head Engineer at ColdDirect with 30 years of experience
+- Begin Persian replies exactly with: درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید.
 - Explain the fault warmly and clearly for a busy kitchen manager
 - Spell numbers and error codes phonetically (E1 = "E one")
-- End by kindly asking the customer to tap the Like button or leave a 5-star review so ColdDirect can improve and grow
+- End Persian replies exactly with: اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید.
+- The speech layer pronounces کولد دایرکت as کُلد دایرِکت so it sounds like Cold Direct, never cool directed. Phone digits stay as 07983 759320 / 0203 952 4822 / 0800 112 3427 in written JSON.
 
 Scope: commercial refrigeration and catering only (Foster, Williams, True, Polar, Gram, Hoshizaki, ice machines, cold rooms, cellar coolers, blast chillers). No domestic household appliances. If the customer asks something outside this, steer them back and offer a London engineer. Write the company name as کولد دایرکت. When giving a phone number, write the digits exactly as 07983 759320, 0203 952 4822 or 0800 112 3427 — never as one giant numeral. The speech layer converts those digits to Persian number-words.
 
@@ -214,7 +215,7 @@ function cd_fallback_pack(string $text): array
         ],
         'fa' => [
             'e1' => [
-                'spoken' => 'سلام. من سرمهندس شرکت کولد دایرکت هستم، سی ساله تو لندن روی یخچال و سردخونه و کترینگ کار کردم. گفتی فاستر کد ای‌وان نشون می‌ده — ای مثل حرف ای، وان یعنی عدد یک. معمولاً یعنی کابین گرم شده یا سنسور دما شل شده یا یخ زده. اول کندانسور بالای دستگاه رو ببین گردوخاک نبسته باشه، لاستیک در رو چک کن و ببین باد برگشتی بسته نشده. اگه دمای داخل از هشت درجه بالاتر رفته همون روز می‌آیم. لطفاً دکمه لایک یا پنج ستاره رو بزن تا کولد دایرکت بتونه رشد کنه. با شماره‌ی 07983 759320 تماس بگیرید.',
+                'spoken' => 'درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. گفتی فاستر کد ای‌وان نشون می‌ده — ای مثل حرف ای، وان یعنی عدد یک. معمولاً یعنی کابین گرم شده یا سنسور دما شل شده یا یخ زده. اول کندانسور بالای دستگاه رو ببین گردوخاک نبسته باشه، لاستیک در رو چک کن و ببین باد برگشتی بسته نشده. اگه دمای داخل از هشت درجه بالاتر رفته همون روز می‌آیم. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'کد ای‌وان فاستر معمولاً آلارم دمای بالا یا خرابی سنسور کابینه. یا یخچال گرم شده، یا پراب درست نمی‌خونه.',
                 'cause' => 'کندانسور کثیف، در باز مونده یا لاستیک ضعیف، جریان هوا بسته، یا سنسور خراب.',
                 'checks' => ['کندانسور بالا رو تمیز کن.', 'ببین در کامل بسته می‌شه و فن‌ها می‌چرخن.', 'اگه دما بالای ۸ درجه است با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیر.'],
@@ -232,7 +233,7 @@ function cd_fallback_pack(string $text): array
                 'checks' => ['در، پرده و لاستیک رو چک کن.', 'ببین لوله درین بازه.', 'موجودی رو حفظ کن و به ۰۷۹۸۳ ۷۵۹۳۲۰ زنگ بزن.'],
             ],
             'generic' => [
-                'spoken' => 'سلام. من سرمهندس شرکت کولد دایرکت هستم، سی ساله تو لندن روی سرمایش تجاری و کترینگ کار کردم. برند، کد خطا و اینکه کابین هنوز سرده یا نه رو بگو تا قدم‌به‌قدم راهنمایی‌ت کنم. اول کندانسور تمیز، در درست و جریان هوا. اگه مواد غذایی داره گرم می‌شه همون روز می‌رسیم. لطفاً لایک یا پنج ستاره بزن تا کولد دایرکت رشد کنه. با شماره‌ی 07983 759320 تماس بگیرید.',
+                'spoken' => 'درود، من سرپرست مهندسین در شرکت کولد دایرکت هستم و خوشحالم که ما را انتخاب کردید. برند، کد خطا و اینکه کابین هنوز سرده یا نه رو بگو تا قدم‌به‌قدم راهنمایی‌ت کنم. اول کندانسور تمیز، در درست و جریان هوا. اگه مواد غذایی داره گرم می‌شه همون روز می‌رسیم. اگر این راهنمایی برای شما مفید بود، لطفاً دکمه سبز لایک و ثبت نظر پنج‌ستاره را در پایین همین کادر بزنید. با شماره‌ی 07983 759320 تماس بگیرید.',
                 'summary' => 'برند، کد خطا و دمای فعلی رو بگو. بیشتر خرابی‌های صنفی از کندانسور، در و جریان هوا شروع می‌شه.',
                 'cause' => 'بدون برند و کد خطا دقیق نمی‌شه گفت؛ معمولاً کندانسور، کنترلر، گاز یا لاستیک در.',
                 'checks' => ['برند و کد روی کنترلر رو یادداشت کن.', 'کندانسور و لاستیک در رو چک کن.', 'اگه موجودی گرم می‌شه ۰۷۹۸۳ ۷۵۹۳۲۰.'],
