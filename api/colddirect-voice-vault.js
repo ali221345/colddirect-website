@@ -83,25 +83,25 @@ function fallbackPack(text) {
   else if (/cold room|ice-?up/.test(q)) kind = "room";
   var en = {
     e1: {
-      spoken: "Hello, I am the Head Engineer at ColdDirect. I have thirty years of hands-on commercial refrigeration and catering experience here in London. You mentioned a Foster fridge showing E one — that is E for Echo, one as in the number one. That is usually a high-temperature or probe alarm. Clean the condenser, check the door gasket, and keep stock off the return air. Please tap Helpful or leave a five-star review so ColdDirect can grow. Call oh seven nine eight three, seven five nine, three two oh.",
+      spoken: "You mentioned a Foster fridge showing E one — that is E for Echo, one as in the number one. That is usually a high-temperature or probe alarm. Clean the condenser, check the door gasket, and keep stock off the return air. Please tap Helpful or leave a five-star review so ColdDirect can grow. Call oh seven nine eight three, seven five nine, three two oh.",
       summary: "Foster E1 is typically a high-temperature or cabinet-probe alarm.",
       cause: "Dirty condenser, open door or weak gasket, blocked airflow, or a failed probe.",
       checks: ["Brush the condenser fins clean.", "Confirm the door seals and fans spin.", "If air is above 8°C call 07983 759320."]
     },
     ice: {
-      spoken: "Hello, I am the Head Engineer at ColdDirect, thirty years on ice machines across London. No ice usually means water, scale or heat rejection — not a dead machine. Check the tap, inlet filter, bin switch and condenser. Please tap Like or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
+      spoken: "No ice usually means water, scale or heat rejection — not a dead machine. Check the tap, inlet filter, bin switch and condenser. Please tap Like or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
       summary: "No ice usually means water supply, scale, a dirty condenser or a harvest/bin switch fault.",
       cause: "Closed stopcock, blocked filter, limescale, dirty condenser or a full-bin switch.",
       checks: ["Confirm water reaches the machine.", "Look for a thin uneven ice sheet — that is scale.", "Clean the condenser or call 07983 759320."]
     },
     room: {
-      spoken: "Hello, I am the Head Engineer at ColdDirect with thirty years on London walk-in cold rooms. Ice-up means the room cannot breathe — warm air in, or defrost has stopped. Do not chip the coil. Please tap Helpful or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
+      spoken: "Ice-up means the room cannot breathe — warm air in, or defrost has stopped. Do not chip the coil. Please tap Helpful or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
       summary: "Cold-room ice-up is usually door air ingress or a failed defrost cycle.",
       cause: "Open door, tired gasket, failed defrost heater or a blocked drain.",
       checks: ["Check door closer, curtains and gasket.", "See if the drain is clear.", "Protect stock and call 07983 759320."]
     },
     generic: {
-      spoken: "Hello, I am the Head Engineer at ColdDirect. I have thirty years of hands-on commercial refrigeration and catering experience in London. Tell me the make, the error code and whether the cabinet is still cold. Please tap the Like button or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
+      spoken: "Tell me the make, the error code and whether the cabinet is still cold. Please tap the Like button or leave a five-star review. Call oh seven nine eight three, seven five nine, three two oh.",
       summary: "Share the make, error code and whether the cabinet is still holding temperature.",
       cause: "Needs the symptom, brand and error code to narrow the fault.",
       checks: ["Note the brand, model and controller code.", "Feel the condenser and check the gasket.", "Call 07983 759320 if stock is warming."]

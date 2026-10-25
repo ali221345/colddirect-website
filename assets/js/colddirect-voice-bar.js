@@ -23,14 +23,14 @@
     "Cold Room Ice-Up"
   ];
   var MAX_MS = 60000;
-  var SILENCE_MS = 700;
-  var SR_SILENCE_MS = 700;
+  var SILENCE_MS = 3800;
+  var SR_SILENCE_MS = 3800;
   var NO_SPEECH_MS = 9000;
+  var API_MS = 1800;
   var PACE = 1;
   var TTS_RATE = 1.05;
   var SPEAK_LABEL = "🎤 SPEAK";
-  var STOP_LABEL = "⏹ STOP & SEND";
-  var GREET_EN = "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.";
+  var STOP_LABEL = "⏹ TAP WHEN DONE (Listening...)";
 
   var root, drawer, input, statusEl, speakBtn, listenBtn, toggleBtn;
   var cardEls = {};
@@ -60,6 +60,9 @@
   var srSilence = null;
   var kbCache = {};
   var voicesReady = false;
+  var dxSpeaking = false;
+  var keepAliveT = null;
+  var srFinal = "";
 
   function $(sel, el) { return (el || document).querySelector(sel); }
 
@@ -295,7 +298,7 @@
       summary: "E1 on a Dixell, Carel or Eliwell controller is a room-probe fault.",
       cause: "The room air probe is open-circuit, unplugged or shorted, so the controller cannot read cabinet temperature.",
       checks: ["Seat the probe plug on the controller.", "Look for a crushed or iced probe lead.", "If high-risk food is warming, call 07983 759320."],
-      spoken: GREET_EN + " E1 is a room probe fault on most commercial controllers. Check the probe plug is seated, then call 07983 759320 if the cabinet is warming."
+      spoken: "E1 is a room probe fault on most commercial controllers. Check the probe plug is seated, then call 07983 759320 if the cabinet is warming."
     },
     {
       re: /\b(p\s*1|p1)\b|room probe|air probe/i,
@@ -303,7 +306,7 @@
       summary: "P1 is the room / air probe alarm on Dixell and similar controllers.",
       cause: "The cabinet air probe is disconnected, iced, or reading out of range.",
       checks: ["Reseat the P1 probe connector.", "Thaw any ice around the probe bulb.", "Call 07983 759320 if temperature is still climbing."],
-      spoken: GREET_EN + " P1 is the room air probe alarm. Reseat the probe plug. If the fridge is still warming, call 07983 759320."
+      spoken: "P1 is the room air probe alarm. Reseat the probe plug. If the fridge is still warming, call 07983 759320."
     },
     {
       re: /\b(p\s*2|p2)\b|defrost probe|evaporator probe/i,
@@ -311,7 +314,7 @@
       summary: "P2 is the evaporator / defrost-probe alarm.",
       cause: "The coil probe is open, shorted or iced, so defrost cannot terminate correctly.",
       checks: ["Check the P2 probe on the evaporator.", "Clear solid ice from the coil if it is safe to do so.", "Call 07983 759320 for a same-day visit."],
-      spoken: GREET_EN + " P2 is the evaporator probe alarm. That probe sits on the coil and controls defrost. Call 07983 759320 if the coil is iced solid."
+      spoken: "P2 is the evaporator probe alarm. That probe sits on the coil and controls defrost. Call 07983 759320 if the coil is iced solid."
     },
     {
       re: /\bha\b|high temp(?:erature)? alarm|\bhi\b alarm/i,
@@ -319,7 +322,7 @@
       summary: "HA / Hi is a high-temperature alarm — the cabinet or cold room has gone above the set limit.",
       cause: "Warm air ingress, a dirty condenser, a failed fan, low gas, or a door left ajar.",
       checks: ["Close the door and check the gasket.", "Feel if the condenser is hot and clogged with grease.", "Move high-risk food and call 07983 759320."],
-      spoken: GREET_EN + " HA is a high temperature alarm. Close the door, check the seal, and call 07983 759320 if stock is warming."
+      spoken: "HA is a high temperature alarm. Close the door, check the seal, and call 07983 759320 if stock is warming."
     },
     {
       re: /not cooling|no cooling|not getting cold|won't cool|wont cool|warm fridge|fridge.*warm|cabinet.*warm/i,
@@ -327,7 +330,7 @@
       summary: "A commercial fridge that is not cooling is usually airflow, condenser dirt, or a control/compressor fault.",
       cause: "Blocked condenser, seized evaporator fan, iced coil, or a tripped compressor.",
       checks: ["Is the condenser at the back or top caked in grease?", "Is the evaporator fan spinning inside?", "Call 07983 759320 for same-day diagnosis."],
-      spoken: GREET_EN + " If the cabinet is not cooling, check the condenser is clean and the inner fan is spinning. Call 07983 759320 for same-day repair."
+      spoken: "If the cabinet is not cooling, check the condenser is clean and the inner fan is spinning. Call 07983 759320 for same-day repair."
     },
     {
       re: /icing up|ice[- ]up|iced up|frozen coil|evaporator.*ice|coil.*ice/i,
@@ -335,7 +338,7 @@
       summary: "Icing up means humid air is getting in or defrost has failed.",
       cause: "Split door gasket, failed defrost heater or termination probe, or stock blocking the coil.",
       checks: ["Check the door gasket with a paper test.", "Do not chip ice with a metal bar.", "Call 07983 759320 — we carry defrost heaters."],
-      spoken: GREET_EN + " Icing up is usually a door seal or a failed defrost. Do not smash the ice. Call 07983 759320."
+      spoken: "Icing up is usually a door seal or a failed defrost. Do not smash the ice. Call 07983 759320."
     },
     {
       re: /compressor (trip|tripping|overload|not starting)|overload trip|short cycl/i,
@@ -343,7 +346,7 @@
       summary: "A tripping compressor is overload, high head pressure, or a failed start device.",
       cause: "Dirty condenser, seized fan, weak start relay/capacitor, or a failing compressor.",
       checks: ["Switch off if it is clicking every few seconds.", "Clear grease from the condenser.", "Call 07983 759320 — do not keep resetting it."],
-      spoken: GREET_EN + " A compressor that keeps tripping needs a clean condenser and a start-device check. Call 07983 759320. Do not keep resetting it."
+      spoken: "A compressor that keeps tripping needs a clean condenser and a start-device check. Call 07983 759320. Do not keep resetting it."
     },
     {
       re: /ice machine|not making ice|no ice|hoshizaki|scotsman|ice-o-matic/i,
@@ -351,7 +354,7 @@
       summary: "An ice machine that is not making ice is usually scale, water inlet, or a harvest fault.",
       cause: "Scaled evaporator, closed water valve, failed inlet valve or dirty condenser.",
       checks: ["Confirm the water tap is open.", "Look for heavy white scale on the plate.", "Call 07983 759320 for a commercial ice-machine visit."],
-      spoken: GREET_EN + " If the ice machine is not making ice, open the water tap and check for scale. Call 07983 759320 for a same-day engineer."
+      spoken: "If the ice machine is not making ice, open the water tap and check for scale. Call 07983 759320 for a same-day engineer."
     },
     {
       re: /cold room|walk[- ]in|chiller room/i,
@@ -359,7 +362,71 @@
       summary: "A cold room climbing in temperature is door air, an iced evaporator, or a rooftop condensing unit fault.",
       cause: "Door left on the latch, torn gaskets, iced coil, dirty remote condenser, or a controller alarm.",
       checks: ["Close the door fully and check strip curtains.", "Look at the evaporator for a solid ice block.", "Call 07983 759320 for 24/7 cold room repair."],
-      spoken: GREET_EN + " For a cold room losing temperature, close the door and look at the evaporator for ice. Call 07983 759320 for 24/7 dispatch."
+      spoken: "For a cold room losing temperature, close the door and look at the evaporator for ice. Call 07983 759320 for 24/7 dispatch."
+    },
+    {
+      re: /walk[- ]in|chiller room|سردخانه/i,
+      language: "en", languageLabel: "English",
+      summary: "A walk-in chiller climbing in temperature is door air, an iced evaporator, or the remote pack.",
+      cause: "Door on the latch, torn gaskets, iced coil, or a dirty rooftop condenser.",
+      checks: ["Close the door and check strip curtains.", "Look at the evaporator for a solid ice block.", "Call 07983 759320."],
+      spoken: "A walk-in chiller that is warming is usually a door left on the latch, an iced evaporator, or a dirty remote condenser. Call 07983 759320."
+    },
+    {
+      re: /ice cream|soft[- ]serve|بستنی/i,
+      language: "en", languageLabel: "English",
+      summary: "An ice cream machine that will not freeze is usually mix, beaters, or a dirty condenser.",
+      cause: "Wrong mix, worn beaters, or a condenser choked with sugar dust.",
+      checks: ["Confirm the mix is in date and the hoppers are full.", "Wipe the condenser fins.", "Call 07983 759320."],
+      spoken: "If the ice cream machine will not freeze, check the mix and clean the condenser. Call 07983 759320."
+    },
+    {
+      re: /cellar|keg|beer cooler|خنک.?کننده.?سرداب/i,
+      language: "en", languageLabel: "English",
+      summary: "Cellar beer going warm is usually airflow, a glycol leak, or a tripped cellar pack.",
+      cause: "Blocked cellar cooler fins, low glycol, or a high-pressure trip.",
+      checks: ["Clear stock off the cellar cooler grille.", "Feel if the pack is running.", "Call 07983 759320."],
+      spoken: "Warm cellar beer is usually a blocked cellar cooler or a tripped pack. Call 07983 759320."
+    },
+    {
+      re: /air.?cond|ac unit|vrv|vrf|daikin|mitsubishi|کولر|تهویه/i,
+      language: "en", languageLabel: "English",
+      summary: "Commercial AC blowing warm is usually a dirty filter, a failed outdoor fan, or low R32/R410A.",
+      cause: "Blocked indoor filter, outdoor unit in trip, or a refrigerant leak.",
+      checks: ["Clean or replace the indoor filter.", "Look at the outdoor fan.", "Call 07983 759320."],
+      spoken: "If the air conditioning is blowing warm, clean the indoor filter and check the outdoor fan. Call 07983 759320."
+    },
+    {
+      re: /condenser|grease|dust on the back|کندانسر/i,
+      language: "en", languageLabel: "English",
+      summary: "A dirty condenser makes the cabinet warm and the compressor trip on high pressure.",
+      cause: "Grease and fluff blocking condenser fins.",
+      checks: ["Switch off and brush the condenser.", "Do not use a wet cloth on live electrics.", "Call 07983 759320 if it still trips."],
+      spoken: "A dirty condenser causes weak cooling and compressor trips. Switch off and brush it, then call 07983 759320 if it still trips."
+    },
+    {
+      re: /defrost|dEF|heater|کلکسیون برفک|دیفراست/i,
+      language: "en", languageLabel: "English",
+      summary: "A failed defrost leaves the evaporator as a solid ice block.",
+      cause: "Burnt defrost heater, failed termination probe, or a controller stuck in dEF.",
+      checks: ["Do not chip ice with a metal bar.", "Look for a solid white coil.", "Call 07983 759320 — we carry heaters."],
+      spoken: "Failed defrost ices the coil solid. Do not smash the ice. Call 07983 759320."
+    },
+    {
+      re: /gas leak|f-?gas|regas|refrigerant|low gas|نشت گاز/i,
+      language: "en", languageLabel: "English",
+      summary: "A refrigerant leak shows as weak cooling, oil stains, and a high-temperature alarm.",
+      cause: "A leak on a joint, evaporator, or cracked line — not a job for a top-up without a repair.",
+      checks: ["Do not keep adding gas.", "Look for oil around joints.", "Call 07983 759320 for leak test and F-Gas recovery."],
+      spoken: "A gas leak needs a proper leak test, not a top-up. Call 07983 759320."
+    },
+    {
+      re: /\b(e0|e2|hf|da|la|ah1)\b|carel|dixell|eliwell/i,
+      language: "en", languageLabel: "English",
+      summary: "Carel, Dixell and Eliwell alarms are probe, door or high-temperature faults — not a dead compressor yet.",
+      cause: "Probe error (E0/E1/E2/P1/P2), door alarm (dA), or high-temperature (HA/HF/AH1).",
+      checks: ["Write down the exact code on the display.", "Reseat the probe plugs.", "Call 07983 759320 with the code."],
+      spoken: "That controller code is usually a probe, door or high-temperature alarm. Write it down and call 07983 759320."
     }
   ];
 
@@ -375,6 +442,41 @@
       }
     }
     return null;
+  }
+
+  function stripFiller(text) {
+    var t = String(text || "");
+    t = t.replace(/^Hello po\.\s*Ako ang Head Engineer[^.]*\.\s*Natutuwa[^.]*\.\s*/i, "");
+    t = t.replace(/^Hello[.,]?\s*I am the Head Engineer[\s\S]*?(?:company|ColdDirect)[^.]*\.\s*/i, "");
+    t = t.replace(/^I am (the )?head (engineer )?of (the )?(Cold\s*)?Direct[^.]*\.\s*/i, "");
+    t = t.replace(/^I'm the Head Engineer[^.]*\.\s*/i, "");
+    t = t.replace(/^سلام[^.]*کُلد دایرِکت هستم[^.]*\.\s*/g, "");
+    t = t.replace(/^سلام و درود[^.]*\.\s*/g, "");
+    return t.replace(/^\s+/, "");
+  }
+
+  function instantDiagnose(q) {
+    var hit = kbLookup(q);
+    if (hit) return hit;
+    var fa = /[\u0600-\u06FF]/.test(q || "");
+    if (fa) {
+      return {
+        language: "fa",
+        languageLabel: "Persian",
+        summary: "احتمال زیاد کندانسور کثیف، فن اواپراتور، یا نشتی/ضعف کمپرسور است.",
+        cause: "گرد و غبار روی کندانسور، یخ‌زدگی کویل، یا ایراد کنترلر.",
+        checks: ["کندانسور را بررسی کنید.", "در را ببندید و واشر را چک کنید.", "با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیرید."],
+        spoken: "احتمال زیاد کندانسور کثیف است یا فن اواپراتور یخ زده. در را ببندید، کندانسور را تمیز کنید و اگر دما بالا رفت با صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید."
+      };
+    }
+    return {
+      language: "en",
+      languageLabel: "English",
+      summary: "Most commercial refrigeration faults come down to a dirty condenser, an iced evaporator, or a controller/compressor trip.",
+      cause: "Blocked condenser fins, iced coil or failed door seal, or a compressor that is short-cycling.",
+      checks: ["Brush the condenser if it is safe to isolate.", "Check the door gasket and that the inner fan is spinning.", "Call 07983 759320 for same-day London engineers."],
+      spoken: "Likely cause: a dirty condenser, an iced evaporator, or a compressor trip. Quick checks: isolate and brush the condenser, confirm the door shuts true, and see if the inner fan is spinning. If stock is warming, call 07983 759320."
+    };
   }
 
   function pickVoice(code) {
@@ -413,6 +515,8 @@
       u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" }[code] || code);
       u.onend = function () {
         playing = false;
+        dxSpeaking = false;
+        stopKeepAlive();
         listenBtn.classList.remove("is-on");
         listenBtn.setAttribute("aria-pressed", "false");
         if (onend) onend();
@@ -421,6 +525,7 @@
       listenBtn.classList.add("is-on");
       listenBtn.setAttribute("aria-pressed", "true");
       window.speechSynthesis.speak(u);
+      startKeepAlive();
       return true;
     } catch (e) {
       if (onend) onend();
@@ -428,25 +533,41 @@
     }
   }
 
-  function speakFallback(text, lang) {
-    if (!text || !window.speechSynthesis) return false;
+  function stopKeepAlive() {
+    if (keepAliveT) { clearInterval(keepAliveT); keepAliveT = null; }
+  }
+
+  function startKeepAlive() {
+    stopKeepAlive();
+    keepAliveT = setInterval(function () {
+      if (!window.speechSynthesis || !window.speechSynthesis.speaking) {
+        stopKeepAlive();
+        return;
+      }
+      try {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      } catch (e) {}
+    }, 10000);
+  }
+
+  function speakDiagnosis(text, lang) {
+    var clean = stripFiller(text);
+    if (!clean) return false;
+    lastSpoken = clean;
+    lastLang = lang || lastLang || "en";
+    dxSpeaking = true;
     try { window.speechSynthesis.cancel(); } catch (e) {}
-    return speakChunk(text, lang);
+    return speakChunk(clean, lang);
+  }
+
+  function speakFallback(text, lang) {
+    if (dxSpeaking && window.speechSynthesis && window.speechSynthesis.speaking) return true;
+    return speakDiagnosis(text, lang);
   }
 
   function speakStream(full, lang) {
-    lastSpoken = full || "";
-    lastLang = lang || lastLang || "en";
-    var first = firstSentence(full);
-    var rest = String(full || "").slice(first.length).trim();
-    if (!first) return false;
-    return speakChunk(first, lang, function () {
-      if (parts.length) {
-        playQueue();
-        return;
-      }
-      if (rest) speakChunk(rest, lang);
-    });
+    return speakDiagnosis(full, lang);
   }
 
   function playDiagnosis() {
@@ -482,21 +603,24 @@
       li.textContent = c;
       cardEls.checks.appendChild(li);
     });
-    cardEls.spoken.textContent = data.spoken || "";
+    cardEls.spoken.textContent = stripFiller(data.spoken || "");
     cardEls.box.hidden = false;
-    lastSpoken = data.spoken || data.summary || "";
+    lastSpoken = stripFiller(data.spoken || data.summary || "");
     lastLang = data.language || "en";
     parts = data.audio && data.audio.data ? [data.audio] : [];
     partsDone = true;
   }
 
-  function postVault(payload) {
+  function postVault(payload, timeoutMs) {
     var i = 0;
+    var ms = timeoutMs == null ? API_MS : timeoutMs;
     function tryNext(err) {
       if (i >= ENDPOINTS.length) {
         return Promise.reject(err || new Error("Voice vault unavailable"));
       }
       var url = ENDPOINTS[i++];
+      var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+      var timer = ms && ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e0) {} }, ms) : null;
       return fetch(url, {
         method: "POST",
         credentials: "same-origin",
@@ -505,7 +629,8 @@
           "X-CD-IP": MARK,
           "Accept": "application/json"
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: ctrl ? ctrl.signal : undefined
       }).then(function (res) {
         if (res.status === 404 || res.status === 405) return tryNext(new Error("skip"));
         return res.text().then(function (txt) {
@@ -518,24 +643,28 @@
           return json;
         });
       }).catch(function (e) {
+        if (e && e.name === "AbortError") throw e;
         if (i < ENDPOINTS.length) return tryNext(e);
         throw e;
+      }).finally(function () {
+        if (timer) clearTimeout(timer);
       });
     }
     return tryNext();
   }
 
   function requestVoice(data, seq) {
-    var full = data.spoken || data.summary || "";
+    var full = stripFiller(data.spoken || data.summary || "");
+    if (dxSpeaking && window.speechSynthesis && window.speechSynthesis.speaking) {
+      lastSpoken = full || lastSpoken;
+      return;
+    }
     var first = firstSentence(full);
     var rest = full.slice(first.length).trim();
     lastSpoken = full;
     lastLang = data.language || lastLang || "en";
     if (first) {
-      speakChunk(first, lastLang, function () {
-        if (parts.length) playQueue();
-        else if (rest && !voicePending) speakChunk(rest, lastLang);
-      });
+      speakDiagnosis(full, lastLang);
     }
     if (!data.spoken || data.voice === "browser-no-key" || !rest) {
       voicePending = false;
@@ -598,20 +727,15 @@
     unlockAudio();
     openDrawer();
     stopPlayback();
-    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e0) {}
     parts = [];
     partsDone = true;
     root.classList.add("is-busy");
     setStatus("Diagnosing fault...");
-    var fast = kbLookup(q);
-    if (fast) {
-      if (seq !== askSeq) return;
-      fillCard(fast);
-      setStatus(langStatus(fast));
-      root.classList.remove("is-busy");
-      speakStream(fast.spoken, fast.language);
-      return;
-    }
+    var fast = instantDiagnose(q || "commercial refrigeration fault");
+    fillCard(fast);
+    setStatus(langStatus(fast));
+    root.classList.remove("is-busy");
+    speakDiagnosis(fast.spoken, fast.language);
     var payload = {
       mode: "diagnose",
       text: q,
@@ -623,21 +747,15 @@
       payload.audio = audio.data;
       payload.mime = audio.mime || "audio/webm";
     }
-    postVault(payload).then(function (data) {
+    if (!q && !audio) return;
+    postVault(payload, API_MS).then(function (data) {
       if (seq !== askSeq) return;
       if (data.transcript) input.value = data.transcript;
+      if (data.spoken) data.spoken = stripFiller(data.spoken);
       fillCard(data);
       setStatus(langStatus(data));
-      root.classList.remove("is-busy");
-      if (data.audio && data.audio.data) {
-        playBytes(b64ToBytes(data.audio.data), data.audio.mime);
-      } else {
-        requestVoice(data, seq);
-      }
-    }).catch(function (err) {
+    }).catch(function () {
       if (seq !== askSeq) return;
-      root.classList.remove("is-busy");
-      setStatus(err && err.message ? err.message : "Diagnosis unavailable. Call 07983 759320.");
     });
   }
 
@@ -702,36 +820,42 @@
     }
   }
 
-  function startSpeechRec() {
+  function startSpeechRec(keep) {
     var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!Ctor) return false;
     try {
-      srText = "";
+      if (!keep) {
+        srText = "";
+        srFinal = "";
+      }
       sr = new Ctor();
       sr.interimResults = true;
-      sr.continuous = false;
+      sr.continuous = true;
       sr.maxAlternatives = 1;
       sr.lang = navigator.language || "en-GB";
       sr.onresult = function (ev) {
-        var piece = "";
+        var finals = "";
+        var inter = "";
         for (var i = 0; i < ev.results.length; i++) {
-          piece += ev.results[i][0].transcript;
+          if (ev.results[i].isFinal) finals += ev.results[i][0].transcript + " ";
+          else inter += ev.results[i][0].transcript;
         }
-        piece = piece.replace(/\s+/g, " ").trim();
-        if (piece) {
-          srText = piece;
-          if (input) input.value = piece;
+        if (finals.replace(/\s+/g, " ").trim()) {
+          srFinal = (srFinal + " " + finals).replace(/\s+/g, " ").trim();
         }
+        srText = (srFinal + " " + inter).replace(/\s+/g, " ").trim();
+        if (input && srText) input.value = srText;
+        if (!srText) return;
         if (srSilence) clearTimeout(srSilence);
         srSilence = setTimeout(function () {
           srSilence = null;
-          try { if (sr) sr.stop(); } catch (e2) {}
           finishRec();
         }, SR_SILENCE_MS);
       };
       sr.onerror = function () { /* MediaRecorder / type-in still work */ };
       sr.onend = function () {
-        if (recording && srText) finishRec();
+        if (!recording) return;
+        try { sr.start(); } catch (e2) { startSpeechRec(true); }
       };
       sr.start();
       return true;

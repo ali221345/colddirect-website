@@ -77,13 +77,9 @@ string SystemPrompt()
         + "TONE: kind, gentle, polite and reassuring — a senior expert helping a valued client. No street slang, no 'mate', no 'cheers', no 'don't panic', no aggressive urgency. "
         + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Detect the language from the speech or typed text. Typed text is the transcript. "
         + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100% in that same language, written as a native of that country. Never translate English word-for-word. Never mix English into another language except the company name ColdDirect where that language uses Latin letters. "
-        + "MANDATORY OPENING — spoken_script MUST begin with these exact sentences in the customer's language, then a space, then the answer. Do not add extra welcome lines before them. "
-        + "English: 'Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.' "
-        + "Persian: 'سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.' "
-        + "Tagalog/Filipino: 'Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.' "
-        + "Any other language: translate 'Hello. I am the Head Engineer at ColdDirect. I am glad you chose our company.' naturally into that language (Arabic, Turkish, Spanish, Hindi, Polish, Kurdish Kurmanji or Sorani, French, Chinese, and so on), then continue. "
+        + "Do NOT introduce yourself. Do NOT say you are the Head Engineer. Do NOT start with Hello or any welcome filler. spoken_script starts with the diagnosis. "
         + "Persian: fluent polite Iranian Farsi only. شما, complete verbs. Never Dari or Urdu. Write ColdDirect as کُلد دایرِکت and spell numbers and error codes in Persian words. "
-        + "Immediately after the opening, answer the customer's exact fault clearly and accurately. No generic filler. One or two gentle checks they can do now. "
+        + "Answer the customer's exact fault clearly and accurately. No generic filler. One or two gentle checks they can do now. "
         + "Noise: fan hitting ice, worn fan bearings, or a clicking start relay — opening the door is a kind first check. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water: blocked drain or overflowing tray. Trip: motor shorting, burned plug, dead board. If they only say it is broken, give the top three causes gently. NEVER brush them off. "
         + "End gently: offer help on 07983 759320 in that language's own number words (English: 'zero seven nine eight three, seven five nine, three two zero'; Persian: 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر') and politely ask for a like or five-star review on this page if the answer helped. Never call it a video. London only. "
         + "spoken_script: one paragraph under 130 words. summary names the cause. No fillers or stammers. Commercial refrigeration and catering only. "
@@ -247,7 +243,7 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
 
 string EnIntro(string sym)
 {
-    return "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ";
+    return "";
 }
 
 string EnLead(string sym)
@@ -295,9 +291,7 @@ string FallbackJson(string text)
     bool fosterE1 = code == "E1" && Has(q, "foster|فاستر");
 
     string first = syms[0];
-    string intro = lc == "fa"
-        ? "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. "
-        : EnIntro(first);
+    string intro = "";
     string outro = lc == "fa"
         ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این پاسخ برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
         : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this answer helped you, please tap Like or leave a five-star review on this page. Thank you.";

@@ -172,7 +172,7 @@ function cd_fallback_pack(string $text): array
     $packs = [
         'en' => [
             'e1' => [
-                'spoken' => 'Hello, I am the Head Engineer at ColdDirect. I have thirty years of hands-on commercial refrigeration and catering experience here in London. You mentioned a Foster fridge showing E one — that is E for Echo, one as in the number one. On Foster controllers that is usually a high-temperature or probe alarm: the cabinet has climbed above the safe band, or the air probe is loose, iced or failed. Before we roll an engineer, feel the top condenser for thick dust, check the door gasket is sucking shut, and make sure stock is not blocking the return air. If food is above eight degrees Celsius we should attend the same day. Please tap Helpful or leave a five-star review so ColdDirect can keep growing and looking after more London kitchens. If you want us on site, call oh seven nine eight three, seven five nine, three two oh.',
+                'spoken' => 'You mentioned a Foster fridge showing E one — that is E for Echo, one as in the number one. On Foster controllers that is usually a high-temperature or probe alarm: the cabinet has climbed above the safe band, or the air probe is loose, iced or failed. Before we roll an engineer, feel the top condenser for thick dust, check the door gasket is sucking shut, and make sure stock is not blocking the return air. If food is above eight degrees Celsius we should attend the same day. Please tap Helpful or leave a five-star review so ColdDirect can keep growing and looking after more London kitchens. If you want us on site, call oh seven nine eight three, seven five nine, three two oh.',
                 'summary' => 'Foster E1 is typically a high-temperature or cabinet-probe alarm. The fridge has gone warm, or the sensor is not reading true air temperature.',
                 'cause' => 'Dirty condenser, door left open or a weak gasket, blocked airflow, or a failed air/evaporator probe.',
                 'checks' => [
@@ -182,7 +182,7 @@ function cd_fallback_pack(string $text): array
                 ],
             ],
             'ice' => [
-                'spoken' => 'Hello, I am the Head Engineer at ColdDirect, thirty years on ice machines and catering kit across London. If the ice machine is not making ice, we almost always start with water, scale and heat rejection — not a new machine. Check the tap is open, the inlet filter is not clogged, the bin switch is not held down, and the condenser is clean. A scaled evaporator will freeze a skin of ice and then stop harvesting. If the water filter is months overdue, that is a very common London-pub fault. Please tap Like or leave a five-star review to help ColdDirect grow. Need us there? Call oh seven nine eight three, seven five nine, three two oh.',
+                'spoken' => 'If the ice machine is not making ice, we almost always start with water, scale and heat rejection — not a new machine. Check the tap is open, the inlet filter is not clogged, the bin switch is not held down, and the condenser is clean. A scaled evaporator will freeze a skin of ice and then stop harvesting. If the water filter is months overdue, that is a very common London-pub fault. Please tap Like or leave a five-star review to help ColdDirect grow. Need us there? Call oh seven nine eight three, seven five nine, three two oh.',
                 'summary' => 'No ice usually means water supply, scale on the evaporator, a dirty condenser, or a harvest/bin switch fault — not necessarily a dead compressor.',
                 'cause' => 'Closed stopcock, blocked inlet filter, limescale, dirty condenser, or a bin thermostat that thinks the bin is full.',
                 'checks' => [
@@ -192,7 +192,7 @@ function cd_fallback_pack(string $text): array
                 ],
             ],
             'room' => [
-                'spoken' => 'Hello, I am the Head Engineer at ColdDirect with thirty years on London walk-in cold rooms. Ice-up on the evaporator is the room telling you it cannot breathe. Warm moist air is getting in, or defrost has stopped. Check the door closer and curtain, feel whether the coil is a solid white block, and see if the drain is dripping or frozen. If the coil is iced solid, do not chip it — turn the room off, leave the door ajar with stock protected, and let us recover it properly. Please tap Helpful or leave a five-star review so ColdDirect can keep improving. For same-day help call oh seven nine eight three, seven five nine, three two oh.',
+                'spoken' => 'Ice-up on the evaporator is the room telling you it cannot breathe. Warm moist air is getting in, or defrost has stopped. Check the door closer and curtain, feel whether the coil is a solid white block, and see if the drain is dripping or frozen. If the coil is iced solid, do not chip it — turn the room off, leave the door ajar with stock protected, and let us recover it properly. Please tap Helpful or leave a five-star review so ColdDirect can keep improving. For same-day help call oh seven nine eight three, seven five nine, three two oh.',
                 'summary' => 'Cold-room ice-up is usually door air ingress or a failed defrost cycle. A solid white coil cannot absorb heat.',
                 'cause' => 'Door left open or a tired gasket, failed defrost heater or probe, or a blocked drain that ices the tray and coil.',
                 'checks' => [
@@ -202,7 +202,7 @@ function cd_fallback_pack(string $text): array
                 ],
             ],
             'generic' => [
-                'spoken' => 'Hello, I am the Head Engineer at ColdDirect. I have thirty years of hands-on commercial refrigeration and catering experience in London. Tell me the make, the error code and whether the cabinet is still cold, and I will talk you through the safe checks. Typical first steps are a clean condenser, a door that shuts true, and airflow that is not blocked by stock. If food safety is at risk we can be with you the same day. Please tap the Like button or leave a five-star review to help ColdDirect grow. Call oh seven nine eight three, seven five nine, three two oh whenever you want an engineer.',
+                'spoken' => 'Tell me the make, the error code and whether the cabinet is still cold, and I will talk you through the safe checks. Typical first steps are a clean condenser, a door that shuts true, and airflow that is not blocked by stock. If food safety is at risk we can be with you the same day. Please tap the Like button or leave a five-star review to help ColdDirect grow. Call oh seven nine eight three, seven five nine, three two oh whenever you want an engineer.',
                 'summary' => 'Describe the make, error code and whether the cabinet is still holding temperature. Most trade faults start with condenser, door and airflow.',
                 'cause' => 'Needs the symptom, brand and error code to narrow — condenser, controls, refrigerant or door integrity are the usual London call-outs.',
                 'checks' => [
@@ -220,13 +220,13 @@ function cd_fallback_pack(string $text): array
                 'checks' => ['کندانسور بالا رو تمیز کن.', 'ببین در کامل بسته می‌شه و فن‌ها می‌چرخن.', 'اگه دما بالای ۸ درجه است با ۰۷۹۸۳ ۷۵۹۳۲۰ تماس بگیر.'],
             ],
             'ice' => [
-                'spoken' => 'سلام، من سرمهندس کلد دایرکت‌ام، سی ساله تو لندن یخساز و کترینگ درست کردم. اگه یخساز یخ نمی‌ده اول آب و رسوب و گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یخ نازک می‌زنه و دیگه رها نمی‌کنه. لایک یا پنج ستاره بزن تا کمک کنی رشد کنیم. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'اگه یخساز یخ نمی‌ده اول آب و رسوب و گرما رو چک می‌کنیم، نه اینکه دستگاه رو عوض کنیم. شیر آب باز باشه، فیلتر نگرفته باشه، سوییچ مخزن گیر نکرده باشه و کندانسور تمیز باشه. اواپراتور رسوب‌گرفته یخ نازک می‌زنه و دیگه رها نمی‌کنه. لایک یا پنج ستاره بزن تا کمک کنی رشد کنیم. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
                 'summary' => 'نبودن یخ معمولاً از آب، رسوب اواپراتور، کندانسور کثیف یا سوییچ مخزنه؛ لزوماً کمپرسور نمرده.',
                 'cause' => 'شیر بسته، فیلتر گرفته، رسوب، کندانسور کثیف یا ترموستات مخزن که فکر می‌کنه پره.',
                 'checks' => ['ببین آب به دستگاه می‌رسه.', 'اگه ورقه یخ نازک و ناهماهنگه، رسوبه.', 'کندانسور رو تمیز کن و اگر درست نشد ۰۷۹۸۳ ۷۵۹۳۲۰.'],
             ],
             'room' => [
-                'spoken' => 'سلام، من سرمهندس کلد دایرکت‌ام، سی ساله سردخونه‌های لندن رو درست کردم. یخ زدن اواپراتور یعنی اتاق نفس نمی‌کشه. یا هوای گرم داره می‌آد تو، یا برفک‌زدایی خوابیده. در و پرده و لاستیک رو ببین، کویل رو لمس کن ببین یخ سفید یکدست شده یا نه. اگه کویل یخ زده جامد، یخ رو نشکون — دستگاه رو خاموش کن، در رو یک‌کم باز بذار و بذار ما درست جمعش کنیم. لایک یا پنج ستاره بزن لطفاً. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
+                'spoken' => 'یخ زدن اواپراتور یعنی اتاق نفس نمی‌کشه. یا هوای گرم داره می‌آد تو، یا برفک‌زدایی خوابیده. در و پرده و لاستیک رو ببین، کویل رو لمس کن ببین یخ سفید یکدست شده یا نه. اگه کویل یخ زده جامد، یخ رو نشکون — دستگاه رو خاموش کن، در رو یک‌کم باز بذار و بذار ما درست جمعش کنیم. لایک یا پنج ستاره بزن لطفاً. زنگ بزن صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.',
                 'summary' => 'یخ زدن سردخانه معمولاً از نفوذ هوا از در یا خوابیدن سیکل دیفراسته.',
                 'cause' => 'در باز، لاستیک ضعیف، هیتر یا پراب دیفراست خراب، یا درین گرفته.',
                 'checks' => ['در، پرده و لاستیک رو چک کن.', 'ببین لوله درین بازه.', 'موجودی رو حفظ کن و به ۰۷۹۸۳ ۷۵۹۳۲۰ زنگ بزن.'],
