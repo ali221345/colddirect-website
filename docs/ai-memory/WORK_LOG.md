@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25q] — Hero-top Ask Your Fault + live transcript + like CTA (`?v=20261025j`)
+- Bar sits in the hero wrap immediately before H1 (below nav, above the headline). SPEAK opens a dark transcript panel. Vapi `transcript` / `conversation-update` type live (RTL for Persian). Like/review CTA highlights when the assistant finishes. Title/H1/meta unchanged.
+
 ### [2026-10-25p] — Restore dark Ask Your Fault bar above the slider (`?v=20261025i`)
 - Dark SPEAK/LISTEN bar sits in-flow immediately before `#home-slider` (homepage) or the first hero image (service pages). Title `Ask Your Fault`. Badge `Lang: Auto` only. Buttons start the existing Vapi assistant. No floating corner widget. Title/H1/meta unchanged.
 
