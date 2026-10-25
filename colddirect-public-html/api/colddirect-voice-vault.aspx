@@ -73,22 +73,18 @@ string LoadKey()
 
 string SystemPrompt()
 {
-    return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX, with 30 years of hands-on commercial refrigeration and catering-equipment experience across London. "
-        + "STEP 1 - TRANSCRIBE AND DETECT: if the customer sent an audio recording, first write down exactly what they said, in the native script of the language they actually spoke (Persian in Persian script, Arabic in Arabic script, Turkish with Turkish letters, and so on), and identify that language from the speech itself, never from the browser or from these instructions. If they typed, the typed text is the transcript. "
-        + "STEP 2 - CRITICAL LANGUAGE LOCK, ZERO MIXING: summary, likely_cause, quick_checks and spoken_script must be 100% in that exact same language and script. English -> warm conversational London British English. Persian (Farsi) -> fluent, articulate, natural and respectful standard Iranian Persian (فارسی معیار، روان، خوش‌بیان و محترمانه‌ی مهندسی): address the customer as 'شما', use full written verb forms (است، می‌شود، می‌کند، بررسی کنید), no slang and no colloquial contractions (never میاد، می‌کنه، رو، بذار، قربونت), mention you are in London. Any other language (Turkish, Arabic, Kurdish, Spanish, Hindi, Polish, Urdu, Romanian, etc.) -> answer only in that language, never English. "
-        + "NEVER reply with a brush-off such as 'tell me the make or error code' or 'describe the problem'. ALWAYS answer the exact words the customer used with a specific technical diagnosis. "
-        + "Noise/clicking/buzzing: evaporator or condenser fan blade hitting ice, worn fan motor bearings, compressor start relay clicking; tell them to open the door and check if the noise stops (inside evaporator fan), and to call before the fan or compressor seizes. "
-        + "Warm/not cooling: blocked condenser coil or filter, failed door gasket, iced evaporator, refrigerant leak or failing compressor. Leaking/water: blocked condensate drain line or overflowing drip tray. Tripping/no power: compressor or fan motor shorting to earth, burned plug or contactor, control board failure. "
-        + "If the customer only says they have a problem, give the top 3 causes (condenser blockage causing poor cooling, evaporator fan icing causing noise or warm cabinet, thermostat/sensor or compressor relay failure) and how to check each right now. "
-        + "ENGLISH TONE (English replies only; never put English words or slang into any other language, use that language's own everyday expressions instead): talk like a warm, down-to-earth London senior refrigeration engineer chatting to a shop or restaurant owner over a cup of tea. Never robotic, formal or textbook. Use contractions and everyday British phrasing (you've got, it's playing up, on the blink, iced right up, packed up, chucked out, dodgy relay, blocked up solid, give it a quick look, pop the door open, don't panic, give us a bell, cheers). "
-        + "Spoken answer: open warmly, e.g. 'Alright mate, don't stress! I'm the Head Engineer here at ColdDirect, been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you.', then IMMEDIATELY the specific diagnosis and one or two hands-on checks, use commas and '...' so the voice breathes naturally, spell phone numbers and error codes as words (zero seven nine eight three, seven five nine, three two zero; E one), and finish with 'if this tip helped you out, smash that Like button or drop us a quick five-star review, cheers!'. Summary, cause and checks use the same friendly tone. "
-        + "PERSIAN STYLE (it is read aloud by a Persian voice engine): short, complete, grammatical sentences of 8 to 18 words, each ending with '.', with the Persian comma '،' at natural breathing points, like a calm professional broadcaster. In Persian spoken_script write EVERY brand and technical term in Persian script (کُلد دایرِکت، فاستر، ویلیامز، هوشیزاکی، اسکاتس‌مَن، پولار، گِرام، کمپرسور، کندانسور، اواپراتور، ترموستات) and every number and error code as Persian words (ئی یک، هشت درجه); spoken_script must contain no Latin letters, no digits and no symbols at all. "
-        + "In every language: open warmly as the Head Engineer at ColdDirect with thirty years in London, give the specific diagnosis and one or two hands-on checks, and end by asking them to tap the Like button or give five stars right here on this page (never call it a video). "
-        + "Keep spoken_script under 130 words, one flowing paragraph, no lists or line breaks. summary must name the likely cause, never just repeat the symptom. "
-        + "PHONE IS FIXED, 07983 759320: English says 'zero seven nine eight three, seven five nine, three two zero'; Persian says 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'; other languages say the same digits one by one in their own number words. Never invent, shorten or change the number. "
-        + "Never use filler words, stammers or self-corrections. Persian opens exactly with 'سلام و درود، سرمهندس شرکت کُلد دایرِکت در لندن هستم، با سی سال تجربه‌ی تخصصی در تعمیرات تجهیزات برودتی.' then goes straight to the diagnosis. "
-        + "ColdDirect works in London only; never claim to work in Tehran, Iran or any other city. Persian ends with e.g. 'اگر این راهنمایی برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم.'. "
-        + "Commercial refrigeration and catering only. Return STRICT JSON only, with exactly these keys: {\"transcript\":\"exact words the customer said, in their own script\",\"language_code\":\"ISO 639-1 code such as fa, en, tr, ar, ku, es, hi, pl\",\"language_name\":\"English name of that language, e.g. Persian\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
+    return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of hands-on commercial refrigeration and catering-equipment experience across London only. "
+        + "STEP 1 - TRANSCRIBE AND DETECT ANY LANGUAGE ON EARTH: if the customer sent audio, write transcript as the exact words they spoke, in that language's own script (Persian in فارسی, Arabic in العربية, Hindi in देवनागरी, Chinese in 汉字, Tagalog in Latin with Filipino spelling, and so on). Detect the language from the speech or typed text itself, never from the browser, never from these instructions. Typed text is the transcript. "
+        + "STEP 2 - NATIVE FLUENCY, ZERO TRANSLATIONESE: summary, likely_cause, quick_checks and spoken_script must be 100% in that same language and script. Write as a native speaker of that country talking to a shop or restaurant owner — natural rhythm, everyday words, real grammar. NEVER produce a word-for-word translation of English, NEVER mix English sentences into another language, NEVER sound like a template. "
+        + "Persian (fa): fluent, eloquent, natural Iranian Persian only (فارسی معیار ایران، فصیح، روان، خوش‌بیان)، like an experienced Iranian head engineer who lives in London. Address the customer as شما, use complete verbs (است، می‌شود، می‌کند، بررسی کنید). Never Afghan Dari, never Pakistani Urdu, never slang contractions (میاد، می‌کنه، بذار، قربونت). Brands and numbers in Persian script (کُلد دایرِکت، فاستر، ئی یک). "
+        + "Tagalog / Filipino (tl or fil): warm everyday Filipino as spoken in the Philippines, e.g. open with 'Kamusta kaibigan! Head Engineer ako dito sa ColdDirect sa London, tatlumpung taon na akong nag-aayos ng commercial fridge at catering equipment…' then the diagnosis in natural Tagalog, not English with Tagalog words sprinkled in. "
+        + "British English (en): warm conversational London Head Engineer English (mate, on the blink, pop the door open, give us a bell, cheers). "
+        + "Arabic: natural spoken Arabic of a professional engineer, not stiff Modern-Standard textbook. Turkish, Spanish, Hindi, Urdu, Polish, Romanian, French, Russian, Chinese, Bengali, Portuguese, Kurdish and every other language: 100% native fluency of that country. "
+        + "ALWAYS give a specific technical diagnosis from the customer's exact words. NEVER brush them off with 'tell me the make' or 'describe the problem'. "
+        + "Noise: evaporator or condenser fan hitting ice, worn fan bearings, compressor start relay clicking — open the door; if the noise stops it is the inside fan. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water leak: blocked condensate drain or overflowing tray. Trip / no power: motor shorting to earth, burned plug or contactor, dead board. If they only say it is broken, give the top three of those and how to check each now. "
+        + "spoken_script: one flowing paragraph under 130 words, no lists. Open as the Head Engineer at ColdDirect with thirty years in London, then the diagnosis and one or two hands-on checks, then ask them to tap Like or give five stars on this page (never call it a video). Spell the phone in that language's own number words. The number is always 07983 759320 — English: 'zero seven nine eight three, seven five nine, three two zero'; Persian: 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'; others: the same digits one by one in their number words. Never invent a different number. We work in London only, never Tehran or any other city. "
+        + "summary must name the likely cause, not just the symptom. No fillers, stammers or self-corrections. Commercial refrigeration and catering only. "
+        + "Return STRICT JSON only: {\"transcript\":\"exact customer words in their script\",\"language_code\":\"ISO 639-1 such as fa, en, tl, ar, tr, es, hi, pl, fr, zh, ru, pt, bn, ku\",\"language_name\":\"English name, e.g. Tagalog\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
 
 string[] DetectLang(string text)
@@ -96,9 +92,34 @@ string[] DetectLang(string text)
     string t = text ?? "";
     if (Regex.IsMatch(t, "[\u067E\u0686\u0698\u06AF\u06CC\u06A9]")) return new string[] { "fa", "Persian" };
     if (Regex.IsMatch(t, "[\u0600-\u06FF]")) return new string[] { "ar", "Arabic" };
-    if (Regex.IsMatch(t, "[ğşıİĞŞ]")) return new string[] { "tr", "Turkish" };
     if (Regex.IsMatch(t, "[\u0900-\u097F]")) return new string[] { "hi", "Hindi" };
+    if (Regex.IsMatch(t, "[\u0980-\u09FF]")) return new string[] { "bn", "Bengali" };
+    if (Regex.IsMatch(t, "[\u0400-\u04FF]")) return new string[] { "ru", "Russian" };
+    if (Regex.IsMatch(t, "[\u4E00-\u9FFF]")) return new string[] { "zh", "Chinese" };
+    if (Regex.IsMatch(t, "[\u3040-\u30FF]")) return new string[] { "ja", "Japanese" };
+    if (Regex.IsMatch(t, "[\uAC00-\uD7AF]")) return new string[] { "ko", "Korean" };
+    if (Regex.IsMatch(t, "[\u0E00-\u0E7F]")) return new string[] { "th", "Thai" };
+    if (Regex.IsMatch(t, "[ğşıİĞŞ]")) return new string[] { "tr", "Turkish" };
+    if (Regex.IsMatch(t, "[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]")) return new string[] { "pl", "Polish" };
+    if (Regex.IsMatch(t, "[ăâîșțĂÂÎȘȚ]")) return new string[] { "ro", "Romanian" };
+    if (Regex.IsMatch(t, "\\b(ang|mga|hindi|yung|naman|talaga|kasi|wala|meron|ayaw|gusto|pridyider|kamusta|kaibigan|gumagana|po)\\b", RegexOptions.IgnoreCase))
+        return new string[] { "tl", "Tagalog" };
+    if (Regex.IsMatch(t, "[ñ¿¡]|\\b(el|la|los|las|una|está|refrigerador)\\b", RegexOptions.IgnoreCase) && Regex.IsMatch(t, "[áéíóúñ¿¡]", RegexOptions.IgnoreCase))
+        return new string[] { "es", "Spanish" };
     return new string[] { "en", "English" };
+}
+
+string CanonLang(string lang)
+{
+    lang = (lang ?? "").Trim().ToLowerInvariant().Replace('_', '-');
+    if (lang == "" || lang == "und" || lang == "auto") return "";
+    if (lang == "fil" || lang.StartsWith("fil-") || lang == "tagalog" || lang.StartsWith("tl-")) return "tl";
+    if (lang.StartsWith("pes") || lang.StartsWith("prs") || lang.StartsWith("per") || lang.StartsWith("far") || lang.StartsWith("fa-")) return "fa";
+    if (lang.StartsWith("zh")) return "zh";
+    if (lang.StartsWith("pt")) return "pt";
+    if (lang.Length > 2 && lang[2] == '-') return lang.Substring(0, 2);
+    if (lang.Length > 2) return lang.Substring(0, 2);
+    return lang;
 }
 
 bool Has(string q, string pattern)
@@ -458,6 +479,20 @@ string LabelFor(string code, string name)
         case "tr": return "Turkish";
         case "ar": return "Arabic";
         case "es": return "Spanish";
+        case "tl": return "Tagalog";
+        case "fil": return "Tagalog";
+        case "hi": return "Hindi";
+        case "ur": return "Urdu";
+        case "pl": return "Polish";
+        case "ro": return "Romanian";
+        case "fr": return "French";
+        case "ru": return "Russian";
+        case "zh": return "Chinese";
+        case "pt": return "Portuguese";
+        case "bn": return "Bengali";
+        case "de": return "German";
+        case "it": return "Italian";
+        case "ku": return "Kurdish";
         default: return code == "" ? "Detected" : code;
     }
 }
@@ -476,10 +511,9 @@ string ParseModelJson(string text)
     string summary = Str(d, "summary");
     if (spoken == "" && summary == "") return null;
     if (spoken == "") spoken = summary;
-    if (Regex.IsMatch(spoken, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
+    if (spoken.Length < 80 && Regex.IsMatch(spoken, "describe the (make|problem)|tell me (the|your) (make|problem)|let me know (the|your) problem", RegexOptions.IgnoreCase)) return null;
 
-    string code = Str(d, "language_code", "language").ToLowerInvariant();
-    if (code.Length > 2 && code.IndexOf('-') == 2) code = code.Substring(0, 2);
+    string code = CanonLang(Str(d, "language_code", "language"));
     string label = LabelFor(code, Str(d, "language_name", "languageLabel"));
 
     if (!Regex.IsMatch(spoken, "759|seven,? five,? nine|هفت،? پنج،? نه|۷۵۹", RegexOptions.IgnoreCase))
@@ -535,7 +569,7 @@ string GeminiDiagnose(string key, string text, string audioB64, string mime)
     foreach (string model in models)
     {
         Dictionary<string, object> gc = new Dictionary<string, object>();
-        gc["temperature"] = 0.2;
+        gc["temperature"] = 0.45;
         gc["responseMimeType"] = "application/json";
         if (model == "gemini-3.8-flash")
         {
@@ -601,6 +635,7 @@ byte[] HttpBytes(string method, string url, string contentType, byte[] body, Dic
             foreach (KeyValuePair<string, string> h in headers)
             {
                 if (h.Key == "Referer") req.Referer = h.Value;
+                else if (h.Key == "Authorization") req.Headers.Add("Authorization", h.Value);
                 else req.Headers[h.Key] = h.Value;
             }
         if (body != null)
@@ -862,7 +897,7 @@ string PiperModel(string lang)
 }
 
 // Ganji (Persian narrator) reads a touch faster than the others; output is always at the native sample rate.
-string PiperArgs(string lang) { return lang == "fa" ? "--length_scale 0.95 --noise_scale 0.667" : "--length_scale 1.05 --noise_scale 0.667"; }
+string PiperArgs(string lang) { return lang == "fa" ? "--length_scale 1.0 --noise_scale 0.667" : "--length_scale 1.05 --noise_scale 0.667"; }
 
 byte[] PiperRun(string exe, string dir, string onnx, string line, string args)
 {
@@ -969,19 +1004,83 @@ List<string> StreamGroups(string text)
     return groups;
 }
 
-// Puck (Gemini) first, then Piper on this server, then official Azure neural if a key is installed. All male.
+string LoadOpenAi()
+{
+    try
+    {
+        string file = Server.MapPath("~/App_Data/openai-voice.key");
+        if (!File.Exists(file)) return "";
+        string k = File.ReadAllText(file).Trim();
+        if (k == "" || k.IndexOf("PASTE", StringComparison.OrdinalIgnoreCase) >= 0) return "";
+        return k.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+    }
+    catch { return ""; }
+}
+
+string[] OpenAiTts(string text)
+{
+    string key = LoadOpenAi();
+    if (key == "" || string.IsNullOrEmpty(text)) return null;
+    if (text.Length > 4000) text = text.Substring(0, 4000);
+    string body = "{\"model\":\"gpt-4o-mini-tts\",\"voice\":\"onyx\",\"input\":\"" + Esc(text) + "\",\"response_format\":\"mp3\"}";
+    Dictionary<string, string> h = new Dictionary<string, string>();
+    h["Authorization"] = "Bearer " + key;
+    byte[] mp3 = HttpBytes("POST", "https://api.openai.com/v1/audio/speech", "application/json", Encoding.UTF8.GetBytes(body), h, 45000);
+    if (mp3 == null || mp3.Length < 2000) return null;
+    return new string[] { "audio/mpeg", Convert.ToBase64String(mp3) };
+}
+
+// Google speech stream for languages with no local Piper voice. Never used for Persian (HTTP 400).
+string TranslateTl(string lang)
+{
+    if (lang == "fa" || lang == "") return null;
+    if (lang == "en") return "en-GB";
+    if (lang == "zh") return "zh-CN";
+    if (lang == "tl" || lang == "fil") return "tl";
+    if (lang == "jw") return "jw";
+    return lang;
+}
+
+string[] TranslateTts(string lang, string text)
+{
+    string tl = TranslateTl(lang);
+    if (tl == null || string.IsNullOrEmpty(text)) return null;
+    List<string> chunks = SentenceGroups(Regex.Replace(text, "\\s+", " ").Trim(), 180);
+    if (chunks.Count == 0 || chunks.Count > 30) return null;
+    Dictionary<string, string> h = new Dictionary<string, string>();
+    h["Referer"] = "https://translate.google.com/";
+    using (MemoryStream all = new MemoryStream())
+    {
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            string url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + Uri.EscapeDataString(tl)
+                + "&total=" + chunks.Count + "&idx=" + i + "&textlen=" + chunks[i].Length + "&q=" + Uri.EscapeDataString(chunks[i]);
+            byte[] part = HttpBytes("GET", url, null, null, h, 15000) ?? HttpBytes("GET", url, null, null, h, 15000);
+            if (part == null || part.Length < 200) return null;
+            all.Write(part, 0, part.Length);
+        }
+        return new string[] { "audio/mpeg", Convert.ToBase64String(all.ToArray()) };
+    }
+}
+
+// OpenAI onyx (if a key is installed) -> Puck -> Piper (fa/en/tr/ar) -> Azure -> Google stream for every other language.
 string[] Speak(string key, string lang, string text, out string voice)
 {
     voice = "none";
     if (string.IsNullOrEmpty(text)) return null;
+    lang = CanonLang(lang);
     if (lang == "fa") text = NormalizePersianForSpeech(text);
     string[] r = null;
+    try { r = OpenAiTts(text); } catch { r = null; }
+    if (r != null) { voice = "openai-onyx"; return r; }
     try { r = GeminiTts(key, text); } catch { r = null; }
     if (r != null) { voice = "Puck"; return r; }
     r = PiperTts(lang, text);
     if (r != null) { voice = "piper-" + PiperModel(lang); return r; }
     try { r = AzureTts(lang, text); } catch { r = null; }
     if (r != null) { voice = "azure-neural"; return r; }
+    try { r = TranslateTts(lang, text); } catch { r = null; }
+    if (r != null) { voice = "cloud-neural-fallback"; return r; }
     return null;
 }
 
@@ -1044,21 +1143,23 @@ protected void Page_Load(object sender, EventArgs e)
     if (mode == "tts")
     {
         string say = text.Length > 2500 ? text.Substring(0, 2500) : text;
-        string lang = Str(req, "language", "lang").ToLowerInvariant();
-        if (lang == "") lang = (Request.QueryString["lang"] ?? "").ToLowerInvariant();
-        if (lang.StartsWith("pes") || lang.StartsWith("prs") || lang.StartsWith("per") || lang.StartsWith("far")) lang = "fa";
-        if (lang.Length > 2) lang = lang.Substring(0, 2);
+        string lang = CanonLang(Str(req, "language", "lang"));
+        if (lang == "") lang = CanonLang(Request.QueryString["lang"] ?? "");
         if (lang == "") lang = DetectLang(say)[0];
         if (lang == "fa") say = NormalizePersianForSpeech(say);
-        // Piper only renders the first sentence group; the widget fetches "more" (engine=piper) while it plays.
         bool piperOnly = Str(req, "engine").ToLowerInvariant() == "piper";
         string v = "none";
         string[] spoken = null;
         List<string> more = new List<string>();
         if (!piperOnly)
         {
-            try { spoken = GeminiTts(key, say); } catch { spoken = null; }
-            if (spoken != null) v = "Puck";
+            try { spoken = OpenAiTts(say); } catch { spoken = null; }
+            if (spoken != null) v = "openai-onyx";
+            if (spoken == null)
+            {
+                try { spoken = GeminiTts(key, say); } catch { spoken = null; }
+                if (spoken != null) v = "Puck";
+            }
         }
         if (spoken == null && PiperModel(lang) != null)
         {
@@ -1073,6 +1174,11 @@ protected void Page_Load(object sender, EventArgs e)
         {
             try { spoken = AzureTts(lang, say); } catch { spoken = null; }
             if (spoken != null) v = "azure-neural";
+            if (spoken == null)
+            {
+                try { spoken = TranslateTts(lang, say); } catch { spoken = null; }
+                if (spoken != null) v = "cloud-neural-fallback";
+            }
         }
         Dictionary<string, object> o = new Dictionary<string, object>();
         o["ok"] = spoken != null;
@@ -1104,6 +1210,13 @@ protected void Page_Load(object sender, EventArgs e)
         {
             Response.StatusCode = 502;
             Response.Write("{\"ok\":false,\"error\":\"Sorry, I couldn't make out that recording. Tap SPEAK and try again, or type the fault.\",\"watermark\":\"" + MARK + "\"}");
+            return;
+        }
+        string guess = DetectLang(text)[0];
+        if (guess != "fa" && guess != "en")
+        {
+            Response.StatusCode = 502;
+            Response.Write("{\"ok\":false,\"error\":\"Please tap Ask once more in a moment.\",\"watermark\":\"" + MARK + "\"}");
             return;
         }
         result = FallbackJson(text);

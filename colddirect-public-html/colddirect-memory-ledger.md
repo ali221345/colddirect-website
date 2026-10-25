@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25e] — Any-language diagnose + spoken audio (`?v=11`)
+- Native Gemini copy for every language. TTS: OpenAI onyx (optional key) → Puck → Piper fa/en/tr/ar → Azure → translate_tts for Tagalog and other languages without Piper. Persian stays on Ganji. Live 7/7 PASS.
+
 ### [2026-10-25d] — Ganji Persian male (no pitch shift) + `NormalizePersianForSpeech`, `?v=10`
 - Amir + 7% pitch-down removed. Live: `piper-fa_IR-ganji-medium`, 22050 Hz, F0 95 Hz, `ColdDirect` → `کُلد دایرِکت`, zero Latin in TTS text.
 

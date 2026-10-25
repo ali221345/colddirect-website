@@ -18,6 +18,12 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25e] — World-language diagnose + TTS (homepage `?v=11`)
+- Gemini prompt rewritten for native fluency in any language (Iranian Persian, Tagalog/Filipino, British English, and every other country). Temperature 0.45. Brush-off reject only if the whole answer is a short brush-off. Non-en/fa Gemini failure no longer dumps the English/Persian template.
+- TTS chain: optional OpenAI `gpt-4o-mini-tts` onyx (`App_Data/openai-voice.key`, `tools/upload_openai_key_ftp.py`) → Puck → Piper fa/en/tr/ar (Ganji `length_scale` 1.0) → Azure → **Google `translate_tts` only for languages with no Piper voice** (Tagalog `tl`/`fil` → `tl`, Spanish, etc.). Persian never goes to translate_tts.
+- Widget: `cloud-neural-fallback` audio is pitch-dropped ~2.5 semitones via AudioContext `detune` so the Google female stream sounds male. `?v=11`.
+- Live 7/7: fa Ganji; tl/fil/es Google stream (440–470KB Tagalog); en Alan; ar Kareem; tr dfki. All Gemini-written, `ok:true`.
+
 ### [2026-10-25d] — Persian voice: Ganji (no pitch shift) + phonetic normalizer, homepage `?v=10`
 - Replaced `fa_IR-amir-medium` with **`fa_IR-ganji-medium`** (Iranian male audiobook narrator). **Removed the 7% pitch-down** (no sample-rate rewrite, no formant smear). Piper args for fa: `--length_scale 0.95 --noise_scale 0.667`. WAV is native 22050 Hz. Widget `PACE` is now 1 so playback does not slow/pitch the file.
 - **`NormalizePersianForSpeech`** runs on every Persian string before Puck and before Piper (mode=tts, Speak, ParseModelJson, FallbackJson). `ColdDirect` / `colddirect.co.uk` / `کلد دایرکت` → `کُلد دایرِکت`; `07983 759320` → `صفر هفت نُه هشت سه، هفت پنج نُه، سه دو صفر`; `E1` → `ئی یک`; Foster/Williams/Hoshizaki/Scotsman/Polar/Gram and leftover Latin stripped. Live: `tts_text` has zero Latin, voice=`piper-fa_IR-ganji-medium`, 9.2s WAV, median F0 **95 Hz** (male, not shifted).
