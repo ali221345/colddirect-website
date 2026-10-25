@@ -21,6 +21,9 @@ Live voice is ElevenLabs agent `agent_2901m5th5arfe9amcec9ef2p42q` (`?v=20261025
 
 ---
 
+### [2026-10-25ai] — ConvAI token proxy (`?v=20261025ai`)
+- `/colddirect-elevenlabs-token.aspx` for private agent tokens. Title/H1/meta unchanged.
+
 ### [2026-10-25ah] — ElevenLabs ConvAI live voice (`?v=20261025ah`)
 - `@elevenlabs/client` + agent `agent_2901m5th5arfe9amcec9ef2p42q`. SPEAK starts live session in the existing modal. Title/H1/meta unchanged.
 

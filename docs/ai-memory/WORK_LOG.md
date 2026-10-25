@@ -26,6 +26,10 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-25ai] — ElevenLabs ConvAI + server token proxy (`?v=20261025ai`)
+- Public widget/token APIs return `agent_not_found` for `agent_2901m5th5arfe9amcec9ef2p42q` (auth enabled). Widget now falls back to `/colddirect-elevenlabs-token.aspx` which mints a conversation token from `App_Data/elevenlabs.key` without exposing the key.
+- Title/H1/meta unchanged.
+
 ### [2026-10-25ah] — ElevenLabs ConvAI live voice (`?v=20261025ah`)
 - Replaced MediaRecorder/PHP/OpenAI/Vapi with `@elevenlabs/client` `Conversation.startSession` + agent `agent_2901m5th5arfe9amcec9ef2p42q` (WebRTC).
 - SPEAK opens the existing diagnostic modal and starts the live session. Transcript RTL + clickable office/mobile `tel:` links. Green Like CTA kept.
