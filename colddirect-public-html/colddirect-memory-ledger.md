@@ -16,12 +16,15 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25, NEVER regress)
-SPEAK must play voice, not text-only. Keep the Head Engineer greeting. No slang. Male voices only (Ganji fa, Alan en; never Urdu/Arabic for Persian). Stop mic tracks + close analyser context before play. Unlock `__cdPlayCtx` + `__cdVoicePlayer` on the SPEAK tap. Diagnose JSON includes `audio_base64`. Play via `AudioBufferSourceNode` first. Keep 3800ms silence.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25s — compact header-left widget)
+The live widget is a compact **Ask Your Fault** box in the top-left of the white header (`?v=20261025n`). Do not restore the full-width bar or the top-right Listen audio dock.
 
 ---
 
-### [2026-10-25o] — Vapi Ask Your Fault (`?v=20261025f`)
+### [2026-10-25s] — Header-left widget dropdown not clipped (`?v=20261025n`)
+- Compact box left of the logo. SPEAK dropdown paints over the hero. Title/H1/meta unchanged.
+
+### [2026-10-25o] — Vapi Ask Your Fault (`?v=20261025g`)
 - Replaced custom top voice bar. Title `Ask Your Fault`. Badge `Lang: Auto`. SEO tags untouched.
 
 ### [2026-10-25n] — Same-language greeting (`?v=20261025e`)
