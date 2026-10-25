@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25i] — Voice widget ultra-low-latency (`?v=14`)
+- After SPEAK: SpeechRecognition `interimResults=true`, `continuous=false`, 700ms silence auto-stop; second SPEAK tap submits immediately. MediaRecorder silence also 700ms (was 3s). Status `Diagnosing fault...` within 100ms.
+- First sentence spoken immediately via `speechSynthesis` (rate 1.05, pre-warmed `getVoices`/`voiceschanged`). Remaining TTS queues in the background.
+- Client FAST_KB for E1/P1/P2/HA, not cooling, icing up, compressor trip, ice machine, cold room — no network. Title/H1/meta/canonical/sitemap 122 unchanged. Deploy `40183369543` success. Commit `f2770bf`.
+
 ### [2026-10-25h] — Clean `commercial commercial` typo + leftover Dispatch popover source
 - `tools/top3_rank_booster_v5.py` no longer prefixes `commercial` when the equipment label already starts with it. Homepage + commercial fridge/freezer/appliances (4 copies each) now read `Cold Direct covers **commercial …**` and schema `Cheap affordable commercial …` (one `commercial`). Legacy ASP aliases had the same double word in JSON-LD / a list item; those were collapsed too. Fridge/freezer/cold-room/catering/AC/cellar HTML was left untouched.
 - Live HTML on `/`, `/cold-room-repair-london/`, `/fridge-repair-london/` had **zero** `#cd-hover-popover` nodes (only the CSS hide rule). `js/cd-hover-card.js` still held the dead Dispatch Active innerHTML after an early `return`; it is now a 200-OK stub so that markup cannot be injected. Title/H1/meta/canonical/`sitemap.xml` (122) unchanged. `protected-pages.json` rebaselined for commercial-fridge. Deploy `40180065273` success. Commit `5c4cb87`.
