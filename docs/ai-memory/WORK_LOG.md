@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25z] — Start Vapi with assistant id only (`?v=20261025w`)
+- Removed partial `assistantOverrides` from `vapi.start(ASSISTANT_ID)` (400 reject). Still never auto-stop on speech-end/timer. Error handler logs details and ignores non-fatal daily-js warnings. Title/H1/meta unchanged.
+
 ### [2026-10-25y] — Finish the closing sentence; keep the call open; fit LISTEN on mobile (`?v=20261025v`)
 - Do not auto-stop on speech-end/message/timer. `assistantOverrides`: `model.maxTokens: 600`, `silenceTimeoutSeconds: 45`, `endCallFunctionEnabled: false`. Merge final transcript + conversation-update so last words are not dropped. Mobile Ask Your Fault uses a wrapping column so Lang/SPEAK/LISTEN stay inside the screen. Title/H1/meta unchanged.
 
