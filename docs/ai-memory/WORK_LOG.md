@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25s] — Header-left widget dropdown not clipped (`?v=20261025n`)
+- Same compact box, no `transform` on `#cd-voice-root` so the SPEAK dropdown paints over the hero. Title/H1/meta unchanged.
+
 ### [2026-10-25r] — Compact Ask Your Fault in the white header (`?v=20261025m`)
 - Compact dark box in the top-left of `.cd-main-header`, left of the logo. Full-width bar removed. `#cd-audio-dock` hidden visually. SPEAK opens a dropdown transcript + like CTA. Title/H1/meta unchanged.
 
