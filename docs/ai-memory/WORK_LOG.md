@@ -18,6 +18,10 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25h] — Clean `commercial commercial` typo + leftover Dispatch popover source
+- `tools/top3_rank_booster_v5.py` no longer prefixes `commercial` when the equipment label already starts with it. Homepage + commercial fridge/freezer/appliances (4 copies each) now read `Cold Direct covers **commercial …**` and schema `Cheap affordable commercial …` (one `commercial`). Legacy ASP aliases had the same double word in JSON-LD / a list item; those were collapsed too. Fridge/freezer/cold-room/catering/AC/cellar HTML was left untouched.
+- Live HTML on `/`, `/cold-room-repair-london/`, `/fridge-repair-london/` had **zero** `#cd-hover-popover` nodes (only the CSS hide rule). `js/cd-hover-card.js` still held the dead Dispatch Active innerHTML after an early `return`; it is now a 200-OK stub so that markup cannot be injected. Title/H1/meta/canonical/`sitemap.xml` (122) unchanged. `protected-pages.json` rebaselined for commercial-fridge. Deploy `40180065273` success. Commit `5c4cb87`.
+
 ### [2026-10-25g] — Voice widget rolled out sitewide (`?v=13`)
 - Owner approved the polite greeting. Removed the JS homepage-only path guard. Injected `<script src="/assets/js/colddirect-voice-bar.js?v=13" defer></script>` on every public HTML page (root + folder index + public-html mirror), 514 files, via `tools/inject_voice_bar.py`. Idempotent; 0 missing; 0 title/h1/meta/canonical/JSON-LD/V4 diffs. Guards all green.
 

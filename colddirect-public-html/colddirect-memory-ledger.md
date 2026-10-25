@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25h] — TOP3 double-`commercial` typo + Dispatch popover stub
+- Generator skips the extra `commercial` prefix. Live homepage + commercial hubs: 0 `commercial commercial`. Hover JS is a stub; no `#cd-hover-popover` element on cold-room or fridge. SEO tags untouched. Commit `5c4cb87`, deploy `40180065273`.
+
 ### [2026-10-25g] — Voice bar on every public HTML page (`?v=13`)
 - Homepage-only guard removed. Script injected sitewide. SEO tags untouched.
 
