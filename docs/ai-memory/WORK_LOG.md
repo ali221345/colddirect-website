@@ -18,6 +18,11 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25f] — Polite universal opening, no slang, native 1.0 playback (`?v=13`)
+- Every spoken_script starts with the same greeting in the customer's language. Exact: FA `سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` / EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / TL `Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.` Other languages: natural translation of that meaning.
+- Slang openings (`Alright mate`, `Kamusta kaibigan`, `سلام و درود`) removed from the Gemini prompt and from FallbackJson. Tone: kind, gentle, polite. Widget no longer detunes Google-stream audio (playbackRate 1).
+- Live 3/3: fa Ganji, en Alan, tl Google stream, all start with the new line, no banned slang.
+
 ### [2026-10-25e] — World-language diagnose + TTS (homepage `?v=11`)
 - Gemini prompt rewritten for native fluency in any language (Iranian Persian, Tagalog/Filipino, British English, and every other country). Temperature 0.45. Brush-off reject only if the whole answer is a short brush-off. Non-en/fa Gemini failure no longer dumps the English/Persian template.
 - TTS chain: optional OpenAI `gpt-4o-mini-tts` onyx (`App_Data/openai-voice.key`, `tools/upload_openai_key_ftp.py`) → Puck → Piper fa/en/tr/ar (Ganji `length_scale` 1.0) → Azure → **Google `translate_tts` only for languages with no Piper voice** (Tagalog `tl`/`fil` → `tl`, Spanish, etc.). Persian never goes to translate_tts.

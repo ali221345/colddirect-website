@@ -18,6 +18,9 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 
 ---
 
+### [2026-10-25f] — Universal polite opening, no slang, `?v=13`
+- Exact FA/EN/TL greetings verified live. Playback at 1.0. Slang openings deleted.
+
 ### [2026-10-25e] — Any-language diagnose + spoken audio (`?v=11`)
 - Native Gemini copy for every language. TTS: OpenAI onyx (optional key) → Puck → Piper fa/en/tr/ar → Azure → translate_tts for Tagalog and other languages without Piper. Persian stays on Ganji. Live 7/7 PASS.
 

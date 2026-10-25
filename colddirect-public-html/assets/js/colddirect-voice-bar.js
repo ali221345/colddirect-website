@@ -180,7 +180,7 @@
       return;
     }
     var p = parts[partIdx++];
-    playBytes(b64ToBytes(p.data), p.mime, playNextPart, p.deepen);
+    playBytes(b64ToBytes(p.data), p.mime, playNextPart);
   }
 
   function addPart(p) {
@@ -200,7 +200,7 @@
     }
   }
 
-  function playBytes(bytes, mime, onDone, deepen) {
+  function playBytes(bytes, mime, onDone) {
     stopCurrent();
     unlockAudio();
     playing = true;
@@ -218,41 +218,23 @@
       if (onDone) onDone();
     }
 
-    // Google stream voices are female; drop pitch ~2.5 semitones without changing speed (AudioContext detune).
-    if (deepen && audioCtx) {
+    var el = player();
+    el.onended = done;
+    el.src = url;
+    el.playbackRate = 1;
+    var p = el.play();
+    if (p && p.catch) p.catch(function () {
+      if (!audioCtx) { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); return; }
       audioCtx.decodeAudioData(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), function (buf) {
         var src = audioCtx.createBufferSource();
         src.buffer = buf;
         src.playbackRate.value = 1;
-        try { src.detune.value = -280; } catch (e) {}
         src.connect(audioCtx.destination);
         playSource = src;
         src.onended = done;
         src.start(0);
-      }, function () { playElement(); });
-      return;
-    }
-    playElement();
-
-    function playElement() {
-      var el = player();
-      el.onended = done;
-      el.src = url;
-      el.playbackRate = deepen ? 0.88 : PACE;
-      var p = el.play();
-      if (p && p.catch) p.catch(function () {
-        if (!audioCtx) { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); return; }
-        audioCtx.decodeAudioData(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), function (buf) {
-          var src = audioCtx.createBufferSource();
-          src.buffer = buf;
-          src.playbackRate.value = deepen ? 0.88 : PACE;
-          src.connect(audioCtx.destination);
-          playSource = src;
-          src.onended = done;
-          src.start(0);
-        }, function () { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); });
-      });
-    }
+      }, function () { done(); setStatus("Tap ▶ Listen Answer to hear the diagnosis."); });
+    });
   }
 
   var UK_MALE_PREFS = [
@@ -302,8 +284,8 @@
       window.speechSynthesis.cancel();
       var code = String(lang || lastLang || "en").slice(0, 2).toLowerCase();
       var u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.94;
-      u.pitch = 0.96;
+      u.rate = 1;
+      u.pitch = 1;
       u.voice = pickVoice(code);
       if (!u.voice) return false;
       u.lang = (u.voice && u.voice.lang) || ({ en: "en-GB", fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", es: "es-ES", hi: "hi-IN", tl: "fil-PH", pl: "pl-PL", ro: "ro-RO", fr: "fr-FR", zh: "zh-CN", pt: "pt-PT", ru: "ru-RU" }[code] || code);
@@ -413,7 +395,6 @@
       setStatus(langStatus(data));
       var got = v && v.audio_base64 ? { data: v.audio_base64, mime: v.audio_mime } : (v && v.audio && v.audio.data ? v.audio : null);
       if (!got) { voiceFallback(data); return; }
-      got.deepen = /cloud-neural/.test(v.voice || "");
       parts = [got];
       var rest = (v.more || []).slice();
       partsDone = rest.length === 0;
@@ -435,7 +416,7 @@
       if (seq !== askSeq) return;
       if (!v || !v.audio_base64) { endParts(); return; }
       if (v.more && v.more.length) rest = v.more.concat(rest);
-      addPart({ data: v.audio_base64, mime: v.audio_mime, deepen: /cloud-neural/.test(v.voice || "") });
+      addPart({ data: v.audio_base64, mime: v.audio_mime });
       fetchRest(rest, lang, seq);
     }).catch(function () {
       if (seq === askSeq) endParts();

@@ -73,17 +73,20 @@ string LoadKey()
 
 string SystemPrompt()
 {
-    return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of hands-on commercial refrigeration and catering-equipment experience across London only. "
-        + "STEP 1 - TRANSCRIBE AND DETECT ANY LANGUAGE ON EARTH: if the customer sent audio, write transcript as the exact words they spoke, in that language's own script (Persian in فارسی, Arabic in العربية, Hindi in देवनागरी, Chinese in 汉字, Tagalog in Latin with Filipino spelling, and so on). Detect the language from the speech or typed text itself, never from the browser, never from these instructions. Typed text is the transcript. "
-        + "STEP 2 - NATIVE FLUENCY, ZERO TRANSLATIONESE: summary, likely_cause, quick_checks and spoken_script must be 100% in that same language and script. Write as a native speaker of that country talking to a shop or restaurant owner — natural rhythm, everyday words, real grammar. NEVER produce a word-for-word translation of English, NEVER mix English sentences into another language, NEVER sound like a template. "
-        + "Persian (fa): fluent, eloquent, natural Iranian Persian only (فارسی معیار ایران، فصیح، روان، خوش‌بیان)، like an experienced Iranian head engineer who lives in London. Address the customer as شما, use complete verbs (است، می‌شود، می‌کند، بررسی کنید). Never Afghan Dari, never Pakistani Urdu, never slang contractions (میاد، می‌کنه، بذار، قربونت). Brands and numbers in Persian script (کُلد دایرِکت، فاستر، ئی یک). "
-        + "Tagalog / Filipino (tl or fil): warm everyday Filipino as spoken in the Philippines, e.g. open with 'Kamusta kaibigan! Head Engineer ako dito sa ColdDirect sa London, tatlumpung taon na akong nag-aayos ng commercial fridge at catering equipment…' then the diagnosis in natural Tagalog, not English with Tagalog words sprinkled in. "
-        + "British English (en): warm conversational London Head Engineer English (mate, on the blink, pop the door open, give us a bell, cheers). "
-        + "Arabic: natural spoken Arabic of a professional engineer, not stiff Modern-Standard textbook. Turkish, Spanish, Hindi, Urdu, Polish, Romanian, French, Russian, Chinese, Bengali, Portuguese, Kurdish and every other language: 100% native fluency of that country. "
-        + "ALWAYS give a specific technical diagnosis from the customer's exact words. NEVER brush them off with 'tell me the make' or 'describe the problem'. "
-        + "Noise: evaporator or condenser fan hitting ice, worn fan bearings, compressor start relay clicking — open the door; if the noise stops it is the inside fan. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water leak: blocked condensate drain or overflowing tray. Trip / no power: motor shorting to earth, burned plug or contactor, dead board. If they only say it is broken, give the top three of those and how to check each now. "
-        + "spoken_script: one flowing paragraph under 130 words, no lists. Open as the Head Engineer at ColdDirect with thirty years in London, then the diagnosis and one or two hands-on checks, then ask them to tap Like or give five stars on this page (never call it a video). Spell the phone in that language's own number words. The number is always 07983 759320 — English: 'zero seven nine eight three, seven five nine, three two zero'; Persian: 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر'; others: the same digits one by one in their number words. Never invent a different number. We work in London only, never Tehran or any other city. "
-        + "summary must name the likely cause, not just the symptom. No fillers, stammers or self-corrections. Commercial refrigeration and catering only. "
+    return "You are the Head Engineer at ColdDirect Ltd (colddirect.co.uk), 27 Felixstowe Road, Enfield, London N9 0DX. You have 30 years of commercial refrigeration experience in London only. "
+        + "TONE: kind, gentle, polite and reassuring — a senior expert helping a valued client. No street slang, no 'mate', no 'cheers', no 'don't panic', no aggressive urgency. "
+        + "STEP 1: if they sent audio, write transcript as their exact words in their own script. Detect the language from the speech or typed text. Typed text is the transcript. "
+        + "STEP 2: summary, likely_cause, quick_checks and spoken_script are 100% in that same language, written as a native of that country. Never translate English word-for-word. Never mix English into another language except the company name ColdDirect where that language uses Latin letters. "
+        + "MANDATORY OPENING — spoken_script MUST begin with these exact sentences in the customer's language, then a space, then the answer. Do not add extra welcome lines before them. "
+        + "English: 'Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.' "
+        + "Persian: 'سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید.' "
+        + "Tagalog/Filipino: 'Hello po. Ako ang Head Engineer ng ColdDirect. Natutuwa akong pinili ninyo ang aming kompanya.' "
+        + "Any other language: translate 'Hello. I am the Head Engineer at ColdDirect. I am glad you chose our company.' naturally into that language (Arabic, Turkish, Spanish, Hindi, Polish, Kurdish Kurmanji or Sorani, French, Chinese, and so on), then continue. "
+        + "Persian: fluent polite Iranian Farsi only. شما, complete verbs. Never Dari or Urdu. Write ColdDirect as کُلد دایرِکت and spell numbers and error codes in Persian words. "
+        + "Immediately after the opening, answer the customer's exact fault clearly and accurately. No generic filler. One or two gentle checks they can do now. "
+        + "Noise: fan hitting ice, worn fan bearings, or a clicking start relay — opening the door is a kind first check. Warm: blocked condenser, failed gasket, iced evaporator, leak or weak compressor. Water: blocked drain or overflowing tray. Trip: motor shorting, burned plug, dead board. If they only say it is broken, give the top three causes gently. NEVER brush them off. "
+        + "End gently: offer help on 07983 759320 in that language's own number words (English: 'zero seven nine eight three, seven five nine, three two zero'; Persian: 'صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر') and politely ask for a like or five-star review on this page if the answer helped. Never call it a video. London only. "
+        + "spoken_script: one paragraph under 130 words. summary names the cause. No fillers or stammers. Commercial refrigeration and catering only. "
         + "Return STRICT JSON only: {\"transcript\":\"exact customer words in their script\",\"language_code\":\"ISO 639-1 such as fa, en, tl, ar, tr, es, hi, pl, fr, zh, ru, pt, bn, ku\",\"language_name\":\"English name, e.g. Tagalog\",\"summary\":\"...\",\"likely_cause\":\"...\",\"quick_checks\":[\"...\",\"...\",\"...\"],\"spoken_script\":\"...\"}";
 }
 
@@ -244,38 +247,17 @@ string[] Block(string lang, string sym, string a, string code, string codeFa)
 
 string EnIntro(string sym)
 {
-    switch (sym)
-    {
-        case "noise": return "Alright mate, don't panic! Head Engineer at ColdDirect here, thirty years on the tools. ";
-        case "warm": return "Alright mate, Head Engineer at ColdDirect here, with thirty years in the game. ";
-        case "noice": return "Alright mate, don't worry! Head Engineer at ColdDirect here, thirty years fixing catering kit. ";
-        case "code": return "Alright mate, easy one here! Head Engineer at ColdDirect, thirty years on the tools. ";
-        case "ice": return "Alright mate, don't panic! Head Engineer at ColdDirect here, thirty years on the tools. ";
-        case "general": return "Alright mate, you're in safe hands! I'm the Head Engineer at ColdDirect, with thirty years fixing commercial cooling across London. ";
-        default: return "Alright mate, don't stress! I'm the Head Engineer here at ColdDirect... been fixing commercial fridges and catering kit around London for thirty years, and we'll get this sorted for you. ";
-    }
+    return "Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company. ";
 }
 
 string EnLead(string sym)
 {
-    if (sym == "general") return "Tell you what, ";
-    if (sym == "leak" || sym == "trip") return "Right, ";
-    return "Look, ";
+    return "";
 }
 
 string EnUrgency(string sym)
 {
-    switch (sym)
-    {
-        case "noise": return "before the motor burns out";
-        case "warm": return "before your stock spoils";
-        case "leak": return "before it turns into a proper flood";
-        case "trip": return "and we'll get it safe and running again";
-        case "ice": return "before that ice chokes the coil";
-        case "noice": return "and we'll get those cubes dropping again";
-        case "code": return "and we'll get that code cleared";
-        default: return "and we'll get it sorted for you";
-    }
+    return "if you would like an engineer today";
 }
 
 string FallbackJson(string text)
@@ -314,11 +296,11 @@ string FallbackJson(string text)
 
     string first = syms[0];
     string intro = lc == "fa"
-        ? "سلام و درود، سرمهندس شرکت کُلد دایرِکت در لندن هستم، با سی سال تجربه‌ی تخصصی در تعمیرات تجهیزات برودتی و آشپزخانه‌های صنعتی. "
+        ? "سلام. من سرمهندس شرکت کُلد دایرِکت هستم. خوشحالم که شرکت ما را انتخاب کردید. "
         : EnIntro(first);
     string outro = lc == "fa"
-        ? " اگر مایل هستید همین امروز یک تکنسین اعزام کنیم، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این راهنمایی برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
-        : " Give us a bell on zero seven nine eight three, seven five nine, three two zero, " + EnUrgency(first) + "... and if this tip helped you out, smash that Like button or drop us a quick five-star review. Cheers!";
+        ? " اگر مایل هستید کمک بیشتری بگیرید، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید. اگر این پاسخ برایتان مفید بود، لطفاً در همین صفحه لایک کنید یا پنج ستاره بدهید. سپاسگزارم."
+        : " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero. If this answer helped you, please tap Like or leave a five-star review on this page. Thank you.";
 
     StringBuilder spoken = new StringBuilder(intro);
     string summary = "", cause = "";
@@ -519,7 +501,7 @@ string ParseModelJson(string text)
     if (!Regex.IsMatch(spoken, "759|seven,? five,? nine|هفت،? پنج،? نه|۷۵۹", RegexOptions.IgnoreCase))
     {
         if (code == "fa") spoken += " برای هماهنگی، با شماره‌ی صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر تماس بگیرید.";
-        else if (code == "en") spoken += " Give us a bell on zero seven nine eight three, seven five nine, three two zero.";
+        else if (code == "en") spoken += " If you would like our help, please call zero seven nine eight three, seven five nine, three two zero.";
     }
     if (code == "fa") spoken = NormalizePersianForSpeech(spoken);
 
@@ -669,7 +651,7 @@ string[] GeminiTtsModel(string key, string model, string spoken)
 {
     string parked = "cd-tts-429-" + model;
     if (HttpRuntime.Cache[parked] != null) return null;
-    string line = "Speak in the same language as the text below, with natural native pronunciation, as a warm, relaxed, friendly London male engineer chatting to a cafe owner over a cup of tea. Calm, unhurried pace, natural little pauses at commas and dots, never robotic. Read this exactly:\n\n" + spoken;
+    string line = "Speak in the same language as the text below, as a kind, gentle, professional male engineer. Natural native pronunciation, calm unhurried pace, normal pitch, no slang and no robotic emphasis. Read this exactly:\n\n" + spoken;
     string body = "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"" + Esc(line) + "\"}]}],\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Puck\"}}}}}";
     string url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + Uri.EscapeDataString(key);
     string raw = HttpJson(url, body, 60000) ?? "";
