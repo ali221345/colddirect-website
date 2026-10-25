@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak the answer aloud. Text-only after a mic
 
 ---
 
+### [2026-10-25p] — Restore dark Ask Your Fault bar above the slider (`?v=20261025i`)
+- Dark SPEAK/LISTEN bar sits in-flow immediately before `#home-slider` (homepage) or the first hero image (service pages). Title `Ask Your Fault`. Badge `Lang: Auto` only. Buttons start the existing Vapi assistant. No floating corner widget. Title/H1/meta unchanged.
+
 ### [2026-10-25o] — Replace custom voice bar with Vapi Ask Your Fault (`?v=20261025g`)
 - Sitewide floating widget: title `Ask Your Fault`, badge `Lang: Auto` only. Old top SPEAK bar removed. CSS scoped to `.vapi-widget` (no page `body` reset).
 - Assistant `e31c40c7-a45b-4dff-833c-320c54250743`. Public key from `App_Data/vapi-public.key` via `/colddirect-vapi-config.aspx` (not in git). Title/H1/meta/canonical unchanged.
