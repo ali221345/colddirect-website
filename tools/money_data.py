@@ -67,7 +67,7 @@ MONEY = {
     },
     "commercial-freezer-repair-london": {
         "kw": "Commercial freezer repair London",
-        "title": "Commercial Freezer Repair London | 24/7 Emergency Same-Day Engineers",
+        "title": "Commercial Freezer Repair London | 24/7 Same-Day Service",
         "desc": "Commercial freezer repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, walk-in and kitchen freezers. Call 07983 759320.",
         "offers": ['Same day commercial freezer repair London', '24 hour emergency commercial freezer repair London', 'Affordable commercial freezer repair London with fixed diagnostic call-out', 'Commercial freezer repair London', 'Commercial freezer repairs London', 'Commercial freezer service London', 'Commercial freezer services London', 'Emergency commercial freezer repair London', 'Same day commercial freezer repairs London', '24/7 commercial freezer repair London', 'Cheap commercial freezer repair London', 'Affordable commercial freezer repair London', 'Commercial freezer repair near me', 'Annual commercial freezer maintenance and servicing London', 'Low-cost commercial freezer diagnostics London'],
         "audio": "Cold Direct commercial freezer repair London. When a walk-in or kitchen freezer fails, every hour counts. Our London engineers provide twenty four hour emergency and same day commercial freezer repairs, with a fixed diagnostic call-out and transparent, affordable pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -80,7 +80,7 @@ MONEY = {
     },
     "catering-repair-london": {
         "kw": "Catering repair London",
-        "title": "Catering Repair London | Same-Day 24/7 Emergency Kitchen Engineers",
+        "title": "Catering Repair London | 24/7 Same-Day Service",
         "desc": "Catering repair London for restaurant and takeaway kitchens: same-day 24/7 emergency repairs and service, fixed diagnostic call-out. Call 07983 759320.",
         "offers": ['Same day catering repair London', '24 hour emergency catering repair London', 'Affordable catering repair London with fixed diagnostic call-out', 'Catering repair London', 'Catering repairs London', 'Catering service London', 'Catering services London', 'Emergency catering repair London', 'Same day catering repairs London', '24/7 catering repair London', 'Cheap catering repair London', 'Affordable catering repair London', 'Catering repair near me', 'Annual catering maintenance and servicing London', 'Low-cost catering diagnostics London'],
         "audio": "Cold Direct catering repair London. Restaurants, takeaways, cafes and catering kitchens rely on refrigeration that works. Our London engineers provide same day, twenty four seven emergency catering repair for kitchen fridges, freezers and chillers, with a fixed diagnostic call-out and affordable transparent pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -132,7 +132,7 @@ MONEY = {
     },
     "cellar-cooler-repair-london": {
         "kw": "Cellar repair London",
-        "title": "Cellar Repair London | Same-Day 24/7 Pub and Bar Cooler Engineers",
+        "title": "Cellar Repair London | 24/7 Pub and Bar Engineers",
         "desc": "Cellar repair London for pubs and bars: same-day 24/7 emergency cellar cooler repairs and service, fixed diagnostic call-out. Call 07983 759320.",
         "offers": ['Same day cellar repair London', '24 hour emergency cellar cooler repair London', 'Affordable cellar repair London with fixed diagnostic call-out', 'Cellar cooler repair London', 'Cellar cooler repairs London', 'Cellar cooler service London', 'Cellar cooler services London', 'Emergency cellar cooler repair London', 'Same day cellar cooler repairs London', '24/7 cellar cooler repair London', 'Cheap cellar cooler repair London', 'Affordable cellar cooler repair London', 'Cellar cooler repair near me', 'Annual cellar cooler maintenance and servicing London', 'Low-cost cellar cooler diagnostics London'],
         "audio": "Cold Direct cellar repair London. Warm beer means lost sales. Our London engineers repair pub and bar cellar coolers with same day emergency visits, twenty four hours a day, seven days a week, for a fixed diagnostic call-out and affordable transparent pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
