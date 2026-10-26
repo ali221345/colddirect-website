@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-26d: Diagnose returns text first (`transcript`, `reply`, `language`) and the widget then calls `/api/voice-tts`. TTS receives only the spoken answer, never prompt instructions. Every answer ends with the green Like and 5-Star Review line and `0203 952 4822 or 07983 759320`. Script `?v=20261026d`.
+
 Owner 2026-10-26c: Lang Auto records with MediaRecorder only. STOP & SEND posts `audio_base64` to Vercel `/api/voice-diagnose`. Gemini transcribes the original Persian or English words into the You bubble and answers in that language. No browser SpeechRecognition. No canned "Give the brand, error code..." fallback. Spoken audio never contains a slash. Script `?v=20261026c`.
 
 Owner 2026-10-26b: Ask Your Fault is push-to-talk. STOP & SEND kills mic tracks before playback. TTS playback sets `isSpeaking` and keeps the mic dead so the speaker cannot hear the greeting. One audio queue. Persian letters lock `fa-IR`; otherwise `en-GB`. Strip `[happy]` tags. Diagnose+TTS on Vercel `/api/voice-diagnose` and `/api/voice-tts`. Script `?v=20261026b`.

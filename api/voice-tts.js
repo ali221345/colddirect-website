@@ -30,15 +30,15 @@ module.exports = async function handler(req, res) {
   }
   var data = await core.readBody(req);
   var lockedHint = core.lockLang(data.text || data.spoken_text || "", data.language);
-  var text = core.forSpeech(data.text || data.spoken_text || "", lockedHint.code).slice(0, 1800);
-  if (!text) {
+  var text = core.ttsScript(data.text || data.spoken_text || "", lockedHint.code).slice(0, 900);
+  if (!text || /read this exactly|do not add words|never say the word slash/i.test(text)) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.end(JSON.stringify({ ok: false, error: "no_text", watermark: core.MARK }));
     return;
   }
   var locked = core.lockLang(text, lockedHint.bcp);
-  text = core.forSpeech(text, locked.code);
+  text = core.ttsScript(text, locked.code);
   var key = String(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "").trim();
   if (!key) {
     res.statusCode = 200;
@@ -47,8 +47,9 @@ module.exports = async function handler(req, res) {
     return;
   }
   var voice = locked.code === "fa" ? "Charon" : "Puck";
-  var out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
-    contents: [{ role: "user", parts: [{ text: "Read this exactly in a calm male Head Engineer voice. Do not add words. Never say the word slash:\n\n" + text }] }],
+  var out = await core.geminiJson(key, "gemini-2.5-flash-preview-tts", {
+    systemInstruction: { parts: [{ text: "Male Head Engineer voice." }] },
+    contents: [{ role: "user", parts: [{ text: text }] }],
     generationConfig: {
       responseModalities: ["AUDIO"],
       speechConfig: {
@@ -56,7 +57,20 @@ module.exports = async function handler(req, res) {
         voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
       }
     }
-  });
+  }, 12000);
+  if (!out.ok) {
+    out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
+      systemInstruction: { parts: [{ text: "Male Head Engineer voice." }] },
+      contents: [{ role: "user", parts: [{ text: text }] }],
+      generationConfig: {
+        responseModalities: ["AUDIO"],
+        speechConfig: {
+          languageCode: locked.bcp,
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
+        }
+      }
+    }, 12000);
+  }
   var audio = out.ok ? core.extractAudio(out.json) : null;
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");

@@ -24,6 +24,7 @@
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
+  var recordingRow = null;
   var starting = false;
   var live = false;
   var isSpeaking = false;
@@ -184,6 +185,29 @@
     logEl.appendChild(row);
     logEl.scrollTop = logEl.scrollHeight;
     return { row: row, body: body };
+  }
+
+  function showRecording() {
+    if (recordingRow && recordingRow.row && recordingRow.row.parentNode) {
+      setTranscriptBody(recordingRow.body, "Recording…", false);
+      recordingRow.row.classList.add("is-partial");
+      liveUser = recordingRow;
+      return;
+    }
+    recordingRow = addRow("user", "Recording…", true);
+    liveUser = recordingRow;
+  }
+
+  function fillRecording(text) {
+    text = String(text || "");
+    if (!recordingRow || !recordingRow.row || !recordingRow.row.parentNode) {
+      recordingRow = addRow("user", text, false);
+    } else {
+      setTranscriptBody(recordingRow.body, text, false);
+      recordingRow.row.classList.remove("is-partial");
+    }
+    liveUser = null;
+    if (logEl) logEl.scrollTop = logEl.scrollHeight;
   }
 
   function upsertLive(role, text, final) {
@@ -357,7 +381,24 @@
 
   function spokenClean(text, lang) {
     var fa = lang === "fa-IR";
-    return stripTags(text).replace(/\bslash\b/gi, " ").replace(/[／/]/g, fa ? " یا " : " or ").replace(/\s+/g, " ").trim();
+    var s = stripTags(text)
+      .replace(/read this exactly[^.]*\./gi, " ")
+      .replace(/do not add words\.?/gi, " ")
+      .replace(/never say the word slash\.?/gi, " ")
+      .replace(/calm male head engineer voice\.?/gi, " ")
+      .replace(/\bslash\b/gi, " ")
+      .replace(/[／/]/g, fa ? " یا " : " or ")
+      .replace(/0203\s*952\s*4822/g, "0203 952 4822")
+      .replace(/07983\s*759320/g, "07983 759320");
+    var cta = fa
+      ? "لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید."
+      : "Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.";
+    if (fa) {
+      if (s.indexOf("دکمه سبز") === -1) s = (s + " " + cta).trim();
+    } else if (!/5-star review button/i.test(s)) {
+      s = (s + " " + cta).trim();
+    }
+    return s.replace(/\s+/g, " ").trim();
   }
 
   function lockLang(text) {
@@ -542,6 +583,41 @@
     });
   }
 
+  function tracksAreLive(stream) {
+    var tracks = stream && stream.getAudioTracks ? stream.getAudioTracks() : [];
+    return tracks.length > 0 && tracks.every(function (t) {
+      return t.readyState === "live" && t.enabled !== false;
+    });
+  }
+
+  function waitForLiveTracks(stream) {
+    return new Promise(function (resolve, reject) {
+      if (tracksAreLive(stream)) return resolve(stream);
+      var settled = false;
+      var timer = null;
+      function finish(ok) {
+        if (settled) return;
+        settled = true;
+        if (timer) clearInterval(timer);
+        if (ok) resolve(stream);
+        else {
+          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e1) {}
+          reject(new Error("mic"));
+        }
+      }
+      var tracks = stream.getAudioTracks();
+      tracks.forEach(function (t) {
+        t.onunmute = function () { if (tracksAreLive(stream)) finish(true); };
+      });
+      var n = 0;
+      timer = setInterval(function () {
+        n += 1;
+        if (tracksAreLive(stream)) finish(true);
+        else if (n > 30) finish(false);
+      }, 50);
+    });
+  }
+
   function finishRecording() {
     return new Promise(function (resolve) {
       var rec = mediaRec;
@@ -571,18 +647,12 @@
     });
   }
 
-  function speakAnswer(text, lang, audioB64, mime) {
+  function speakAnswer(text, lang) {
     stopPlayback();
     isSpeaking = true;
     var token = playToken;
     setStatus("active", "🔊 Speaking Answer...");
     var clean = spokenClean(text, lang);
-    if (audioB64) {
-      return playBytes(audioB64, mime || "audio/wav", token).catch(function () {
-        if (token !== playToken) return;
-        return speakBrowser(clean, lang);
-      });
-    }
     return postJson(TTS_URLS[0], { text: clean, language: lang }).then(function (j) {
       if (token !== playToken) return;
       if (j && j.audio_base64) return playBytes(j.audio_base64, j.audio_mime || "audio/wav", token);
@@ -599,7 +669,7 @@
     if (root) root.classList.remove("is-live");
     if (root) root.classList.add("is-busy");
     setStatus("connecting", "Transcribing your voice...");
-    upsertLive("user", "Recording…", false);
+    showRecording();
     finishRecording().then(function () {
       if (my !== seq) return "";
       var blob = recChunks.length ? new Blob(recChunks, { type: recMime || "audio/webm" }) : null;
@@ -607,7 +677,7 @@
     }).then(function (b64) {
       if (my !== seq) return null;
       if (!b64) {
-        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        fillRecording("I did not catch that. Tap SPEAK and try again.");
         setStatus("error", "I did not catch that. Tap SPEAK and try again.");
         isSpeaking = false;
         return { handled: true };
@@ -624,25 +694,25 @@
     }).then(function (j) {
       if (my !== seq || (j && j.handled)) return;
       if (!j) {
-        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        fillRecording("I did not catch that. Tap SPEAK and try again.");
         setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
         isSpeaking = false;
         return;
       }
       var transcript = stripTags((j && j.transcript) || "");
-      var display = stripTags((j && j.display_text) || "");
+      var display = stripTags((j && (j.reply || j.display_text)) || "");
       var spoken = stripTags((j && (j.spoken_text || display)) || "");
       if (!j || j.ok === false || !display || !transcript || /give the brand, error code and whether the cabinet is still cold/i.test(display + " " + spoken)) {
-        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        fillRecording("I did not catch that. Tap SPEAK and try again.");
         setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
         isSpeaking = false;
         return;
       }
-      var lang = lockLang(transcript + " " + display);
+      var lang = (j && j.language) || lockLang(transcript + " " + display);
       sessionLang = lang;
-      upsertLive("user", transcript, true);
+      fillRecording(transcript);
       upsertLive("bot", display, true);
-      return speakAnswer(spoken || display, lang, j.audio_base64, j.audio_mime || (j.audio && j.audio.mime));
+      return speakAnswer(spoken || display, lang);
     }).catch(function () {
       if (my !== seq) return;
       isSpeaking = false;
@@ -660,24 +730,22 @@
     agentSpoke = false;
     liveUser = null;
     liveBot = null;
+    recordingRow = null;
     userText = "";
     recChunks = [];
     stopPlayback();
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);
-    setStatus("connecting", "Listening… speak the fault, then STOP & SEND.");
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+    setStatus("connecting", "Starting the microphone...");
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } }).then(function (s) {
+      return waitForLiveTracks(s);
+    }).then(function (s) {
       if (my !== seq) {
         s.getTracks().forEach(function (t) { t.stop(); });
         return;
       }
       micStream = s;
-      live = true;
-      starting = false;
-      setStatus("active", "Listening… tap STOP & SEND when you finish.");
-      startMeter(s);
-      upsertLive("user", "Recording…", false);
       recMime = (window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) ? "audio/webm;codecs=opus" : "audio/mp4";
       try {
         mediaRec = new MediaRecorder(s, { mimeType: recMime });
@@ -695,7 +763,13 @@
       try { mediaRec.start(250); } catch (e3) {
         hangup();
         setStatus("error", "This browser cannot record audio. Tap SPEAK again.");
+        return;
       }
+      live = true;
+      starting = false;
+      setStatus("active", "Listening… tap STOP & SEND when you finish.");
+      startMeter(s);
+      showRecording();
     }).catch(function () {
       if (my !== seq) return;
       hangup();

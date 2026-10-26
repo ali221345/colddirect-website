@@ -17,15 +17,15 @@ var SYS = [
   "Start display_text and spoken_text with the greeting. English: Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.",
   "Persian display greeting: سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.",
   "Persian spoken_text must pronounce the brand as کُلد دایرِکت.",
-  "End display_text with 0203 952 4822 / 07983 759320.",
-  "spoken_text must NEVER contain a slash character or the word slash. English ending: 0203 952 4822 or 07983 759320.",
-  "Persian spoken ending uses number words: صفر دو صفر سه، نه پنج دو، چهار هشت دو دو یا صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر.",
-  "No slang. No stage directions. No bracket tags.",
-  "JSON only: {\"language\":\"fa-IR or en-GB\",\"transcript\":\"exact spoken words\",\"display_text\":\"on-screen answer\",\"spoken_text\":\"TTS answer\"}"
+  "End both answers with this exact close, and do not use a slash.",
+  "English close: Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.",
+  "Persian close: لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید.",
+  "No slang. No stage directions. No bracket tags. Never include instructions about how to speak.",
+  "JSON only: {\"language\":\"fa-IR or en-GB\",\"transcript\":\"exact spoken words\",\"display_text\":\"on-screen answer\",\"spoken_text\":\"same answer for speech\"}"
 ].join(" ");
 
 function hasPhone(text) {
-  return /0203|07983|952\s*4822|759320|صفر دو صفر سه|صفر هفت نه هشت سه/.test(String(text || ""));
+  return /0203|07983|952\s*4822|759320/.test(String(text || ""));
 }
 
 function parseOut(text, audioMode) {
@@ -44,15 +44,9 @@ function parseOut(text, audioMode) {
       if (!/[\u0600-\u06FF]/.test(display)) return null;
       if (audioMode && !/[\u0600-\u06FF]/.test(transcript)) return null;
     }
-    display = core.ensureGreeting(display, locked.code, false);
-    spoken = core.ensureGreeting(spoken, locked.code, true);
-    if (!hasPhone(display)) display += " 0203 952 4822 / 07983 759320.";
-    if (!hasPhone(spoken)) {
-      spoken += locked.code === "fa"
-        ? " صفر دو صفر سه، نه پنج دو، چهار هشت دو دو یا صفر هفت نه هشت سه، هفت پنج نه، سه دو صفر."
-        : " 0203 952 4822 or 07983 759320.";
-    }
-    spoken = core.forSpeech(spoken, locked.code);
+    display = core.ensureClose(core.ensureGreeting(display, locked.code, false), locked.code);
+    spoken = core.ttsScript(core.ensureGreeting(spoken, locked.code, true), locked.code);
+    if (!hasPhone(display) || !hasPhone(spoken)) return null;
     if (core.isBanned(display) || core.isBanned(spoken) || /[／/]|\bslash\b/i.test(spoken)) return null;
     return { display: display, spoken: spoken, language: locked.bcp, transcript: transcript };
   } catch (e) {
@@ -66,23 +60,18 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var models = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-flash-latest"];
+  var models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-lite-latest"];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
     var out = null;
-    for (var attempt = 0; attempt < 2; attempt++) {
-      try {
-        out = await core.geminiJson(key, models[i], {
-          systemInstruction: { parts: [{ text: SYS }] },
-          contents: [{ role: "user", parts: parts }],
-          generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
-        });
-      } catch (err) {
-        out = { ok: false, json: { error: { code: 408 } } };
-      }
-      var code = out && out.json && out.json.error && out.json.error.code;
-      if (out && out.ok) break;
-      if (code !== 503 && code !== 429 && code !== 408) break;
+    try {
+      out = await core.geminiJson(key, models[i], {
+        systemInstruction: { parts: [{ text: SYS }] },
+        contents: [{ role: "user", parts: parts }],
+        generationConfig: { temperature: 0.1, maxOutputTokens: 400, responseMimeType: "application/json" }
+      }, 7000);
+    } catch (err) {
+      out = { ok: false, json: { error: { code: 408 } } };
     }
     if (!out || !out.ok) {
       lastErr = models[i];
@@ -93,23 +82,6 @@ async function diagnose(key, text, audio, mime) {
     lastErr = models[i] + ":unparsed";
   }
   return { error: lastErr || "no_model" };
-}
-
-async function speak(key, spoken, locked) {
-  var voice = locked.code === "fa" ? "Charon" : "Puck";
-  var script = core.forSpeech(spoken, locked.code);
-  var out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
-    contents: [{ role: "user", parts: [{ text: "Read this exactly in a calm male Head Engineer voice. Do not add words. Never say the word slash:\n\n" + script }] }],
-    generationConfig: {
-      responseModalities: ["AUDIO"],
-      speechConfig: {
-        languageCode: locked.bcp,
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
-      }
-    }
-  });
-  if (!out.ok) return null;
-  return core.extractAudio(out.json);
 }
 
 function send(res, code, body) {
@@ -128,7 +100,7 @@ module.exports = async function handler(req, res) {
   }
   if (!core.cors(req, res)) return;
   if (req.method === "GET") {
-    send(res, 200, { ok: true, service: "voice-diagnose", audio: "gemini-multimodal" });
+    send(res, 200, { ok: true, service: "voice-diagnose", mode: "text-first" });
     return;
   }
   if (req.method !== "POST") {
@@ -170,18 +142,14 @@ module.exports = async function handler(req, res) {
     return;
   }
   var locked = core.lockLang(result.transcript + " " + result.display, result.language);
-  result.spoken = core.forSpeech(result.spoken || result.display, locked.code);
-  var audioOut = null;
-  if (result.spoken) {
-    try { audioOut = await speak(key, result.spoken, locked); } catch (e2) { audioOut = null; }
-  }
+  var reply = core.ensureClose(result.display, locked.code);
+  var spoken = core.ttsScript(result.spoken || reply, locked.code);
   send(res, 200, {
     ok: true,
     language: locked.bcp,
     transcript: result.transcript || text,
-    display_text: result.display,
-    spoken_text: result.spoken,
-    audio_base64: audioOut ? audioOut.data : "",
-    audio_mime: audioOut ? audioOut.mime : ""
+    reply: reply,
+    display_text: reply,
+    spoken_text: spoken
   });
 };

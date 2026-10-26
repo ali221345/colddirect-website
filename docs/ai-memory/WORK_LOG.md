@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget records with `MediaRecorder` and, on `STOP & SEND`
 
 ---
 
+### [2026-10-26d] — Fast text, then TTS (`?v=20261026d`)
+- `/api/voice-diagnose` returns `transcript`, `reply`, and `language` without waiting for a WAV. The widget shows both bubbles, then calls `/api/voice-tts`. TTS is given only the spoken answer. Every answer ends with the Like and 5-Star Review line. Title/H1/meta unchanged.
+
 ### [2026-10-26c3] — Live voice transcription verified
 - Production `https://colddirect-website.vercel.app/api/voice-diagnose` on `gemini-3.8-flash`. English WAV transcript was exactly "The Foster commercial fridge is not cooling and shows error E1." Persian text stayed fa-IR. Neither answer contained the canned fallback or a spoken slash. Both returned `audio_base64`. Plesk homepage serves `colddirect-voice-bar.js?v=20261026c` with MediaRecorder and no SpeechRecognition. Title/H1/meta unchanged.
 
