@@ -66,15 +66,25 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-flash-lite"];
+  var models = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-flash-latest"];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
-    var out = await core.geminiJson(key, models[i], {
-      systemInstruction: { parts: [{ text: SYS }] },
-      contents: [{ role: "user", parts: parts }],
-      generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
-    });
-    if (!out.ok) {
+    var out = null;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        out = await core.geminiJson(key, models[i], {
+          systemInstruction: { parts: [{ text: SYS }] },
+          contents: [{ role: "user", parts: parts }],
+          generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+        });
+      } catch (err) {
+        out = { ok: false, json: { error: { code: 408 } } };
+      }
+      var code = out && out.json && out.json.error && out.json.error.code;
+      if (out && out.ok) break;
+      if (code !== 503 && code !== 429 && code !== 408) break;
+    }
+    if (!out || !out.ok) {
       lastErr = models[i];
       continue;
     }
@@ -88,7 +98,7 @@ async function diagnose(key, text, audio, mime) {
 async function speak(key, spoken, locked) {
   var voice = locked.code === "fa" ? "Charon" : "Puck";
   var script = core.forSpeech(spoken, locked.code);
-  var out = await core.geminiJson(key, "gemini-2.5-flash-preview-tts", {
+  var out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
     contents: [{ role: "user", parts: [{ text: "Read this exactly in a calm male Head Engineer voice. Do not add words. Never say the word slash:\n\n" + script }] }],
     generationConfig: {
       responseModalities: ["AUDIO"],

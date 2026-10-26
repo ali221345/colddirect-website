@@ -194,13 +194,18 @@ function extractAudio(json) {
 
 async function geminiJson(key, model, body) {
   var url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + encodeURIComponent(key);
-  var res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  var json = await res.json().catch(function () { return {}; });
-  return { ok: res.ok, json: json };
+  try {
+    var res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(12000)
+    });
+    var json = await res.json().catch(function () { return {}; });
+    return { ok: res.ok, json: json };
+  } catch (e) {
+    return { ok: false, json: { error: { code: 408, status: "TIMEOUT" } } };
+  }
 }
 
 module.exports = {

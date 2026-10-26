@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
     return;
   }
   var voice = locked.code === "fa" ? "Charon" : "Puck";
-  var out = await core.geminiJson(key, "gemini-2.5-flash-preview-tts", {
+  var out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
     contents: [{ role: "user", parts: [{ text: "Read this exactly in a calm male Head Engineer voice. Do not add words. Never say the word slash:\n\n" + text }] }],
     generationConfig: {
       responseModalities: ["AUDIO"],
