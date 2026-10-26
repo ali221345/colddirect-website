@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-26b] — PTT mute, language lock, Vercel Gemini/TTS (`?v=20261026b`)
+- STOP & SEND / TTS play abort recognition and stop every mic track. Single audio queue. Persian letters lock fa-IR, else en-GB. Bracket tags stripped. Diagnose answers the fault; phones only at the end. Vercel `/api/voice-diagnose` + `/api/voice-tts`. Title/H1/meta unchanged.
+
 ### [2026-10-26a] — Unify Ask Your Fault bar on 9 money pages (`?v=20261026a`)
 - Compact bar now has `Lang: Auto`, `🎤 SPEAK`, `🔊 LISTEN`, and `Tap SPEAK, then STOP & SEND when you finish.` Live SPEAK still talks to the Head Engineer; LISTEN plays the page welcome audio. Title/H1/meta/canonical unchanged.
 

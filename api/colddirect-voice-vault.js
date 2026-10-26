@@ -60,10 +60,7 @@ function readBody(req) {
 }
 
 function detectLang(text) {
-  if (/[پچژگ]/.test(text) || /[آ-ی]/.test(text)) return ["fa", "Persian"];
-  if (/[\u0600-\u06FF]/.test(text)) return ["ar", "Arabic"];
-  if (/[ğüşöçıİĞÜŞÖÇ]/.test(text)) return ["tr", "Turkish"];
-  if (/[\u0900-\u097F]/.test(text)) return ["hi", "Hindi"];
+  if (/[\u0600-\u06FF]/.test(text)) return ["fa", "Persian"];
   return ["en", "English"];
 }
 

@@ -1,5 +1,4 @@
-/* ColdDirect Voice — Ask Your Fault via ElevenLabs Conversational AI
- * Agent: agent_2901m5th5arfe9kamcec9ef2p42q
+/* ColdDirect Voice — Ask Your Fault / Head Engineer (PTT + Vercel Gemini)
  * Watermark: CD-UK-IP-2026-994821-VOICE-AI
  * Owner: ColdDirect Ltd, colddirect.co.uk
  */
@@ -14,16 +13,9 @@
   var STOP_LABEL = "⏹ STOP & SEND";
   var LISTEN_LABEL = "🔊 LISTEN";
   var STATUS_IDLE = "Tap SPEAK, then STOP & SEND when you finish.";
-  var AGENT_ID = "agent_2901m5th5arfe9kamcec9ef2p42q";
-  var TOKEN_URL = "/colddirect-elevenlabs-token.aspx";
-  var TRANSCRIBE_URL = "/colddirect-voice-transcribe.aspx";
-  var EL_LANGS = "en ja zh de hi fr ko pt pt-br it es id nl tr pl sv bg ro ar cs el fi ms da ta uk ru hu hr sk no vi tl af hy as az be bn bs ca et gl ka gu ha he is ga jv kn kk ky lv lt lb mk ml mr ne ps fa pa sr sd sl so sw te th ur cy";
-  var SDK_URLS = [
-    "https://cdn.jsdelivr.net/npm/@elevenlabs/client@0.15.2/+esm",
-    "https://esm.sh/@elevenlabs/client@0.15.2",
-    "https://unpkg.com/@elevenlabs/client@0.15.2/+esm",
-    "https://cdn.jsdelivr.net/npm/@11labs/client@0.15.2/+esm"
-  ];
+  var VERCEL_API = "https://colddirect-website.vercel.app";
+  var DIAGNOSE_URLS = [VERCEL_API + "/api/voice-diagnose", "/colddirect-voice-vault.aspx"];
+  var TTS_URLS = [VERCEL_API + "/api/voice-tts"];
 
   var host = String(location.hostname || "").toLowerCase();
   if (host && host !== "www.colddirect.co.uk" && host !== "colddirect.co.uk" && host !== "localhost" && host !== "127.0.0.1") return;
@@ -32,22 +24,22 @@
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
-  var conversation = null;
   var starting = false;
   var live = false;
+  var isSpeaking = false;
   var agentSpoke = false;
   var meterTimer = null;
-  var sdkPromise = null;
   var seq = 0;
-  var spokenLang = "";
-  var blockNativeAsr = true;
+  var sessionLang = "";
   var srRec = null;
   var micStream = null;
-  var probePromise = null;
-  var lastProbe = null;
-  var sttSeq = 0;
-  var lastSentUser = "";
-  var contextSent = false;
+  var mediaRec = null;
+  var recChunks = [];
+  var recMime = "audio/webm";
+  var userText = "";
+  var playToken = 0;
+  var voiceSource = null;
+  var voiceEl = null;
 
   function css() {
     return [
@@ -347,268 +339,117 @@
     restoreAudioDock();
   }
 
-  function loadSdk() {
-    if (sdkPromise) return sdkPromise;
-    sdkPromise = (function next(i) {
-      if (i >= SDK_URLS.length) return Promise.reject(new Error("ElevenLabs SDK failed to load"));
-      return import(SDK_URLS[i]).then(function (mod) {
-        var C = (mod && (mod.Conversation || (mod.default && mod.default.Conversation) || mod.default)) || null;
-        if (C && typeof C.startSession === "function") return C;
-        return next(i + 1);
-      }).catch(function () { return next(i + 1); });
-    })(0);
-    return sdkPromise;
+  function stripTags(text) {
+    return String(text || "").replace(/\[\w+\]\s*/g, "").replace(/\s+/g, " ").trim();
   }
 
-  function messageText(payload) {
-    if (payload == null) return "";
-    if (typeof payload === "string") return payload;
-    return String(payload.message || payload.text || payload.transcript || payload.content || "");
-  }
-
-  function messageRole(payload) {
-    var src = "";
-    if (payload && typeof payload === "object") src = String(payload.source || payload.role || payload.type || payload.sender || "");
-    if (/user|human/i.test(src)) return "user";
-    return "bot";
-  }
-
-  function messageFinal(payload) {
-    if (!payload || typeof payload !== "object") return true;
-    if (payload.is_final === false || payload.isFinal === false) return false;
-    if (payload.tentative === true || payload.interim === true) return false;
-    return true;
-  }
-
-  function onAgentMessage(payload) {
-    var text = messageText(payload).replace(/\s+/g, " ").trim();
-    if (!text) return;
-    var role = messageRole(payload);
-    if (role === "user") return;
-    upsertLive(role, text, messageFinal(payload));
-  }
-
-  function toElLang(code) {
-    var raw = String(code || "").toLowerCase().replace(/_/g, "-").trim();
-    var base = raw.split("-")[0];
-    var aliases = { fas: "fa", per: "fa", farsi: "fa", persian: "fa", fil: "tl", tgl: "tl", cmn: "zh", yue: "zh", iw: "he", nb: "no", nn: "no" };
-    if (aliases[raw]) base = aliases[raw];
-    else if (aliases[base]) base = aliases[base];
-    if (raw === "pt-br" || (base === "pt" && /br/.test(raw))) return "pt-br";
-    if (raw === "zh-cn" || raw === "zh-tw" || raw === "zh-hans" || raw === "zh-hant") return "zh";
-    return EL_LANGS.split(" ").indexOf(base) >= 0 ? base : "";
-  }
-
-  function toSrLang(code) {
-    var el = toElLang(code);
-    var m = {
-      fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", zh: "zh-CN", en: "en-GB", hi: "hi-IN",
-      ur: "ur-PK", ps: "ps-AF", de: "de-DE", fr: "fr-FR", es: "es-ES", it: "it-IT",
-      pt: "pt-PT", "pt-br": "pt-BR", ru: "ru-RU", uk: "uk-UA", nl: "nl-NL", pl: "pl-PL",
-      ja: "ja-JP", ko: "ko-KR", tl: "fil-PH", he: "he-IL", bn: "bn-BD", pa: "pa-IN"
-    };
-    return m[el] || "";
-  }
-
-  function isLatinMostly(text) {
-    var s = String(text || "");
-    var latin = (s.match(/[A-Za-z]/g) || []).length;
-    var other = (s.match(/[^\sA-Za-z0-9.,!?'"+\-:/()]/g) || []).length;
-    return latin >= 8 && latin > other * 2;
-  }
-
-  function shouldIgnoreEnglishAsr(text) {
-    if (!blockNativeAsr) return false;
-    if (isRtl(text)) return false;
-    if (spokenLang && spokenLang !== "en" && isLatinMostly(text)) return true;
-    return false;
-  }
-
-  function encodeWav(chunks, sampleRate) {
-    var n = 0;
-    var i;
-    var c;
-    for (c = 0; c < chunks.length; c++) n += chunks[c].length;
-    var buf = new ArrayBuffer(44 + n * 2);
-    var v = new DataView(buf);
-    function wstr(off, s) {
-      for (i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i));
-    }
-    wstr(0, "RIFF");
-    v.setUint32(4, 36 + n * 2, true);
-    wstr(8, "WAVE");
-    wstr(12, "fmt ");
-    v.setUint32(16, 16, true);
-    v.setUint16(20, 1, true);
-    v.setUint16(22, 1, true);
-    v.setUint32(24, sampleRate, true);
-    v.setUint32(28, sampleRate * 2, true);
-    v.setUint16(32, 2, true);
-    v.setUint16(34, 16, true);
-    wstr(36, "data");
-    v.setUint32(40, n * 2, true);
-    var o = 44;
-    for (c = 0; c < chunks.length; c++) {
-      var a = chunks[c];
-      for (i = 0; i < a.length; i++, o += 2) {
-        var s = Math.max(-1, Math.min(1, a[i]));
-        v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-      }
-    }
-    var bytes = new Uint8Array(buf);
-    var bin = "";
-    var step = 0x8000;
-    for (i = 0; i < bytes.length; i += step) {
-      bin += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + step, bytes.length)));
-    }
-    return btoa(bin);
-  }
-
-  function captureWav(stream, ms) {
-    return new Promise(function (resolve, reject) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return reject(new Error("no AudioContext"));
-      var ctx = window.__cdPlayCtx || new AC();
-      if (ctx.state === "suspended") ctx.resume();
-      var src = ctx.createMediaStreamSource(stream);
-      var proc = ctx.createScriptProcessor(4096, 1, 1);
-      var gain = ctx.createGain();
-      gain.gain.value = 0;
-      var chunks = [];
-      proc.onaudioprocess = function (ev) {
-        chunks.push(new Float32Array(ev.inputBuffer.getChannelData(0)));
-      };
-      src.connect(proc);
-      proc.connect(gain);
-      gain.connect(ctx.destination);
-      setTimeout(function () {
-        try { proc.disconnect(); } catch (e1) {}
-        try { src.disconnect(); } catch (e2) {}
-        try { gain.disconnect(); } catch (e3) {}
-        if (!chunks.length) return reject(new Error("no audio"));
-        resolve({ b64: encodeWav(chunks, ctx.sampleRate || 48000), mime: "audio/wav" });
-      }, ms);
-    });
-  }
-
-  function transcribeOriginal(stream) {
-    return captureWav(stream, 1400).then(function (clip) {
-      return fetch(TRANSCRIBE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        body: JSON.stringify({ audio_base64: clip.b64, mime: clip.mime, mode: "transcribe", translate: false })
-      });
-    }).then(function (r) { return r.json().catch(function () { return {}; }); }).then(function (j) {
-      if (!j || j.ok === false) return null;
-      var transcript = String(j.transcript || "").replace(/\s+/g, " ").trim();
-      if (!transcript) return null;
-      return { language: toElLang(j.language) || "", transcript: transcript, mode: "transcribe" };
-    });
+  function lockLang(text) {
+    if (/[\u0600-\u06FF]/.test(String(text || ""))) return "fa-IR";
+    return "en-GB";
   }
 
   function stopSpeechRec() {
     if (!srRec) return;
-    try { srRec.onresult = null; srRec.onend = null; srRec.stop(); } catch (e1) {}
+    try { srRec.onresult = null; srRec.onend = null; srRec.onerror = null; } catch (e0) {}
+    try { srRec.abort(); } catch (e1) {}
+    try { srRec.stop(); } catch (e2) {}
     srRec = null;
   }
 
-  function startSpeechRec(lang) {
-    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    var locale = toSrLang(lang);
-    if (!SR || !locale) return;
-    if (locale.toLowerCase().indexOf("en-us") === 0) locale = "en-GB";
-    if (srRec && String(srRec.lang || "") === locale) return;
+  function stopMicHard() {
     stopSpeechRec();
+    if (mediaRec) {
+      try { if (mediaRec.state !== "inactive") mediaRec.stop(); } catch (e1) {}
+      mediaRec = null;
+    }
+    if (micStream) {
+      try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e2) {}
+      micStream = null;
+    }
+  }
+
+  function stopPlayback() {
+    playToken += 1;
+    isSpeaking = false;
+    if (voiceSource) {
+      try { voiceSource.stop(0); } catch (e1) {}
+      voiceSource = null;
+    }
+    if (voiceEl) {
+      try { voiceEl.pause(); voiceEl.removeAttribute("src"); voiceEl.load(); } catch (e2) {}
+    }
+    var welcome = welcomeAudio();
+    if (welcome && !welcome.paused) {
+      try { welcome.pause(); } catch (e3) {}
+      setListenUi(false);
+    }
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e4) {}
+  }
+
+  function startSpeechRec() {
+    if (isSpeaking) return;
+    stopSpeechRec();
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
     var rec = new SR();
     srRec = rec;
-    rec.lang = locale;
+    rec.lang = sessionLang === "fa-IR" ? "fa-IR" : "en-GB";
     rec.continuous = true;
     rec.interimResults = true;
     rec.maxAlternatives = 1;
     rec.onresult = function (ev) {
+      if (isSpeaking) {
+        stopSpeechRec();
+        return;
+      }
       var t = "";
       var final = false;
       for (var i = ev.resultIndex; i < ev.results.length; i++) {
         t += ev.results[i][0].transcript || "";
         if (ev.results[i].isFinal) final = true;
       }
-      t = String(t).replace(/\s+/g, " ").trim();
-      if (!t || shouldIgnoreEnglishAsr(t)) return;
-      upsertLive("user", t, final);
-      if (final) sendOriginalUser(t);
+      t = stripTags(t);
+      if (!t) return;
+      var locked = lockLang(t);
+      if (locked === "fa-IR" && sessionLang !== "fa-IR") {
+        sessionLang = "fa-IR";
+        try { rec.lang = "fa-IR"; } catch (e1) {}
+      } else if (!sessionLang) {
+        sessionLang = locked;
+      }
+      userText = stripTags((userText + " " + t).replace(/\s+/g, " "));
+      upsertLive("user", userText, final);
     };
     rec.onend = function () {
-      if (srRec === rec && live && blockNativeAsr) {
+      if (srRec === rec && live && !isSpeaking) {
         try { rec.start(); } catch (e2) {}
       }
     };
     try { rec.start(); } catch (e3) {}
   }
 
-  function muteElAsr() {
-    blockNativeAsr = true;
-    if (conversation && typeof conversation.setMicMuted === "function") {
-      try { conversation.setMicMuted(true); } catch (e1) {}
-    }
-  }
-
-  function sendTranscribeContext() {
-    if (contextSent || !conversation || typeof conversation.sendContextualUpdate !== "function") return;
-    contextSent = true;
+  function startMeter(stream) {
+    if (!meterEl) return;
+    meterEl.hidden = false;
+    var bar = meterEl.querySelector("i");
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC || !stream) return;
     try {
-      conversation.sendContextualUpdate(
-        "STT mode is transcribe, never translate. Keep the user's original language. " +
-        (spokenLang ? "They spoke " + spokenLang + ". " : "") +
-        "Reply in that same language. Do not switch to English unless they spoke English."
-      );
+      var ctx = window.__cdPlayCtx || new AC();
+      if (ctx.state === "suspended") ctx.resume();
+      var src = ctx.createMediaStreamSource(stream);
+      var ana = ctx.createAnalyser();
+      ana.fftSize = 256;
+      src.connect(ana);
+      var data = new Uint8Array(ana.frequencyBinCount);
+      meterTimer = setInterval(function () {
+        if (!live) return;
+        ana.getByteFrequencyData(data);
+        var n = 0;
+        for (var i = 0; i < data.length; i++) n += data[i];
+        if (bar) bar.style.width = Math.min(100, Math.round((n / (data.length * 255)) * 100)) + "%";
+      }, 120);
     } catch (e1) {}
-  }
-
-  function sendOriginalUser(text) {
-    var t = String(text || "").replace(/\s+/g, " ").trim();
-    if (!t) return;
-    if (t === lastSentUser) return;
-    if (lastSentUser && lastSentUser.indexOf(t) === 0) return;
-    lastSentUser = t;
-    if (conversation && typeof conversation.sendUserMessage === "function") {
-      try { conversation.sendUserMessage(t); } catch (e1) {}
-    }
-  }
-
-  function ingestOriginal(info) {
-    if (!info || !live) return;
-    var lang = toElLang(info.language);
-    var transcript = String(info.transcript || "").replace(/\s+/g, " ").trim();
-    if (transcript && isRtl(transcript) && (!lang || lang === "en")) {
-      lang = /[\u067E\u0686\u0698\u06AF]/.test(transcript) ? "fa" : "ar";
-    }
-    if (lang) spokenLang = lang;
-    muteElAsr();
-    sendTranscribeContext();
-    if (transcript && !shouldIgnoreEnglishAsr(transcript)) {
-      upsertLive("user", transcript, true);
-      sendOriginalUser(transcript);
-    }
-    if (spokenLang) startSpeechRec(spokenLang);
-  }
-
-  function stopSttLoop() {
-    sttSeq += 1;
-  }
-
-  function startSttLoop() {
-    var my = ++sttSeq;
-    function tick() {
-      if (my !== sttSeq || !live || !micStream) return;
-      transcribeOriginal(micStream).then(function (info) {
-        if (my !== sttSeq || !live) return;
-        if (info) ingestOriginal(info);
-      }).catch(function () {}).then(function () {
-        if (my === sttSeq && live) setTimeout(tick, 200);
-      });
-    }
-    tick();
   }
 
   function stopMeter() {
@@ -620,225 +461,250 @@
     }
   }
 
-  function startMeter() {
-    if (!meterEl || !conversation) return;
-    meterEl.hidden = false;
-    var bar = meterEl.querySelector("i");
-    meterTimer = setInterval(function () {
-      if (!live || !conversation) return;
-      var p = null;
-      try {
-        if (typeof conversation.getInputVolume === "function") p = conversation.getInputVolume();
-      } catch (e1) { return; }
-      Promise.resolve(p).then(function (vol) {
-        var n = typeof vol === "number" ? vol : (vol && vol.volume);
-        if (typeof n !== "number") return;
-        if (bar) bar.style.width = Math.min(100, Math.round(n * 100)) + "%";
-      }).catch(function () {});
-    }, 120);
-  }
-
   function hangup() {
-    var conv = conversation;
-    conversation = null;
     live = false;
     starting = false;
-    blockNativeAsr = true;
-    spokenLang = "";
-    lastProbe = null;
-    probePromise = null;
-    lastSentUser = "";
-    contextSent = false;
-    stopSttLoop();
-    stopSpeechRec();
-    if (micStream) {
-      try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e0) {}
-      micStream = null;
-    }
+    stopMicHard();
     stopMeter();
     setSpeakUi(false);
     if (root) root.classList.remove("is-live", "is-busy");
     setStatus("", STATUS_IDLE);
-    if (conv && typeof conv.endSession === "function") {
-      try { conv.endSession(); } catch (e1) {}
-    }
   }
 
-  function sessionOptions(my, connectionType, langCode) {
-    var elLang = toElLang(langCode);
-    var opts = {
-      agentId: AGENT_ID,
-      connectionType: connectionType,
-      dynamicVariables: {
-        stt_mode: "transcribe",
-        never_translate: "true",
-        lang_auto: "true"
-      },
-      onConnect: function () {
-        if (my !== seq) return;
-        live = true;
-        starting = false;
-        muteElAsr();
-        startSttLoop();
-        setSpeakUi(true);
-        setStatus("active", "Speak now — the Head Engineer is listening.");
-        startMeter();
-      },
-      onDisconnect: function () {
-        if (my !== seq) return;
-        hangup();
-      },
-      onError: function (err) {
-        try { console.error("ColdDirect ElevenLabs error", err); } catch (e1) {}
-        if (my !== seq) return;
-        hangup();
-        setStatus("error", "The voice session could not start. Allow the microphone and tap SPEAK again.");
-      },
-      onMessage: function (payload) {
-        if (my !== seq) return;
-        onAgentMessage(payload);
-      },
-      onAgentResponseCorrection: function (info) {
-        if (my !== seq) return;
-        var text = info && (info.corrected_agent_response || info.corrected);
-        if (text) upsertLive("bot", String(text), true);
-      },
-      onModeChange: function (info) {
-        if (my !== seq) return;
-        var mode = "";
-        if (typeof info === "string") mode = info;
-        else if (info && typeof info === "object") mode = String(info.mode || info.status || "");
-        mode = mode.toLowerCase();
-        if (mode === "speaking") {
-          agentSpoke = true;
-          setStatus("active", "🔊 Head Engineer speaking...");
-        } else if (mode === "listening") {
-          setStatus("active", "Speak now — the Head Engineer is listening.");
-          if (agentSpoke) highlightCta(true);
-        }
-      }
-    };
-    if (elLang && elLang !== "en") {
-      opts.overrides = { agent: { language: elLang } };
-    }
-    return opts;
-  }
-
-  function fetchConversationToken() {
-    return fetch(TOKEN_URL, { cache: "no-store" }).then(function (r) {
-      return r.json().catch(function () { return {}; });
-    }).then(function (j) {
-      return (j && (j.token || j.conversationToken || j.signed_url)) || "";
-    }).catch(function () { return ""; });
-  }
-
-  function beginSession(Conversation, my) {
-    function startWith(opts) {
-      return Conversation.startSession(opts);
-    }
-    function startPublic(langCode) {
-      var opts = sessionOptions(my, "webrtc", langCode);
-      return startWith(opts).catch(function (err) {
-        var msg = String((err && err.message) || err || "");
-        if (opts.overrides && /override|400|not enabled|language/i.test(msg)) {
-          delete opts.overrides;
-          return startWith(opts);
-        }
-        throw err;
+  function playBytes(b64, mime, token) {
+    unlockAudio();
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    var ctx = window.__cdPlayCtx;
+    if (ctx && ctx.decodeAudioData) {
+      return ctx.decodeAudioData(bytes.buffer.slice(0)).then(function (buf) {
+        if (token !== playToken) return;
+        var src = ctx.createBufferSource();
+        voiceSource = src;
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        src.onended = function () {
+          if (token !== playToken) return;
+          isSpeaking = false;
+          setStatus("", STATUS_IDLE);
+          highlightCta(true);
+        };
+        src.start(0);
       });
     }
-    return startPublic(spokenLang).catch(function (err) {
-      var msg = String((err && err.message) || err || "");
-      if (!/401|authentication|signed url|conversation token/i.test(msg)) throw err;
-      return fetchConversationToken().then(function (token) {
-        if (!token) throw err;
-        var opts = sessionOptions(my, "webrtc", spokenLang);
-        delete opts.agentId;
-        opts.conversationToken = token;
-        return startWith(opts);
-      });
-    }).then(function (conv) {
-      if (my !== seq) {
-        if (conv && conv.endSession) try { conv.endSession(); } catch (e2) {}
-        return;
+    return new Promise(function (resolve, reject) {
+      if (!voiceEl) {
+        voiceEl = document.createElement("audio");
+        voiceEl.setAttribute("playsinline", "true");
+        voiceEl.style.display = "none";
+        document.body.appendChild(voiceEl);
       }
-      conversation = conv || conversation;
-      live = true;
-      muteElAsr();
-      sendTranscribeContext();
-      startSttLoop();
-      if (lastProbe) ingestOriginal(lastProbe);
-      else if (probePromise) {
-        probePromise.then(function (info) {
-          if (my !== seq || !info) return;
-          lastProbe = info;
-          ingestOriginal(info);
-        }).catch(function () {});
-      }
+      voiceEl.onended = function () {
+        if (token !== playToken) return;
+        isSpeaking = false;
+        setStatus("", STATUS_IDLE);
+        highlightCta(true);
+        resolve();
+      };
+      voiceEl.onerror = function () { reject(new Error("audio")); };
+      voiceEl.src = "data:" + (mime || "audio/wav") + ";base64," + b64;
+      var p = voiceEl.play();
+      if (p && p.catch) p.catch(reject);
     });
   }
 
-  function warmMic() {
-    if (micStream && micStream.active) return Promise.resolve(micStream);
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve(null);
-    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
-      micStream = s;
-      if (!probePromise) {
-        probePromise = transcribeOriginal(s).then(function (info) {
-          lastProbe = info;
-          if (info && info.language) spokenLang = info.language;
-          return info;
-        }).catch(function () { return null; });
+  function speakBrowser(text, lang) {
+    return new Promise(function (resolve) {
+      if (!window.speechSynthesis) return resolve();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === "fa-IR" ? "fa-IR" : "en-GB";
+      u.rate = 1;
+      var voices = window.speechSynthesis.getVoices() || [];
+      var pick = voices.filter(function (v) {
+        var loc = String(v.lang || "").toLowerCase();
+        if (lang === "fa-IR") return loc.indexOf("fa") === 0;
+        return loc.indexOf("en-gb") === 0 && /male|daniel|ryan|ravi|george|aaron/i.test(v.name);
+      })[0];
+      if (lang === "fa-IR" && !pick) return resolve();
+      if (pick) u.voice = pick;
+      u.onend = function () {
+        isSpeaking = false;
+        setStatus("", STATUS_IDLE);
+        highlightCta(true);
+        resolve();
+      };
+      u.onerror = function () { resolve(); };
+      window.speechSynthesis.speak(u);
+    });
+  }
+
+  function postJson(url, body) {
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CD-IP": MARK },
+      cache: "no-store",
+      body: JSON.stringify(body)
+    }).then(function (r) { return r.json().catch(function () { return {}; }); });
+  }
+
+  function diagnose(payload) {
+    var i = 0;
+    function next() {
+      if (i >= DIAGNOSE_URLS.length) return Promise.resolve(null);
+      var url = DIAGNOSE_URLS[i++];
+      return postJson(url, payload).then(function (j) {
+        if (j && (j.display_text || j.spoken || j.ok)) return j;
+        return next();
+      }).catch(function () { return next(); });
+    }
+    return next();
+  }
+
+  function speakAnswer(text, lang, audioB64, mime) {
+    stopPlayback();
+    isSpeaking = true;
+    var token = playToken;
+    setStatus("active", "🔊 Speaking Answer...");
+    var clean = stripTags(text);
+    if (audioB64) {
+      return playBytes(audioB64, mime || "audio/wav", token).catch(function () {
+        if (token !== playToken) return;
+        return speakBrowser(clean, lang);
+      });
+    }
+    return postJson(TTS_URLS[0], { text: clean, language: lang }).then(function (j) {
+      if (token !== playToken) return;
+      if (j && j.audio_base64) return playBytes(j.audio_base64, j.audio_mime || "audio/wav", token);
+      return speakBrowser(clean, lang);
+    }).catch(function () { return speakBrowser(clean, lang); });
+  }
+
+  function sendFault() {
+    var my = seq;
+    var text = stripTags(userText);
+    live = false;
+    starting = false;
+    isSpeaking = true;
+    stopMicHard();
+    stopMeter();
+    setSpeakUi(false);
+    if (root) root.classList.remove("is-live");
+    if (root) root.classList.add("is-busy");
+    setStatus("connecting", "Diagnosing the fault...");
+    if (!text) {
+      setStatus("error", "I did not catch that. Tap SPEAK and try again.");
+      isSpeaking = false;
+      return;
+    }
+    sessionLang = lockLang(text);
+    upsertLive("user", text, true);
+    var blobP = Promise.resolve("");
+    if (recChunks.length) {
+      var blob = new Blob(recChunks, { type: recMime });
+      blobP = new Promise(function (resolve) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          var s = String(fr.result || "");
+          resolve(s.indexOf(",") >= 0 ? s.split(",")[1] : s);
+        };
+        fr.onerror = function () { resolve(""); };
+        fr.readAsDataURL(blob);
+      });
+    }
+    blobP.then(function (b64) {
+      if (my !== seq) return;
+      return diagnose({
+        text: text,
+        transcript: text,
+        audio_base64: b64,
+        mime: recMime,
+        language: sessionLang,
+        mode: "transcribe",
+        translate: false
+      });
+    }).then(function (j) {
+      if (my !== seq) return;
+      var display = stripTags((j && (j.display_text || j.spoken || j.summary)) || "");
+      var spoken = stripTags((j && (j.spoken_text || j.tts_text || display)) || "");
+      var lang = lockLang(text + " " + display);
+      sessionLang = lang;
+      if (!display) {
+        setStatus("error", "The Head Engineer could not answer. Tap SPEAK again.");
+        isSpeaking = false;
+        return;
       }
-      return s;
+      upsertLive("bot", display, true);
+      return speakAnswer(spoken || display, lang, j && j.audio_base64, j && (j.audio_mime || (j.audio && j.audio.mime)));
+    }).catch(function () {
+      if (my !== seq) return;
+      isSpeaking = false;
+      setStatus("error", "The diagnosis could not start. Tap SPEAK again.");
+    }).then(function () {
+      if (root) root.classList.remove("is-busy");
     });
   }
 
   function startLive() {
-    if (live || starting) return;
+    if (live || starting || isSpeaking) return;
     var my = ++seq;
     userCollapsed = false;
     starting = true;
     agentSpoke = false;
     liveUser = null;
     liveBot = null;
-    blockNativeAsr = true;
-    lastSentUser = "";
-    contextSent = false;
+    userText = "";
+    recChunks = [];
+    stopPlayback();
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);
-    setStatus("connecting", "Connecting to the Head Engineer...");
-    Promise.all([loadSdk(), warmMic()]).then(function (pair) {
-      if (my !== seq) return;
-      var Conversation = pair[0];
-      if (lastProbe && lastProbe.language) spokenLang = lastProbe.language;
-      return beginSession(Conversation, my);
-    }).catch(function (err) {
-      try { console.error("ColdDirect ElevenLabs start", err); } catch (e4) {}
+    setStatus("connecting", "Listening… speak the fault, then STOP & SEND.");
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+      if (my !== seq) {
+        s.getTracks().forEach(function (t) { t.stop(); });
+        return;
+      }
+      micStream = s;
+      live = true;
+      starting = false;
+      setStatus("active", "Listening… tap STOP & SEND when you finish.");
+      startMeter(s);
+      startSpeechRec();
+      recMime = (window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) ? "audio/webm;codecs=opus" : "audio/mp4";
+      try {
+        mediaRec = new MediaRecorder(s, { mimeType: recMime });
+      } catch (e1) {
+        try { mediaRec = new MediaRecorder(s); recMime = mediaRec.mimeType || recMime; } catch (e2) { mediaRec = null; }
+      }
+      if (mediaRec) {
+        mediaRec.ondataavailable = function (ev) {
+          if (ev.data && ev.data.size) recChunks.push(ev.data);
+        };
+        mediaRec.start(250);
+      }
+    }).catch(function () {
       if (my !== seq) return;
       hangup();
-      setStatus("error", "The voice session could not start. Allow the microphone and tap SPEAK again.");
+      setStatus("error", "Allow the microphone and tap SPEAK again.");
     });
   }
 
   function onSpeakPointer(ev) {
     if (ev && ev.pointerType === "mouse" && ev.button !== 0) return;
     unlockAudio();
-    loadSdk();
-    if (!live && !starting) {
-      probePromise = null;
-      lastProbe = null;
-      spokenLang = "";
-      warmMic();
-    }
   }
 
   function onSpeakClick(ev) {
     if (ev) ev.preventDefault();
+    if (isSpeaking) {
+      stopPlayback();
+      setStatus("", STATUS_IDLE);
+      return;
+    }
     if (live || starting) {
       seq += 1;
-      hangup();
+      sendFault();
       return;
     }
     startLive();
@@ -851,14 +717,19 @@
       listenBtn.addEventListener("pointerdown", function () { unlockAudio(); });
       listenBtn.addEventListener("click", function (ev) {
         if (ev) ev.preventDefault();
+        if (live || starting) {
+          stopMicHard();
+        }
+        stopPlayback();
         playWelcome();
       });
     }
     if (closeBtn) closeBtn.addEventListener("click", function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      if (live || starting) {
+      if (live || starting || isSpeaking) {
         seq += 1;
+        stopPlayback();
         hangup();
       }
       closePanel();
@@ -868,8 +739,9 @@
 
   function mount() {
     restoreAudioDock();
-    if (document.getElementById("cd-voice-root") && document.getElementById("cd-voice-speak") && document.getElementById("cd-voice-listen")) {
-      root = document.getElementById("cd-voice-root");
+    var existing = document.getElementById("cd-voice-root");
+    if (existing && existing.getAttribute("data-cd-ptt") === "1" && document.getElementById("cd-voice-speak") && document.getElementById("cd-voice-listen")) {
+      root = existing;
       syncVoicePlacement();
       return;
     }
@@ -889,6 +761,7 @@
     root = document.createElement("div");
     root.id = "cd-voice-root";
     root.setAttribute("data-cd-ip", MARK);
+    root.setAttribute("data-cd-ptt", "1");
     root.setAttribute("role", "region");
     root.setAttribute("aria-label", TITLE);
     root.innerHTML = html();
@@ -907,7 +780,6 @@
     ctaEl = document.getElementById("cd-voice-cta");
     meterEl = document.getElementById("cd-voice-meter");
     bindUi();
-    loadSdk();
     setStatus("", STATUS_IDLE);
   }
 

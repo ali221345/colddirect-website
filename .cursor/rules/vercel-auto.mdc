@@ -1,0 +1,16 @@
+---
+description: Always commit, push, and deploy Vercel production automatically for Cold Direct voice API work.
+alwaysApply: true
+---
+
+# Vercel auto-deploy (Cold Direct)
+
+When this session changes `api/**`, `vercel.json`, `.vercelignore`, or the voice widget that calls the Vercel Gemini/TTS endpoints:
+
+1. Do not ask the owner for confirmation, a project name, or a deploy click.
+2. After tests pass, commit the relevant files (never `App_Data`, `*.key`, `.env`, FTP secrets, `AUTO_SEO_KEY`, or `GSC_CREDENTIALS_JSON`).
+3. Push to `main`.
+4. Deploy production with `npx vercel --prod --yes` (link first with `npx vercel link --yes` only if `.vercel` is missing).
+5. Keep `https://www.colddirect.co.uk` on WHUK Plesk. Vercel hosts the voice API (`/api/voice-diagnose`, `/api/voice-tts`). The widget on Plesk must call the live Vercel URL.
+6. CORS must allow only `https://colddirect.co.uk` and `https://www.colddirect.co.uk` (plus localhost for local tests). Functions echo the request Origin when it is one of those hosts.
+7. After Vercel deploy, still FTP/push the widget JS so Plesk serves the new frontend.

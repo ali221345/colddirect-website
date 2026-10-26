@@ -10,3 +10,10 @@ plesk-upload
 _wa_src
 node_modules
 .vercel
+App_Data
+*.key
+.env
+.env.*
+AUDIT-REPORT.md
+gsc_report.csv
+rank_history.jsonl

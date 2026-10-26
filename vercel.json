@@ -1,9 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npm run build",
+  "buildCommand": "node -e \"process.exit(0)\"",
   "installCommand": "true",
   "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://www.colddirect.co.uk" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, X-CD-IP, Accept" },
+        { "key": "Access-Control-Allow-Credentials", "value": "false" },
+        { "key": "Vary", "value": "Origin" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ],
+  "functions": {
+    "api/voice-diagnose.js": { "maxDuration": 30 },
+    "api/voice-tts.js": { "maxDuration": 30 },
+    "api/colddirect-voice-vault.js": { "maxDuration": 30 }
+  },
   "redirects": [
     {
       "source": "/about-us.html",
