@@ -60,11 +60,8 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  // Keep the complete retry sequence below common serverless timeout limits.
-  var models = [
-    ["gemini-2.5-flash", 3500],
-    ["gemini-2.0-flash", 3000]
-  ];
+  // One bounded request prevents upstream retries from triggering serverless 502s.
+  var models = [["gemini-2.5-flash", 4000]];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
     var out = null;
@@ -146,7 +143,11 @@ module.exports = async function handler(req, res) {
   }
   var result = null;
   try {
-    result = await diagnose(key, text, audio || null, mime);
+    if (text && /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(text)) {
+      result = localDiagnosis(text);
+    } else {
+      result = await diagnose(key, text, audio || null, mime);
+    }
   } catch (e) {
     result = { error: "exception" };
   }
