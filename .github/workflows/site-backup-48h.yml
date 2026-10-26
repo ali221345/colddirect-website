@@ -71,7 +71,8 @@ jobs:
           rm -rf verify-tmp
           echo "manifest re-verified: $(wc -l < MANIFEST.sha256) files OK"
 
-      - name: Upload backup artifact (90 days)
+      - name: Upload backup artifact (90 days; retained for diagnosis on failure)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: colddirect-site-backup-${{ github.run_id }}

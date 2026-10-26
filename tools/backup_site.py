@@ -28,6 +28,7 @@ import json
 import os
 import re
 import sys
+import time
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -127,13 +128,20 @@ def snapshot(ftp, base: str, include_media: bool, log=print):
         if rsize is not None and rsize > MAX_FILE:
             skipped.append((rel, "too large"))
             continue
-        buf = io.BytesIO()
-        try:
-            ftp.retrbinary(f"RETR {remote}", buf.write)
-        except Exception as exc:  # noqa: BLE001
-            skipped.append((rel, f"download failed: {type(exc).__name__}"))
+        data = None
+        for attempt in range(3):
+            buf = io.BytesIO()
+            try:
+                ftp.retrbinary(f"RETR {remote}", buf.write)
+                data = buf.getvalue()
+                break
+            except Exception as exc:  # noqa: BLE001 - transient IIS FTP failures need bounded retries
+                if attempt == 2:
+                    skipped.append((rel, f"download failed after 3 attempts: {type(exc).__name__}"))
+                else:
+                    time.sleep(2 * (attempt + 1))
+        if data is None:
             continue
-        data = buf.getvalue()
         if rsize is not None and rsize != len(data):
             skipped.append((rel, f"size mismatch remote={rsize} got={len(data)}"))
             continue
@@ -202,6 +210,10 @@ def verify_zip(zpath: Path, manifest: dict) -> list[str]:
 def critical_problems(manifest: dict) -> list[str]:
     files = manifest["files"]
     p = [f"critical file missing: {c}" for c in CRITICAL if c not in files]
+    incomplete = [x for x in manifest["skipped"] if x["reason"].startswith(("download failed", "size mismatch", "total size cap"))]
+    p.extend(f"incomplete backup: {x['path']} ({x['reason']})" for x in incomplete[:20])
+    if len(incomplete) > 20:
+        p.append(f"incomplete backup: {len(incomplete) - 20} additional failed files")
     html = sum(1 for f in files if f.lower().endswith(".html"))
     if html < MIN_HTML:
         p.append(f"only {html} .html files (expected >= {MIN_HTML})")
@@ -334,7 +346,19 @@ def selftest():
             def size(self, path):
                 return 999999 if path.endswith("index.html") and "p1/" in path else super().size(path)
         s4 = run(Short(tree), b, tmp / "s", False, now=datetime(2026, 10, 21, 3, 0, 3, tzinfo=timezone.utc))
-        assert s4["skipped"] >= 1
+        assert s4["skipped"] >= 1 and not s4["verified"] and any("incomplete backup" in p for p in s4["problems"])
+        # A transient FTP failure is retried and recovered without weakening integrity checks.
+        class Flaky(FakeFtp):
+            calls = 0
+            def retrbinary(self, cmd, cb):
+                if cmd.endswith("/index.html") and "/p2/" not in cmd and Flaky.calls == 0:
+                    Flaky.calls += 1
+                    raise OSError("transient")
+                super().retrbinary(cmd, cb)
+        old_sleep, time.sleep = time.sleep, lambda _: None
+        s5 = run(Flaky(tree), b, tmp / "r", False, now=datetime(2026, 10, 21, 3, 0, 4, tzinfo=timezone.utc))
+        time.sleep = old_sleep
+        assert Flaky.calls == 1 and "httpdocs/index.html" in zipfile.ZipFile(tmp / "r" / s5["zip"]).namelist()
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print("backup_site selftest OK (scrub, exclusions, media flag, zip verify, tamper + critical + size-mismatch detection)")

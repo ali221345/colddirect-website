@@ -4,6 +4,8 @@ import base64
 import json
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 
 API = os.environ.get("VOICE_API_URL", "https://colddirect-website.vercel.app/api/voice-diagnose")
@@ -11,9 +13,15 @@ SILENT_WAV = base64.b64encode(b"RIFF" + (32036).to_bytes(4, "little") + b"WAVEfm
 
 
 def request(payload, opener=urllib.request.urlopen):
-    req = urllib.request.Request(API, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 (compatible; ColdDirect-Voice-Regression/1.0)", "Origin": "https://www.colddirect.co.uk", "Referer": "https://www.colddirect.co.uk/"}, method="POST")
-    with opener(req, timeout=90) as response:
-        return response.status, json.loads(response.read().decode("utf-8"))
+    for attempt in range(2):
+        req = urllib.request.Request(API, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 (compatible; ColdDirect-Voice-Regression/1.0)", "Origin": "https://www.colddirect.co.uk", "Referer": "https://www.colddirect.co.uk/"}, method="POST")
+        try:
+            with opener(req, timeout=90) as response:
+                return response.status, json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (429, 502, 503) or attempt == 1:
+                raise
+            time.sleep(3)
 
 
 def check(opener=urllib.request.urlopen):
