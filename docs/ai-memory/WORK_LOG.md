@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-25al] — Mute ElevenLabs ASR; original-language STT loop (`?v=20261025al`)
+- Lang Auto never lets ElevenLabs English ASR fill the You bubble (it was translating Persian). Mic is muted; `/colddirect-voice-transcribe.aspx` loops in transcribe mode only; Web Speech uses `fa-IR` / mapped locales, never `en-US`. Original text is `sendUserMessage` to the Head Engineer. Title/H1/meta unchanged.
+
 ### [2026-10-25ak] — STT transcribe, never translate (`?v=20261025ak`)
 - Lang Auto no longer uses English ASR/translate. `/colddirect-voice-transcribe.aspx` returns verbatim original-language text. That transcript is shown in You and sent to the agent. Native English ASR is ignored for non-English speech. Title/H1/meta unchanged.
 

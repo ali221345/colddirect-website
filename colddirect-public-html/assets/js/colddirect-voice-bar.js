@@ -35,11 +35,14 @@
   var sdkPromise = null;
   var seq = 0;
   var spokenLang = "";
-  var blockNativeAsr = false;
+  var blockNativeAsr = true;
   var srRec = null;
   var micStream = null;
   var probePromise = null;
   var lastProbe = null;
+  var sttSeq = 0;
+  var lastSentUser = "";
+  var contextSent = false;
 
   function css() {
     return [
@@ -342,7 +345,7 @@
     var text = messageText(payload).replace(/\s+/g, " ").trim();
     if (!text) return;
     var role = messageRole(payload);
-    if (role === "user" && shouldIgnoreEnglishAsr(text)) return;
+    if (role === "user") return;
     upsertLive(role, text, messageFinal(payload));
   }
 
@@ -472,11 +475,12 @@
   }
 
   function startSpeechRec(lang) {
-    stopSpeechRec();
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     var locale = toSrLang(lang);
     if (!SR || !locale) return;
     if (locale.toLowerCase().indexOf("en-us") === 0) locale = "en-GB";
+    if (srRec && String(srRec.lang || "") === locale) return;
+    stopSpeechRec();
     var rec = new SR();
     srRec = rec;
     rec.lang = locale;
@@ -491,11 +495,9 @@
         if (ev.results[i].isFinal) final = true;
       }
       t = String(t).replace(/\s+/g, " ").trim();
-      if (!t) return;
+      if (!t || shouldIgnoreEnglishAsr(t)) return;
       upsertLive("user", t, final);
-      if (final && conversation && typeof conversation.sendUserMessage === "function") {
-        try { conversation.sendUserMessage(t); } catch (e1) {}
-      }
+      if (final) sendOriginalUser(t);
     };
     rec.onend = function () {
       if (srRec === rec && live && blockNativeAsr) {
@@ -505,39 +507,69 @@
     try { rec.start(); } catch (e3) {}
   }
 
-  function applySpokenLanguage(info) {
+  function muteElAsr() {
+    blockNativeAsr = true;
+    if (conversation && typeof conversation.setMicMuted === "function") {
+      try { conversation.setMicMuted(true); } catch (e1) {}
+    }
+  }
+
+  function sendTranscribeContext() {
+    if (contextSent || !conversation || typeof conversation.sendContextualUpdate !== "function") return;
+    contextSent = true;
+    try {
+      conversation.sendContextualUpdate(
+        "STT mode is transcribe, never translate. Keep the user's original language. " +
+        (spokenLang ? "They spoke " + spokenLang + ". " : "") +
+        "Reply in that same language. Do not switch to English unless they spoke English."
+      );
+    } catch (e1) {}
+  }
+
+  function sendOriginalUser(text) {
+    var t = String(text || "").replace(/\s+/g, " ").trim();
+    if (!t) return;
+    if (t === lastSentUser) return;
+    if (lastSentUser && lastSentUser.indexOf(t) === 0) return;
+    lastSentUser = t;
+    if (conversation && typeof conversation.sendUserMessage === "function") {
+      try { conversation.sendUserMessage(t); } catch (e1) {}
+    }
+  }
+
+  function ingestOriginal(info) {
     if (!info || !live) return;
     var lang = toElLang(info.language);
     var transcript = String(info.transcript || "").replace(/\s+/g, " ").trim();
     if (transcript && isRtl(transcript) && (!lang || lang === "en")) {
       lang = /[\u067E\u0686\u0698\u06AF]/.test(transcript) ? "fa" : "ar";
     }
-    spokenLang = lang || spokenLang;
-    if (transcript) upsertLive("user", transcript, true);
-    if (conversation && typeof conversation.sendContextualUpdate === "function") {
-      try {
-        conversation.sendContextualUpdate(
-          "STT mode is transcribe, never translate. Keep the user's original language. " +
-          (spokenLang ? "They spoke " + spokenLang + ". " : "") +
-          "Reply in that same language. Do not switch to English unless they spoke English."
-        );
-      } catch (e1) {}
+    if (lang) spokenLang = lang;
+    muteElAsr();
+    sendTranscribeContext();
+    if (transcript && !shouldIgnoreEnglishAsr(transcript)) {
+      upsertLive("user", transcript, true);
+      sendOriginalUser(transcript);
     }
-    if (transcript && conversation && typeof conversation.sendUserMessage === "function") {
-      try { conversation.sendUserMessage(transcript); } catch (e2) {}
+    if (spokenLang) startSpeechRec(spokenLang);
+  }
+
+  function stopSttLoop() {
+    sttSeq += 1;
+  }
+
+  function startSttLoop() {
+    var my = ++sttSeq;
+    function tick() {
+      if (my !== sttSeq || !live || !micStream) return;
+      transcribeOriginal(micStream).then(function (info) {
+        if (my !== sttSeq || !live) return;
+        if (info) ingestOriginal(info);
+      }).catch(function () {}).then(function () {
+        if (my === sttSeq && live) setTimeout(tick, 200);
+      });
     }
-    if (spokenLang && spokenLang !== "en") {
-      blockNativeAsr = true;
-      if (conversation && typeof conversation.setMicMuted === "function") {
-        try { conversation.setMicMuted(true); } catch (e3) {}
-      }
-      startSpeechRec(spokenLang);
-    } else {
-      blockNativeAsr = false;
-      if (conversation && typeof conversation.setMicMuted === "function") {
-        try { conversation.setMicMuted(false); } catch (e4) {}
-      }
-    }
+    tick();
   }
 
   function stopMeter() {
@@ -572,10 +604,13 @@
     conversation = null;
     live = false;
     starting = false;
-    blockNativeAsr = false;
+    blockNativeAsr = true;
     spokenLang = "";
     lastProbe = null;
     probePromise = null;
+    lastSentUser = "";
+    contextSent = false;
+    stopSttLoop();
     stopSpeechRec();
     if (micStream) {
       try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e0) {}
@@ -604,6 +639,8 @@
         if (my !== seq) return;
         live = true;
         starting = false;
+        muteElAsr();
+        startSttLoop();
         setSpeakUi(true);
         setStatus("active", "Speak now — the Head Engineer is listening.");
         startMeter();
@@ -687,15 +724,16 @@
         return;
       }
       conversation = conv || conversation;
-      if (conversation && typeof conversation.setMicMuted === "function" && (!spokenLang || spokenLang !== "en")) {
-        try { conversation.setMicMuted(true); } catch (e3) {}
-      }
-      if (lastProbe) applySpokenLanguage(lastProbe);
+      live = true;
+      muteElAsr();
+      sendTranscribeContext();
+      startSttLoop();
+      if (lastProbe) ingestOriginal(lastProbe);
       else if (probePromise) {
         probePromise.then(function (info) {
           if (my !== seq || !info) return;
           lastProbe = info;
-          applySpokenLanguage(info);
+          ingestOriginal(info);
         }).catch(function () {});
       }
     });
@@ -725,7 +763,9 @@
     agentSpoke = false;
     liveUser = null;
     liveBot = null;
-    blockNativeAsr = false;
+    blockNativeAsr = true;
+    lastSentUser = "";
+    contextSent = false;
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);

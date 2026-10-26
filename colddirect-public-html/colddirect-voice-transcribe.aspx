@@ -6,7 +6,7 @@
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Import Namespace="System.Web.Script.Serialization" %>
 <script runat="server">
-const string SYS = "You are a speech-to-text transcriber. Task=transcribe. NEVER translate. NEVER convert speech into English. Return the speaker's exact original-language words in their native script (Persian/Farsi stays Persian letters, Arabic stays Arabic, Turkish stays Turkish, Chinese stays Chinese). JSON only: {\"language\":\"ISO-639-1\",\"transcript\":\"verbatim original text\"}. language is the spoken language, not English, unless they actually spoke English.";
+const string SYS = "You are a speech-to-text transcriber. Task=transcribe only. NEVER translate. NEVER convert speech into English. If they spoke Persian/Farsi, transcript MUST be Persian script, not an English translation. Arabic stays Arabic. Turkish stays Turkish. Chinese stays Chinese. JSON only: {\"language\":\"ISO-639-1\",\"transcript\":\"verbatim original text\"}. language is the spoken language, not English, unless they actually spoke English.";
 
 bool HostOk(string value)
 {
@@ -152,7 +152,7 @@ if (string.IsNullOrEmpty(audio) || audio.Length < 80)
 string payload = "{"
     + "\"systemInstruction\":{\"parts\":[{\"text\":" + new JavaScriptSerializer().Serialize(SYS) + "}]},"
     + "\"contents\":[{\"role\":\"user\",\"parts\":["
-    + "{\"text\":\"Transcribe this audio verbatim in the original spoken language. Do not translate.\"},"
+    + "{\"text\":\"Transcribe verbatim in the original spoken language. Do not translate into English.\"},"
     + "{\"inlineData\":{\"mimeType\":" + new JavaScriptSerializer().Serialize(mime) + ",\"data\":" + new JavaScriptSerializer().Serialize(audio) + "}}"
     + "]}],"
     + "\"generationConfig\":{\"temperature\":0,\"maxOutputTokens\":120,\"responseMimeType\":\"application/json\"}"

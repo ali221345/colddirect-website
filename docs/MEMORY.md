@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25al: Lang Auto NEVER uses ElevenLabs English ASR. Mic is muted; original-language STT loop (`/colddirect-voice-transcribe.aspx`, mode=transcribe) plus Web Speech (`fa-IR` etc, never `en-US`) fills the You bubble and `sendUserMessage`. Ignore EL user transcripts. Never `language: en`. Script `?v=20261025al`.
+
 Owner 2026-10-25ak: Lang Auto STT is transcribe-only, never translate-to-English. Original-language transcript is sent to the Head Engineer. Never force `language: en` or `en-US` SpeechRecognition. Script `?v=20261025ak`.
 
 Owner 2026-10-25aj: Exact public agent ID `agent_2901m5th5arfe9kamcec9ef2p42q` (`9kam`, not `9am`). SPEAK uses `Conversation.startSession({ agentId, connectionType: 'webrtc' })` and does not wait on `App_Data/elevenlabs.key`. Script `?v=20261025aj`.
