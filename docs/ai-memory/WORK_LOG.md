@@ -26,6 +26,11 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-26a] — GSC daily report (Search Console unavailable)
+- Cursor automation still has no Search Console MCP or `GSC_CREDENTIALS_JSON`. Did not invent 28-day totals, tables, or movers. Requested windows: 28 Sep–25 Oct vs 31 Aug–27 Sep.
+- Property `https://www.colddirect.co.uk/` last reached for sitemap/inspect by nightly auto-seo dispatch `40236559402` (25 Oct 21:49 UTC): 122 submitted / 0 indexed; homepage and money pages PASS. Weekly Sync performance report still last 20 Oct (`39512458941`, 7-day only, not copied); Monday 06:00 UTC Weekly Sync had not run as of 09:05 UTC.
+- Wrote `GSC-DAILY-REPORT.md` and `logs/gsc_daily_2026-10-26.md`. No HTML, title, or indexing changes.
+
 ### [2026-10-25al] — Mute ElevenLabs ASR; original-language STT loop (`?v=20261025al`)
 - Lang Auto never lets ElevenLabs English ASR fill the You bubble (it was translating Persian). Mic is muted; `/colddirect-voice-transcribe.aspx` loops in transcribe mode only; Web Speech uses `fa-IR` / mapped locales, never `en-US`. Original text is `sendUserMessage` to the Head Engineer. Title/H1/meta unchanged.
 
