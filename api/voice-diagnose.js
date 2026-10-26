@@ -60,11 +60,10 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
+  // Keep the complete retry sequence below common serverless timeout limits.
   var models = [
-    ["gemini-3.1-flash-lite", 6500],
-    ["gemini-2.5-flash", 1500],
-    ["gemini-2.0-flash", 1500],
-    ["gemini-3.8-flash", 6500]
+    ["gemini-2.5-flash", 3500],
+    ["gemini-2.0-flash", 3000]
   ];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
@@ -87,6 +86,22 @@ async function diagnose(key, text, audio, mime) {
     lastErr = models[i][0] + ":unparsed";
   }
   return { error: lastErr || "no_model" };
+}
+
+function localDiagnosis(text) {
+  var locked = core.lockLang(text, "");
+  var advice;
+  if (locked.code === "fa") {
+    advice = "برای جلوگیری از آسیب بیشتر، دستگاه را از برق جدا کنید و مسیر هوای کندانسور و فن‌ها را مسدود نکنید. برای بررسی کمپرسور، فن، ترموستات و گاز مبرد توسط مهندس، با کولد دایرکت تماس بگیرید.";
+  } else if (/fan|evaporator/i.test(text)) {
+    advice = "A non-running evaporator fan may have a faulty motor, iced-over coils, or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
+  } else if (/warm|not cold|temperature|freezer/i.test(text)) {
+    advice = "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat, or sealed-system fault. Switch the unit off if the compressor is hot or noisy, protect stock, and arrange a prompt engineer inspection.";
+  } else {
+    advice = "The fault requires checks of the power supply, airflow, fans, controls, and refrigeration circuit. Switch the unit off if it is overheating or noisy and arrange an engineer inspection rather than repeatedly restarting it.";
+  }
+  var display = core.ensureGreeting(advice, locked.code, false);
+  return { display: display, spoken: display, language: locked.bcp, transcript: text };
 }
 
 function send(res, code, body) {
@@ -134,6 +149,9 @@ module.exports = async function handler(req, res) {
     result = await diagnose(key, text, audio || null, mime);
   } catch (e) {
     result = { error: "exception" };
+  }
+  if (text && (!result || result.error || !result.display)) {
+    result = localDiagnosis(text);
   }
   if (!result || result.error || !result.display) {
     // Silent, clipped or unintelligible microphone audio is an input failure, not a site outage.
