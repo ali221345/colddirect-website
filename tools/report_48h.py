@@ -20,6 +20,10 @@ LABELS = {
 ORDER = tuple(LABELS)
 
 
+def overall(job_status, outcomes):
+    return "success" if job_status == "success" and all(outcomes.get(key) == "success" for key in ORDER) else "failure"
+
+
 def message(status, outcomes, now=None):
     now = now or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     lines = [f"ColdDirect 48h | {now}", "English: " + ("All requested checks passed." if status == "success" else "Attention required; inspect failed checks below.")]
@@ -47,6 +51,10 @@ def selftest():
     text = message("failure", {"backup": "success", "voice": "failure"}, "2026-10-26 00:00 UTC")
     assert "Attention required" in text and "نیاز به بررسی" in text and "Voice API: failure" in text
     assert "All requested checks passed" not in text and "همه بررسی‌های درخواستی موفق" not in text
+    good = {key: "success" for key in ORDER}
+    assert overall("success", good) == "success"
+    assert overall("success", dict(good, voice="failure")) == "failure"
+    assert overall("failure", good) == "failure"
     print("report_48h selftest OK")
 
 
@@ -59,7 +67,8 @@ if __name__ == "__main__":
         print(f"Bilingual ntfy test accepted: HTTP {status}")
         raise SystemExit(0)
     outcomes = {key: os.environ.get("S_" + key.upper(), "not run") for key in ORDER}
-    status = os.environ.get("JOB_STATUS", "failure")
+    # job.status ignores continue-on-error step failures; derive the headline from every real outcome.
+    status = overall(os.environ.get("JOB_STATUS"), outcomes)
     text = message(status, outcomes)
     out = ROOT / "backup-out" / "48h-report-fa-en.txt"
     out.parent.mkdir(exist_ok=True)
