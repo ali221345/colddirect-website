@@ -118,6 +118,11 @@
         "</div>" +
         '<div id="cd-voice-meter" hidden><i></i></div>' +
         '<div id="cd-voice-log" aria-live="polite"></div>' +
+        '<form id="cd-voice-text-form" style="display:flex;gap:6px;margin-top:10px">' +
+          '<label for="cd-voice-text-input" style="position:absolute;left:-10000px">Type your equipment fault</label>' +
+          '<input id="cd-voice-text-input" type="text" maxlength="2000" required autocomplete="off" placeholder="Or type the fault here…" style="flex:1;min-width:0;padding:10px;border:1px solid #475569;border-radius:8px;background:#fff;color:#0f172a;font:14px system-ui">' +
+          '<button type="submit" class="cd-voice-btn" style="height:auto!important;min-height:40px!important;padding:8px 12px!important">SEND</button>' +
+        '</form>' +
         '<a id="cd-voice-cta" href="' + REVIEW_HREF + '">👍 Like &amp; Leave a 5-Star Review</a>' +
       "</div>"
     );
@@ -703,8 +708,8 @@
       var display = stripTags((j && (j.reply || j.display_text)) || "");
       var spoken = stripTags((j && (j.spoken_text || display)) || "");
       if (!j || j.ok === false || !display || !transcript || /give the brand, error code and whether the cabinet is still cold/i.test(display + " " + spoken)) {
-        fillRecording("I did not catch that. Tap SPEAK and try again.");
-        setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
+        fillRecording("I could not hear that clearly. Type the fault below or try again.");
+        setStatus("error", (j && j.error) || "Type the fault below or tap SPEAK and try again.");
         isSpeaking = false;
         return;
       }
@@ -716,7 +721,38 @@
     }).catch(function () {
       if (my !== seq) return;
       isSpeaking = false;
-      setStatus("error", "The diagnosis could not start. Tap SPEAK again.");
+      setStatus("error", "The diagnosis could not start. Type the fault below or call 0203 952 4822.");
+    }).then(function () {
+      if (root) root.classList.remove("is-busy");
+    });
+  }
+
+  function sendTextFault(text) {
+    text = String(text || "").trim();
+    if (!text || live || starting) return;
+    var my = ++seq;
+    stopPlayback();
+    openPanel(true);
+    isSpeaking = true;
+    if (root) root.classList.add("is-busy");
+    upsertLive("user", text, true);
+    setStatus("connecting", "Diagnosing your typed fault...");
+    diagnose({ text: text, language: "auto", mode: "text" }).then(function (j) {
+      if (my !== seq) return;
+      var display = stripTags((j && (j.reply || j.display_text)) || "");
+      var spoken = stripTags((j && (j.spoken_text || display)) || "");
+      if (!j || j.ok === false || !display) {
+        isSpeaking = false;
+        setStatus("error", (j && j.error) || "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.");
+        return;
+      }
+      var lang = (j && j.language) || lockLang(text + " " + display);
+      upsertLive("bot", display, true);
+      return speakAnswer(spoken, lang);
+    }).catch(function () {
+      if (my !== seq) return;
+      isSpeaking = false;
+      setStatus("error", "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.");
     }).then(function () {
       if (root) root.classList.remove("is-busy");
     });
@@ -820,6 +856,15 @@
         hangup();
       }
       closePanel();
+    });
+    var textForm = document.getElementById("cd-voice-text-form");
+    var textInput = document.getElementById("cd-voice-text-input");
+    if (textForm && textInput) textForm.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var value = textInput.value;
+      if (!value.trim()) return;
+      textInput.value = "";
+      sendTextFault(value);
     });
     document.addEventListener("pointerdown", function () { unlockAudio(); }, { capture: true, once: true });
   }

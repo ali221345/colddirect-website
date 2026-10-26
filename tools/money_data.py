@@ -54,7 +54,7 @@ MONEY = {
     },
     "commercial-fridge-repair-london": {
         "kw": "Commercial fridge repair London",
-        "title": "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers",
+        "title": "Commercial Fridge Repair London | 24/7 Same-Day Service",
         "desc": "Commercial fridge repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, F-Gas certified London engineers. Call 07983 759320.",
         "offers": ['Same day commercial fridge repair London', '24 hour emergency commercial fridge repair London', 'Affordable commercial fridge repair London with fixed diagnostic call-out', 'Commercial fridge repair London', 'Commercial fridge repairs London', 'Commercial fridge service London', 'Commercial fridge services London', 'Emergency commercial fridge repair London', 'Same day commercial fridge repairs London', '24/7 commercial fridge repair London', 'Cheap commercial fridge repair London', 'Affordable commercial fridge repair London', 'Commercial fridge repair near me', 'Annual commercial fridge maintenance and servicing London', 'Low-cost commercial fridge diagnostics London'],
         "audio": "Cold Direct commercial fridge repair London. For restaurants, hotels, pubs, supermarkets and food producers, we offer twenty four seven emergency and same day commercial fridge repairs with F-Gas certified London engineers. A fixed diagnostic call-out keeps the cost transparent and affordable. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",

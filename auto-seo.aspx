@@ -30,103 +30,36 @@ protected void Page_Load(object sender, EventArgs e)
 
     string scOpen = "<scr" + "ipt type=\"application/ld+json\">";
     string scClose = "</scr" + "ipt>";
-    string schemaBlock = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n{\r\n" +
-        "  \"@context\": \"https://schema.org\",\r\n" +
-        "  \"@type\": \"HVACBusiness\",\r\n" +
-        "  \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
-        "  \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
-        "  \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
-        "  \"telephone\": \"+442039524822\",\r\n" +
-        "  \"priceRange\": \"\u00A3\u00A3\",\r\n" +
-        "  \"address\": {\r\n" +
-        "    \"@type\": \"PostalAddress\",\r\n" +
-        "    \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
-        "    \"addressLocality\": \"Enfield, London\",\r\n" +
-        "    \"postalCode\": \"N9 0DX\",\r\n" +
-        "    \"addressCountry\": \"GB\"\r\n" +
-        "  },\r\n" +
-        "  \"geo\": {\r\n" +
-        "    \"@type\": \"GeoCoordinates\",\r\n" +
-        "    \"latitude\": \"51.6256\",\r\n" +
-        "    \"longitude\": \"-0.0561\"\r\n" +
-        "  },\r\n" +
-        "  \"areaServed\": \"London\"\r\n" +
-        "}\r\n" + scClose + "\r\n";
-
-    // V4.7: unified #business node shared by the homepage and the 9 money pages
+    // One verified ColdDirect entity shared by every page. Do not add page-specific business duplicates.
     string bizNodeJson =
         "    {\r\n" +
-        "      \"@type\": [\r\n" +
-        "        \"HVACBusiness\",\r\n" +
-        "        \"LocalBusiness\"\r\n" +
-        "      ],\r\n" +
+        "      \"@type\": [\"HVACBusiness\", \"LocalBusiness\"],\r\n" +
         "      \"@id\": \"https://www.colddirect.co.uk/#business\",\r\n" +
-        "      \"name\": \"Cold Direct Commercial Refrigeration, Cold Room, Cellar & Catering Repair London\",\r\n" +
+        "      \"name\": \"ColdDirect\",\r\n" +
         "      \"url\": \"https://www.colddirect.co.uk/\",\r\n" +
         "      \"image\": \"https://www.colddirect.co.uk/images/logo/colddirect-main.webp\",\r\n" +
-        "      \"telephone\": \"+442039524822\",\r\n" +
-        "      \"contactPoint\": [\r\n" +
-        "        {\r\n" +
-        "          \"@type\": \"ContactPoint\",\r\n" +
-        "          \"telephone\": \"+448001123427\",\r\n" +
-        "          \"contactType\": \"customer service\",\r\n" +
-        "          \"areaServed\": \"GB\"\r\n" +
-        "        },\r\n" +
-        "        {\r\n" +
-        "          \"@type\": \"ContactPoint\",\r\n" +
-        "          \"telephone\": \"+447983759320\",\r\n" +
-        "          \"contactType\": \"emergency service\",\r\n" +
-        "          \"areaServed\": \"GB\"\r\n" +
-        "        }\r\n" +
-        "      ],\r\n" +
+        "      \"telephone\": [\"+447983759320\", \"+442039524822\"],\r\n" +
+        "      \"email\": \"info@colddirect.co.uk\",\r\n" +
         "      \"priceRange\": \"\u00A3\u00A3\",\r\n" +
         "      \"address\": {\r\n" +
         "        \"@type\": \"PostalAddress\",\r\n" +
         "        \"streetAddress\": \"27 Felixstowe Road\",\r\n" +
-        "        \"addressLocality\": \"Enfield, London\",\r\n" +
+        "        \"addressLocality\": \"London\",\r\n" +
         "        \"postalCode\": \"N9 0DX\",\r\n" +
         "        \"addressCountry\": \"GB\"\r\n" +
         "      },\r\n" +
-        "      \"geo\": {\r\n" +
-        "        \"@type\": \"GeoCoordinates\",\r\n" +
-        "        \"latitude\": \"51.6256\",\r\n" +
-        "        \"longitude\": \"-0.0561\"\r\n" +
-        "      },\r\n" +
-        "      \"areaServed\": [\r\n" +
-        "        \"London\",\r\n" +
-        "        {\r\n" +
-        "          \"@type\": \"GeoCircle\",\r\n" +
-        "          \"geoMidpoint\": {\r\n" +
-        "            \"@type\": \"GeoCoordinates\",\r\n" +
-        "            \"latitude\": \"51.6256\",\r\n" +
-        "            \"longitude\": \"-0.0561\"\r\n" +
-        "          },\r\n" +
-        "          \"geoRadius\": \"40234\"\r\n" +
-        "        }\r\n" +
-        "      ],\r\n" +
-        "      \"aggregateRating\": {\r\n" +
-        "        \"@type\": \"AggregateRating\",\r\n" +
-        "        \"ratingValue\": \"4.9\",\r\n" +
-        "        \"reviewCount\": \"38\",\r\n" +
-        "        \"bestRating\": \"5\"\r\n" +
-        "      },\r\n" +
+        "      \"geo\": {\"@type\": \"GeoCoordinates\", \"latitude\": \"51.6256\", \"longitude\": \"-0.0561\"},\r\n" +
+        "      \"areaServed\": [\"London\", \"North London\", \"Brent\", \"Willesden\", \"Harlesden\"],\r\n" +
         "      \"openingHoursSpecification\": {\r\n" +
         "        \"@type\": \"OpeningHoursSpecification\",\r\n" +
-        "        \"dayOfWeek\": [\r\n" +
-        "          \"Monday\",\r\n" +
-        "          \"Tuesday\",\r\n" +
-        "          \"Wednesday\",\r\n" +
-        "          \"Thursday\",\r\n" +
-        "          \"Friday\",\r\n" +
-        "          \"Saturday\",\r\n" +
-        "          \"Sunday\"\r\n" +
-        "        ],\r\n" +
+        "        \"dayOfWeek\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"],\r\n" +
         "        \"opens\": \"00:00\",\r\n" +
         "        \"closes\": \"23:59\"\r\n" +
         "      }\r\n" +
         "    }\r\n";
 
     string schemaBlockCore = "\r\n<!-- AUTO-SEO-V4-SCHEMA -->\r\n" + scOpen + "\r\n{\r\n  \"@context\": \"https://schema.org\",\r\n  \"@graph\": [\r\n" + bizNodeJson + "\r\n  ]\r\n}\r\n" + scClose + "\r\n";
+    string schemaBlock = schemaBlockCore;
 
     // Body markers owned by Cursor tools (never strip / rewrite): CD-TOP3-RANK-BOOSTER-V5, CD-TOP3-SCHEMA-V5,
     // CD-INTERNAL-ANCHOR-MESH-V5, CD-MONEY-V1, CD-AUDIO-V1, CD-TOP-RIGHT-AUDIO, CD-BLOG-MONEY-LINKS-V1.
@@ -143,7 +76,7 @@ protected void Page_Load(object sender, EventArgs e)
     Dictionary<string, string[]> moneyMeta = new Dictionary<string, string[]>();
     moneyMeta["fridge-repair-london"] = new string[] { "Fridge Repair London | Same-Day 24/7 Emergency Engineers", "Fridge repair London for restaurants, pubs and shops: same-day 24/7 emergency repairs and service, fixed diagnostic call-out. Call 07983 759320.", "Fridge repair London", "Commercial fridge repair", "Fridge repair London", "Fridge repairs London", "Fridge service London", "Emergency fridge repair London", "Commercial fridge repair", "Same day fridge repair London", "24 hour emergency fridge repair London", "Affordable fridge repair London with fixed diagnostic call-out", "Fridge services London", "Same day fridge repairs London", "24/7 fridge repair London", "Cheap fridge repair London", "Affordable fridge repair London", "Fridge repair near me", "Annual fridge maintenance and servicing London", "Low-cost fridge diagnostics London" };
     moneyMeta["freezer-repair-london"] = new string[] { "Freezer Repair London | Same-Day 24/7 Emergency Engineers", "Freezer repair London for kitchens, bars and shops: same-day 24/7 emergency repairs and service, fixed diagnostic call-out. Call 07983 759320.", "Freezer repair London", "Commercial freezer repair", "Freezer repair London", "Freezer repairs London", "Freezer service London", "Emergency freezer repair London", "Commercial freezer repair", "Same day freezer repair London", "24 hour emergency freezer repair London", "Affordable freezer repair London with fixed diagnostic call-out", "Freezer services London", "Same day freezer repairs London", "24/7 freezer repair London", "Cheap freezer repair London", "Affordable freezer repair London", "Freezer repair near me", "Annual freezer maintenance and servicing London", "Low-cost freezer diagnostics London" };
-    moneyMeta["commercial-fridge-repair-london"] = new string[] { "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers", "Commercial fridge repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, F-Gas certified London engineers. Call 07983 759320.", "Commercial fridge repair London", "Commercial fridge repair", "Commercial fridge repair London", "Commercial fridge repairs", "Commercial fridge service", "Walk-in chiller repair London", "Display chiller repair London", "Emergency fridge repair", "Same day commercial fridge repair London", "24 hour emergency commercial fridge repair London", "Affordable commercial fridge repair London with fixed diagnostic call-out", "Commercial fridge repairs London", "Commercial fridge service London", "Commercial fridge services London", "Emergency commercial fridge repair London", "Same day commercial fridge repairs London", "24/7 commercial fridge repair London", "Cheap commercial fridge repair London", "Affordable commercial fridge repair London", "Commercial fridge repair near me", "Annual commercial fridge maintenance and servicing London", "Low-cost commercial fridge diagnostics London" };
+    moneyMeta["commercial-fridge-repair-london"] = new string[] { "Commercial Fridge Repair London | 24/7 Same-Day Service", "Commercial fridge repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, F-Gas certified London engineers. Call 07983 759320.", "Commercial fridge repair London", "Commercial fridge repair", "Commercial fridge repair London", "Commercial fridge repairs", "Commercial fridge service", "Walk-in chiller repair London", "Display chiller repair London", "Emergency fridge repair", "Same day commercial fridge repair London", "24 hour emergency commercial fridge repair London", "Affordable commercial fridge repair London with fixed diagnostic call-out", "Commercial fridge repairs London", "Commercial fridge service London", "Commercial fridge services London", "Emergency commercial fridge repair London", "Same day commercial fridge repairs London", "24/7 commercial fridge repair London", "Cheap commercial fridge repair London", "Affordable commercial fridge repair London", "Commercial fridge repair near me", "Annual commercial fridge maintenance and servicing London", "Low-cost commercial fridge diagnostics London" };
     moneyMeta["commercial-freezer-repair-london"] = new string[] { "Commercial Freezer Repair London | 24/7 Emergency Same-Day Engineers", "Commercial freezer repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, walk-in and kitchen freezers. Call 07983 759320.", "Commercial freezer repair London", "Commercial freezer repair", "Commercial freezer repair London", "Commercial freezer repairs", "Commercial freezer service", "Walk-in freezer repair London", "Emergency commercial freezer repair", "Same day commercial freezer repair London", "24 hour emergency commercial freezer repair London", "Affordable commercial freezer repair London with fixed diagnostic call-out", "Commercial freezer repairs London", "Commercial freezer service London", "Commercial freezer services London", "Emergency commercial freezer repair London", "Same day commercial freezer repairs London", "24/7 commercial freezer repair London", "Cheap commercial freezer repair London", "Affordable commercial freezer repair London", "Commercial freezer repair near me", "Annual commercial freezer maintenance and servicing London", "Low-cost commercial freezer diagnostics London" };
     moneyMeta["cold-room-repair-london"] = new string[] { "Cold Room Repair London | 24/7 Same-Day Emergency Repairs", "Cold room repair London: 24/7 same-day emergency repairs and service by London engineers. Affordable, fixed diagnostic call-out. Call 07983 759320.", "Cold room repair London", "Walk-in cold room repair", "Cold room repair London", "Cold room repairs London", "Cold room repair near me", "Cold room service London", "Emergency cold room repair", "Walk-in chiller repair London", "Same day cold room repair London", "24 hour emergency cold room repair London", "Affordable cold room repair London with fixed diagnostic call-out", "Cold room services London", "Emergency cold room repair London", "Same day cold room repairs London", "24/7 cold room repair London", "Cheap cold room repair London", "Affordable cold room repair London", "Annual cold room maintenance and servicing London", "Low-cost cold room diagnostics London" };
     moneyMeta["catering-repair-london"] = new string[] { "Catering Repair London | Same-Day 24/7 Emergency Kitchen Engineers", "Catering repair London for restaurant and takeaway kitchens: same-day 24/7 emergency repairs and service, fixed diagnostic call-out. Call 07983 759320.", "Catering repair London", "Commercial catering refrigeration repair", "Catering repair London", "Commercial catering repair", "Catering fridge repair", "Catering refrigeration service London", "Kitchen chiller repair London", "Same day catering repair London", "24 hour emergency catering repair London", "Affordable catering repair London with fixed diagnostic call-out", "Catering repairs London", "Catering service London", "Catering services London", "Emergency catering repair London", "Same day catering repairs London", "24/7 catering repair London", "Cheap catering repair London", "Affordable catering repair London", "Catering repair near me", "Annual catering maintenance and servicing London", "Low-cost catering diagnostics London" };
@@ -435,11 +368,24 @@ protected void Page_Load(object sender, EventArgs e)
 
                 if (newTitle != "")
                 {
-                    if (Regex.IsMatch(html, @"<title>[\s\S]*?</title>", RegexOptions.IgnoreCase))
-                        html = Regex.Replace(html, @"<title>[\s\S]*?</title>", "<title>" + newTitle + "</title>", RegexOptions.IgnoreCase);
+                    // Preserve deliberately curated metadata. The nightly job fills gaps; it must not
+                    // reintroduce long or duplicate titles after a reviewed deployment.
+                    bool hasTitle = Regex.IsMatch(html, @"<title>[\s\S]*?\S[\s\S]*?</title>", RegexOptions.IgnoreCase);
+                    if (!hasTitle)
+                    {
+                        if (Regex.IsMatch(html, @"<title>[\s\S]*?</title>", RegexOptions.IgnoreCase))
+                            html = Regex.Replace(html, @"<title>[\s\S]*?</title>", "<title>" + newTitle + "</title>", RegexOptions.IgnoreCase);
+                        else
+                            html = Regex.Replace(html, @"</head>", "<title>" + newTitle + "</title>\r\n</head>", RegexOptions.IgnoreCase);
+                    }
 
-                    if (Regex.IsMatch(html, @"<meta\s+name=[""']description[""'][^>]*>", RegexOptions.IgnoreCase))
-                        html = Regex.Replace(html, @"<meta\s+name=[""']description[""'][^>]*>", "<meta name=\"description\" content=\"" + newDesc + "\">", RegexOptions.IgnoreCase);
+                    bool hasDescription = Regex.IsMatch(html, "<meta[^>]+name=[\"']description[\"'][^>]*content=[\"']\\s*[^\"'\\s]", RegexOptions.IgnoreCase)
+                                        || Regex.IsMatch(html, "<meta[^>]+content=[\"']\\s*[^\"'\\s][^>]*name=[\"']description[\"']", RegexOptions.IgnoreCase);
+                    if (!hasDescription)
+                    {
+                        html = Regex.Replace(html, "<meta[^>]+name=[\"']description[\"'][^>]*>", "", RegexOptions.IgnoreCase);
+                        html = new Regex("</title>", RegexOptions.IgnoreCase).Replace(html, "</title>\r\n  <meta name=\"description\" content=\"" + newDesc + "\">", 1);
+                    }
                 }
             }
 
@@ -474,7 +420,7 @@ protected void Page_Load(object sender, EventArgs e)
             }
 
             // Inject Schema in <head>
-            if (Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
+            if (!html.Contains("<!-- AUTO-SEO-V4-SCHEMA -->") && Regex.IsMatch(html, @"</head>", RegexOptions.IgnoreCase))
                 html = Regex.Replace(html, @"\s*</head>", (rel == "index.html" ? schemaBlockCore : (moneyMeta.ContainsKey(name) ? BuildMoneySchema(name, moneyMeta[name], bizNodeJson, scOpen, scClose) : schemaBlock)) + "</head>", RegexOptions.IgnoreCase);
 
             // Inject V4 Footer Links before </body>
