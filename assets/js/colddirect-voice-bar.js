@@ -14,7 +14,7 @@
   var LISTEN_LABEL = "🔊 LISTEN";
   var STATUS_IDLE = "Tap SPEAK, then STOP & SEND when you finish.";
   var VERCEL_API = "https://colddirect-website.vercel.app";
-  var DIAGNOSE_URLS = [VERCEL_API + "/api/voice-diagnose", "/colddirect-voice-vault.aspx"];
+  var DIAGNOSE_URL = VERCEL_API + "/api/voice-diagnose";
   var TTS_URLS = [VERCEL_API + "/api/voice-tts"];
 
   var host = String(location.hostname || "").toLowerCase();
@@ -31,7 +31,6 @@
   var meterTimer = null;
   var seq = 0;
   var sessionLang = "";
-  var srRec = null;
   var micStream = null;
   var mediaRec = null;
   var recChunks = [];
@@ -257,6 +256,19 @@
         if (window.__cdPlayCtx.state === "suspended") window.__cdPlayCtx.resume();
       }
     } catch (e1) {}
+    try {
+      if (!window.__cdVoicePlayer) {
+        var player = document.createElement("audio");
+        player.setAttribute("playsinline", "true");
+        player.setAttribute("preload", "auto");
+        player.style.display = "none";
+        (document.body || document.documentElement).appendChild(player);
+        window.__cdVoicePlayer = player;
+      }
+      window.__cdVoicePlayer.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+      var primed = window.__cdVoicePlayer.play();
+      if (primed && primed.catch) primed.catch(function () {});
+    } catch (e2) {}
   }
 
   function welcomeAudio() {
@@ -343,21 +355,17 @@
     return String(text || "").replace(/\[\w+\]\s*/g, "").replace(/\s+/g, " ").trim();
   }
 
+  function spokenClean(text, lang) {
+    var fa = lang === "fa-IR";
+    return stripTags(text).replace(/\bslash\b/gi, " ").replace(/[／/]/g, fa ? " یا " : " or ").replace(/\s+/g, " ").trim();
+  }
+
   function lockLang(text) {
     if (/[\u0600-\u06FF]/.test(String(text || ""))) return "fa-IR";
     return "en-GB";
   }
 
-  function stopSpeechRec() {
-    if (!srRec) return;
-    try { srRec.onresult = null; srRec.onend = null; srRec.onerror = null; } catch (e0) {}
-    try { srRec.abort(); } catch (e1) {}
-    try { srRec.stop(); } catch (e2) {}
-    srRec = null;
-  }
-
   function stopMicHard() {
-    stopSpeechRec();
     if (mediaRec) {
       try { if (mediaRec.state !== "inactive") mediaRec.stop(); } catch (e1) {}
       mediaRec = null;
@@ -386,48 +394,6 @@
     try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e4) {}
   }
 
-  function startSpeechRec() {
-    if (isSpeaking) return;
-    stopSpeechRec();
-    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return;
-    var rec = new SR();
-    srRec = rec;
-    rec.lang = sessionLang === "fa-IR" ? "fa-IR" : "en-GB";
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.maxAlternatives = 1;
-    rec.onresult = function (ev) {
-      if (isSpeaking) {
-        stopSpeechRec();
-        return;
-      }
-      var t = "";
-      var final = false;
-      for (var i = ev.resultIndex; i < ev.results.length; i++) {
-        t += ev.results[i][0].transcript || "";
-        if (ev.results[i].isFinal) final = true;
-      }
-      t = stripTags(t);
-      if (!t) return;
-      var locked = lockLang(t);
-      if (locked === "fa-IR" && sessionLang !== "fa-IR") {
-        sessionLang = "fa-IR";
-        try { rec.lang = "fa-IR"; } catch (e1) {}
-      } else if (!sessionLang) {
-        sessionLang = locked;
-      }
-      userText = stripTags((userText + " " + t).replace(/\s+/g, " "));
-      upsertLive("user", userText, final);
-    };
-    rec.onend = function () {
-      if (srRec === rec && live && !isSpeaking) {
-        try { rec.start(); } catch (e2) {}
-      }
-    };
-    try { rec.start(); } catch (e3) {}
-  }
-
   function startMeter(stream) {
     if (!meterEl) return;
     meterEl.hidden = false;
@@ -435,7 +401,11 @@
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC || !stream) return;
     try {
-      var ctx = window.__cdPlayCtx || new AC();
+      if (window.__cdMeterCtx) {
+        try { window.__cdMeterCtx.close(); } catch (e0) {}
+      }
+      var ctx = new AC();
+      window.__cdMeterCtx = ctx;
       if (ctx.state === "suspended") ctx.resume();
       var src = ctx.createMediaStreamSource(stream);
       var ana = ctx.createAnalyser();
@@ -454,6 +424,10 @@
 
   function stopMeter() {
     if (meterTimer) { clearInterval(meterTimer); meterTimer = null; }
+    if (window.__cdMeterCtx) {
+      try { window.__cdMeterCtx.close(); } catch (e0) {}
+      window.__cdMeterCtx = null;
+    }
     if (meterEl) {
       meterEl.hidden = true;
       var bar = meterEl.querySelector("i");
@@ -495,10 +469,13 @@
     }
     return new Promise(function (resolve, reject) {
       if (!voiceEl) {
-        voiceEl = document.createElement("audio");
+        voiceEl = window.__cdVoicePlayer || document.createElement("audio");
         voiceEl.setAttribute("playsinline", "true");
-        voiceEl.style.display = "none";
-        document.body.appendChild(voiceEl);
+        if (!voiceEl.parentNode) {
+          voiceEl.style.display = "none";
+          document.body.appendChild(voiceEl);
+        }
+        window.__cdVoicePlayer = voiceEl;
       }
       voiceEl.onended = function () {
         if (token !== playToken) return;
@@ -549,16 +526,49 @@
   }
 
   function diagnose(payload) {
-    var i = 0;
-    function next() {
-      if (i >= DIAGNOSE_URLS.length) return Promise.resolve(null);
-      var url = DIAGNOSE_URLS[i++];
-      return postJson(url, payload).then(function (j) {
-        if (j && (j.display_text || j.spoken || j.ok)) return j;
-        return next();
-      }).catch(function () { return next(); });
-    }
-    return next();
+    return postJson(DIAGNOSE_URL, payload).catch(function () { return null; });
+  }
+
+  function blobToBase64(blob) {
+    return new Promise(function (resolve) {
+      if (!blob || !blob.size) return resolve("");
+      var fr = new FileReader();
+      fr.onload = function () {
+        var s = String(fr.result || "");
+        resolve(s.indexOf(",") >= 0 ? s.split(",")[1] : s);
+      };
+      fr.onerror = function () { resolve(""); };
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  function finishRecording() {
+    return new Promise(function (resolve) {
+      var rec = mediaRec;
+      var settled = false;
+      function done() {
+        if (settled) return;
+        settled = true;
+        mediaRec = null;
+        if (micStream) {
+          try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e1) {}
+          micStream = null;
+        }
+        stopMeter();
+        resolve();
+      }
+      if (!rec || rec.state === "inactive") {
+        done();
+        return;
+      }
+      var timer = setTimeout(done, 1500);
+      rec.onstop = function () {
+        clearTimeout(timer);
+        done();
+      };
+      try { rec.requestData(); } catch (e2) {}
+      try { rec.stop(); } catch (e3) { clearTimeout(timer); done(); }
+    });
   }
 
   function speakAnswer(text, lang, audioB64, mime) {
@@ -566,7 +576,7 @@
     isSpeaking = true;
     var token = playToken;
     setStatus("active", "🔊 Speaking Answer...");
-    var clean = stripTags(text);
+    var clean = spokenClean(text, lang);
     if (audioB64) {
       return playBytes(audioB64, mime || "audio/wav", token).catch(function () {
         if (token !== playToken) return;
@@ -582,60 +592,57 @@
 
   function sendFault() {
     var my = seq;
-    var text = stripTags(userText);
     live = false;
     starting = false;
     isSpeaking = true;
-    stopMicHard();
-    stopMeter();
     setSpeakUi(false);
     if (root) root.classList.remove("is-live");
     if (root) root.classList.add("is-busy");
-    setStatus("connecting", "Diagnosing the fault...");
-    if (!text) {
-      setStatus("error", "I did not catch that. Tap SPEAK and try again.");
-      isSpeaking = false;
-      return;
-    }
-    sessionLang = lockLang(text);
-    upsertLive("user", text, true);
-    var blobP = Promise.resolve("");
-    if (recChunks.length) {
-      var blob = new Blob(recChunks, { type: recMime });
-      blobP = new Promise(function (resolve) {
-        var fr = new FileReader();
-        fr.onload = function () {
-          var s = String(fr.result || "");
-          resolve(s.indexOf(",") >= 0 ? s.split(",")[1] : s);
-        };
-        fr.onerror = function () { resolve(""); };
-        fr.readAsDataURL(blob);
-      });
-    }
-    blobP.then(function (b64) {
-      if (my !== seq) return;
+    setStatus("connecting", "Transcribing your voice...");
+    upsertLive("user", "Recording…", false);
+    finishRecording().then(function () {
+      if (my !== seq) return "";
+      var blob = recChunks.length ? new Blob(recChunks, { type: recMime || "audio/webm" }) : null;
+      return blobToBase64(blob);
+    }).then(function (b64) {
+      if (my !== seq) return null;
+      if (!b64) {
+        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        setStatus("error", "I did not catch that. Tap SPEAK and try again.");
+        isSpeaking = false;
+        return { handled: true };
+      }
       return diagnose({
-        text: text,
-        transcript: text,
+        text: "",
+        transcript: "",
         audio_base64: b64,
-        mime: recMime,
-        language: sessionLang,
+        mime: (recMime || "audio/webm").split(";")[0],
+        language: "auto",
         mode: "transcribe",
         translate: false
       });
     }).then(function (j) {
-      if (my !== seq) return;
-      var display = stripTags((j && (j.display_text || j.spoken || j.summary)) || "");
-      var spoken = stripTags((j && (j.spoken_text || j.tts_text || display)) || "");
-      var lang = lockLang(text + " " + display);
-      sessionLang = lang;
-      if (!display) {
-        setStatus("error", "The Head Engineer could not answer. Tap SPEAK again.");
+      if (my !== seq || (j && j.handled)) return;
+      if (!j) {
+        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
         isSpeaking = false;
         return;
       }
+      var transcript = stripTags((j && j.transcript) || "");
+      var display = stripTags((j && j.display_text) || "");
+      var spoken = stripTags((j && (j.spoken_text || display)) || "");
+      if (!j || j.ok === false || !display || !transcript || /give the brand, error code and whether the cabinet is still cold/i.test(display + " " + spoken)) {
+        upsertLive("user", "I did not catch that. Tap SPEAK and try again.", true);
+        setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
+        isSpeaking = false;
+        return;
+      }
+      var lang = lockLang(transcript + " " + display);
+      sessionLang = lang;
+      upsertLive("user", transcript, true);
       upsertLive("bot", display, true);
-      return speakAnswer(spoken || display, lang, j && j.audio_base64, j && (j.audio_mime || (j.audio && j.audio.mime)));
+      return speakAnswer(spoken || display, lang, j.audio_base64, j.audio_mime || (j.audio && j.audio.mime));
     }).catch(function () {
       if (my !== seq) return;
       isSpeaking = false;
@@ -670,18 +677,24 @@
       starting = false;
       setStatus("active", "Listening… tap STOP & SEND when you finish.");
       startMeter(s);
-      startSpeechRec();
+      upsertLive("user", "Recording…", false);
       recMime = (window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) ? "audio/webm;codecs=opus" : "audio/mp4";
       try {
         mediaRec = new MediaRecorder(s, { mimeType: recMime });
       } catch (e1) {
         try { mediaRec = new MediaRecorder(s); recMime = mediaRec.mimeType || recMime; } catch (e2) { mediaRec = null; }
       }
-      if (mediaRec) {
-        mediaRec.ondataavailable = function (ev) {
-          if (ev.data && ev.data.size) recChunks.push(ev.data);
-        };
-        mediaRec.start(250);
+      if (!mediaRec) {
+        hangup();
+        setStatus("error", "This browser cannot record audio. Tap SPEAK again.");
+        return;
+      }
+      mediaRec.ondataavailable = function (ev) {
+        if (ev.data && ev.data.size) recChunks.push(ev.data);
+      };
+      try { mediaRec.start(250); } catch (e3) {
+        hangup();
+        setStatus("error", "This browser cannot record audio. Tap SPEAK again.");
       }
     }).catch(function () {
       if (my !== seq) return;

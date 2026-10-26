@@ -27,7 +27,7 @@
     }
   ],
   "functions": {
-    "api/voice-diagnose.js": { "maxDuration": 30 },
+    "api/voice-diagnose.js": { "maxDuration": 60 },
     "api/voice-tts.js": { "maxDuration": 30 },
     "api/ping.js": { "maxDuration": 10 }
   }

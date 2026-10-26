@@ -16,8 +16,8 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-26b — PTT + Vercel)
-Ask Your Fault is push-to-talk (`?v=20261026b`). STOP & SEND mutes the mic before TTS. Persian → fa-IR, else en-GB. Diagnose+TTS on Vercel.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-26c — microphone audio)
+Ask Your Fault records with MediaRecorder (`?v=20261026c`). STOP & SEND posts `audio_base64` to Vercel `/api/voice-diagnose`. Do not use browser SpeechRecognition for Lang Auto. Never return the canned brand/error-code fallback. Never speak a slash. The widget must still speak the answer aloud.
 
 ---
 

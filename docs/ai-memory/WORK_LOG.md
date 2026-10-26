@@ -16,8 +16,8 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25ah, NEVER regress)
-After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `agent_2901m5th5arfe9kamcec9ef2p42q`. Text-only after a tap is a P0 bug. Do not restore MediaRecorder / PHP vault / OpenAI TTS / Vapi.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-26c, NEVER regress)
+After `🎤 SPEAK` the widget records with `MediaRecorder` and, on `STOP & SEND`, posts `audio_base64` to Vercel `/api/voice-diagnose`. Gemini transcribes the original Persian or English words into the You bubble and speaks a real diagnosis in that language. Text-only after STOP & SEND is a P0 bug. Do not use browser `SpeechRecognition` for Lang Auto. Do not return the canned line "Give the brand, error code and whether the cabinet is still cold...". Spoken audio must not contain a slash or the word slash. Script `?v=20261026c`.
 1. NEVER remove the polite universal greeting (EN `Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.` / FA display `سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.` — TTS speaks `کُلد دایرِکت`).
 2. NEVER use street slang (`Alright mate`, `cheers`, `don't panic`).
 3. NEVER use female voices or Urdu/Arabic fallback for Persian. Male only: `fa_IR-ganji-medium` + `NormalizePersianForSpeech` (`ColdDirect` / `کولد دایرکت` → `کُلد دایرِکت` for audio only), `en_GB-alan-medium`, Piper/Google-stream male for Tagalog and other langs.
@@ -25,6 +25,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 5. Persian display vs TTS: on-screen keeps `کولد دایرکت` and `07983 759320` / `0203 952 4822` / `0800 112 3427`. Audio input uses `کُلد دایرِکت` and the spoken Persian number-word groups. Never reverse the phonetic brand in FA_LEXICON. Never run `NumFa` on leftover phone digits.
 
 ---
+
+### [2026-10-26c2] — Microphone audio transcription (`?v=20261026c`)
+- Lang Auto no longer uses browser SpeechRecognition. SPEAK starts MediaRecorder. STOP & SEND sends only `audio_base64` to `/api/voice-diagnose`. Gemini writes the real transcript into the You bubble and a same-language commercial diagnosis. The canned English fallback is deleted. TTS spoken text uses "or" / "یا", never a slash. Title/H1/meta unchanged.
 
 ### [2026-10-26c] — Vercel voice API live (colddirect-website.vercel.app)
 - Project `prj_1nIbCSUiYF1S6fYzRr6D3maTtxkC`. Production aliases `https://colddirect-website.vercel.app` + `https://colddirect-website-coldcom-5054.vercel.app`. Vercel Auth off. CORS echoes `https://www.colddirect.co.uk` and `https://colddirect.co.uk`. GET `/api/voice-diagnose` 200. POST Persian fridge-fault returns fa-IR diagnostic (no greeting, no `[happy]`, no zh) + phones + `audio_base64` wav. Widget on Plesk already `?v=20261026b` → that URL. Title/H1/meta unchanged.
