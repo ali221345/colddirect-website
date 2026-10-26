@@ -47,29 +47,16 @@ module.exports = async function handler(req, res) {
     return;
   }
   var voice = locked.code === "fa" ? "Charon" : "Puck";
-  var out = await core.geminiJson(key, "gemini-2.5-flash-preview-tts", {
-    systemInstruction: { parts: [{ text: "Male Head Engineer voice." }] },
+  var speech = {
     contents: [{ role: "user", parts: [{ text: text }] }],
     generationConfig: {
       responseModalities: ["AUDIO"],
-      speechConfig: {
-        languageCode: locked.bcp,
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
-      }
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
     }
-  }, 12000);
-  if (!out.ok) {
-    out = await core.geminiJson(key, "gemini-3.8-flash-tts", {
-      systemInstruction: { parts: [{ text: "Male Head Engineer voice." }] },
-      contents: [{ role: "user", parts: [{ text: text }] }],
-      generationConfig: {
-        responseModalities: ["AUDIO"],
-        speechConfig: {
-          languageCode: locked.bcp,
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
-        }
-      }
-    }, 12000);
+  };
+  var out = await core.geminiJson(key, "gemini-3.8-flash-lite-tts", speech, 9000);
+  if (!out.ok || !core.extractAudio(out.json)) {
+    out = await core.geminiJson(key, "gemini-3.1-flash-tts-preview", speech, 12000);
   }
   var audio = out.ok ? core.extractAudio(out.json) : null;
   res.statusCode = 200;
