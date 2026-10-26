@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-26c] — Vercel voice API live (colddirect-website.vercel.app)
+- Project `prj_1nIbCSUiYF1S6fYzRr6D3maTtxkC`. Production aliases `https://colddirect-website.vercel.app` + `https://colddirect-website-coldcom-5054.vercel.app`. Vercel Auth off. CORS echoes `https://www.colddirect.co.uk` and `https://colddirect.co.uk`. GET `/api/voice-diagnose` 200. POST Persian fridge-fault returns fa-IR diagnostic (no greeting, no `[happy]`, no zh) + phones + `audio_base64` wav. Widget on Plesk already `?v=20261026b` → that URL. Title/H1/meta unchanged.
+
 ### [2026-10-26b] — PTT mute, language lock, Vercel Gemini/TTS (`?v=20261026b`)
 - STOP & SEND / TTS play abort recognition and stop every mic track. Single audio queue. Persian letters lock fa-IR, else en-GB. Bracket tags stripped. Diagnose answers the fault; phones only at the end. Vercel `/api/voice-diagnose` + `/api/voice-tts`. Title/H1/meta unchanged.
 

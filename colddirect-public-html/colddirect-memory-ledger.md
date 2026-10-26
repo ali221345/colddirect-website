@@ -21,6 +21,9 @@ Ask Your Fault is push-to-talk (`?v=20261026b`). STOP & SEND mutes the mic befor
 
 ---
 
+### [2026-10-26c] — Vercel voice API live
+- `https://colddirect-website.vercel.app/api/voice-diagnose` 200. CORS www + apex. Title/H1/meta unchanged.
+
 ### [2026-10-26b] — PTT + Vercel diagnose/TTS (`?v=20261026b`)
 - Mic dies on STOP & SEND and during TTS. Title/H1/meta unchanged.
 

@@ -1,8 +1,20 @@
 "use strict";
 
-var core = require("../lib/cd-voice-core");
+var core = null;
+var coreErr = "";
+try {
+  core = require("../lib/cd-voice-core");
+} catch (e1) {
+  coreErr = String((e1 && e1.message) || e1);
+}
 
 module.exports = async function handler(req, res) {
+  if (!core) {
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ ok: false, error: "core_missing", detail: coreErr }));
+    return;
+  }
   if (!core.cors(req, res)) return;
   if (req.method === "GET") {
     res.statusCode = 200;
