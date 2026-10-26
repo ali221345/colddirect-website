@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-26a] — Unify Ask Your Fault bar on 9 money pages (`?v=20261026a`)
+- Compact bar now has `Lang: Auto`, `🎤 SPEAK`, `🔊 LISTEN`, and `Tap SPEAK, then STOP & SEND when you finish.` Live SPEAK still talks to the Head Engineer; LISTEN plays the page welcome audio. Title/H1/meta/canonical unchanged.
+
 ### [2026-10-25al] — Mute ElevenLabs ASR; original-language STT loop (`?v=20261025al`)
 - Lang Auto never lets ElevenLabs English ASR fill the You bubble (it was translating Persian). Mic is muted; `/colddirect-voice-transcribe.aspx` loops in transcribe mode only; Web Speech uses `fa-IR` / mapped locales, never `en-US`. Original text is `sendUserMessage` to the Head Engineer. Title/H1/meta unchanged.
 

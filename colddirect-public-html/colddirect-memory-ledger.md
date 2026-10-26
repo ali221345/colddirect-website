@@ -16,10 +16,13 @@ Verified: `config_parity` 371 rules, 746 probes, 708 one-hop 301s, 0 chains. Liv
 ### LOCKED #3 — Automated background pipelines
 `auto-seo.aspx` V4.9 (key in `App_Data/auto-seo.key`, never printed), the 24h workflow `auto-seo-nightly.yml`, the 48h workflow `site-backup-48h.yml`, and `tools/live_production_audit.py` are on `main` and were in sync with live Plesk `/httpdocs` on 2026-10-21 (pull reported 0 diff). Do not rebuild them.
 
-### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-25al — ElevenLabs ConvAI)
-Live voice is public ElevenLabs agent `agent_2901m5th5arfe9kamcec9ef2p42q` (`?v=20261025al`). SPEAK uses `agentId` only and must not wait on `App_Data/elevenlabs.key`. Keep Like CTA, RTL transcript, clickable phones. Do not restore MediaRecorder/PHP/OpenAI/Vapi. Lang Auto STT is transcribe-only: mute EL ASR, never translate to English.
+### LOCKED #4 — Voice AI RULE 0 (owner 2026-10-26a — ElevenLabs ConvAI)
+Live voice is public ElevenLabs agent `agent_2901m5th5arfe9kamcec9ef2p42q` (`?v=20261026a`). Compact bar: Ask Your Fault + Lang Auto + SPEAK + LISTEN + STOP & SEND status. SPEAK uses `agentId` only. Keep Like CTA, RTL transcript. Lang Auto STT is transcribe-only.
 
 ---
+
+### [2026-10-26a] — Unify compact Ask Your Fault bar (`?v=20261026a`)
+- SPEAK + LISTEN on all 9 money pages. Title/H1/meta unchanged.
 
 ### [2026-10-25al] — Mute EL ASR + original-language STT loop (`?v=20261025al`)
 - You bubble keeps Persian/etc. Original text goes to the Head Engineer. Title/H1/meta unchanged.

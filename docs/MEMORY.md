@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-26a: Compact Ask Your Fault bar is identical on all money pages: `Lang: Auto` + `🎤 SPEAK` + `🔊 LISTEN` + status `Tap SPEAK, then STOP & SEND when you finish.` UK IP domain lock. Script `?v=20261026a`. Keep original-language STT and ElevenLabs Head Engineer. Do not strip LISTEN from the compact bar.
+
 Owner 2026-10-25al: Lang Auto NEVER uses ElevenLabs English ASR. Mic is muted; original-language STT loop (`/colddirect-voice-transcribe.aspx`, mode=transcribe) plus Web Speech (`fa-IR` etc, never `en-US`) fills the You bubble and `sendUserMessage`. Ignore EL user transcripts. Never `language: en`. Script `?v=20261025al`.
 
 Owner 2026-10-25ak: Lang Auto STT is transcribe-only, never translate-to-English. Original-language transcript is sent to the Head Engineer. Never force `language: en` or `en-US` SpeechRecognition. Script `?v=20261025ak`.

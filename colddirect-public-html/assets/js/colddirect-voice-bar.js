@@ -11,7 +11,9 @@
   var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
   var REVIEW_HREF = "/write-a-review/";
   var SPEAK_LABEL = "🎤 SPEAK";
-  var END_LABEL = "⏹ END";
+  var STOP_LABEL = "⏹ STOP & SEND";
+  var LISTEN_LABEL = "🔊 LISTEN";
+  var STATUS_IDLE = "Tap SPEAK, then STOP & SEND when you finish.";
   var AGENT_ID = "agent_2901m5th5arfe9kamcec9ef2p42q";
   var TOKEN_URL = "/colddirect-elevenlabs-token.aspx";
   var TRANSCRIBE_URL = "/colddirect-voice-transcribe.aspx";
@@ -23,7 +25,10 @@
     "https://cdn.jsdelivr.net/npm/@11labs/client@0.15.2/+esm"
   ];
 
-  var root, speakBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
+  var host = String(location.hostname || "").toLowerCase();
+  if (host && host !== "www.colddirect.co.uk" && host !== "colddirect.co.uk" && host !== "localhost" && host !== "127.0.0.1") return;
+
+  var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
@@ -111,11 +116,12 @@
         '<div id="cd-voice-controls">' +
           '<span class="cd-voice-langwrap" aria-label="Language">' + LANG_BADGE + "</span>" +
           '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false">' + SPEAK_LABEL + "</button>" +
+          '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false">' + LISTEN_LABEL + "</button>" +
         "</div>" +
       "</div>" +
       '<div id="cd-voice-panel">' +
         '<div id="cd-voice-panel-head">' +
-          '<div id="cd-voice-status" role="status">Tap SPEAK to talk to the Head Engineer.</div>' +
+          '<div id="cd-voice-status" role="status">' + STATUS_IDLE + "</div>" +
           '<button type="button" id="cd-voice-close" aria-label="Close transcript">✕</button>' +
         "</div>" +
         '<div id="cd-voice-meter" hidden><i></i></div>' +
@@ -221,7 +227,7 @@
     if (!speakBtn) return;
     speakBtn.classList.toggle("is-on", !!on);
     speakBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    speakBtn.textContent = on ? END_LABEL : SPEAK_LABEL;
+    speakBtn.textContent = on ? STOP_LABEL : SPEAK_LABEL;
   }
 
   function setStatus(kind, message) {
@@ -259,6 +265,39 @@
         if (window.__cdPlayCtx.state === "suspended") window.__cdPlayCtx.resume();
       }
     } catch (e1) {}
+  }
+
+  function welcomeAudio() {
+    return document.querySelector("#cd-audio-dock audio, #cd-hero-audio, audio.cd-welcome-audio");
+  }
+
+  function setListenUi(on) {
+    if (!listenBtn) return;
+    listenBtn.classList.toggle("is-on", !!on);
+    listenBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
+  function playWelcome() {
+    unlockAudio();
+    var a = welcomeAudio();
+    if (!a) {
+      openPanel(true);
+      setStatus("error", "Welcome audio is not available on this page.");
+      return;
+    }
+    if (!a.paused && !a.ended) {
+      try { a.pause(); } catch (e1) {}
+      setListenUi(false);
+      return;
+    }
+    try { a.currentTime = 0; } catch (e2) {}
+    var p = a.play();
+    setListenUi(true);
+    a.onended = function () { setListenUi(false); };
+    a.onpause = function () { if (a.paused) setListenUi(false); };
+    if (p && typeof p.catch === "function") {
+      p.catch(function () { setListenUi(false); });
+    }
   }
 
   function isMobileVoice() {
@@ -619,7 +658,7 @@
     stopMeter();
     setSpeakUi(false);
     if (root) root.classList.remove("is-live", "is-busy");
-    setStatus("", "Tap SPEAK to talk to the Head Engineer.");
+    setStatus("", STATUS_IDLE);
     if (conv && typeof conv.endSession === "function") {
       try { conv.endSession(); } catch (e1) {}
     }
@@ -808,6 +847,13 @@
   function bindUi() {
     speakBtn.addEventListener("pointerdown", onSpeakPointer);
     speakBtn.addEventListener("click", onSpeakClick);
+    if (listenBtn) {
+      listenBtn.addEventListener("pointerdown", function () { unlockAudio(); });
+      listenBtn.addEventListener("click", function (ev) {
+        if (ev) ev.preventDefault();
+        playWelcome();
+      });
+    }
     if (closeBtn) closeBtn.addEventListener("click", function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
@@ -822,7 +868,7 @@
 
   function mount() {
     restoreAudioDock();
-    if (document.getElementById("cd-voice-root") && document.getElementById("cd-voice-speak")) {
+    if (document.getElementById("cd-voice-root") && document.getElementById("cd-voice-speak") && document.getElementById("cd-voice-listen")) {
       root = document.getElementById("cd-voice-root");
       syncVoicePlacement();
       return;
@@ -854,6 +900,7 @@
     else if (mq.addListener) mq.addListener(syncVoicePlacement);
 
     speakBtn = document.getElementById("cd-voice-speak");
+    listenBtn = document.getElementById("cd-voice-listen");
     closeBtn = document.getElementById("cd-voice-close");
     statusEl = document.getElementById("cd-voice-status");
     logEl = document.getElementById("cd-voice-log");
@@ -861,7 +908,7 @@
     meterEl = document.getElementById("cd-voice-meter");
     bindUi();
     loadSdk();
-    setStatus("", "Tap SPEAK to talk to the Head Engineer.");
+    setStatus("", STATUS_IDLE);
   }
 
   function boot() { mount(); }
