@@ -137,15 +137,11 @@ module.exports = async function handler(req, res) {
     return;
   }
   var key = String(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "").trim();
-  if (!key) {
-    send(res, 503, { ok: false, error: "The Head Engineer could not hear that. Tap SPEAK and try again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
-    return;
-  }
   var result = null;
   try {
-    if (text && /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(text)) {
+    if (text && (!key || /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(text))) {
       result = localDiagnosis(text);
-    } else {
+    } else if (key) {
       result = await diagnose(key, text, audio || null, mime);
     }
   } catch (e) {
