@@ -60,26 +60,31 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.1-flash-lite", "gemini-3.8-flash"];
+  var models = [
+    ["gemini-3.1-flash-lite", 6500],
+    ["gemini-2.5-flash", 1500],
+    ["gemini-2.0-flash", 1500],
+    ["gemini-3.8-flash", 6500]
+  ];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
     var out = null;
     try {
-      out = await core.geminiJson(key, models[i], {
+      out = await core.geminiJson(key, models[i][0], {
         systemInstruction: { parts: [{ text: SYS }] },
         contents: [{ role: "user", parts: parts }],
         generationConfig: { temperature: 0.1, maxOutputTokens: 400, responseMimeType: "application/json" }
-      }, 8000);
+      }, models[i][1]);
     } catch (err) {
       out = { ok: false, json: { error: { code: 408 } } };
     }
     if (!out || !out.ok) {
-      lastErr = models[i];
+      lastErr = models[i][0];
       continue;
     }
     var parsed = parseOut(core.extractText(out.json), !!audio);
     if (parsed) return parsed;
-    lastErr = models[i] + ":unparsed";
+    lastErr = models[i][0] + ":unparsed";
   }
   return { error: lastErr || "no_model" };
 }
