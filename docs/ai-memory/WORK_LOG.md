@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget records with `MediaRecorder` and, on `STOP & SEND`
 
 ---
 
+### [2026-10-26c3] — Live voice transcription verified
+- Production `https://colddirect-website.vercel.app/api/voice-diagnose` on `gemini-3.8-flash`. English WAV transcript was exactly "The Foster commercial fridge is not cooling and shows error E1." Persian text stayed fa-IR. Neither answer contained the canned fallback or a spoken slash. Both returned `audio_base64`. Plesk homepage serves `colddirect-voice-bar.js?v=20261026c` with MediaRecorder and no SpeechRecognition. Title/H1/meta unchanged.
+
 ### [2026-10-26c2] — Microphone audio transcription (`?v=20261026c`)
 - Lang Auto no longer uses browser SpeechRecognition. SPEAK starts MediaRecorder. STOP & SEND sends only `audio_base64` to `/api/voice-diagnose`. Gemini writes the real transcript into the You bubble and a same-language commercial diagnosis. The canned English fallback is deleted. TTS spoken text uses "or" / "یا", never a slash. Title/H1/meta unchanged.
 
