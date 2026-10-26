@@ -2,15 +2,16 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-26T19:10:00Z",
+  "updatedAt": "2026-10-26T22:20:00Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
     "websiteDeployment": "verified",
     "liveSeoHealth": "passed",
     "businessSchema": "passed_local_541_files",
     "liveSitemapUrls": 133,
-    "voiceBrowserAudit": "intermittent_502_unresolved",
-    "voiceAudio502Count": "latest_browser_run_2",
+    "voiceBrowserAudit": "passed_twice_zero_console_or_http_errors",
+    "voiceAudio502Count": 0,
+    "voiceApiConsecutivePasses": 3,
     "gscLatestMetrics": "retrieved_in_run_40371951644",
     "gscIndexingApi": "http_403_permission_unavailable",
     "mobileNtfyAccepted": true,
@@ -19,12 +20,13 @@
     "verifiedBackupFiles": 629,
     "verifiedBackupHtmlFiles": 292,
     "backupArtifactRetentionDays": 90,
-    "vercelDeploymentAuthorization": "email_one_time_code_required"
+    "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07"
   },
   "deployments": [
     {"sha": "83044be3b96d43d3e67173fc3fa83bd20a40aa91", "purpose": "SEO schema links content and landing pages", "status": "deployed"},
     {"sha": "c751b601f7561e79bd50415ad9b96fe12b73d61a", "purpose": "Live sitemap navigation and title corrections", "status": "verified_live"},
-    {"sha": "d30991dd", "runId": 40369714526, "purpose": "Voice fallback mirror deployment", "status": "verified_live"}
+    {"sha": "d30991dd", "runId": 40369714526, "purpose": "Voice fallback mirror deployment", "status": "verified_live"},
+    {"sha": "1ed0ef07", "purpose": "Voice resilience and Vercel GitHub production reconnect", "status": "production_ready_three_api_and_two_browser_passes"}
   ],
   "permanentRules": [
     "one_unified_business_entity",
@@ -38,7 +40,7 @@
     "never_guarantee_rankings"
   ],
   "nextChecks": [
-    "Complete Vercel email authorization then deploy and repeat browser voice checks",
+    "Verify the next 48-hour workflow reports voice success with the corrected bilingual headline",
     "Resolve Indexing API HTTP 403 permission if submission access is required",
     "Read fresh GSC evidence before further ranking changes",
     "Confirm owner phone is subscribed to the ntfy topic"
