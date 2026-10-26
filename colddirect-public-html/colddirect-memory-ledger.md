@@ -21,6 +21,9 @@ Live voice is public ElevenLabs agent `agent_2901m5th5arfe9kamcec9ef2p42q` (`?v=
 
 ---
 
+### [2026-10-25ak] — STT transcribe never translate (`?v=20261025ak`)
+- Original-language transcript to the agent. Title/H1/meta unchanged.
+
 ### [2026-10-25aj] — Correct public agent ID (`?v=20261025aj`)
 - Typo `9am` → `9kam`. ID `agent_2901m5th5arfe9kamcec9ef2p42q`. Public start, no key wait. Title/H1/meta unchanged.
 

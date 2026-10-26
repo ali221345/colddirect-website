@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget MUST speak aloud via the live ElevenLabs agent `ag
 
 ---
 
+### [2026-10-25ak] — STT transcribe, never translate (`?v=20261025ak`)
+- Lang Auto no longer uses English ASR/translate. `/colddirect-voice-transcribe.aspx` returns verbatim original-language text. That transcript is shown in You and sent to the agent. Native English ASR is ignored for non-English speech. Title/H1/meta unchanged.
+
 ### [2026-10-25aj] — Correct public ConvAI agent ID (`?v=20261025aj`)
 - Fixed one-letter typo `9am` → `9kam`. Live ID is `agent_2901m5th5arfe9kamcec9ef2p42q`. Public token/widget APIs return HTTP 200. SPEAK starts with `agentId` only; does not block on `App_Data/elevenlabs.key`.
 - Title/H1/meta unchanged.

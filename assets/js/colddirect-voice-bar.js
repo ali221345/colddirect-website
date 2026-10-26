@@ -14,6 +14,8 @@
   var END_LABEL = "⏹ END";
   var AGENT_ID = "agent_2901m5th5arfe9kamcec9ef2p42q";
   var TOKEN_URL = "/colddirect-elevenlabs-token.aspx";
+  var TRANSCRIBE_URL = "/colddirect-voice-transcribe.aspx";
+  var EL_LANGS = "en ja zh de hi fr ko pt pt-br it es id nl tr pl sv bg ro ar cs el fi ms da ta uk ru hu hr sk no vi tl af hy as az be bn bs ca et gl ka gu ha he is ga jv kn kk ky lv lt lb mk ml mr ne ps fa pa sr sd sl so sw te th ur cy";
   var SDK_URLS = [
     "https://cdn.jsdelivr.net/npm/@elevenlabs/client@0.15.2/+esm",
     "https://esm.sh/@elevenlabs/client@0.15.2",
@@ -32,6 +34,12 @@
   var meterTimer = null;
   var sdkPromise = null;
   var seq = 0;
+  var spokenLang = "";
+  var blockNativeAsr = false;
+  var srRec = null;
+  var micStream = null;
+  var probePromise = null;
+  var lastProbe = null;
 
   function css() {
     return [
@@ -333,7 +341,203 @@
   function onAgentMessage(payload) {
     var text = messageText(payload).replace(/\s+/g, " ").trim();
     if (!text) return;
-    upsertLive(messageRole(payload), text, messageFinal(payload));
+    var role = messageRole(payload);
+    if (role === "user" && shouldIgnoreEnglishAsr(text)) return;
+    upsertLive(role, text, messageFinal(payload));
+  }
+
+  function toElLang(code) {
+    var raw = String(code || "").toLowerCase().replace(/_/g, "-").trim();
+    var base = raw.split("-")[0];
+    var aliases = { fas: "fa", per: "fa", farsi: "fa", persian: "fa", fil: "tl", tgl: "tl", cmn: "zh", yue: "zh", iw: "he", nb: "no", nn: "no" };
+    if (aliases[raw]) base = aliases[raw];
+    else if (aliases[base]) base = aliases[base];
+    if (raw === "pt-br" || (base === "pt" && /br/.test(raw))) return "pt-br";
+    if (raw === "zh-cn" || raw === "zh-tw" || raw === "zh-hans" || raw === "zh-hant") return "zh";
+    return EL_LANGS.split(" ").indexOf(base) >= 0 ? base : "";
+  }
+
+  function toSrLang(code) {
+    var el = toElLang(code);
+    var m = {
+      fa: "fa-IR", ar: "ar-SA", tr: "tr-TR", zh: "zh-CN", en: "en-GB", hi: "hi-IN",
+      ur: "ur-PK", ps: "ps-AF", de: "de-DE", fr: "fr-FR", es: "es-ES", it: "it-IT",
+      pt: "pt-PT", "pt-br": "pt-BR", ru: "ru-RU", uk: "uk-UA", nl: "nl-NL", pl: "pl-PL",
+      ja: "ja-JP", ko: "ko-KR", tl: "fil-PH", he: "he-IL", bn: "bn-BD", pa: "pa-IN"
+    };
+    return m[el] || "";
+  }
+
+  function isLatinMostly(text) {
+    var s = String(text || "");
+    var latin = (s.match(/[A-Za-z]/g) || []).length;
+    var other = (s.match(/[^\sA-Za-z0-9.,!?'"+\-:/()]/g) || []).length;
+    return latin >= 8 && latin > other * 2;
+  }
+
+  function shouldIgnoreEnglishAsr(text) {
+    if (!blockNativeAsr) return false;
+    if (isRtl(text)) return false;
+    if (spokenLang && spokenLang !== "en" && isLatinMostly(text)) return true;
+    return false;
+  }
+
+  function encodeWav(chunks, sampleRate) {
+    var n = 0;
+    var i;
+    var c;
+    for (c = 0; c < chunks.length; c++) n += chunks[c].length;
+    var buf = new ArrayBuffer(44 + n * 2);
+    var v = new DataView(buf);
+    function wstr(off, s) {
+      for (i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i));
+    }
+    wstr(0, "RIFF");
+    v.setUint32(4, 36 + n * 2, true);
+    wstr(8, "WAVE");
+    wstr(12, "fmt ");
+    v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true);
+    v.setUint16(22, 1, true);
+    v.setUint32(24, sampleRate, true);
+    v.setUint32(28, sampleRate * 2, true);
+    v.setUint16(32, 2, true);
+    v.setUint16(34, 16, true);
+    wstr(36, "data");
+    v.setUint32(40, n * 2, true);
+    var o = 44;
+    for (c = 0; c < chunks.length; c++) {
+      var a = chunks[c];
+      for (i = 0; i < a.length; i++, o += 2) {
+        var s = Math.max(-1, Math.min(1, a[i]));
+        v.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      }
+    }
+    var bytes = new Uint8Array(buf);
+    var bin = "";
+    var step = 0x8000;
+    for (i = 0; i < bytes.length; i += step) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + step, bytes.length)));
+    }
+    return btoa(bin);
+  }
+
+  function captureWav(stream, ms) {
+    return new Promise(function (resolve, reject) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return reject(new Error("no AudioContext"));
+      var ctx = window.__cdPlayCtx || new AC();
+      if (ctx.state === "suspended") ctx.resume();
+      var src = ctx.createMediaStreamSource(stream);
+      var proc = ctx.createScriptProcessor(4096, 1, 1);
+      var gain = ctx.createGain();
+      gain.gain.value = 0;
+      var chunks = [];
+      proc.onaudioprocess = function (ev) {
+        chunks.push(new Float32Array(ev.inputBuffer.getChannelData(0)));
+      };
+      src.connect(proc);
+      proc.connect(gain);
+      gain.connect(ctx.destination);
+      setTimeout(function () {
+        try { proc.disconnect(); } catch (e1) {}
+        try { src.disconnect(); } catch (e2) {}
+        try { gain.disconnect(); } catch (e3) {}
+        if (!chunks.length) return reject(new Error("no audio"));
+        resolve({ b64: encodeWav(chunks, ctx.sampleRate || 48000), mime: "audio/wav" });
+      }, ms);
+    });
+  }
+
+  function transcribeOriginal(stream) {
+    return captureWav(stream, 1400).then(function (clip) {
+      return fetch(TRANSCRIBE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ audio_base64: clip.b64, mime: clip.mime, mode: "transcribe", translate: false })
+      });
+    }).then(function (r) { return r.json().catch(function () { return {}; }); }).then(function (j) {
+      if (!j || j.ok === false) return null;
+      var transcript = String(j.transcript || "").replace(/\s+/g, " ").trim();
+      if (!transcript) return null;
+      return { language: toElLang(j.language) || "", transcript: transcript, mode: "transcribe" };
+    });
+  }
+
+  function stopSpeechRec() {
+    if (!srRec) return;
+    try { srRec.onresult = null; srRec.onend = null; srRec.stop(); } catch (e1) {}
+    srRec = null;
+  }
+
+  function startSpeechRec(lang) {
+    stopSpeechRec();
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var locale = toSrLang(lang);
+    if (!SR || !locale) return;
+    if (locale.toLowerCase().indexOf("en-us") === 0) locale = "en-GB";
+    var rec = new SR();
+    srRec = rec;
+    rec.lang = locale;
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    rec.onresult = function (ev) {
+      var t = "";
+      var final = false;
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        t += ev.results[i][0].transcript || "";
+        if (ev.results[i].isFinal) final = true;
+      }
+      t = String(t).replace(/\s+/g, " ").trim();
+      if (!t) return;
+      upsertLive("user", t, final);
+      if (final && conversation && typeof conversation.sendUserMessage === "function") {
+        try { conversation.sendUserMessage(t); } catch (e1) {}
+      }
+    };
+    rec.onend = function () {
+      if (srRec === rec && live && blockNativeAsr) {
+        try { rec.start(); } catch (e2) {}
+      }
+    };
+    try { rec.start(); } catch (e3) {}
+  }
+
+  function applySpokenLanguage(info) {
+    if (!info || !live) return;
+    var lang = toElLang(info.language);
+    var transcript = String(info.transcript || "").replace(/\s+/g, " ").trim();
+    if (transcript && isRtl(transcript) && (!lang || lang === "en")) {
+      lang = /[\u067E\u0686\u0698\u06AF]/.test(transcript) ? "fa" : "ar";
+    }
+    spokenLang = lang || spokenLang;
+    if (transcript) upsertLive("user", transcript, true);
+    if (conversation && typeof conversation.sendContextualUpdate === "function") {
+      try {
+        conversation.sendContextualUpdate(
+          "STT mode is transcribe, never translate. Keep the user's original language. " +
+          (spokenLang ? "They spoke " + spokenLang + ". " : "") +
+          "Reply in that same language. Do not switch to English unless they spoke English."
+        );
+      } catch (e1) {}
+    }
+    if (transcript && conversation && typeof conversation.sendUserMessage === "function") {
+      try { conversation.sendUserMessage(transcript); } catch (e2) {}
+    }
+    if (spokenLang && spokenLang !== "en") {
+      blockNativeAsr = true;
+      if (conversation && typeof conversation.setMicMuted === "function") {
+        try { conversation.setMicMuted(true); } catch (e3) {}
+      }
+      startSpeechRec(spokenLang);
+    } else {
+      blockNativeAsr = false;
+      if (conversation && typeof conversation.setMicMuted === "function") {
+        try { conversation.setMicMuted(false); } catch (e4) {}
+      }
+    }
   }
 
   function stopMeter() {
@@ -368,6 +572,15 @@
     conversation = null;
     live = false;
     starting = false;
+    blockNativeAsr = false;
+    spokenLang = "";
+    lastProbe = null;
+    probePromise = null;
+    stopSpeechRec();
+    if (micStream) {
+      try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e0) {}
+      micStream = null;
+    }
     stopMeter();
     setSpeakUi(false);
     if (root) root.classList.remove("is-live", "is-busy");
@@ -377,10 +590,16 @@
     }
   }
 
-  function sessionOptions(my, connectionType) {
-    return {
+  function sessionOptions(my, connectionType, langCode) {
+    var elLang = toElLang(langCode);
+    var opts = {
       agentId: AGENT_ID,
       connectionType: connectionType,
+      dynamicVariables: {
+        stt_mode: "transcribe",
+        never_translate: "true",
+        lang_auto: "true"
+      },
       onConnect: function () {
         if (my !== seq) return;
         live = true;
@@ -423,6 +642,10 @@
         }
       }
     };
+    if (elLang && elLang !== "en") {
+      opts.overrides = { agent: { language: elLang } };
+    }
+    return opts;
   }
 
   function fetchConversationToken() {
@@ -437,12 +660,23 @@
     function startWith(opts) {
       return Conversation.startSession(opts);
     }
-    return startWith(sessionOptions(my, "webrtc")).catch(function (err) {
+    function startPublic(langCode) {
+      var opts = sessionOptions(my, "webrtc", langCode);
+      return startWith(opts).catch(function (err) {
+        var msg = String((err && err.message) || err || "");
+        if (opts.overrides && /override|400|not enabled|language/i.test(msg)) {
+          delete opts.overrides;
+          return startWith(opts);
+        }
+        throw err;
+      });
+    }
+    return startPublic(spokenLang).catch(function (err) {
       var msg = String((err && err.message) || err || "");
       if (!/401|authentication|signed url|conversation token/i.test(msg)) throw err;
       return fetchConversationToken().then(function (token) {
         if (!token) throw err;
-        var opts = sessionOptions(my, "webrtc");
+        var opts = sessionOptions(my, "webrtc", spokenLang);
         delete opts.agentId;
         opts.conversationToken = token;
         return startWith(opts);
@@ -453,6 +687,33 @@
         return;
       }
       conversation = conv || conversation;
+      if (conversation && typeof conversation.setMicMuted === "function" && (!spokenLang || spokenLang !== "en")) {
+        try { conversation.setMicMuted(true); } catch (e3) {}
+      }
+      if (lastProbe) applySpokenLanguage(lastProbe);
+      else if (probePromise) {
+        probePromise.then(function (info) {
+          if (my !== seq || !info) return;
+          lastProbe = info;
+          applySpokenLanguage(info);
+        }).catch(function () {});
+      }
+    });
+  }
+
+  function warmMic() {
+    if (micStream && micStream.active) return Promise.resolve(micStream);
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve(null);
+    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+      micStream = s;
+      if (!probePromise) {
+        probePromise = transcribeOriginal(s).then(function (info) {
+          lastProbe = info;
+          if (info && info.language) spokenLang = info.language;
+          return info;
+        }).catch(function () { return null; });
+      }
+      return s;
     });
   }
 
@@ -464,12 +725,15 @@
     agentSpoke = false;
     liveUser = null;
     liveBot = null;
+    blockNativeAsr = false;
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);
     setStatus("connecting", "Connecting to the Head Engineer...");
-    loadSdk().then(function (Conversation) {
+    Promise.all([loadSdk(), warmMic()]).then(function (pair) {
       if (my !== seq) return;
+      var Conversation = pair[0];
+      if (lastProbe && lastProbe.language) spokenLang = lastProbe.language;
       return beginSession(Conversation, my);
     }).catch(function (err) {
       try { console.error("ColdDirect ElevenLabs start", err); } catch (e4) {}
@@ -483,6 +747,12 @@
     if (ev && ev.pointerType === "mouse" && ev.button !== 0) return;
     unlockAudio();
     loadSdk();
+    if (!live && !starting) {
+      probePromise = null;
+      lastProbe = null;
+      spokenLang = "";
+      warmMic();
+    }
   }
 
   function onSpeakClick(ev) {

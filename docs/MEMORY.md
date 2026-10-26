@@ -1,5 +1,7 @@
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
+Owner 2026-10-25ak: Lang Auto STT is transcribe-only, never translate-to-English. Original-language transcript is sent to the Head Engineer. Never force `language: en` or `en-US` SpeechRecognition. Script `?v=20261025ak`.
+
 Owner 2026-10-25aj: Exact public agent ID `agent_2901m5th5arfe9kamcec9ef2p42q` (`9kam`, not `9am`). SPEAK uses `Conversation.startSession({ agentId, connectionType: 'webrtc' })` and does not wait on `App_Data/elevenlabs.key`. Script `?v=20261025aj`.
 
 Owner 2026-10-25ai: Same ElevenLabs agent. If public token 404s, the widget mints a conversation token via `/colddirect-elevenlabs-token.aspx` + `App_Data/elevenlabs.key`. Script `?v=20261025ai`.
