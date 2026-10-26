@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
   if (!result || result.error || !result.display) {
     // Silent, clipped or unintelligible microphone audio is an input failure, not a site outage.
     // Return a structured response so the widget can offer its typed-fault fallback without a console 502.
-    send(res, audio ? 200 : 502, {
+    send(res, 200, {
       ok: false,
       code: audio ? "VOICE_NOT_UNDERSTOOD" : "DIAGNOSIS_UNAVAILABLE",
       error: audio ? "We could not hear that clearly. Type the fault below or tap SPEAK and try again." : "The diagnosis service is temporarily unavailable. Please try again or call us.",
