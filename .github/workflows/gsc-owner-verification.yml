@@ -1,0 +1,33 @@
+name: GSC Owner verification (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install --quiet google-auth requests
+
+      - name: Offline self-test
+        run: python tools/gsc_owner_verification.py --selftest
+
+      - name: Verify Owner, sitemap and 13 watchlist URLs
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+        run: python tools/gsc_owner_verification.py
