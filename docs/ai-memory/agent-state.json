@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "project": "ColdDirect",
+  "site": "https://www.colddirect.co.uk/",
+  "updatedAt": "2026-10-26T17:40:00Z",
+  "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
+  "status": {
+    "websiteDeployment": "verified",
+    "liveSeoHealth": "passed",
+    "businessSchema": "passed_local_541_files",
+    "liveSitemapUrls": 133,
+    "voiceBrowserAudit": "passed",
+    "voiceAudio502Count": 0,
+    "gscLatestMetrics": "requires_scheduled_run",
+    "mobilePhoneReceipt": "requires_owner_subscription",
+    "scheduled48hEndToEnd": "pending_test_run"
+  },
+  "deployments": [
+    {"sha": "83044be3b96d43d3e67173fc3fa83bd20a40aa91", "purpose": "SEO schema links content and landing pages", "status": "deployed"},
+    {"sha": "c751b601f7561e79bd50415ad9b96fe12b73d61a", "purpose": "Live sitemap navigation and title corrections", "status": "verified_live"},
+    {"sha": "d30991dd", "runId": 40369714526, "purpose": "Voice fallback mirror deployment", "status": "verified_live"}
+  ],
+  "permanentRules": [
+    "one_unified_business_entity",
+    "no_scheduled_curated_metadata_rewrites",
+    "synchronize_all_deployable_copies",
+    "final_trailing_slash_internal_links",
+    "microphone_502_is_failure_even_with_fallback",
+    "explicitly_upload_auto_seo_and_sitemap_when_changed",
+    "browser_microphone_and_playback_check_after_voice_deploy",
+    "never_expose_secrets_or_customer_data",
+    "never_guarantee_rankings"
+  ],
+  "nextChecks": [
+    "Run and inspect the 48-hour workflow manually",
+    "Confirm GSC retrieval and mobile delivery independently",
+    "Read fresh GSC evidence before further ranking changes"
+  ]
+}

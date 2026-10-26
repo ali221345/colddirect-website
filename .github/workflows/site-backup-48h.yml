@@ -1,6 +1,6 @@
 name: Site backup (48h)
 
-# EVERY 48 HOURS (03:00 UTC on every second day-of-month + manual): full verified snapshot of the LIVE Plesk site.
+# EVERY 48 HOURS (03:17 UTC on every second day-of-month + manual): full verified snapshot of the LIVE Plesk site.
 #   tools/backup_site.py downloads /httpdocs over PLAIN FTP (HTML/ASP/ASPX incl. auto-seo.aspx, web.config & other
 #   *.config, sitemap.xml, robots.txt, CSS/JS, JSON/XML/TXT config files), scrubs secret values from config files,
 #   never archives App_Data/*.key/private keys/bookings (customer data), writes a timestamped ZIP with a SHA-256
@@ -12,7 +12,7 @@ name: Site backup (48h)
 
 on:
   schedule:
-    - cron: '0 3 */2 * *'
+    - cron: '17 3 */2 * *'
   workflow_dispatch:
     inputs:
       include_media:
@@ -82,6 +82,73 @@ jobs:
             backup-out/backup-summary.json
           retention-days: 90
           if-no-files-found: error
+
+      - name: Install Search Console dependencies
+        if: always()
+        run: python -m pip install --quiet google-auth requests
+
+      - name: Curated-safe live auto-SEO sync
+        if: always()
+        id: sync
+        continue-on-error: true
+        env:
+          AUTO_SEO_KEY: ${{ secrets.AUTO_SEO_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${AUTO_SEO_KEY:-}"
+          resp="$(curl -sS --retry 3 --retry-delay 10 --retry-all-errors --connect-timeout 20 --max-time 180 -A 'ColdDirect-CI-48h/1.0' "https://www.colddirect.co.uk/auto-seo.aspx?key=${AUTO_SEO_KEY}")"
+          [[ "$resp" == *"AUTO-SEO"* && "$resp" == *"OK"* ]]
+          echo "Curated-safe auto-SEO completed; response body withheld."
+
+      - name: Live site health
+        if: always()
+        id: health
+        continue-on-error: true
+        run: python tools/live_smoke_test.py
+
+      - name: Live redirects and server config parity
+        if: always()
+        id: redirects
+        continue-on-error: true
+        run: python tools/config_parity.py --live
+
+      - name: Live schema and SEO integrity
+        if: always()
+        id: schema
+        continue-on-error: true
+        run: python tools/seo_integrity_check.py
+
+      - name: Voice API regression check
+        if: always()
+        id: voice
+        continue-on-error: true
+        run: |
+          python tools/voice_api_check.py --selftest
+          python tools/voice_api_check.py
+
+      - name: Search Console performance and indexing report
+        if: always()
+        id: gsc
+        continue-on-error: true
+        env:
+          GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
+        run: python tools/gsc_weekly_report.py
+
+      - name: Bilingual mobile report from actual outcomes
+        if: always()
+        continue-on-error: true
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
+          JOB_STATUS: ${{ job.status }}
+          S_BACKUP: ${{ steps.backup.outcome }}
+          S_HEALTH: ${{ steps.health.outcome }}
+          S_REDIRECTS: ${{ steps.redirects.outcome }}
+          S_SCHEMA: ${{ steps.schema.outcome }}
+          S_VOICE: ${{ steps.voice.outcome }}
+          S_GSC: ${{ steps.gsc.outcome }}
+        run: |
+          python tools/report_48h.py --selftest
+          python tools/report_48h.py
 
       # ---- unified job report: ALWAYS runs (success or failure), never changes the job result, no secrets/log text
       - name: Job report (rolling issue + WORK_LOG)
