@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-26T22:20:00Z",
+  "updatedAt": "2026-10-26T22:31:42Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
     "websiteDeployment": "verified",
@@ -12,15 +12,18 @@
     "voiceBrowserAudit": "passed_twice_zero_console_or_http_errors",
     "voiceAudio502Count": 0,
     "voiceApiConsecutivePasses": 3,
-    "gscLatestMetrics": "retrieved_in_run_40371951644",
+    "gscLatestMetrics": "retrieved_in_run_40410829821",
     "gscIndexingApi": "http_403_permission_unavailable",
+    "gscIndexingWatchlist": "1_indexed_13_waiting_of_14",
     "mobileNtfyAccepted": true,
     "mobilePhoneReceipt": "requires_owner_subscription",
-    "scheduled48hEndToEnd": "run_40378611708_backup_seo_gsc_mobile_passed_voice_failed",
+    "scheduled48hEndToEnd": "run_40410829821_all_steps_passed",
     "verifiedBackupFiles": 629,
     "verifiedBackupHtmlFiles": 292,
+    "verifiedBackupSkippedFiles": 0,
     "backupArtifactRetentionDays": 90,
-    "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07"
+    "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07",
+    "unusedVercelDeploymentToken": "revoked"
   },
   "deployments": [
     {"sha": "83044be3b96d43d3e67173fc3fa83bd20a40aa91", "purpose": "SEO schema links content and landing pages", "status": "deployed"},
@@ -40,7 +43,7 @@
     "never_guarantee_rankings"
   ],
   "nextChecks": [
-    "Verify the next 48-hour workflow reports voice success with the corrected bilingual headline",
+    "Review 13 GSC watchlist URLs still awaiting indexing; do not treat stale inspection verdicts as current live status",
     "Resolve Indexing API HTTP 403 permission if submission access is required",
     "Read fresh GSC evidence before further ranking changes",
     "Confirm owner phone is subscribed to the ntfy topic"
