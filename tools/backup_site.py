@@ -129,21 +129,28 @@ def snapshot(ftp, base: str, include_media: bool, log=print):
             skipped.append((rel, "too large"))
             continue
         data = None
+        failure = ""
         for attempt in range(3):
             buf = io.BytesIO()
             try:
                 ftp.retrbinary(f"RETR {remote}", buf.write)
-                data = buf.getvalue()
-                break
+                candidate = buf.getvalue()
+                if rsize is None or rsize == len(candidate):
+                    data = candidate
+                    break
+                # auto-seo may legitimately replace a live file between SIZE and RETR.
+                # Re-stat: accept only a complete download of the new size, else retry the whole file.
+                fresh_size = ftp.size(remote)
+                if fresh_size == len(candidate):
+                    data = candidate
+                    break
+                failure = f"size mismatch remote={rsize} got={len(candidate)} fresh={fresh_size}"
             except Exception as exc:  # noqa: BLE001 - transient IIS FTP failures need bounded retries
-                if attempt == 2:
-                    skipped.append((rel, f"download failed after 3 attempts: {type(exc).__name__}"))
-                else:
-                    time.sleep(2 * (attempt + 1))
+                failure = f"download failed: {type(exc).__name__}"
+            if attempt < 2:
+                time.sleep(2 * (attempt + 1))
         if data is None:
-            continue
-        if rsize is not None and rsize != len(data):
-            skipped.append((rel, f"size mismatch remote={rsize} got={len(data)}"))
+            skipped.append((rel, failure + " after 3 attempts"))
             continue
         redacted = 0
         if PRIVATE_KEY_RX.search(data[:200000].decode("latin-1", "ignore")):
