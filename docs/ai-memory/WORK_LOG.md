@@ -1312,3 +1312,11 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-26 18:31 UTC - Autopilot: 48h full site backup - FAILED
 - Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40376346795 | commit eff07fe
 - Metrics: archive=colddirect-backup-20261026-181707.zip; SHA-256=176314a5f392b8af52c28ebbc4e8b1a97cea6d5ddaf87212e736c1f6c396d1eb; files=382 (47 html); integrity verified=False; manifest re-check=skipped; artifact (90 days)=colddirect-site-backup-40376346795
+
+## 2026-10-26 18:39 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40379376001 | commit 0ccb46e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 18:46 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40378611708 | commit 8135cf7
+- Metrics: archive=colddirect-backup-20261026-183233.zip; SHA-256=0e9b2d2d240234428398492e64459daa2845766d2105184a7a4f9a35a8037a2b; files=629 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-40378611708
