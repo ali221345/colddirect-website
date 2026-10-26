@@ -60,7 +60,7 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-lite-latest"];
+  var models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.1-flash-lite", "gemini-3.8-flash"];
   var lastErr = "";
   for (var i = 0; i < models.length; i++) {
     var out = null;
@@ -69,7 +69,7 @@ async function diagnose(key, text, audio, mime) {
         systemInstruction: { parts: [{ text: SYS }] },
         contents: [{ role: "user", parts: parts }],
         generationConfig: { temperature: 0.1, maxOutputTokens: 400, responseMimeType: "application/json" }
-      }, 7000);
+      }, 8000);
     } catch (err) {
       out = { ok: false, json: { error: { code: 408 } } };
     }
