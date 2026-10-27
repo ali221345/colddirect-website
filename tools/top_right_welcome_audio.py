@@ -130,6 +130,14 @@ TRANSCRIPT = (
     "Welcome to Cold Direct. We are a North London-based company with over 30 years of experience "
     "in commercial refrigeration, walk-in cold rooms, all types of cooling equipment, ice machines, "
     "ice cream machines, and full air conditioning systems. All of our work comes with a full guarantee, "
+    "24 hour emergency response, and fair, competitive pricing. Call us today on 0203 952 4822. "
+    "Or call 07983 759320. If you are happy with our service, please tap the green Like and "
+    "5-Star Review button."
+)
+LEGACY_TRANSCRIPT = (
+    "Welcome to Cold Direct. We are a North London-based company with over 30 years of experience "
+    "in commercial refrigeration, walk-in cold rooms, all types of cooling equipment, ice machines, "
+    "ice cream machines, and full air conditioning systems. All of our work comes with a full guarantee, "
     "24/7 emergency response, and fair, competitive pricing. After your very first experience "
     "with us, you will become a lifelong customer. We would be delighted to hear from you—give us a call "
     "today and put our 30 years of expertise to work for you."
@@ -215,6 +223,7 @@ def iter_html_files() -> list[Path]:
 
 
 def inject(html: str, block: str) -> str:
+    html = html.replace(LEGACY_TRANSCRIPT, TRANSCRIPT)
     html = BLOCK_RX.sub("", html)
     html = SITEWIDE_RX.sub("", html)
     # Drop any prior hide-legacy style if re-applying

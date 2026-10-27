@@ -76,6 +76,123 @@
 }
 </script>
 </head><body><a class="skip" href="#content">Skip to content</a><!--#include virtual="/includes/header-nav.inc" -->
+<!-- CD-TOP-RIGHT-AUDIO -->
+<style id="cd-hide-legacy-audio">section.cd-audio-summary,.cd-audio-summary,.cd-audio-summary *{display:none !important;visibility:hidden !important;pointer-events:none !important;position:absolute !important;width:0 !important;height:0 !important;max-height:0 !important;overflow:hidden !important;clip:rect(0,0,0,0) !important;opacity:0 !important;}</style>
+<style id="cd-top-right-audio">
+#cd-audio-dock,#cd-audio-dock *{box-sizing:border-box !important;}
+#cd-audio-dock{
+  position:fixed !important;
+  top:48px !important;
+  right:16px !important;
+  left:auto !important;
+  bottom:auto !important;
+  z-index:9999 !important;
+  width:240px !important;
+  max-width:calc(100vw - 32px) !important;
+  margin:0 !important;
+  padding:6px 10px !important;
+  background:linear-gradient(145deg,#0a2540 0%,#0d3a5c 100%) !important;
+  color:#fff !important;
+  border:1px solid rgba(0,169,157,.65) !important;
+  border-radius:10px !important;
+  box-shadow:0 8px 24px rgba(10,37,64,.4) !important;
+  font:600 11px/1.3 system-ui,Segoe UI,sans-serif !important;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+#cd-audio-dock .cd-audio-label{
+  display:block !important;margin:0 0 4px !important;color:#9fe8e1 !important;letter-spacing:.02em !important;
+  font-size:11px !important;line-height:1.2 !important;
+}
+#cd-audio-dock audio{
+  width:100% !important;height:32px !important;display:block !important;margin:0 !important;
+  border-radius:6px !important;background:#fff !important;
+}
+#cd-audio-dock details{margin-top:4px !important;}
+#cd-audio-dock summary{
+  cursor:pointer !important;font-weight:700 !important;color:#fff !important;list-style:none !important;
+  font-size:10px !important;
+}
+#cd-audio-dock summary::-webkit-details-marker{display:none !important;}
+#cd-audio-dock .cd-transcript-text{
+  margin:4px 0 0 !important;font-weight:400 !important;font-size:11px !important;line-height:1.4 !important;opacity:.95 !important;
+}
+@media (max-width:768px){
+  #cd-audio-dock{
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
+    left:auto !important;
+    bottom:auto !important;
+    float:none !important;
+    clear:both !important;
+    width:175px !important;
+    max-width:175px !important;
+    margin:6px 12px 4px auto !important;
+    padding:4px 8px !important;
+    border-radius:8px !important;
+    box-shadow:0 4px 14px rgba(10,37,64,.35) !important;
+    z-index:20 !important;
+    font-size:10px !important;
+    line-height:1.2 !important;
+    max-height:48px !important;
+    overflow:hidden !important;
+  }
+  #cd-audio-dock .cd-audio-label{
+    font-size:10px !important;line-height:1.2 !important;margin:0 0 2px !important;
+    white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
+  }
+  #cd-audio-dock audio{
+    height:26px !important;width:100% !important;border-radius:5px !important;
+  }
+  #cd-audio-dock details{
+    display:none !important;visibility:hidden !important;height:0 !important;margin:0 !important;
+    overflow:hidden !important;
+  }
+}
+</style>
+<aside id="cd-audio-dock" aria-label="Cold Direct welcome audio">
+<span class="cd-audio-label">Listen · Welcome to Cold Direct</span>
+<audio controls preload="none" src="/audio/colddirect-welcome.mp3"><source src="/audio/colddirect-welcome.mp3" type="audio/mpeg">Your browser does not support audio playback.</audio>
+<details><summary>Transcript</summary><p class="cd-transcript-text">Welcome to Cold Direct. We are a North London-based company with over 30 years of experience in commercial refrigeration, walk-in cold rooms, all types of cooling equipment, ice machines, ice cream machines, and full air conditioning systems. All of our work comes with a full guarantee, 24 hour emergency response, and fair, competitive pricing. Call us today on 0203 952 4822. Or call 07983 759320. If you are happy with our service, please tap the green Like and 5-Star Review button.</p></details>
+</aside>
+<script type="application/ld+json" data-cd-schema="top-right-welcome-audio">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.colddirect.co.uk/cold-room-installation-london/#top-right-audio-page",
+      "url": "https://www.colddirect.co.uk/cold-room-installation-london/",
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [
+          "#cd-audio-dock .cd-transcript-text",
+          "h1"
+        ]
+      }
+    },
+    {
+      "@type": "AudioObject",
+      "@id": "https://www.colddirect.co.uk/cold-room-installation-london/#top-right-audio",
+      "name": "Cold Direct welcome — 30 years of commercial refrigeration in North London",
+      "description": "Welcome to Cold Direct. We are a North London-based company with over 30 years of experience in commercial refrigeration, walk-in cold rooms, all types of cooling equipment, ice machines, ice cream machines, and full air conditioning systems. All of our work comes with a full guarantee, 24 hour emergency response, and fair, competitive pricing. Call us today on 0203 952 4822. Or call 07983 759320. If you are happy with our service, please tap the green Like and 5-Star Review button.",
+      "contentUrl": "https://www.colddirect.co.uk/audio/colddirect-welcome.mp3",
+      "encodingFormat": "audio/mpeg",
+      "duration": "PT40S",
+      "uploadDate": "2026-10-22",
+      "inLanguage": "en-GB",
+      "transcript": "Welcome to Cold Direct. We are a North London-based company with over 30 years of experience in commercial refrigeration, walk-in cold rooms, all types of cooling equipment, ice machines, ice cream machines, and full air conditioning systems. All of our work comes with a full guarantee, 24 hour emergency response, and fair, competitive pricing. Call us today on 0203 952 4822. Or call 07983 759320. If you are happy with our service, please tap the green Like and 5-Star Review button.",
+      "publisher": {
+        "@id": "https://www.colddirect.co.uk/#business"
+      }
+    }
+  ]
+}
+</script>
+<!-- /CD-TOP-RIGHT-AUDIO -->
+
 <main id="content"><section class="hero"><div class="wrap"><p class="kicker">Commercial walk-in cold room design and installation</p><h1>Cold Room Installation London</h1><p class="lead">Plan a new walk-in chiller or freezer room around your stock, site access and daily workload.</p><div class="cta-row"><a class="btn btn-light" href="tel:+447983759320">Mobile 07983 759320</a><a class="btn btn-dark" href="tel:+442039524822">London Office 0203 952 4822</a><a class="btn" href="/contact/">Book a call-out</a></div></div></section>
 <section class="section"><div class="wrap"><p>ColdDirect plans commercial cold room installation for London kitchens, shops and catering sites. We consider available space, access, ventilation, temperature requirements, stock flow and cleaning before specifying the room and refrigeration equipment.</p><h2>Installation planning and commissioning</h2><p>The work starts with site dimensions, door position, floor and drainage requirements, electrical supplies and condenser heat rejection. Equipment is selected for the intended duty rather than a one-size-fits-all package. On completion, controls, alarms, door operation and temperature performance are checked and explained to your team.</p>
 <h2>Chiller rooms and freezer rooms</h2><p>Choose a walk-in chiller for fresh stock or a freezer room for frozen storage. We can also assess replacement of ageing panels, doors and refrigeration plant. Existing faults belong on our repair page; new rooms and upgrades are planned through this installation service.</p><h2>Book ColdDirect</h2><p>Call <a href="tel:+447983759320">07983 759320</a> or <a href="tel:+442039524822">0203 952 4822</a>, or email <a href="mailto:info@colddirect.co.uk">info@colddirect.co.uk</a>. Commercial equipment only.</p><p><a href="/cold-room-repair-london/">Cold room repair London</a> | <a href="/freezer-room-repair-london/">Freezer room repair London</a></p></div></section>
