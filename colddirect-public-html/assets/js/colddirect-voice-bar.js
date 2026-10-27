@@ -337,6 +337,7 @@
 
   function playWelcome() {
     unlockAudio();
+    if (root && /[?&]voiceDebug=1/.test(location.search)) root.setAttribute("data-cd-voice-state", "chunks=" + splitSpeechText.length + ";cache=" + speechCache.length + ";ready=" + speechCache.filter(function (entry) { return entry && entry.data; }).length + ";token=" + playToken);
     if (speechCache.length) return playCachedSpeech();
     var a = welcomeAudio();
     if (!a) {
