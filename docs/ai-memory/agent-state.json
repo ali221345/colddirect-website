@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-27T18:00:08Z",
+  "updatedAt": "2026-10-27T18:50:00Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
-    "websiteDeployment": "verified_run_40554823797",
+    "websiteDeployment": "verified_run_40562705351",
     "scheduled48hWatchlist": "exact_13_url_inspection_with_six_priority_pages_bilingual_mobile_until_13_pass",
     "scheduled48hCron": "17 3 */2 * *",
     "liveSeoHealth": "passed",
@@ -13,17 +13,19 @@
     "sixWatchlistInternalLinks": "live_homepage_and_footer_links_verified_all_six",
     "businessSchema": "passed_local_541_files",
     "liveSitemapUrls": 131,
-    "voiceBrowserAudit": "speech_first_and_recorder_fallback_passed_on_live_widget",
+    "voiceBrowserAudit": "written_and_spoken_phone_review_cta_native_fallback_and_cached_listen_passed",
     "voiceAudio502Count": 0,
     "voiceApiConsecutivePasses": 3,
-    "voiceWidgetCacheVersion": "20261027g",
+    "voiceWidgetCacheVersion": "20261027h",
     "voiceAudioFormat": "mp3_48kbps_mono",
     "voiceFullResponseBytes": [173376, 193824],
     "voiceTtsRequestsPerDiagnosis": 1,
-    "voiceSummaryMaxWords": 45,
-    "voiceSummaryWordsLive429Test": 37,
-    "voiceCachedReplay": "controlled_browser_mp3_and_native_pass_no_additional_tts_request",
-    "voiceNativeFallback": "forced_429_one_tts_request_one_en_gb_utterance_listen_replay_without_new_request",
+    "voiceSummaryMaxWords": 72,
+    "voiceSummaryWordsLive429Test": 68,
+    "voiceCachedReplay": "native_same_68_word_cta_utterance_no_additional_tts_request",
+    "voiceNativeFallback": "live_real_429_one_diagnosis_one_tts_request_one_68_word_cta_utterance",
+    "voiceWrittenCta": "live_bot_bubble_both_tel_links_and_green_like_5_star_review_close_verified",
+    "voiceSpokenCta": "technical_advice_then_both_formatted_phones_and_green_like_5_star_review_close_verified",
     "voiceNativeCapture": "live_interim_text_auto_submit_after_1500ms_zero_audio_bytes_verified",
     "voiceRecorderFallback": "6000ms_max_2000ms_silence_requestData_before_stop_nonempty_mp4_verified",
     "voiceGeminiModelFailover": "3.6_2.5_2.0_2.0-lite_1.5_forced_429_tested",
@@ -45,7 +47,7 @@
     "verifiedBackupSkippedFiles": 0,
     "backupArtifactRetentionDays": 90,
     "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07",
-    "vercelFinalWidget": "cache_version_20261027g_verified_live",
+    "vercelFinalWidget": "cache_version_20261027h_verified_live",
     "unusedVercelDeploymentToken": "revoked"
   },
   "deployments": [
@@ -55,7 +57,8 @@
     {"sha": "1ed0ef07", "purpose": "Voice resilience and Vercel GitHub production reconnect", "status": "production_ready_three_api_and_two_browser_passes"},
     {"sha": "f61d83da88eec7fe3910a19580a73790c208d97f", "runId": 40522462940, "purpose": "Mobile MP3 playback gesture unlock chunking and cached LISTEN", "status": "plesk_success_and_both_hosts_final_widget_verified_live_tts_429_on_final_recheck"},
     {"sha": "4e6fc42e8949934d7874d358b77e828c80ab4f49", "runId": 40530373086, "purpose": "Single-summary TTS and native zero-silence fallback", "status": "plesk_success_both_hosts_and_forced_429_fallback_verified"},
-    {"sha": "dc845e8984342b3e6978e144c46c367fd1194dce", "runId": 40554823797, "purpose": "Speech-first mobile capture multi-model and expert quota fallback", "status": "plesk_success_both_hosts_live_browser_and_api_verified"}
+    {"sha": "dc845e8984342b3e6978e144c46c367fd1194dce", "runId": 40554823797, "purpose": "Speech-first mobile capture multi-model and expert quota fallback", "status": "plesk_success_both_hosts_live_browser_and_api_verified"},
+    {"sha": "a4e3623b7989fda0a0ea7b9c17c8b5bc57905be3", "runId": 40562705351, "purpose": "Mandatory written and spoken phone and 5-Star Review CTA", "status": "plesk_success_both_hosts_native_fallback_and_cached_listen_verified_real_tts_429"}
   ],
   "permanentRules": [
     "one_unified_business_entity",
@@ -72,7 +75,8 @@
     "one_concise_tts_summary_per_diagnosis_no_chunk_quota_burn",
     "native_speech_recognition_first_media_recorder_fallback_only",
     "never_map_upstream_quota_errors_to_hearing_errors",
-    "never_promise_100_percent_audio_uptime"
+    "never_promise_100_percent_audio_uptime",
+    "every_written_and_spoken_diagnosis_ends_with_both_phones_and_review_cta"
   ],
   "nextChecks": [
     "Re-inspect 13 NEUTRAL watchlist URLs after Google recrawls; do not treat stale inspection verdicts as current live status",
