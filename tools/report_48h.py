@@ -56,6 +56,15 @@ def watchlist_lines(summary):
     return lines
 
 
+def position_wow(family):
+    """Signed position movement: previous minus current, so negative means improvement."""
+    position = family.get("position")
+    previous = family.get("previousPosition")
+    if position is None or previous is None:
+        return ""
+    return f"{previous - position:+.1f}"
+
+
 def money_keyword_lines(summary):
     """Bilingual mobile metrics for the ten London money-keyword families."""
     if not summary:
@@ -67,17 +76,22 @@ def money_keyword_lines(summary):
     for family in summary.get("families", []):
         position = family.get("position")
         position_text = "-" if position is None else f"{position:.1f}"
+        wow = position_wow(family)
+        movement = f" (WoW {wow})" if wow else ""
         lines.append(
             f"{family.get('label', '?')}: {family.get('clicks', 0)} clicks, "
-            f"{family.get('impressions', 0)} impressions, avg position {position_text}"
+            f"{family.get('impressions', 0)} impressions, avg position {position_text}{movement}"
         )
+    lines.append("Position WoW: negative means improvement. | تغییر هفتگی رتبه: عدد منفی یعنی بهبود.")
     lines.append("خانواده‌های ۱۰ کلیدواژه پول‌ساز (هفته کامل جاری):")
     for family in summary.get("families", []):
         position = family.get("position")
         position_text = "-" if position is None else f"{position:.1f}"
+        wow = position_wow(family)
+        movement = f" (تغییر هفتگی {wow})" if wow else ""
         lines.append(
             f"{family.get('labelFa', family.get('label', '?'))}: {family.get('clicks', 0)} کلیک، "
-            f"{family.get('impressions', 0)} نمایش، میانگین رتبه {position_text}"
+            f"{family.get('impressions', 0)} نمایش، میانگین رتبه {position_text}{movement}"
         )
     return lines
 
@@ -115,7 +129,7 @@ def selftest():
                "prioritySix": {"total": 6, "passed": 6}, "pages": pending_pages,
                "moneyKeywords": {"total": 10, "window": "2026-10-11 to 2026-10-17",
                                  "families": [{"label": "Commercial fridge repair London", "labelFa": "تعمیر یخچال تجاری لندن",
-                                               "clicks": 6, "impressions": 250, "position": 7.0}]}}
+                                               "clicks": 6, "impressions": 250, "position": 7.0, "previousPosition": 7.8}]}}
     text = message("failure", {"backup": "success", "voice": "failure"}, "2026-10-26 00:00 UTC", pending)
     assert "Attention required" in text and "نیاز به بررسی" in text and "Voice API: failure" in text
     assert "All requested checks passed" not in text and "همه بررسی‌های درخواستی موفق" not in text
@@ -125,6 +139,8 @@ def selftest():
     assert "Money keyword families (2026-10-11 to 2026-10-17)" in text
     assert "Commercial fridge repair London: 6 clicks, 250 impressions, avg position 7.0" in text
     assert "تعمیر یخچال تجاری لندن: 6 کلیک، 250 نمایش، میانگین رتبه 7.0" in text
+    assert "avg position 7.0 (WoW +0.8)" in text
+    assert "میانگین رتبه 7.0 (تغییر هفتگی +0.8)" in text
     complete = dict(pending, passed=13, waiting=0, complete=True,
                     pages=[dict(page, verdict="PASS", coverageState="Submitted and indexed") for page in pending_pages])
     done = message("success", {key: "success" for key in ORDER}, watchlist=complete)

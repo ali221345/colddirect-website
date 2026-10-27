@@ -2,8 +2,18 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-27T20:25:59Z",
+  "updatedAt": "2026-10-27T20:45:28Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
+  "latestVerification": {
+    "scheduled48hRankingMovement": "bilingual_signed_wow_position_negative_means_improvement_selftest_passed",
+    "scheduled48hIndexing": "same_mobile_report_13_url_inspection_until_13_pass_selftest_passed",
+    "voiceLiveVersion": "20261027h",
+    "voiceLiveWrittenCta": "both_clickable_phones_and_green_like_5_star_review_verified_again",
+    "voiceLiveSpokenCta": "68_word_native_utterance_both_phones_and_exact_review_close_verified_again",
+    "voiceLiveListen": "identical_native_replay_without_additional_tts_request",
+    "voiceLiveTts": "real_429_resource_exhausted_zero_audio_native_fallback_succeeded",
+    "voiceHardwareVerification": "not_tested_no_physical_device_or_generated_mp3_success_claim"
+  },
   "status": {
     "websiteDeployment": "verified_run_40576649545",
     "moneyKeywordImplementation": "cd15fb7c60c56dae6456bbe6848c3aee8a2884b7",
