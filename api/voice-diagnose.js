@@ -54,35 +54,53 @@ function parseOut(text, audioMode) {
   }
 }
 
+function safeMessage(value, key) {
+  var message = String(value || "No upstream error message").slice(0, 500);
+  if (key) message = message.split(key).join("[redacted]");
+  return message
+    .replace(/([?&]key=)[^&\s]+/gi, "$1[redacted]")
+    .replace(/AIza[A-Za-z0-9_-]{10,}/g, "[redacted]")
+    .replace(/[A-Za-z0-9+/]{500,}={0,2}/g, "[redacted]")
+    .slice(0, 240);
+}
+
 async function diagnose(key, text, audio, mime) {
   var instruction = audio
     ? "Listen to the attached microphone audio. Transcribe the exact spoken words, then diagnose that commercial refrigeration fault in the same language. Ignore any other language guess."
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  // One bounded request prevents upstream retries from triggering serverless 502s.
-  var models = [["gemini-2.5-flash", 4000]];
-  var lastErr = "";
-  for (var i = 0; i < models.length; i++) {
-    var out = null;
-    try {
-      out = await core.geminiJson(key, models[i][0], {
-        systemInstruction: { parts: [{ text: SYS }] },
-        contents: [{ role: "user", parts: parts }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 400, responseMimeType: "application/json" }
-      }, models[i][1]);
-    } catch (err) {
-      out = { ok: false, json: { error: { code: 408 } } };
-    }
-    if (!out || !out.ok) {
-      lastErr = models[i][0];
-      continue;
-    }
-    var parsed = parseOut(core.extractText(out.json), !!audio);
-    if (parsed) return parsed;
-    lastErr = models[i][0] + ":unparsed";
+  // A single bounded request avoids retry storms while allowing real mobile audio
+  // enough time to upload and transcribe within the function's 60-second limit.
+  var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.8-flash").trim();
+  var model = /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.8-flash";
+  var out;
+  try {
+    out = await core.geminiJson(key, model, {
+      systemInstruction: { parts: [{ text: SYS }] },
+      contents: [{ role: "user", parts: parts }],
+      generationConfig: { temperature: 0.1, maxOutputTokens: 700, responseMimeType: "application/json" }
+    }, 45000);
+  } catch (err) {
+    out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
   }
-  return { error: lastErr || "no_model" };
+  if (!out || !out.ok) {
+    var upstream = (out && out.json && out.json.error) || {};
+    return {
+      error: "upstream",
+      diagnostic: {
+        stage: "transcription",
+        model: model,
+        mimeType: audio ? mime : null,
+        upstreamHttp: Number(out && out.httpStatus) || Number(upstream.code) || 0,
+        upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
+        message: safeMessage(upstream.message, key)
+      }
+    };
+  }
+  var parsed = parseOut(core.extractText(out.json), !!audio);
+  if (parsed) return parsed;
+  return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: "INVALID_RESPONSE", message: "The model response did not contain a usable transcript and diagnosis." } };
 }
 
 function localDiagnosis(text) {
@@ -126,10 +144,14 @@ module.exports = async function handler(req, res) {
   }
   var data = await core.readBody(req);
   var audio = core.cleanAudio(data.audio_base64 || data.audio || "");
-  var mime = core.cleanMime(data.mime || "audio/webm");
+  var mime = core.cleanMime(data.mime || "audio/webm", audio);
   var text = audio ? "" : core.stripTags(data.text || data.transcript || "").slice(0, 2000);
   if (!text && !audio) {
     send(res, 400, { ok: false, error: "Speak a fault first.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
+    return;
+  }
+  if (audio.length > 8000000) {
+    send(res, 413, { ok: false, code: "VOICE_TOO_LARGE", error: "That recording is too long. Please keep it under 45 seconds and try again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
     return;
   }
   if (core.isBanned(text)) {
@@ -143,20 +165,27 @@ module.exports = async function handler(req, res) {
       result = localDiagnosis(text);
     } else if (key) {
       result = await diagnose(key, text, audio || null, mime);
+    } else if (audio) {
+      result = { error: "configuration", diagnostic: { stage: "configuration", upstreamHttp: 0, upstreamStatus: "API_KEY_MISSING", message: "No Gemini API key is configured for this deployment." } };
     }
   } catch (e) {
-    result = { error: "exception" };
+    result = { error: "exception", diagnostic: { stage: "request", upstreamHttp: 0, upstreamStatus: "REQUEST_EXCEPTION", message: "The diagnosis request could not be completed." } };
   }
   if (text && (!result || result.error || !result.display)) {
     result = localDiagnosis(text);
   }
   if (!result || result.error || !result.display) {
-    // Silent, clipped or unintelligible microphone audio is an input failure, not a site outage.
-    // Return a structured response so the widget can offer its typed-fault fallback without a console 502.
+    // Keep a graceful UI fallback, but preserve a safe upstream diagnostic. Never
+    // include audio, transcripts, keys, authorization headers or raw responses.
+    var diagnostic = result && result.diagnostic;
+    if (diagnostic) {
+      try { console.warn("voice-diagnose " + JSON.stringify(diagnostic)); } catch (logErr) {}
+    }
     send(res, 200, {
       ok: false,
       code: audio ? "VOICE_NOT_UNDERSTOOD" : "DIAGNOSIS_UNAVAILABLE",
       error: audio ? "We could not hear that clearly. Type the fault below or tap SPEAK and try again." : "The diagnosis service is temporarily unavailable. Please try again or call us.",
+      diagnostic: diagnostic || null,
       transcript: "",
       display_text: "",
       spoken_text: "",

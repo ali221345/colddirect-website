@@ -36,6 +36,8 @@
   var mediaRec = null;
   var recChunks = [];
   var recMime = "audio/webm";
+  var recordingStartedAt = 0;
+  var recordingLimitTimer = null;
   var userText = "";
   var playToken = 0;
   var voiceSource = null;
@@ -213,6 +215,15 @@
     }
     liveUser = null;
     if (logEl) logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function showVoiceError(text) {
+    if (recordingRow && recordingRow.row && recordingRow.row.parentNode) {
+      recordingRow.row.parentNode.removeChild(recordingRow.row);
+    }
+    recordingRow = null;
+    liveUser = null;
+    upsertLive("bot", String(text || "I could not hear that clearly. Type the fault below or try again."), true);
   }
 
   function upsertLive(role, text, final) {
@@ -484,6 +495,7 @@
   function hangup() {
     live = false;
     starting = false;
+    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
     stopMicHard();
     stopMeter();
     setSpeakUi(false);
@@ -666,10 +678,12 @@
   }
 
   function sendFault() {
+    if (!live && !starting) return;
     var my = seq;
     live = false;
     starting = false;
     isSpeaking = true;
+    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
     setSpeakUi(false);
     if (root) root.classList.remove("is-live");
     if (root) root.classList.add("is-busy");
@@ -682,7 +696,7 @@
     }).then(function (b64) {
       if (my !== seq) return null;
       if (!b64) {
-        fillRecording("I did not catch that. Tap SPEAK and try again.");
+        showVoiceError("I did not catch that. Tap SPEAK and try again.");
         setStatus("error", "I did not catch that. Tap SPEAK and try again.");
         isSpeaking = false;
         return { handled: true };
@@ -699,7 +713,7 @@
     }).then(function (j) {
       if (my !== seq || (j && j.handled)) return;
       if (!j) {
-        fillRecording("I did not catch that. Tap SPEAK and try again.");
+        showVoiceError("I did not catch that. Tap SPEAK and try again.");
         setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
         isSpeaking = false;
         return;
@@ -708,7 +722,7 @@
       var display = stripTags((j && (j.reply || j.display_text)) || "");
       var spoken = stripTags((j && (j.spoken_text || display)) || "");
       if (!j || j.ok === false || !display || !transcript || /give the brand, error code and whether the cabinet is still cold/i.test(display + " " + spoken)) {
-        fillRecording("I could not hear that clearly. Type the fault below or try again.");
+        showVoiceError("I could not hear that clearly. Type the fault below or try again.");
         setStatus("error", (j && j.error) || "Type the fault below or tap SPEAK and try again.");
         isSpeaking = false;
         return;
@@ -721,6 +735,7 @@
     }).catch(function () {
       if (my !== seq) return;
       isSpeaking = false;
+      showVoiceError("The diagnosis could not start. Type the fault below or call 0203 952 4822.");
       setStatus("error", "The diagnosis could not start. Type the fault below or call 0203 952 4822.");
     }).then(function () {
       if (root) root.classList.remove("is-busy");
@@ -803,6 +818,11 @@
       }
       live = true;
       starting = false;
+      recordingStartedAt = Date.now();
+      recordingLimitTimer = setTimeout(function () {
+        recordingLimitTimer = null;
+        if (my === seq && live) sendFault();
+      }, 45000);
       setStatus("active", "Listening… tap STOP & SEND when you finish.");
       startMeter(s);
       showRecording();
@@ -825,7 +845,15 @@
       setStatus("", STATUS_IDLE);
       return;
     }
-    if (live || starting) {
+    if (starting) {
+      setStatus("connecting", "Starting the microphone… please wait.");
+      return;
+    }
+    if (live) {
+      if (Date.now() - recordingStartedAt < 900) {
+        setStatus("active", "Keep speaking for at least one second, then tap STOP & SEND.");
+        return;
+      }
       seq += 1;
       sendFault();
       return;

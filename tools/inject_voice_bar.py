@@ -12,7 +12,7 @@ SKIP_DIRS = {
     "tools", "scripts", "logs", "App_Data", "images", "css", "js", "assets",
 }
 SKIP_PREFIX = ("_backup", "gsc-analysis", "AUDIT-", "audit-")
-SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=20261026d" defer></script>'
+SCRIPT = '<script src="/assets/js/colddirect-voice-bar.js?v=20261027a" defer></script>'
 MARKER = "<!-- CD-VOICE-BAR-V1 -->"
 BLOCK = MARKER + "\n" + SCRIPT + "\n"
 HAS_SCRIPT = re.compile(r"colddirect-voice-bar\.js\?v=[^\"'\s>]+", re.I)
@@ -45,7 +45,7 @@ def targets():
 
 
 def inject(text):
-    bumped = BUMP_V.sub(r'\1?v=20261026d"', text, count=1)
+    bumped = BUMP_V.sub(r'\1?v=20261027a"', text, count=1)
     changed = bumped != text
     text = bumped
     if HAS_SCRIPT.search(text):
@@ -77,6 +77,10 @@ def main():
         bom = raw.startswith(b"\xef\xbb\xbf")
         text = raw.decode("utf-8-sig")
         new, did = inject(text)
+        # Git stores these public pages with LF; avoid isolated CR characters on
+        # replaced script tags when a local checkout contains mixed endings.
+        new = new.replace("\r\n", "\n").replace("\r", "\n")
+        did = did or new != text
         if not HAS_SCRIPT.search(new) and BODY.search(text) and "<html" in text.lower():
             print("NO SCRIPT", path.relative_to(ROOT))
             missing += 1

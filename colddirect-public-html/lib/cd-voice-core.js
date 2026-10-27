@@ -121,9 +121,22 @@ function cleanAudio(b64) {
   return s;
 }
 
-function cleanMime(mime) {
+function cleanMime(mime, audio) {
   var m = String(mime || "audio/webm").split(";")[0].trim().toLowerCase();
-  if (!/^audio\/[a-z0-9.+-]+$/.test(m)) return "audio/webm";
+  if (!/^audio\/[a-z0-9.+-]+$/.test(m)) m = "audio/webm";
+  if (m === "audio/x-m4a" || m === "audio/m4a") m = "audio/mp4";
+  // Mobile browsers occasionally label an AAC/MP4 recording incorrectly. Prefer
+  // the container signature over the declaration, without decoding the audio.
+  if (audio) {
+    try {
+      var head = Buffer.from(String(audio).slice(0, 64), "base64");
+      if (head.length >= 4 && head[0] === 0x1a && head[1] === 0x45 && head[2] === 0xdf && head[3] === 0xa3) return "audio/webm";
+      if (head.length >= 8 && head.toString("ascii", 4, 8) === "ftyp") return "audio/mp4";
+      if (head.length >= 12 && head.toString("ascii", 0, 4) === "RIFF" && head.toString("ascii", 8, 12) === "WAVE") return "audio/wav";
+      if (head.length >= 4 && head.toString("ascii", 0, 4) === "OggS") return "audio/ogg";
+      if (head.length >= 2 && head[0] === 0xff && (head[1] & 0xf6) === 0xf0) return "audio/aac";
+    } catch (e) {}
+  }
   return m;
 }
 
@@ -226,9 +239,15 @@ async function geminiJson(key, model, body, timeoutMs) {
       signal: AbortSignal.timeout(timeoutMs || 12000)
     });
     var json = await res.json().catch(function () { return {}; });
-    return { ok: res.ok, json: json };
+    return { ok: res.ok, httpStatus: res.status, json: json };
   } catch (e) {
-    return { ok: false, json: { error: { code: 408, status: "TIMEOUT" } } };
+    var timedOut = e && (e.name === "TimeoutError" || e.name === "AbortError");
+    return {
+      ok: false,
+      httpStatus: 0,
+      networkError: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
+      json: { error: { code: timedOut ? 408 : 503, status: timedOut ? "TIMEOUT" : "NETWORK_ERROR" } }
+    };
   }
 }
 
