@@ -70,39 +70,49 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  // A single bounded request avoids retry storms while allowing real mobile audio
-  // enough time to upload and transcribe within the function's 60-second limit.
+  // Retry only transient capacity/network failures, once, on a second stable
+  // model. The 30s + 20s bounds stay inside Vercel's 60-second function limit.
   var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash").trim();
-  var model = /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.6-flash";
-  var out;
-  try {
-    out = await core.geminiJson(key, model, {
-      systemInstruction: { parts: [{ text: SYS }] },
-      contents: [{ role: "user", parts: parts }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
-    }, 45000);
-  } catch (err) {
-    out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
+  var fallback = String(process.env.GEMINI_VOICE_FALLBACK_MODEL || "gemini-3.5-flash-lite").trim();
+  var models = [configured, fallback].map(function (name) {
+    return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash";
+  });
+  for (var i = 0; i < models.length; i++) {
+    var model = models[i];
+    var out;
+    try {
+      out = await core.geminiJson(key, model, {
+        systemInstruction: { parts: [{ text: SYS }] },
+        contents: [{ role: "user", parts: parts }],
+        generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
+      }, i === 0 ? 30000 : 20000);
+    } catch (err) {
+      out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
+    }
+    if (!out || !out.ok) {
+      var upstream = (out && out.json && out.json.error) || {};
+      var http = Number(out && out.httpStatus) || Number(upstream.code) || 0;
+      var failure = {
+        error: "upstream",
+        diagnostic: {
+          stage: "transcription",
+          model: model,
+          mimeType: audio ? mime : null,
+          upstreamHttp: http,
+          upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
+          message: safeMessage(upstream.message, key)
+        }
+      };
+      if (i === 0 && models[1] !== model && (!http || http === 408 || http === 429 || http >= 500)) continue;
+      return failure;
+    }
+    var parsed = parseOut(core.extractText(out.json), !!audio);
+    if (parsed) return parsed;
+    var candidate = ((out.json && out.json.candidates) || [])[0] || {};
+    var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
+    return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis." } };
   }
-  if (!out || !out.ok) {
-    var upstream = (out && out.json && out.json.error) || {};
-    return {
-      error: "upstream",
-      diagnostic: {
-        stage: "transcription",
-        model: model,
-        mimeType: audio ? mime : null,
-        upstreamHttp: Number(out && out.httpStatus) || Number(upstream.code) || 0,
-        upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
-        message: safeMessage(upstream.message, key)
-      }
-    };
-  }
-  var parsed = parseOut(core.extractText(out.json), !!audio);
-  if (parsed) return parsed;
-  var candidate = ((out.json && out.json.candidates) || [])[0] || {};
-  var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
-  return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis." } };
+  return { error: "upstream", diagnostic: { stage: "transcription", upstreamHttp: 0, upstreamStatus: "NO_MODEL", message: "No transcription model is configured." } };
 }
 
 function localDiagnosis(text) {

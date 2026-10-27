@@ -65,7 +65,7 @@ async function run() {
   let seenMime = "";
   core.geminiJson = async (key, model, body, timeout) => {
     assert.strictEqual(model, "gemini-3.6-flash");
-    assert.strictEqual(timeout, 45000);
+    assert.strictEqual(timeout, 30000);
     seenMime = body.contents[0].parts[1].inlineData.mimeType;
     return validModelResponse();
   };
@@ -76,6 +76,17 @@ async function run() {
   assert.ok(ok.json.transcript.includes("commercial fridge"));
   assert.ok(ok.json.spoken_text.length > 40);
   assert.strictEqual(seenMime, "audio/mp4");
+
+  const attemptedModels = [];
+  core.geminiJson = async (key, model, body, timeout) => {
+    attemptedModels.push(model);
+    if (attemptedModels.length === 1) return { ok: false, httpStatus: 503, json: { error: { code: 503, status: "UNAVAILABLE" } } };
+    assert.strictEqual(timeout, 20000);
+    return validModelResponse();
+  };
+  const recovered = await post(mp4);
+  assert.strictEqual(recovered.json.ok, true);
+  assert.deepStrictEqual(attemptedModels, ["gemini-3.6-flash", "gemini-3.5-flash-lite"]);
 
   core.geminiJson = async () => ({ ok: false, httpStatus: 404, json: { error: { code: 404, status: "NOT_FOUND", message: `Model unavailable; key=${KEY}` } } });
   const notFound = await post(mp4);
