@@ -2,10 +2,12 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-27T00:02:37Z",
+  "updatedAt": "2026-10-27T00:15:44Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
     "websiteDeployment": "verified_run_40423158288",
+    "scheduled48hWatchlist": "exact_13_url_inspection_with_six_priority_pages_bilingual_mobile_until_13_pass",
+    "scheduled48hCron": "17 3 */2 * *",
     "liveSeoHealth": "passed",
     "sixWatchlistCanonicals": "local_and_live_self_referencing_http_200_no_noindex",
     "sixWatchlistInternalLinks": "live_homepage_and_footer_links_verified_all_six",

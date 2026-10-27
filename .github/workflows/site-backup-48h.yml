@@ -133,7 +133,10 @@ jobs:
         continue-on-error: true
         env:
           GSC_CREDENTIALS_JSON: ${{ secrets.GSC_CREDENTIALS_JSON }}
-        run: python tools/gsc_weekly_report.py
+        run: |
+          python tools/gsc_owner_verification.py --selftest
+          python tools/gsc_weekly_report.py --selftest
+          python tools/gsc_weekly_report.py
 
       - name: Bilingual mobile report from actual outcomes
         if: always()
