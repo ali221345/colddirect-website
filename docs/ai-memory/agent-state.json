@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-27T14:43:27Z",
+  "updatedAt": "2026-10-27T15:35:15Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
-    "websiteDeployment": "verified_run_40522462940",
+    "websiteDeployment": "verified_run_40530373086",
     "scheduled48hWatchlist": "exact_13_url_inspection_with_six_priority_pages_bilingual_mobile_until_13_pass",
     "scheduled48hCron": "17 3 */2 * *",
     "liveSeoHealth": "passed",
@@ -16,14 +16,18 @@
     "voiceBrowserAudit": "passed_twice_zero_console_or_http_errors",
     "voiceAudio502Count": 0,
     "voiceApiConsecutivePasses": 3,
-    "voiceWidgetCacheVersion": "20261027e",
+    "voiceWidgetCacheVersion": "20261027f",
     "voiceAudioFormat": "mp3_48kbps_mono",
     "voiceFullResponseBytes": [173376, 193824],
-    "voiceFirstChunkBytes": 21168,
-    "voiceFirstChunkRoundTripSeconds": 2.52,
-    "voiceCachedReplay": "controlled_browser_pass_four_chunks_no_additional_tts_request",
+    "voiceTtsRequestsPerDiagnosis": 1,
+    "voiceSummaryMaxWords": 45,
+    "voiceSummaryWordsLive429Test": 37,
+    "voiceCachedReplay": "controlled_browser_mp3_and_native_pass_no_additional_tts_request",
+    "voiceNativeFallback": "forced_429_one_tts_request_one_en_gb_utterance_listen_replay_without_new_request",
+    "voiceConfiguredLiveProviders": ["gemini_primary_only"],
+    "voiceOptionalProviderFailover": "secondary_gemini_azure_elevenlabs_openai_implemented_and_mock_tested",
     "voiceLiveSpeechToText": "mp4_and_webm_passed_on_final_recheck",
-    "voiceLiveTts": "upstream_429_resource_exhausted_zero_audio_bytes_on_final_recheck",
+    "voiceLiveTts": "primary_429_resource_exhausted_single_attempt_native_fallback_verified",
     "voicePhysicalIphoneTest": "not_tested",
     "gscLatestMetrics": "retrieved_in_run_40410829821",
     "gscIndexingApi": "http_200_owner_verified_run_40421085010",
@@ -37,7 +41,7 @@
     "verifiedBackupSkippedFiles": 0,
     "backupArtifactRetentionDays": 90,
     "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07",
-    "vercelFinalWidget": "cache_version_20261027e_verified_live",
+    "vercelFinalWidget": "cache_version_20261027f_verified_live",
     "unusedVercelDeploymentToken": "revoked"
   },
   "deployments": [
@@ -45,7 +49,8 @@
     {"sha": "c751b601f7561e79bd50415ad9b96fe12b73d61a", "purpose": "Live sitemap navigation and title corrections", "status": "verified_live"},
     {"sha": "d30991dd", "runId": 40369714526, "purpose": "Voice fallback mirror deployment", "status": "verified_live"},
     {"sha": "1ed0ef07", "purpose": "Voice resilience and Vercel GitHub production reconnect", "status": "production_ready_three_api_and_two_browser_passes"},
-    {"sha": "f61d83da88eec7fe3910a19580a73790c208d97f", "runId": 40522462940, "purpose": "Mobile MP3 playback gesture unlock chunking and cached LISTEN", "status": "plesk_success_and_both_hosts_final_widget_verified_live_tts_429_on_final_recheck"}
+    {"sha": "f61d83da88eec7fe3910a19580a73790c208d97f", "runId": 40522462940, "purpose": "Mobile MP3 playback gesture unlock chunking and cached LISTEN", "status": "plesk_success_and_both_hosts_final_widget_verified_live_tts_429_on_final_recheck"},
+    {"sha": "4e6fc42e8949934d7874d358b77e828c80ab4f49", "runId": 40530373086, "purpose": "Single-summary TTS and native zero-silence fallback", "status": "plesk_success_both_hosts_and_forced_429_fallback_verified"}
   ],
   "permanentRules": [
     "one_unified_business_entity",
@@ -58,14 +63,16 @@
     "never_expose_secrets_or_customer_data",
     "indexing_api_only_jobposting_broadcastevent_not_commercial_pages",
     "never_guarantee_rankings",
-    "http_200_without_audio_bytes_is_not_tts_success"
+    "http_200_without_audio_bytes_is_not_tts_success",
+    "one_concise_tts_summary_per_diagnosis_no_chunk_quota_burn",
+    "never_promise_100_percent_audio_uptime"
   ],
   "nextChecks": [
     "Re-inspect 13 NEUTRAL watchlist URLs after Google recrawls; do not treat stale inspection verdicts as current live status",
     "Keep sitemap submission and URL Inspection monitoring; do not schedule Indexing API calls for ordinary commercial pages",
     "Read fresh GSC evidence before further ranking changes",
     "Confirm owner phone is subscribed to the ntfy topic",
-    "Re-run live MP4/WebM end-to-end TTS verification after upstream capacity recovers; final rechecks returned 429 RESOURCE_EXHAUSTED",
+    "Re-run live MP4/WebM MP3 verification after primary Gemini capacity recovers; native fallback is verified for the current 429 condition",
     "Test gesture unlock and audible playback on a physical iPhone; controlled browser and API checks do not prove hardware playback"
   ]
 }
