@@ -105,7 +105,7 @@ module.exports = async function handler(req, res) {
   }
   var encodeError = "";
   if (audio) {
-    try { audio = await encodeMp3(audio); } catch (encodeErr) { audio = null; encodeError = "MP3_ENCODING_FAILED"; }
+    try { audio = await encodeMp3(audio); } catch (encodeErr) { audio = null; encodeError = "MP3_ENCODING_FAILED: " + String((encodeErr && encodeErr.message) || "encoder error").replace(/[^a-z0-9 _@./:-]/gi, "").slice(0, 90); }
   }
   var diagnostic = null;
   if (!audio) {
@@ -114,7 +114,7 @@ module.exports = async function handler(req, res) {
       stage: "tts",
       model: model,
       upstreamHttp: Number(out && out.httpStatus) || Number(upstream.code) || 0,
-      upstreamStatus: String(encodeError || upstream.status || (out && out.networkError) || "NO_AUDIO").slice(0, 60)
+      upstreamStatus: String(encodeError || upstream.status || (out && out.networkError) || "NO_AUDIO").slice(0, 140)
     };
     try { console.warn("voice-tts " + JSON.stringify(diagnostic)); } catch (logErr) {}
   }
