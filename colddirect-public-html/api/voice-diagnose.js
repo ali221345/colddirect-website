@@ -79,7 +79,7 @@ async function diagnose(key, text, audio, mime) {
     out = await core.geminiJson(key, model, {
       systemInstruction: { parts: [{ text: SYS }] },
       contents: [{ role: "user", parts: parts }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 700, responseMimeType: "application/json" }
+      generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
     }, 45000);
   } catch (err) {
     out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
@@ -100,7 +100,9 @@ async function diagnose(key, text, audio, mime) {
   }
   var parsed = parseOut(core.extractText(out.json), !!audio);
   if (parsed) return parsed;
-  return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: "INVALID_RESPONSE", message: "The model response did not contain a usable transcript and diagnosis." } };
+  var candidate = ((out.json && out.json.candidates) || [])[0] || {};
+  var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
+  return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis." } };
 }
 
 function localDiagnosis(text) {
