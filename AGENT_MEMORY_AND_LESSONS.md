@@ -37,6 +37,11 @@ Last verified: 2026-10-26. Machine-readable state: `docs/ai-memory/agent-state.j
 - The unused Vercel deployment token named `ColdDirect production deploy 2026-10-26` was permanently revoked after GitHub reconnection had restored production deployment.
 - Targeted GSC Owner verification run `40421085010` passed after the CI account was changed from Full to Owner: one Indexing API permission diagnostic returned HTTP 200, sitemap PUT returned 204, sitemap status returned 200 with zero errors/warnings, and all 13 URL Inspection calls returned 200. All 13 verdicts remain NEUTRAL (one stale 404 inspection, one unknown, seven discovered-not-indexed, four proper-canonical alternates). Do not enable recurring Indexing API calls for ordinary commercial pages; supported use is limited to JobPosting/BroadcastEvent.
 
+## Verified work on 2026-10-27
+
+- Audited Harrow, Palmers Green, Southgate and Wood Green cold-room pages plus Enfield and Central London commercial-fridge pages. All local deployable copies and live pages already had exactly one exact self-referencing canonical, HTTP 200 without redirects, and no `noindex`; the GSC alternate/404/unknown verdicts were not evidence of a current canonical defect.
+- Found and repaired the real internal-link gap: the homepage originally linked only to Enfield, and none of the six pages had direct footer links to the set. Commit `0eb3a50587ba714dc36504af2531aff66685b195`, deployment run `40423158288` succeeded. Live post-deployment verification passed for all six: direct descriptive homepage links and footer navigation containing all six final trailing-slash URLs. Added idempotent `tools/watchlist_internal_links.py --check` and synchronized 26 HTML copies. Strict preflight checked 290 files with zero issues. Indexing on the next crawl is not guaranteed; re-inspect GSC after recrawl.
+
 ## Regression checks
 
 Run the applicable checks before committing and after deployment:
