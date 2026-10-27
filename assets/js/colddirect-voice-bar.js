@@ -42,6 +42,9 @@
   var playToken = 0;
   var voiceSource = null;
   var voiceEl = null;
+  var audioObjectUrl = "";
+  var speechCache = [];
+  var speechLang = "en-GB";
 
   function css() {
     return [
@@ -289,24 +292,35 @@
   }
 
   function unlockAudio() {
+    // Called synchronously from SPEAK, STOP, SEND and LISTEN user events. Keep
+    // this exact element for later MP3 playback so iOS retains media approval.
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (AC) {
         if (!window.__cdPlayCtx) window.__cdPlayCtx = new AC();
-        if (window.__cdPlayCtx.state === "suspended") window.__cdPlayCtx.resume();
+        var ctx = window.__cdPlayCtx;
+        if (ctx.state === "suspended") ctx.resume();
+        var silent = ctx.createBuffer(1, 1, 24000);
+        var source = ctx.createBufferSource();
+        source.buffer = silent;
+        source.connect(ctx.destination);
+        source.start(0);
       }
     } catch (e1) {}
     try {
       if (!window.__cdVoicePlayer) {
         var player = document.createElement("audio");
+        player.playsInline = true;
         player.setAttribute("playsinline", "true");
-        player.setAttribute("preload", "auto");
+        player.setAttribute("webkit-playsinline", "true");
+        player.preload = "auto";
         player.style.display = "none";
         (document.body || document.documentElement).appendChild(player);
         window.__cdVoicePlayer = player;
       }
-      window.__cdVoicePlayer.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
-      var primed = window.__cdVoicePlayer.play();
+      voiceEl = window.__cdVoicePlayer;
+      voiceEl.src = "data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAwF0AAIC7AAACABAAZGF0YTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      var primed = voiceEl.play();
       if (primed && primed.catch) primed.catch(function () {});
     } catch (e2) {}
   }
@@ -323,6 +337,7 @@
 
   function playWelcome() {
     unlockAudio();
+    if (speechCache.length) return playCachedSpeech();
     var a = welcomeAudio();
     if (!a) {
       openPanel(true);
@@ -441,7 +456,7 @@
       voiceSource = null;
     }
     if (voiceEl) {
-      try { voiceEl.pause(); voiceEl.removeAttribute("src"); voiceEl.load(); } catch (e2) {}
+      try { voiceEl.pause(); } catch (e2) {}
     }
     var welcome = welcomeAudio();
     if (welcome && !welcome.paused) {
@@ -504,46 +519,32 @@
   }
 
   function playBytes(b64, mime, token) {
-    unlockAudio();
     var bin = atob(b64);
     var bytes = new Uint8Array(bin.length);
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    var ctx = window.__cdPlayCtx;
-    if (ctx && ctx.decodeAudioData) {
-      return ctx.decodeAudioData(bytes.buffer.slice(0)).then(function (buf) {
-        if (token !== playToken) return;
-        var src = ctx.createBufferSource();
-        voiceSource = src;
-        src.buffer = buf;
-        src.connect(ctx.destination);
-        src.onended = function () {
-          if (token !== playToken) return;
-          isSpeaking = false;
-          setStatus("", STATUS_IDLE);
-          highlightCta(true);
-        };
-        src.start(0);
-      });
-    }
     return new Promise(function (resolve, reject) {
+      if (token !== playToken) return resolve();
       if (!voiceEl) {
         voiceEl = window.__cdVoicePlayer || document.createElement("audio");
+        voiceEl.playsInline = true;
         voiceEl.setAttribute("playsinline", "true");
+        voiceEl.setAttribute("webkit-playsinline", "true");
+        voiceEl.preload = "auto";
         if (!voiceEl.parentNode) {
           voiceEl.style.display = "none";
           document.body.appendChild(voiceEl);
         }
         window.__cdVoicePlayer = voiceEl;
       }
-      voiceEl.onended = function () {
-        if (token !== playToken) return;
-        isSpeaking = false;
-        setStatus("", STATUS_IDLE);
-        highlightCta(true);
-        resolve();
-      };
-      voiceEl.onerror = function () { reject(new Error("audio")); };
-      voiceEl.src = "data:" + (mime || "audio/wav") + ";base64," + b64;
+      if (audioObjectUrl) {
+        try { URL.revokeObjectURL(audioObjectUrl); } catch (e1) {}
+      }
+      audioObjectUrl = URL.createObjectURL(new Blob([bytes], { type: mime || "audio/mpeg" }));
+      voiceEl.onended = function () { resolve(); };
+      voiceEl.onerror = function () { reject(new Error("audio_playback")); };
+      voiceEl.onpause = function () { if (token !== playToken) resolve(); };
+      voiceEl.src = audioObjectUrl;
+      voiceEl.load();
       var p = voiceEl.play();
       if (p && p.catch) p.catch(reject);
     });
@@ -664,17 +665,84 @@
     });
   }
 
+  function splitSpeech(text) {
+    var sentences = String(text || "").match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [];
+    var chunks = [];
+    sentences.forEach(function (sentence) {
+      sentence = sentence.trim();
+      if (!sentence) return;
+      var last = chunks.length - 1;
+      var limit = last === 0 ? 140 : 220;
+      if (last >= 0 && chunks[last].length + sentence.length + 1 <= limit) chunks[last] += " " + sentence;
+      else chunks.push(sentence);
+    });
+    return chunks.length ? chunks : [String(text || "").slice(0, 220)];
+  }
+
+  function loadSpeechChunk(index) {
+    var entry = speechCache[index];
+    if (entry && entry.data) return Promise.resolve(entry.data);
+    if (entry && entry.loading) return entry.loading;
+    entry = { data: null, loading: null };
+    speechCache[index] = entry;
+    entry.loading = postJson(TTS_URLS[0], { text: speechCache[index].text || splitSpeechText[index], language: speechLang, chunk: true }).then(function (j) {
+      if (!j || !j.audio_base64) throw new Error("tts_unavailable");
+      entry.data = { data: j.audio_base64, mime: j.audio_mime || "audio/mpeg" };
+      return entry.data;
+    }).catch(function (error) {
+      if (speechCache[index] === entry) speechCache[index] = { text: entry.text, data: null, loading: null };
+      throw error;
+    });
+    return entry.loading;
+  }
+
+  var splitSpeechText = [];
+
+  function playSpeechFrom(index, token) {
+    if (token !== playToken || index >= splitSpeechText.length) return Promise.resolve();
+    isSpeaking = true;
+    setListenUi(true);
+    setStatus("active", "🔊 Speaking Answer...");
+    return loadSpeechChunk(index).then(function (audio) {
+      if (token !== playToken) return;
+      if (index + 1 < splitSpeechText.length) loadSpeechChunk(index + 1).catch(function () {});
+      return playBytes(audio.data, audio.mime, token);
+    }).then(function () {
+      if (token !== playToken) return;
+      if (index + 1 < splitSpeechText.length) return playSpeechFrom(index + 1, token);
+      isSpeaking = false;
+      setListenUi(false);
+      setStatus("", STATUS_IDLE);
+      highlightCta(true);
+    });
+  }
+
+  function playCachedSpeech() {
+    if (!splitSpeechText.length) return Promise.resolve();
+    stopPlayback();
+    var token = playToken;
+    return playSpeechFrom(0, token).catch(function () {
+      if (token !== playToken) return;
+      isSpeaking = false;
+      setListenUi(false);
+      setStatus("error", "Audio is not available yet. Tap LISTEN to retry.");
+    });
+  }
+
   function speakAnswer(text, lang) {
     stopPlayback();
-    isSpeaking = true;
+    speechCache = [];
+    speechLang = lang || "en-GB";
+    splitSpeechText = splitSpeech(spokenClean(text, speechLang));
+    speechCache = splitSpeechText.map(function (chunk) { return { text: chunk, data: null, loading: null }; });
     var token = playToken;
-    setStatus("active", "🔊 Speaking Answer...");
-    var clean = spokenClean(text, lang);
-    return postJson(TTS_URLS[0], { text: clean, language: lang }).then(function (j) {
+    return playSpeechFrom(0, token).catch(function () {
       if (token !== playToken) return;
-      if (j && j.audio_base64) return playBytes(j.audio_base64, j.audio_mime || "audio/wav", token);
-      return speakBrowser(clean, lang);
-    }).catch(function () { return speakBrowser(clean, lang); });
+      isSpeaking = false;
+      setListenUi(false);
+      if (isMobileVoice()) setStatus("error", "Tap LISTEN to hear the answer, or check your mute switch and volume.");
+      else return speakBrowser(spokenClean(text, speechLang), speechLang);
+    });
   }
 
   function sendFault() {
@@ -840,6 +908,7 @@
 
   function onSpeakClick(ev) {
     if (ev) ev.preventDefault();
+    unlockAudio();
     if (isSpeaking) {
       stopPlayback();
       setStatus("", STATUS_IDLE);
@@ -889,6 +958,7 @@
     var textInput = document.getElementById("cd-voice-text-input");
     if (textForm && textInput) textForm.addEventListener("submit", function (ev) {
       ev.preventDefault();
+      unlockAudio();
       var value = textInput.value;
       if (!value.trim()) return;
       textInput.value = "";

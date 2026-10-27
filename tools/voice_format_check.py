@@ -51,7 +51,8 @@ def check(path, mime):
     result["tts_http"] = tts_status
     result["tts_audio_bytes"] = len(base64.b64decode(tts.get("audio_base64", "")))
     result["tts_mime"] = tts.get("audio_mime", "")
-    return result, tts_status == 200 and result["tts_audio_bytes"] > 1000
+    result["tts_diagnostic"] = tts.get("diagnostic", {})
+    return result, tts_status == 200 and 1000 < result["tts_audio_bytes"] < 300000 and result["tts_mime"] in ("audio/mpeg", "audio/mp3")
 
 
 def main():
