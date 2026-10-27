@@ -12,7 +12,7 @@ var lamejsModule = null;
 
 async function encodeMp3(audio) {
   if (!audio || audio.mime !== "audio/wav") return audio;
-  if (!lamejsModule) lamejsModule = import("@breezystack/lamejs");
+  if (!lamejsModule) lamejsModule = import("../lib/cd-lamejs.mjs");
   var lamejs = await lamejsModule;
   var wav = Buffer.from(audio.data, "base64");
   if (wav.length < 44 || wav.toString("ascii", 0, 4) !== "RIFF") throw new Error("invalid_wav");

@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/ali221345/colddirect-website#readme",
   "dependencies": {
-    "@breezystack/lamejs": "^1.2.7",
     "googleapis": "^181.0.0"
   }
 }
