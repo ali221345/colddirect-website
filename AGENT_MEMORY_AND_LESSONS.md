@@ -1,6 +1,6 @@
 # ColdDirect Agent Memory and Lessons
 
-Last verified: 2026-10-26. Machine-readable state: `docs/ai-memory/agent-state.json`.
+Last verified: 2026-10-27. Machine-readable state: `docs/ai-memory/agent-state.json`.
 
 ## Read before every task or deployment
 
@@ -42,6 +42,8 @@ Last verified: 2026-10-26. Machine-readable state: `docs/ai-memory/agent-state.j
 - Audited Harrow, Palmers Green, Southgate and Wood Green cold-room pages plus Enfield and Central London commercial-fridge pages. All local deployable copies and live pages already had exactly one exact self-referencing canonical, HTTP 200 without redirects, and no `noindex`; the GSC alternate/404/unknown verdicts were not evidence of a current canonical defect.
 - Found and repaired the real internal-link gap: the homepage originally linked only to Enfield, and none of the six pages had direct footer links to the set. Commit `0eb3a50587ba714dc36504af2531aff66685b195`, deployment run `40423158288` succeeded. Live post-deployment verification passed for all six: direct descriptive homepage links and footer navigation containing all six final trailing-slash URLs. Added idempotent `tools/watchlist_internal_links.py --check` and synchronized 26 HTML copies. Strict preflight checked 290 files with zero issues. Indexing on the next crawl is not guaranteed; re-inspect GSC after recrawl.
 - Updated the existing 48-hour workflow (schedule remains `17 3 */2 * *`) to inspect the exact shared 13-URL watchlist, including the six priority pages, on every run. Removed recurring Indexing API submissions for these commercial pages. `gsc_weekly_report.py` writes `backup-out/gsc-watchlist.json`; `report_48h.py` turns it into bilingual mobile totals plus every URL verdict, marks the six pages, continues pending updates until 13/13 PASS, and then reports completion. Offline pending/all-PASS/mobile tests and YAML schedule validation passed; no manual 48-hour run was triggered.
+- Mobile voice playback fix finalized in `f61d83da88eec7fe3910a19580a73790c208d97f`; Plesk deployment run `40522462940` succeeded, and both Plesk and Vercel served widget cache version `20261027e` with temporary diagnostics removed. The widget primes a persistent inline audio element from user gestures, uses chunked/prefetched MP3 audio, and starts cached LISTEN replay directly. A controlled browser test cached four chunks and replayed them with the TTS request count unchanged at 4; playback was active at inspection time.
+- Earlier live spoken-fixture verification returned the exact MP4/WebM transcript and full MP3 payloads of 173,376 and 193,824 bytes; the short first chunk was 21,168 bytes with a measured 2.52-second API round trip. `npm test` passed all voice, asset-path and JSON-LD checks. Final repeated live checks still transcribed both MP4 and WebM correctly, but TTS returned upstream `429 RESOURCE_EXHAUSTED` with zero audio bytes. Do not claim current end-to-end TTS availability from HTTP 200 alone; no physical iPhone hardware test was performed.
 
 ## Regression checks
 

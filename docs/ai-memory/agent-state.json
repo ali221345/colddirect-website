@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "project": "ColdDirect",
   "site": "https://www.colddirect.co.uk/",
-  "updatedAt": "2026-10-27T00:15:44Z",
+  "updatedAt": "2026-10-27T14:43:27Z",
   "memoryFile": "AGENT_MEMORY_AND_LESSONS.md",
   "status": {
-    "websiteDeployment": "verified_run_40423158288",
+    "websiteDeployment": "verified_run_40522462940",
     "scheduled48hWatchlist": "exact_13_url_inspection_with_six_priority_pages_bilingual_mobile_until_13_pass",
     "scheduled48hCron": "17 3 */2 * *",
     "liveSeoHealth": "passed",
@@ -16,6 +16,15 @@
     "voiceBrowserAudit": "passed_twice_zero_console_or_http_errors",
     "voiceAudio502Count": 0,
     "voiceApiConsecutivePasses": 3,
+    "voiceWidgetCacheVersion": "20261027e",
+    "voiceAudioFormat": "mp3_48kbps_mono",
+    "voiceFullResponseBytes": [173376, 193824],
+    "voiceFirstChunkBytes": 21168,
+    "voiceFirstChunkRoundTripSeconds": 2.52,
+    "voiceCachedReplay": "controlled_browser_pass_four_chunks_no_additional_tts_request",
+    "voiceLiveSpeechToText": "mp4_and_webm_passed_on_final_recheck",
+    "voiceLiveTts": "upstream_429_resource_exhausted_zero_audio_bytes_on_final_recheck",
+    "voicePhysicalIphoneTest": "not_tested",
     "gscLatestMetrics": "retrieved_in_run_40410829821",
     "gscIndexingApi": "http_200_owner_verified_run_40421085010",
     "gscIndexingWatchlist": "targeted_run_13_neutral_0_pass",
@@ -28,13 +37,15 @@
     "verifiedBackupSkippedFiles": 0,
     "backupArtifactRetentionDays": 90,
     "vercelDeploymentAuthorization": "github_connected_production_ready_1ed0ef07",
+    "vercelFinalWidget": "cache_version_20261027e_verified_live",
     "unusedVercelDeploymentToken": "revoked"
   },
   "deployments": [
     {"sha": "83044be3b96d43d3e67173fc3fa83bd20a40aa91", "purpose": "SEO schema links content and landing pages", "status": "deployed"},
     {"sha": "c751b601f7561e79bd50415ad9b96fe12b73d61a", "purpose": "Live sitemap navigation and title corrections", "status": "verified_live"},
     {"sha": "d30991dd", "runId": 40369714526, "purpose": "Voice fallback mirror deployment", "status": "verified_live"},
-    {"sha": "1ed0ef07", "purpose": "Voice resilience and Vercel GitHub production reconnect", "status": "production_ready_three_api_and_two_browser_passes"}
+    {"sha": "1ed0ef07", "purpose": "Voice resilience and Vercel GitHub production reconnect", "status": "production_ready_three_api_and_two_browser_passes"},
+    {"sha": "f61d83da88eec7fe3910a19580a73790c208d97f", "runId": 40522462940, "purpose": "Mobile MP3 playback gesture unlock chunking and cached LISTEN", "status": "plesk_success_and_both_hosts_final_widget_verified_live_tts_429_on_final_recheck"}
   ],
   "permanentRules": [
     "one_unified_business_entity",
@@ -46,12 +57,15 @@
     "browser_microphone_and_playback_check_after_voice_deploy",
     "never_expose_secrets_or_customer_data",
     "indexing_api_only_jobposting_broadcastevent_not_commercial_pages",
-    "never_guarantee_rankings"
+    "never_guarantee_rankings",
+    "http_200_without_audio_bytes_is_not_tts_success"
   ],
   "nextChecks": [
     "Re-inspect 13 NEUTRAL watchlist URLs after Google recrawls; do not treat stale inspection verdicts as current live status",
     "Keep sitemap submission and URL Inspection monitoring; do not schedule Indexing API calls for ordinary commercial pages",
     "Read fresh GSC evidence before further ranking changes",
-    "Confirm owner phone is subscribed to the ntfy topic"
+    "Confirm owner phone is subscribed to the ntfy topic",
+    "Re-run live MP4/WebM end-to-end TTS verification after upstream capacity recovers; final rechecks returned 429 RESOURCE_EXHAUSTED",
+    "Test gesture unlock and audible playback on a physical iPhone; controlled browser and API checks do not prove hardware playback"
   ]
 }
