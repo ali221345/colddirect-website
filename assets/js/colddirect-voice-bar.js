@@ -323,6 +323,16 @@
       var primed = voiceEl.play();
       if (primed && primed.catch) primed.catch(function () {});
     } catch (e2) {}
+    try {
+      if (window.speechSynthesis && !window.__cdNativeUnlocked) {
+        window.speechSynthesis.resume();
+        var nativePrimer = new SpeechSynthesisUtterance(" ");
+        nativePrimer.lang = "en-GB";
+        nativePrimer.volume = 0;
+        window.speechSynthesis.speak(nativePrimer);
+        window.__cdNativeUnlocked = true;
+      }
+    } catch (e3) {}
   }
 
   function welcomeAudio() {
@@ -550,27 +560,37 @@
     });
   }
 
-  function speakBrowser(text, lang) {
-    return new Promise(function (resolve) {
-      if (!window.speechSynthesis) return resolve();
+  function speakBrowser(text, lang, token) {
+    return new Promise(function (resolve, reject) {
+      if (!window.speechSynthesis || !text) return reject(new Error("native_tts_unavailable"));
+      if (token !== playToken) return resolve();
       var u = new SpeechSynthesisUtterance(text);
       u.lang = lang === "fa-IR" ? "fa-IR" : "en-GB";
       u.rate = 1;
       var voices = window.speechSynthesis.getVoices() || [];
-      var pick = voices.filter(function (v) {
+      var preferred = voices.filter(function (v) {
         var loc = String(v.lang || "").toLowerCase();
         if (lang === "fa-IR") return loc.indexOf("fa") === 0;
-        return loc.indexOf("en-gb") === 0 && /male|daniel|ryan|ravi|george|aaron/i.test(v.name);
+        return loc.indexOf("en-gb") === 0 && /natural|daniel|ryan|ravi|george|aaron|serena|male/i.test(v.name);
       })[0];
-      if (lang === "fa-IR" && !pick) return resolve();
+      var anyUk = voices.filter(function (v) { return String(v.lang || "").toLowerCase().indexOf("en-gb") === 0; })[0];
+      var pick = preferred || (lang === "fa-IR" ? null : anyUk);
       if (pick) u.voice = pick;
+      window.__cdNativeUtterance = u;
+      isSpeaking = true;
+      setListenUi(true);
+      setStatus("active", "🔊 Speaking with your device voice...");
       u.onend = function () {
-        isSpeaking = false;
-        setStatus("", STATUS_IDLE);
-        highlightCta(true);
+        if (token === playToken) {
+          isSpeaking = false;
+          setListenUi(false);
+          setStatus("", STATUS_IDLE);
+          highlightCta(true);
+        }
         resolve();
       };
-      u.onerror = function () { resolve(); };
+      u.onerror = function () { reject(new Error("native_tts_playback")); };
+      window.speechSynthesis.resume();
       window.speechSynthesis.speak(u);
     });
   }
@@ -665,32 +685,44 @@
     });
   }
 
-  function splitSpeech(text) {
-    var sentences = String(text || "").match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [];
-    var chunks = [];
-    sentences.forEach(function (sentence) {
-      sentence = sentence.trim();
-      if (!sentence) return;
-      var last = chunks.length - 1;
-      var limit = last === 0 ? 140 : 220;
-      if (last >= 0 && chunks[last].length + sentence.length + 1 <= limit) chunks[last] += " " + sentence;
-      else chunks.push(sentence);
-    });
-    return chunks.length ? chunks : [String(text || "").slice(0, 220)];
+  function conciseSpeech(text, lang) {
+    var s = spokenClean(text, lang)
+      .replace(/Hello\. I am the Head Engineer at ColdDirect\. I'm glad you chose our company\./gi, " ")
+      .replace(/سلام\.\s*من سرمهندس شرکت .*?خوشحالم که شرکت ما را انتخاب کردید\./g, " ")
+      .replace(/Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below\./gi, " ")
+      .replace(/لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید\./g, " ")
+      .replace(/\s+/g, " ").trim();
+    var sentences = s.match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [s];
+    var selected = [];
+    var words = 0;
+    for (var i = 0; i < sentences.length && selected.length < 3; i++) {
+      var sentence = sentences[i].trim();
+      if (!sentence) continue;
+      var count = sentence.split(/\s+/).filter(Boolean).length;
+      if (selected.length && words + count > 45) break;
+      if (count > 45) {
+        sentence = sentence.split(/\s+/).slice(0, 45).join(" ");
+        count = 45;
+      }
+      selected.push(sentence);
+      words += count;
+      if (words >= 45) break;
+    }
+    return selected.join(" ").trim();
   }
 
-  function loadSpeechChunk(index) {
-    var entry = speechCache[index];
+  function loadSpeechSummary() {
+    var entry = speechCache[0];
     if (entry && entry.data) return Promise.resolve(entry.data);
     if (entry && entry.loading) return entry.loading;
-    entry = { data: null, loading: null };
-    speechCache[index] = entry;
-    entry.loading = postJson(TTS_URLS[0], { text: speechCache[index].text || splitSpeechText[index], language: speechLang, chunk: true }).then(function (j) {
+    entry = { text: splitSpeechText[0], data: null, loading: null, native: false };
+    speechCache[0] = entry;
+    entry.loading = postJson(TTS_URLS[0], { text: splitSpeechText[0], language: speechLang, summary: true }).then(function (j) {
       if (!j || !j.audio_base64) throw new Error("tts_unavailable");
       entry.data = { data: j.audio_base64, mime: j.audio_mime || "audio/mpeg" };
       return entry.data;
     }).catch(function (error) {
-      if (speechCache[index] === entry) speechCache[index] = { text: entry.text, data: null, loading: null };
+      if (speechCache[0] === entry) speechCache[0] = { text: entry.text, data: null, loading: null, native: false };
       throw error;
     });
     return entry.loading;
@@ -698,22 +730,35 @@
 
   var splitSpeechText = [];
 
-  function playSpeechFrom(index, token) {
-    if (token !== playToken || index >= splitSpeechText.length) return Promise.resolve();
-    isSpeaking = true;
-    setListenUi(true);
-    setStatus("active", "🔊 Speaking Answer...");
-    return loadSpeechChunk(index).then(function (audio) {
+  function finishSpeech(token) {
+    if (token !== playToken) return;
+    isSpeaking = false;
+    setListenUi(false);
+    setStatus("", STATUS_IDLE);
+    highlightCta(true);
+  }
+
+  function nativeFallback(token) {
+    if (token !== playToken) return Promise.resolve();
+    if (speechCache[0]) speechCache[0].native = true;
+    return speakBrowser(splitSpeechText[0], speechLang, token).catch(function () {
       if (token !== playToken) return;
-      if (index + 1 < splitSpeechText.length) loadSpeechChunk(index + 1).catch(function () {});
-      return playBytes(audio.data, audio.mime, token);
-    }).then(function () {
-      if (token !== playToken) return;
-      if (index + 1 < splitSpeechText.length) return playSpeechFrom(index + 1, token);
       isSpeaking = false;
       setListenUi(false);
-      setStatus("", STATUS_IDLE);
-      highlightCta(true);
+      setStatus("error", "Tap LISTEN to retry, and check your mute switch and volume.");
+    });
+  }
+
+  function playSpeech(token) {
+    if (token !== playToken || !splitSpeechText.length) return Promise.resolve();
+    isSpeaking = true;
+    setListenUi(true);
+    setStatus("active", "🔊 Preparing a short spoken answer...");
+    return loadSpeechSummary().then(function (audio) {
+      if (token !== playToken) return;
+      return playBytes(audio.data, audio.mime, token);
+    }).then(function () { finishSpeech(token); }).catch(function () {
+      return nativeFallback(token);
     });
   }
 
@@ -721,44 +766,26 @@
     if (!splitSpeechText.length) return Promise.resolve();
     stopPlayback();
     var token = playToken;
+    var first = speechCache[0];
+    if (!first || (!first.data && !first.native)) return playSpeech(token);
+    if (first.native) return nativeFallback(token);
     setStatus("active", "🔊 Replaying downloaded audio...");
-    var first = speechCache[0] && speechCache[0].data;
-    if (!first) return playSpeechFrom(0, token).catch(function () {
-      if (token === playToken) setStatus("error", "Audio is not available yet. Tap LISTEN to retry.");
-    });
-    // Start the cached first chunk synchronously inside LISTEN's click handler;
-    // later chunks already have their own cached data or prefetch promises.
     isSpeaking = true;
     setListenUi(true);
-    return playBytes(first.data, first.mime, token).then(function () {
-      if (token !== playToken) return;
-      if (splitSpeechText.length > 1) return playSpeechFrom(1, token);
-      isSpeaking = false;
-      setListenUi(false);
-      setStatus("", STATUS_IDLE);
-      highlightCta(true);
+    return playBytes(first.data.data, first.data.mime, token).then(function () {
+      finishSpeech(token);
     }).catch(function () {
-      if (token !== playToken) return;
-      isSpeaking = false;
-      setListenUi(false);
-      setStatus("error", "Audio is not available yet. Tap LISTEN to retry.");
+      return nativeFallback(token);
     });
   }
 
   function speakAnswer(text, lang) {
     stopPlayback();
-    speechCache = [];
     speechLang = lang || "en-GB";
-    splitSpeechText = splitSpeech(spokenClean(text, speechLang));
-    speechCache = splitSpeechText.map(function (chunk) { return { text: chunk, data: null, loading: null }; });
+    splitSpeechText = [conciseSpeech(text, speechLang)];
+    speechCache = [{ text: splitSpeechText[0], data: null, loading: null, native: false }];
     var token = playToken;
-    return playSpeechFrom(0, token).catch(function () {
-      if (token !== playToken) return;
-      isSpeaking = false;
-      setListenUi(false);
-      if (isMobileVoice()) setStatus("error", "Tap LISTEN to hear the answer, or check your mute switch and volume.");
-      else return speakBrowser(spokenClean(text, speechLang), speechLang);
-    });
+    return playSpeech(token);
   }
 
   function sendFault() {
