@@ -54,11 +54,29 @@ module.exports = async function handler(req, res) {
       speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
     }
   };
-  var out = await core.geminiJson(key, "gemini-3.8-flash-lite-tts", speech, 9000);
-  if (!out.ok || !core.extractAudio(out.json)) {
-    out = await core.geminiJson(key, "gemini-3.1-flash-tts-preview", speech, 12000);
+  var models = ["gemini-3.8-flash-lite-tts", "gemini-3.8-flash-tts"];
+  var out = null;
+  var audio = null;
+  var model = models[0];
+  for (var i = 0; i < models.length; i++) {
+    model = models[i];
+    out = await core.geminiJson(key, model, speech, i === 0 ? 12000 : 14000);
+    audio = out.ok ? core.extractAudio(out.json) : null;
+    if (audio) break;
+    var http = Number(out.httpStatus) || Number(out.json && out.json.error && out.json.error.code) || 0;
+    if (http && http !== 408 && http !== 429 && http < 500) break;
   }
-  var audio = out.ok ? core.extractAudio(out.json) : null;
+  var diagnostic = null;
+  if (!audio) {
+    var upstream = (out && out.json && out.json.error) || {};
+    diagnostic = {
+      stage: "tts",
+      model: model,
+      upstreamHttp: Number(out && out.httpStatus) || Number(upstream.code) || 0,
+      upstreamStatus: String(upstream.status || (out && out.networkError) || "NO_AUDIO").slice(0, 60)
+    };
+    try { console.warn("voice-tts " + JSON.stringify(diagnostic)); } catch (logErr) {}
+  }
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.end(JSON.stringify({
@@ -66,6 +84,7 @@ module.exports = async function handler(req, res) {
     language: locked.bcp,
     audio_base64: audio ? audio.data : "",
     audio_mime: audio ? audio.mime : "",
+    diagnostic: diagnostic,
     watermark: core.MARK
   }));
 };
