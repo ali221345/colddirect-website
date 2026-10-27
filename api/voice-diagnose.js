@@ -70,13 +70,11 @@ async function diagnose(key, text, audio, mime) {
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  // Retry only transient capacity/network failures, once, on a second stable
-  // model. The 30s + 20s bounds stay inside Vercel's 60-second function limit.
   var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash").trim();
-  var fallback = String(process.env.GEMINI_VOICE_FALLBACK_MODEL || "gemini-3.5-flash-lite").trim();
-  var models = [configured, fallback].map(function (name) {
-    return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash";
-  });
+  var models = [configured, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"]
+    .map(function (name) { return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash"; })
+    .filter(function (name, index, all) { return all.indexOf(name) === index; });
+  var attempts = [];
   for (var i = 0; i < models.length; i++) {
     var model = models[i];
     var out;
@@ -85,50 +83,80 @@ async function diagnose(key, text, audio, mime) {
         systemInstruction: { parts: [{ text: SYS }] },
         contents: [{ role: "user", parts: parts }],
         generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
-      }, i === 0 ? 30000 : 20000);
+      }, i === 0 ? 30000 : (i === 1 ? 20000 : 3000));
     } catch (err) {
       out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
     }
     if (!out || !out.ok) {
       var upstream = (out && out.json && out.json.error) || {};
       var http = Number(out && out.httpStatus) || Number(upstream.code) || 0;
-      var failure = {
-        error: "upstream",
-        diagnostic: {
-          stage: "transcription",
-          model: model,
-          mimeType: audio ? mime : null,
-          upstreamHttp: http,
-          upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
-          message: safeMessage(upstream.message, key)
-        }
+      var attempt = {
+        stage: audio ? "transcription" : "diagnosis",
+        model: model,
+        mimeType: audio ? mime : null,
+        upstreamHttp: http,
+        upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
+        message: safeMessage(upstream.message, key)
       };
-      if (i === 0 && models[1] !== model && (!http || http === 408 || http === 429 || http >= 500)) continue;
+      attempts.push(attempt);
+      var failure = { error: "upstream", diagnostic: Object.assign({}, attempt, { attempts: attempts }) };
+      if (i + 1 < models.length && (!http || http === 408 || http === 429 || http >= 500)) continue;
       return failure;
     }
     var parsed = parseOut(core.extractText(out.json), !!audio);
-    if (parsed) return parsed;
+    if (parsed) {
+      parsed.source = "gemini";
+      return parsed;
+    }
     var candidate = ((out.json && out.json.candidates) || [])[0] || {};
     var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
-    return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis." } };
+    return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis.", attempts: attempts } };
   }
-  return { error: "upstream", diagnostic: { stage: "transcription", upstreamHttp: 0, upstreamStatus: "NO_MODEL", message: "No transcription model is configured." } };
+  return { error: "upstream", diagnostic: { stage: "transcription", upstreamHttp: 0, upstreamStatus: "NO_MODEL", message: "No transcription model is configured.", attempts: attempts } };
 }
 
-function localDiagnosis(text) {
+function localDiagnosis(text, diagnostic, audioUnavailable) {
   var locked = core.lockLang(text, "");
   var advice;
-  if (locked.code === "fa") {
+  if (audioUnavailable) {
+    advice = "Automatic transcription is temporarily unavailable, so I could not transcribe this recording. Type the equipment make, model and fault code below for a specific diagnosis; switch the unit off if it is hot, noisy, leaking or warming stock, and arrange a 24/7 engineer call-out.";
+  } else if (locked.code === "fa") {
     advice = "برای جلوگیری از آسیب بیشتر، دستگاه را از برق جدا کنید و مسیر هوای کندانسور و فن‌ها را مسدود نکنید. برای بررسی کمپرسور، فن، ترموستات و گاز مبرد توسط مهندس، با کولد دایرکت تماس بگیرید.";
+  } else if (/gas leak|refrigerant leak|refrigerant.*(?:leak|low)|leak.*refrigerant/i.test(text)) {
+    advice = "A refrigerant leak requires pressure testing and repair by a qualified refrigeration engineer; do not keep restarting the cabinet or attempt a top-up. Switch the unit off, keep the area ventilated and protect temperature-sensitive stock.";
+  } else if (/\bE[12]\b/i.test(text)) {
+    var code = (text.match(/\bE[12]\b/i) || ["E1"])[0].toUpperCase();
+    advice = code + " commonly indicates a temperature-sensor or controller fault, although the exact meaning depends on the equipment make and model. Switch the unit off if temperature is rising, note the code for the engineer, and avoid repeated resets or bypassing the control.";
+  } else if (/taylor|carpigiani|ice cream|soft serve|gelato/i.test(text)) {
+    advice = "On a Taylor or Carpigiani machine, poor freezing or a beater fault can involve mix level, airflow, scraper blades, the drive system, controls or the refrigeration circuit. Stop the machine if it is noisy or overheating, follow food-safety procedures for the mix, and book an engineer inspection.";
+  } else if (/ice machine|ice maker|not making ice|no ice/i.test(text)) {
+    advice = "An ice machine that is not producing can have a water-supply, inlet-valve, scale, condenser-airflow, sensor or refrigeration fault. Switch it off if the compressor is hot or unusual noises occur, and arrange cleaning and engineer testing rather than repeatedly resetting it.";
+  } else if (/cold room|coldroom|walk.?in/i.test(text)) {
+    advice = "A cold-room temperature fault can involve the door seal, evaporator airflow, defrost system, controller or refrigeration circuit. Keep the door closed, move at-risk stock to a safe temperature-controlled area, and arrange urgent engineer testing.";
+  } else if (/compressor|buzzing|humming/i.test(text)) {
+    advice = "A hot, buzzing or non-starting compressor can have an electrical supply, relay, capacitor, overload, airflow or sealed-system fault. Switch the equipment off to prevent compressor damage and arrange an engineer inspection rather than repeatedly restarting it.";
   } else if (/fan|evaporator/i.test(text)) {
-    advice = "A non-running evaporator fan may have a faulty motor, iced-over coils, or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
-  } else if (/warm|not cold|temperature|freezer/i.test(text)) {
-    advice = "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat, or sealed-system fault. Switch the unit off if the compressor is hot or noisy, protect stock, and arrange a prompt engineer inspection.";
+    advice = "A non-running evaporator fan may have a faulty motor, iced-over coils or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
+  } else if (/defrost|iced|ice.?up|frost/i.test(text)) {
+    advice = "Excess ice can be caused by a defrost heater, timer, sensor, blocked drain, fan or door-seal fault. Switch the unit off if airflow is blocked or the compressor is hot; do not chip the ice, and arrange an engineer inspection.";
+  } else if (/thermostat|controller|control board|sensor/i.test(text)) {
+    advice = "A thermostat, sensor or controller fault can cause incorrect temperatures, short cycling or a non-running cabinet. Switch the unit off if stock is warming or the compressor is hot, record any displayed code, and arrange electrical and refrigeration testing.";
+  } else if (/high.?temp|freezer|warm|not cold|not cooling|temperature/i.test(text)) {
+    advice = "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat or sealed-system fault. Move at-risk stock to safe storage, switch the unit off if the compressor is hot or noisy, and arrange a prompt engineer inspection.";
   } else {
-    advice = "The fault requires checks of the power supply, airflow, fans, controls, and refrigeration circuit. Switch the unit off if it is overheating or noisy and arrange an engineer inspection rather than repeatedly restarting it.";
+    advice = "The fault requires checks of the power supply, airflow, fans, controls and refrigeration circuit. Switch the unit off if it is overheating, noisy or warming stock, and arrange an engineer inspection rather than repeatedly restarting it.";
   }
   var display = core.ensureGreeting(advice, locked.code, false);
-  return { display: display, spoken: display, language: locked.bcp, transcript: text };
+  return {
+    display: display,
+    spoken: display,
+    language: locked.bcp,
+    transcript: audioUnavailable ? "Voice note received; automatic transcription is temporarily unavailable." : text,
+    transcript_status: audioUnavailable ? "unavailable" : "ok",
+    code: "EXPERT_FALLBACK",
+    source: "expert_rules",
+    diagnostic: diagnostic || null
+  };
 }
 
 function send(res, code, body) {
@@ -183,35 +211,24 @@ module.exports = async function handler(req, res) {
   } catch (e) {
     result = { error: "exception", diagnostic: { stage: "request", upstreamHttp: 0, upstreamStatus: "REQUEST_EXCEPTION", message: "The diagnosis request could not be completed." } };
   }
-  if (text && (!result || result.error || !result.display)) {
-    result = localDiagnosis(text);
-  }
   if (!result || result.error || !result.display) {
-    // Keep a graceful UI fallback, but preserve a safe upstream diagnostic. Never
-    // include audio, transcripts, keys, authorization headers or raw responses.
-    var diagnostic = result && result.diagnostic;
-    if (diagnostic) {
-      try { console.warn("voice-diagnose " + JSON.stringify(diagnostic)); } catch (logErr) {}
+    var failureDiagnostic = result && result.diagnostic;
+    if (failureDiagnostic) {
+      try { console.warn("voice-diagnose " + JSON.stringify(failureDiagnostic)); } catch (logErr) {}
     }
-    send(res, 200, {
-      ok: false,
-      code: audio ? "VOICE_NOT_UNDERSTOOD" : "DIAGNOSIS_UNAVAILABLE",
-      error: audio ? "We could not hear that clearly. Type the fault below or tap SPEAK and try again." : "The diagnosis service is temporarily unavailable. Please try again or call us.",
-      diagnostic: diagnostic || null,
-      transcript: "",
-      display_text: "",
-      spoken_text: "",
-      audio_base64: ""
-    });
-    return;
+    result = localDiagnosis(text, failureDiagnostic || null, !!audio);
   }
   var locked = core.lockLang(result.transcript + " " + result.display, result.language);
   var reply = core.ensureClose(result.display, locked.code);
   var spoken = core.ttsScript(result.spoken || reply, locked.code);
   send(res, 200, {
     ok: true,
+    code: result.code || "OK",
+    source: result.source || "gemini",
     language: locked.bcp,
     transcript: result.transcript || text,
+    transcript_status: result.transcript_status || "ok",
+    diagnostic: result.diagnostic || null,
     reply: reply,
     display_text: reply,
     spoken_text: spoken

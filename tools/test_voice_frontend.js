@@ -21,4 +21,14 @@ assert.ok(source.includes("if (first.native) return nativeFallback(token)"), "LI
 assert.ok(source.includes("return nativeFallback(token);"), "TTS and playback failures must use native speech");
 assert.ok(source.includes("voiceEl.pause();") && !source.includes("voiceEl.removeAttribute(\"src\")"), "Stopping playback must preserve cached media");
 assert.ok(source.includes("showVoiceError"), "Fallback errors must remain in the assistant bubble");
-console.log("Voice frontend regression tests passed: one summary, native unlock, MP3/native cache and LISTEN fallback.");
+assert.ok(/window\.SpeechRecognition \|\| window\.webkitSpeechRecognition/.test(source), "SpeechRecognition must be the first capture path");
+assert.ok(/recognition\.continuous = false/.test(source), "Native recognition must use a single utterance");
+assert.ok(/recognition\.interimResults = true/.test(source), "Native recognition must provide live interim words");
+assert.ok(/SPEECH_SILENCE_MS = 1500/.test(source), "Recognized speech must auto-submit after 1.5 seconds of silence");
+assert.ok(/RECORDER_SILENCE_MS = 2000/.test(source), "MediaRecorder must stop after 2 seconds of detected silence");
+assert.ok(/RECORDER_MAX_MS = 6000/.test(source), "MediaRecorder fallback must have a 6-second maximum");
+assert.ok(source.includes("textInput.value ="), "Live recognized words must appear in the input");
+assert.ok(source.includes("sendRecognizedFault"), "Recognized text must bypass audio transcription");
+assert.ok(source.includes("rec.requestData();") && source.includes("rec.onstop ="), "iOS recording must flush the final chunk before creating the Blob");
+assert.ok(!source.includes("}, 45000);"), "The old 45-second recorder wait must be removed");
+console.log("Voice frontend regression tests passed: speech-first capture, live transcript, recorder timers, one summary, native unlock and LISTEN fallback.");

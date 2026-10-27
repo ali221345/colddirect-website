@@ -10,9 +10,12 @@
   var MARK = "CD-UK-IP-2026-994821-VOICE-AI";
   var REVIEW_HREF = "/write-a-review/";
   var SPEAK_LABEL = "🎤 SPEAK";
-  var STOP_LABEL = "⏹ STOP & SEND";
+  var STOP_LABEL = "🔴 Listening… Tap to send";
   var LISTEN_LABEL = "🔊 LISTEN";
-  var STATUS_IDLE = "Tap SPEAK, then STOP & SEND when you finish.";
+  var STATUS_IDLE = "Tap SPEAK and describe the fault; it sends automatically.";
+  var SPEECH_SILENCE_MS = 1500;
+  var RECORDER_SILENCE_MS = 2000;
+  var RECORDER_MAX_MS = 6000;
   var VERCEL_API = "https://colddirect-website.vercel.app";
   var DIAGNOSE_URL = VERCEL_API + "/api/voice-diagnose";
   var TTS_URLS = [VERCEL_API + "/api/voice-tts"];
@@ -20,7 +23,7 @@
   var host = String(location.hostname || "").toLowerCase();
   if (host && host !== "www.colddirect.co.uk" && host !== "colddirect.co.uk" && host !== "localhost" && host !== "127.0.0.1") return;
 
-  var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl;
+  var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl, textInput;
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
@@ -34,10 +37,17 @@
   var sessionLang = "";
   var micStream = null;
   var mediaRec = null;
+  var nativeRecognition = null;
+  var nativeText = "";
+  var nativeSilenceTimer = null;
+  var nativeStopResolve = null;
   var recChunks = [];
   var recMime = "audio/webm";
   var recordingStartedAt = 0;
   var recordingLimitTimer = null;
+  var recordingUiTimer = null;
+  var recorderHeardAt = 0;
+  var recorderLastSoundAt = 0;
   var userText = "";
   var playToken = 0;
   var voiceSource = null;
@@ -447,7 +457,45 @@
     return "en-GB";
   }
 
+  function clearRecordingTimers() {
+    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
+    if (recordingUiTimer) { clearInterval(recordingUiTimer); recordingUiTimer = null; }
+    if (nativeSilenceTimer) { clearTimeout(nativeSilenceTimer); nativeSilenceTimer = null; }
+  }
+
+  function resolveNativeStop() {
+    var resolve = nativeStopResolve;
+    nativeStopResolve = null;
+    nativeRecognition = null;
+    if (resolve) resolve();
+  }
+
+  function stopNativeRecognition() {
+    var recognition = nativeRecognition;
+    if (!recognition) return Promise.resolve();
+    return new Promise(function (resolve) {
+      nativeStopResolve = resolve;
+      var timer = setTimeout(function () {
+        try { recognition.abort(); } catch (e1) {}
+        resolveNativeStop();
+      }, 800);
+      var originalResolve = nativeStopResolve;
+      nativeStopResolve = function () {
+        clearTimeout(timer);
+        originalResolve();
+      };
+      try { recognition.stop(); } catch (e2) {
+        try { recognition.abort(); } catch (e3) {}
+        resolveNativeStop();
+      }
+    });
+  }
+
   function stopMicHard() {
+    if (nativeRecognition) {
+      try { nativeRecognition.abort(); } catch (e0) {}
+      resolveNativeStop();
+    }
     if (mediaRec) {
       try { if (mediaRec.state !== "inactive") mediaRec.stop(); } catch (e1) {}
       mediaRec = null;
@@ -477,9 +525,8 @@
   }
 
   function startMeter(stream) {
-    if (!meterEl) return;
-    meterEl.hidden = false;
-    var bar = meterEl.querySelector("i");
+    if (meterEl) meterEl.hidden = false;
+    var bar = meterEl && meterEl.querySelector("i");
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC || !stream) return;
     try {
@@ -499,7 +546,14 @@
         ana.getByteFrequencyData(data);
         var n = 0;
         for (var i = 0; i < data.length; i++) n += data[i];
-        if (bar) bar.style.width = Math.min(100, Math.round((n / (data.length * 255)) * 100)) + "%";
+        var average = n / data.length;
+        if (bar) bar.style.width = Math.min(100, Math.round((average / 255) * 100)) + "%";
+        var now = Date.now();
+        if (average >= 10) {
+          if (!recorderHeardAt) recorderHeardAt = now;
+          recorderLastSoundAt = now;
+        }
+        if (recorderHeardAt && now - recorderLastSoundAt >= RECORDER_SILENCE_MS && mediaRec) sendFault();
       }, 120);
     } catch (e1) {}
   }
@@ -520,7 +574,7 @@
   function hangup() {
     live = false;
     starting = false;
-    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
+    clearRecordingTimers();
     stopMicHard();
     stopMeter();
     setSpeakUi(false);
@@ -794,7 +848,7 @@
     live = false;
     starting = false;
     isSpeaking = true;
-    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
+    clearRecordingTimers();
     setSpeakUi(false);
     if (root) root.classList.remove("is-live");
     if (root) root.classList.add("is-busy");
@@ -884,6 +938,149 @@
     });
   }
 
+  function sendRecognizedFault() {
+    if (!live && !starting) return;
+    var text = String(nativeText || (textInput && textInput.value) || "").trim();
+    live = false;
+    starting = false;
+    clearRecordingTimers();
+    setSpeakUi(false);
+    setStatus("connecting", "Diagnosing your recognized speech...");
+    stopNativeRecognition().then(function () {
+      if (!text) {
+        hangup();
+        showVoiceError("I did not detect any speech. Tap SPEAK and try again, or type the fault below.");
+        return;
+      }
+      if (textInput) textInput.value = "";
+      sendTextFault(text);
+    });
+  }
+
+  function queueRecognizedSend(my) {
+    if (nativeSilenceTimer) clearTimeout(nativeSilenceTimer);
+    nativeSilenceTimer = setTimeout(function () {
+      nativeSilenceTimer = null;
+      if (my === seq && live && nativeText) sendRecognizedFault();
+    }, SPEECH_SILENCE_MS);
+  }
+
+  function startRecorder(my) {
+    starting = true;
+    live = false;
+    setStatus("connecting", "Starting the microphone recorder...");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+      hangup();
+      setStatus("error", "This browser cannot capture speech. Type the fault below or try another browser.");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } }).then(function (s) {
+      return waitForLiveTracks(s);
+    }).then(function (s) {
+      if (my !== seq) {
+        s.getTracks().forEach(function (t) { t.stop(); });
+        return;
+      }
+      micStream = s;
+      recMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/mp4";
+      try {
+        mediaRec = new MediaRecorder(s, { mimeType: recMime });
+      } catch (e1) {
+        try { mediaRec = new MediaRecorder(s); recMime = mediaRec.mimeType || recMime; } catch (e2) { mediaRec = null; }
+      }
+      if (!mediaRec) {
+        hangup();
+        setStatus("error", "This browser cannot record audio. Type the fault below.");
+        return;
+      }
+      mediaRec.ondataavailable = function (ev) {
+        if (ev.data && ev.data.size) recChunks.push(ev.data);
+      };
+      try { mediaRec.start(250); } catch (e3) {
+        hangup();
+        setStatus("error", "This browser cannot record audio. Type the fault below.");
+        return;
+      }
+      live = true;
+      starting = false;
+      recordingStartedAt = Date.now();
+      recorderHeardAt = 0;
+      recorderLastSoundAt = 0;
+      recordingLimitTimer = setTimeout(function () {
+        recordingLimitTimer = null;
+        if (my === seq && live) sendFault();
+      }, RECORDER_MAX_MS);
+      recordingUiTimer = setInterval(function () {
+        if (!live || !speakBtn) return;
+        var remaining = Math.max(0, Math.ceil((RECORDER_MAX_MS - (Date.now() - recordingStartedAt)) / 1000));
+        speakBtn.textContent = "🔴 " + remaining + "s • Tap to send";
+      }, 250);
+      setStatus("active", "🔴 Listening… speak now; recording sends automatically.");
+      startMeter(s);
+      showRecording();
+    }).catch(function () {
+      if (my !== seq) return;
+      hangup();
+      setStatus("error", "Allow the microphone and tap SPEAK again, or type the fault below.");
+    });
+  }
+
+  function startNativeRecognition(my, Recognition) {
+    var recognition;
+    try { recognition = new Recognition(); } catch (e0) {
+      startRecorder(my);
+      return;
+    }
+    nativeRecognition = recognition;
+    nativeText = "";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.lang = sessionLang || (/^fa/i.test(navigator.language || "") ? "fa-IR" : "en-GB");
+    recognition.onstart = function () {
+      if (my !== seq) return;
+      live = true;
+      starting = false;
+      recordingStartedAt = Date.now();
+      setStatus("active", "🔴 Listening… your words will appear below.");
+      showRecording();
+    };
+    recognition.onresult = function (event) {
+      if (my !== seq) return;
+      var combined = "";
+      for (var i = 0; i < event.results.length; i++) combined += event.results[i][0].transcript + " ";
+      nativeText = combined.replace(/\s+/g, " ").trim();
+      if (textInput) textInput.value = nativeText;
+      if (nativeText) {
+        upsertLive("user", nativeText, false);
+        queueRecognizedSend(my);
+      }
+    };
+    recognition.onerror = function () {
+      if (my !== seq || !live && !starting) return;
+      if (nativeText) {
+        sendRecognizedFault();
+        return;
+      }
+      nativeRecognition = null;
+      live = false;
+      starting = true;
+      startRecorder(my);
+    };
+    recognition.onend = function () {
+      if (nativeRecognition !== recognition) return;
+      resolveNativeStop();
+      if (my === seq && live) sendRecognizedFault();
+    };
+    try {
+      recognition.start();
+      setStatus("connecting", "Starting live speech recognition...");
+    } catch (e1) {
+      nativeRecognition = null;
+      startRecorder(my);
+    }
+  }
+
   function startLive() {
     if (live || starting || isSpeaking) return;
     var my = ++seq;
@@ -894,54 +1091,17 @@
     liveBot = null;
     recordingRow = null;
     userText = "";
+    nativeText = "";
     recChunks = [];
+    clearRecordingTimers();
     stopPlayback();
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);
-    setStatus("connecting", "Starting the microphone...");
-    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } }).then(function (s) {
-      return waitForLiveTracks(s);
-    }).then(function (s) {
-      if (my !== seq) {
-        s.getTracks().forEach(function (t) { t.stop(); });
-        return;
-      }
-      micStream = s;
-      recMime = (window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) ? "audio/webm;codecs=opus" : "audio/mp4";
-      try {
-        mediaRec = new MediaRecorder(s, { mimeType: recMime });
-      } catch (e1) {
-        try { mediaRec = new MediaRecorder(s); recMime = mediaRec.mimeType || recMime; } catch (e2) { mediaRec = null; }
-      }
-      if (!mediaRec) {
-        hangup();
-        setStatus("error", "This browser cannot record audio. Tap SPEAK again.");
-        return;
-      }
-      mediaRec.ondataavailable = function (ev) {
-        if (ev.data && ev.data.size) recChunks.push(ev.data);
-      };
-      try { mediaRec.start(250); } catch (e3) {
-        hangup();
-        setStatus("error", "This browser cannot record audio. Tap SPEAK again.");
-        return;
-      }
-      live = true;
-      starting = false;
-      recordingStartedAt = Date.now();
-      recordingLimitTimer = setTimeout(function () {
-        recordingLimitTimer = null;
-        if (my === seq && live) sendFault();
-      }, 45000);
-      setStatus("active", "Listening… tap STOP & SEND when you finish.");
-      startMeter(s);
-      showRecording();
-    }).catch(function () {
-      if (my !== seq) return;
-      hangup();
-      setStatus("error", "Allow the microphone and tap SPEAK again.");
-    });
+    setStatus("connecting", "Starting speech recognition...");
+    var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (Recognition) startNativeRecognition(my, Recognition);
+    else startRecorder(my);
   }
 
   function onSpeakPointer(ev) {
@@ -963,11 +1123,12 @@
     }
     if (live) {
       if (Date.now() - recordingStartedAt < 900) {
-        setStatus("active", "Keep speaking for at least one second, then tap STOP & SEND.");
+        setStatus("active", "Keep speaking for at least one second, then tap to send.");
         return;
       }
       seq += 1;
-      sendFault();
+      if (nativeRecognition) sendRecognizedFault();
+      else sendFault();
       return;
     }
     startLive();
@@ -998,7 +1159,7 @@
       closePanel();
     });
     var textForm = document.getElementById("cd-voice-text-form");
-    var textInput = document.getElementById("cd-voice-text-input");
+    textInput = document.getElementById("cd-voice-text-input");
     if (textForm && textInput) textForm.addEventListener("submit", function (ev) {
       ev.preventDefault();
       unlockAudio();

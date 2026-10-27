@@ -86,31 +86,76 @@ async function run() {
   };
   const recovered = await post(mp4);
   assert.strictEqual(recovered.json.ok, true);
-  assert.deepStrictEqual(attemptedModels, ["gemini-3.6-flash", "gemini-3.5-flash-lite"]);
+  assert.deepStrictEqual(attemptedModels, ["gemini-3.6-flash", "gemini-2.5-flash"]);
+
+  const quotaModels = [];
+  core.geminiJson = async (key, model) => {
+    quotaModels.push(model);
+    return { ok: false, httpStatus: 429, json: { error: { code: 429, status: "RESOURCE_EXHAUSTED", message: "Quota exhausted" } } };
+  };
+  const quotaAudio = await post(mp4);
+  assert.strictEqual(quotaAudio.status, 200);
+  assert.strictEqual(quotaAudio.json.ok, true, "Audio quota failures must still return useful expert guidance");
+  assert.strictEqual(quotaAudio.json.code, "EXPERT_FALLBACK");
+  assert.strictEqual(quotaAudio.json.diagnostic.upstreamHttp, 429);
+  assert.ok(!/could not hear that clearly/i.test(quotaAudio.json.display_text));
+  assert.ok(/transcription/i.test(quotaAudio.json.display_text), "Audio fallback must honestly disclose unavailable transcription");
+  assert.ok(/0203 952 4822/.test(quotaAudio.json.display_text));
+  assert.deepStrictEqual(quotaModels, ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"]);
+
+  const quotaText = await post({ text: "My display cabinet shows E1 and is too warm", language: "auto", mode: "text" });
+  assert.strictEqual(quotaText.json.ok, true);
+  assert.strictEqual(quotaText.json.code, "EXPERT_FALLBACK");
+  assert.ok(/E1|sensor|controller/i.test(quotaText.json.display_text), "Text fallback must diagnose the reported error code");
+  assert.ok(!/could not hear that clearly/i.test(quotaText.json.display_text));
 
   core.geminiJson = async () => ({ ok: false, httpStatus: 404, json: { error: { code: 404, status: "NOT_FOUND", message: `Model unavailable; key=${KEY}` } } });
   const notFound = await post(mp4);
-  assert.strictEqual(notFound.json.ok, false);
+  assert.strictEqual(notFound.json.ok, true);
   assert.strictEqual(notFound.json.diagnostic.upstreamHttp, 404);
   assert.strictEqual(notFound.json.diagnostic.upstreamStatus, "NOT_FOUND");
   assert.ok(!JSON.stringify(notFound).includes(KEY));
 
   core.geminiJson = async () => ({ ok: false, httpStatus: 0, networkError: "TIMEOUT", json: { error: { code: 408, status: "TIMEOUT" } } });
   const timeout = await post(mp4);
+  assert.strictEqual(timeout.json.ok, true);
   assert.strictEqual(timeout.json.diagnostic.upstreamStatus, "TIMEOUT");
 
   delete process.env.GEMINI_API_KEY;
   delete process.env.GOOGLE_API_KEY;
   const missing = await post(mp4);
+  assert.strictEqual(missing.json.ok, true);
   assert.strictEqual(missing.json.diagnostic.upstreamStatus, "API_KEY_MISSING");
+
+  const ruleCases = [
+    "Commercial fridge evaporator fan is not running",
+    "Freezer high temperature alarm is active",
+    "Cold room door was left open and stock is warm",
+    "Ice machine is not making ice",
+    "Taylor ice cream machine is not freezing",
+    "Carpigiani machine has a beater fault",
+    "Compressor is hot and buzzing",
+    "Defrost is not working and the coil is iced",
+    "Thermostat is not controlling temperature",
+    "I suspect a refrigerant gas leak",
+    "Controller shows E2"
+  ];
+  for (const text of ruleCases) {
+    const local = await post({ text, language: "auto", mode: "text" });
+    assert.strictEqual(local.json.ok, true, text);
+    assert.strictEqual(local.json.code, "EXPERT_FALLBACK", text);
+    assert.ok(local.json.display_text.length > 120, text);
+    assert.ok(/0203 952 4822/.test(local.json.display_text), text);
+  }
 
   process.env.GEMINI_API_KEY = KEY;
   core.geminiJson = async () => { throw new Error("socket failed"); };
   const thrown = await post(mp4);
+  assert.strictEqual(thrown.json.ok, true);
   assert.strictEqual(thrown.json.diagnostic.upstreamStatus, "REQUEST_EXCEPTION");
   assert.ok(!JSON.stringify(thrown).includes(KEY));
 
-  console.log("Voice diagnosis regression tests passed: signatures, success, upstream errors, timeout, missing key and redaction.");
+  console.log("Voice diagnosis regression tests passed: signatures, model failover, 429 expert guidance, equipment rules, timeout and redaction.");
 }
 
 run().catch((error) => {
