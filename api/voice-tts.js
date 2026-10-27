@@ -43,12 +43,15 @@ async function encodeMp3(audio) {
   return { mime: "audio/mpeg", data: mp3.toString("base64") };
 }
 
+var SPOKEN_SUMMARY_MAX_WORDS = 72;
+
 function conciseSummary(raw, lang) {
-  var text = core.forSpeech(raw, lang)
+  var cta = core.spokenCta(lang);
+  var ctaWords = cta.split(/\s+/).filter(Boolean).length;
+  var technicalLimit = Math.max(20, SPOKEN_SUMMARY_MAX_WORDS - ctaWords);
+  var text = core.withoutClose(core.forSpeech(raw, lang), lang)
     .replace(/Hello\. I am the Head Engineer at ColdDirect\. I'm glad you chose our company\./gi, " ")
     .replace(/سلام\.\s*من سرمهندس شرکت .*?خوشحالم که شرکت ما را انتخاب کردید\./g, " ")
-    .replace(/Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below\./gi, " ")
-    .replace(/لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید\./g, " ")
     .replace(/\s+/g, " ").trim();
   var sentences = text.match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [text];
   var selected = [];
@@ -57,16 +60,16 @@ function conciseSummary(raw, lang) {
     var sentence = sentences[i].trim();
     if (!sentence) continue;
     var count = sentence.split(/\s+/).filter(Boolean).length;
-    if (selected.length && words + count > 45) break;
-    if (count > 45) {
-      sentence = sentence.split(/\s+/).slice(0, 45).join(" ");
-      count = 45;
+    if (selected.length && words + count > technicalLimit) break;
+    if (count > technicalLimit) {
+      sentence = sentence.split(/\s+/).slice(0, technicalLimit).join(" ");
+      count = technicalLimit;
     }
     selected.push(sentence);
     words += count;
-    if (words >= 45) break;
+    if (words >= technicalLimit) break;
   }
-  return selected.join(" ").trim();
+  return (selected.join(" ").trim() + " " + cta).replace(/\s+/g, " ").trim();
 }
 
 function failure(provider, http, status) {

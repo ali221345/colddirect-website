@@ -47,6 +47,17 @@ function validModelResponse() {
 }
 
 async function run() {
+  const displayClose = core.ensureClose("The evaporator fan needs an engineer inspection.", "en");
+  assert.ok(displayClose.includes("0203 952 4822") && displayClose.includes("07983 759320"));
+  assert.ok(displayClose.endsWith("👍 Found this helpful? Please tap the green Like & Leave a 5-Star Review button below!"));
+  const spokenClose = core.ttsScript("The evaporator fan needs an engineer inspection.", "en");
+  assert.ok(spokenClose.endsWith("For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!"));
+  const convertedOldClose = core.ensureClose("The fan needs inspection. Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.", "en");
+  assert.strictEqual((convertedOldClose.match(/0203 952 4822/g) || []).length, 1, "Old CTAs must be replaced, not duplicated");
+  assert.ok(!/kindly click/i.test(convertedOldClose));
+  const persianClose = core.ensureClose("فن اواپراتور نیاز به بررسی مهندس دارد.", "fa");
+  assert.ok(persianClose.includes("0203 952 4822") && persianClose.includes("07983 759320") && persianClose.includes("دکمه سبز"));
+
   assert.strictEqual(core.cleanMime("audio/x-m4a;codecs=aac"), "audio/mp4");
   const samples = [
     [[0x1a, 0x45, 0xdf, 0xa3], "audio/mp4", "audio/webm"],

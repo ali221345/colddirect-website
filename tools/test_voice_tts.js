@@ -44,8 +44,14 @@ async function run() {
   assert.strictEqual(recovered.audio_mime, "audio/mpeg");
   assert.strictEqual(recovered.provider, "gemini");
   assert.strictEqual(calls, 1, "one diagnosis must make one primary TTS request");
-  assert.ok(spokenText.split(/\s+/).filter(Boolean).length <= 45);
-  assert.ok(!/Head Engineer|5-star review button/i.test(spokenText));
+  const summaryWords = spokenText.split(/\s+/).filter(Boolean).length;
+  assert.ok(summaryWords >= 65 && summaryWords <= 72, `Expected a 65-72 word summary, received ${summaryWords}`);
+  assert.ok(/evaporator fan/i.test(spokenText), "The technical diagnosis must remain first");
+  assert.ok(!/Head Engineer/i.test(spokenText), "The greeting should not consume the spoken summary");
+  assert.ok(/0203 952 4822/.test(spokenText) && /07983 759320/.test(spokenText), "Both naturally formatted phone numbers must be spoken");
+  assert.ok(spokenText.endsWith("For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!"), "The mandatory spoken CTA must be last");
+  assert.strictEqual((spokenText.match(/5-Star Review/g) || []).length, 1, "The CTA must not be duplicated");
+  assert.strictEqual(recovered.summary_words, summaryWords);
   const mp3 = Buffer.from(recovered.audio_base64, "base64");
   assert.ok(mp3.length > 1000 && mp3.length < 15000);
   assert.ok(mp3[0] === 0xff && (mp3[1] & 0xe0) === 0xe0);

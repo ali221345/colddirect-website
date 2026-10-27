@@ -16,6 +16,8 @@
   var SPEECH_SILENCE_MS = 1500;
   var RECORDER_SILENCE_MS = 2000;
   var RECORDER_MAX_MS = 6000;
+  var SPOKEN_SUMMARY_MAX_WORDS = 72;
+  var SPOKEN_TECHNICAL_MAX_WORDS = 39;
   var VERCEL_API = "https://colddirect-website.vercel.app";
   var DIAGNOSE_URL = VERCEL_API + "/api/voice-diagnose";
   var TTS_URLS = [VERCEL_API + "/api/voice-tts"];
@@ -432,7 +434,7 @@
 
   function spokenClean(text, lang) {
     var fa = lang === "fa-IR";
-    var s = stripTags(text)
+    return stripTags(text)
       .replace(/read this exactly[^.]*\./gi, " ")
       .replace(/do not add words\.?/gi, " ")
       .replace(/never say the word slash\.?/gi, " ")
@@ -440,16 +442,8 @@
       .replace(/\bslash\b/gi, " ")
       .replace(/[／/]/g, fa ? " یا " : " or ")
       .replace(/0203\s*952\s*4822/g, "0203 952 4822")
-      .replace(/07983\s*759320/g, "07983 759320");
-    var cta = fa
-      ? "لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید."
-      : "Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.";
-    if (fa) {
-      if (s.indexOf("دکمه سبز") === -1) s = (s + " " + cta).trim();
-    } else if (!/5-star review button/i.test(s)) {
-      s = (s + " " + cta).trim();
-    }
-    return s.replace(/\s+/g, " ").trim();
+      .replace(/07983\s*759320/g, "07983 759320")
+      .replace(/\s+/g, " ").trim();
   }
 
   function lockLang(text) {
@@ -739,12 +733,34 @@
     });
   }
 
+  function spokenCta(lang) {
+    return lang === "fa-IR"
+      ? "برای اعزام فوری مهندس در سراسر لندن، با کُلد دایرِکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. اگر این راهنما مفید بود، لطفاً دکمه سبز لایک و نظر پنج‌ستاره در پایین را بزنید!"
+      : "For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!";
+  }
+
+  function stripSpokenClose(text, lang) {
+    var s = String(text || "");
+    var closes = lang === "fa-IR" ? [
+      "لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید.",
+      "برای اعزام فوری مهندس در سراسر لندن، با کولد دایرکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. 👍 اگر این راهنما مفید بود، لطفاً دکمه سبز «Like & Leave a 5-Star Review» در پایین را بزنید!",
+      spokenCta(lang)
+    ] : [
+      "Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.",
+      "For an immediate engineer visit across London, call ColdDirect on 0203 952 4822 or 07983 759320. 👍 Found this helpful? Please tap the green Like & Leave a 5-Star Review button below!",
+      spokenCta(lang)
+    ];
+    closes.forEach(function (close) { s = s.split(close).join(" "); });
+    return s.replace(/\s+/g, " ").trim();
+  }
+
   function conciseSpeech(text, lang) {
-    var s = spokenClean(text, lang)
+    var cta = spokenCta(lang);
+    var ctaWords = cta.split(/\s+/).filter(Boolean).length;
+    var technicalLimit = Math.min(SPOKEN_TECHNICAL_MAX_WORDS, Math.max(20, SPOKEN_SUMMARY_MAX_WORDS - ctaWords));
+    var s = stripSpokenClose(spokenClean(text, lang), lang)
       .replace(/Hello\. I am the Head Engineer at ColdDirect\. I'm glad you chose our company\./gi, " ")
       .replace(/سلام\.\s*من سرمهندس شرکت .*?خوشحالم که شرکت ما را انتخاب کردید\./g, " ")
-      .replace(/Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below\./gi, " ")
-      .replace(/لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید\./g, " ")
       .replace(/\s+/g, " ").trim();
     var sentences = s.match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [s];
     var selected = [];
@@ -753,16 +769,16 @@
       var sentence = sentences[i].trim();
       if (!sentence) continue;
       var count = sentence.split(/\s+/).filter(Boolean).length;
-      if (selected.length && words + count > 45) break;
-      if (count > 45) {
-        sentence = sentence.split(/\s+/).slice(0, 45).join(" ");
-        count = 45;
+      if (selected.length && words + count > technicalLimit) break;
+      if (count > technicalLimit) {
+        sentence = sentence.split(/\s+/).slice(0, technicalLimit).join(" ");
+        count = technicalLimit;
       }
       selected.push(sentence);
       words += count;
-      if (words >= 45) break;
+      if (words >= technicalLimit) break;
     }
-    return selected.join(" ").trim();
+    return (selected.join(" ").trim() + " " + cta).replace(/\s+/g, " ").trim();
   }
 
   function loadSpeechSummary() {

@@ -13,7 +13,9 @@ assert.ok(!playBytes.includes("unlockAudio()"), "Async playback must reuse the u
 assert.ok(!playBytes.includes("decodeAudioData"), "iOS playback must use the native HTMLAudioElement");
 assert.ok(source.includes("summary: true"), "Speech requests must use one concise summary");
 assert.ok(!source.includes("chunk: true"), "The old multi-call chunk requests must be removed");
-assert.ok(source.includes("slice(0, 45)"), "Spoken summaries must be capped at 45 words");
+assert.ok(source.includes("SPOKEN_SUMMARY_MAX_WORDS = 72"), "Spoken summaries must have a 72-word total budget");
+assert.ok(source.includes("SPOKEN_TECHNICAL_MAX_WORDS = 39"), "Technical advice must leave room for the complete CTA");
+assert.ok(source.includes("For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!"), "Native browser speech must include both phone numbers and the review CTA");
 assert.strictEqual(source.split("postJson(TTS_URLS[0]").length - 1, 1, "Only one TTS request path may exist");
 assert.ok(source.includes("return playCachedSpeech()"), "LISTEN must use cached speech");
 assert.ok(source.includes("if (entry && entry.data) return Promise.resolve(entry.data)"), "Cached MP3 audio must not be fetched again");
