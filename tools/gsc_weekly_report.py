@@ -49,6 +49,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from gsc_owner_verification import PATHS as WATCHLIST_PATHS
+import money_target_matrix as mkm
 
 HOST = "colddirect.co.uk"
 SITE_CANDIDATES = ["https://www.colddirect.co.uk/", "sc-domain:colddirect.co.uk"]
@@ -86,6 +87,7 @@ STRIKE_ROWS = 20
 STRIKE_MIN_IMPR = int(os.environ.get("STRIKE_MIN_IMPR", "1") or "1")
 SUMMARY_PATH = os.environ.get("GITHUB_STEP_SUMMARY")
 LAST_WATCHLIST_SUMMARY: dict = {}
+LAST_MONEY_KEYWORD_SUMMARY: dict = {}
 
 
 # ------------------------------------------------------------------ helpers
@@ -322,6 +324,74 @@ def watchlist_section(watch, site: str) -> tuple[list[str], str, dict]:
     return L, headline, summary
 
 
+# ------------------------------------------------------------------ ten money-keyword families
+def money_keyword_section(current_rows: list[dict], previous_rows: list[dict], cs: date, ce: date,
+                          ps: date, pe: date) -> tuple[list[str], dict]:
+    """Aggregate every London/local query variant into exactly one of the ten target families."""
+    current: dict[str, dict[str, Agg]] = {target["id"]: {} for target in mkm.TARGETS}
+    previous: dict[str, dict[str, Agg]] = {target["id"]: {} for target in mkm.TARGETS}
+    for rows, destination in ((current_rows, current), (previous_rows, previous)):
+        for row in rows:
+            query = row.get("keys", [""])[0]
+            family_id = mkm.family_for_query(query)
+            if family_id is None:
+                continue
+            aggregate = destination[family_id].setdefault(query, Agg())
+            aggregate.add(row.get("clicks", 0), row.get("impressions", 0), row.get("position", 0))
+
+    families = []
+    for target in mkm.TARGETS:
+        family_id = target["id"]
+        queries = sorted(set(current[family_id]) | set(previous[family_id]))
+        aggregate = Agg()
+        previous_aggregate = Agg()
+        variants = []
+        for query in queries:
+            cur = current[family_id].get(query, Agg())
+            prev = previous[family_id].get(query, Agg())
+            aggregate.add(cur.clicks, cur.impressions, cur.pos_w / cur.impressions if cur.impressions else 0)
+            previous_aggregate.add(prev.clicks, prev.impressions, prev.pos_w / prev.impressions if prev.impressions else 0)
+            variants.append({
+                "query": query,
+                "clicks": int(round(cur.clicks)), "impressions": int(round(cur.impressions)),
+                "position": round(cur.pos, 4) if cur.pos is not None else None,
+                "previousClicks": int(round(prev.clicks)), "previousImpressions": int(round(prev.impressions)),
+                "previousPosition": round(prev.pos, 4) if prev.pos is not None else None,
+            })
+        variants.sort(key=lambda item: (-item["impressions"], -item["clicks"], -item["previousImpressions"], item["query"]))
+        families.append({
+            "id": family_id, "label": target["label"], "labelFa": target["labelFa"], "slug": target["slug"],
+            "clicks": int(round(aggregate.clicks)), "impressions": int(round(aggregate.impressions)),
+            "position": round(aggregate.pos, 4) if aggregate.pos is not None else None,
+            "previousClicks": int(round(previous_aggregate.clicks)),
+            "previousImpressions": int(round(previous_aggregate.impressions)),
+            "previousPosition": round(previous_aggregate.pos, 4) if previous_aggregate.pos is not None else None,
+            "variants": variants,
+        })
+
+    summary = {
+        "total": len(families), "window": f"{cs} to {ce}", "previousWindow": f"{ps} to {pe}",
+        "intent": "London and local-intent queries only", "families": families,
+    }
+    global LAST_MONEY_KEYWORD_SUMMARY
+    LAST_MONEY_KEYWORD_SUMMARY = summary
+    lines = [
+        "### 3c. Ten money-keyword families", "",
+        "All service/repairs/emergency/same-day and other commercial variants are aggregated into one specific family. "
+        "Average position is impressions-weighted; commercial queries are not double-counted in generic rows.", "",
+        "| Keyword family | Clicks | Impressions | Avg position | Pos. WoW | Top variants |",
+        "|---|---:|---:|---:|---:|---|",
+    ]
+    for family in families:
+        top_variants = ", ".join(esc(item["query"]) for item in family["variants"][:3]) or "-"
+        lines.append("| %s | %d | %d | %s | %s | %s |" % (
+            family["label"], family["clicks"], family["impressions"], pos_s(family["position"]),
+            d_pos(family["position"], family["previousPosition"]), top_variants))
+    lines.extend(["", "_London and local-intent queries only. The complete variant-level metrics are saved in "
+                  "`backup-out/gsc-money-keywords.json` for the bilingual 48-hour report._", ""])
+    return lines, summary
+
+
 # ------------------------------------------------------------------ report
 def build_report(gsc, today: date, site: str, watch=None) -> str:
     end = window_end(gsc, today)
@@ -492,6 +562,11 @@ def build_report(gsc, today: date, site: str, watch=None) -> str:
         L.append("_No queries ranked between positions %.1f and %.1f in this window._" % (STRIKE_LO, STRIKE_HI))
     L.append("")
 
+    money_lines, money_summary = money_keyword_section(q_c, q_p, cs, ce, ps, pe)
+    L.extend(money_lines)
+    top_three = sum(f["position"] is not None and f["position"] <= 3.0 for f in money_summary["families"])
+    head.append("Money-keyword families currently in the Top 3: %d of 10 (measured, not guaranteed)." % top_three)
+
     # ---- 4. indexing watchlist (URL Inspection only)
     if watch is not None:
         try:
@@ -583,10 +658,23 @@ class FakeGsc:
 
 
 def selftest() -> int:
+    mkm.selftest()
     end = date(2026, 10, 17)
     md = build_report(FakeGsc(end), date(2026, 10, 20), "https://www.colddirect.co.uk/")
     assert "## 1. Sitewide overview" in md and "## 2. Homepage" in md and "### 3a." in md and "### 3b." in md and "## Headlines" in md
     assert "2026-10-11 to 2026-10-17" in md and "2026-10-04 to 2026-10-10" in md, "windows"
+    assert "### 3c. Ten money-keyword families" in md, "missing ten-family keyword tracking table"
+    for label in ("Cold room repair London", "Commercial fridge repair London", "Commercial freezer repair London",
+                  "Fridge repair London", "Freezer repair London", "Cellar repair London",
+                  "Cellar cooler repair London", "Air conditioning repair London", "Catering repair London",
+                  "Commercial appliances repair London"):
+        assert label in md, label
+    money_table = md.split("### 3c. Ten money-keyword families")[1].split("## 4.")[0]
+    assert "| Commercial fridge repair London | 6 | 250 | 7.0 |" in money_table, money_table
+    assert "| Fridge repair London | 4 | 220 | 8.0 |" in money_table, money_table
+    assert "London and local-intent queries only" in money_table
+    assert LAST_MONEY_KEYWORD_SUMMARY["total"] == 10
+    assert LAST_MONEY_KEYWORD_SUMMARY["families"][1]["clicks"] == 6
     assert "| Total clicks | 40 | 30 | ▲ +10 (+33%) |" in md, md[:900]
     assert "| Average position | 9.4 | 10.4 | ▲ -1.0 |" in md
     # variants merged: fridge-repair-london = 5+1 clicks, 300+50 impressions
@@ -699,11 +787,15 @@ def main() -> int:
         return 1
     md = build_report(Gsc(session, site), datetime.now(timezone.utc).date(), site, Indexer(session, site))
     emit(md)
+    import json
+    output_dir = ROOT / "backup-out"
+    output_dir.mkdir(exist_ok=True)
     if LAST_WATCHLIST_SUMMARY:
-        import json
-        output = ROOT / "backup-out" / "gsc-watchlist.json"
-        output.parent.mkdir(exist_ok=True)
-        output.write_text(json.dumps(LAST_WATCHLIST_SUMMARY, ensure_ascii=False, indent=2), encoding="utf-8")
+        (output_dir / "gsc-watchlist.json").write_text(
+            json.dumps(LAST_WATCHLIST_SUMMARY, ensure_ascii=False, indent=2), encoding="utf-8")
+    if LAST_MONEY_KEYWORD_SUMMARY:
+        (output_dir / "gsc-money-keywords.json").write_text(
+            json.dumps(LAST_MONEY_KEYWORD_SUMMARY, ensure_ascii=False, indent=2), encoding="utf-8")
     return 0
 
 

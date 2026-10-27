@@ -51,6 +51,25 @@ Last verified: 2026-10-27. Machine-readable state: `docs/ai-memory/agent-state.j
 - Mandatory written/spoken phone and review CTA finalized in `a4e3623b7989fda0a0ea7b9c17c8b5bc57905be3`; Plesk run `40562705351` succeeded and both hosts served `20261027h`. The TTS summary cap is now 72 words, with the technical budget reduced dynamically so the CTA is never truncated. Live browser verification produced one diagnosis, one real Gemini TTS attempt returning `429 RESOURCE_EXHAUSTED`, and one 68-word native utterance containing technical advice, both formatted phone numbers, and the exact green Like/5-Star Review close. The written Head Engineer bubble ended with the display CTA and both `tel:` links. LISTEN repeated the identical utterance with the TTS count unchanged. This verifies native fallback, not generated-MP3 success or physical-device audible playback.
 - فارسی: فراخوان تلفن و نظر پنج‌ستاره در پاسخ نوشتاری و گفتاری در کامیت `a4e3623b7989fda0a0ea7b9c17c8b5bc57905be3` نهایی شد؛ اجرای Plesk با شناسه `40562705351` موفق بود و هر دو میزبان نسخه `20261027h` را ارائه کردند. سقف خلاصه گفتاری ۷۲ کلمه است و بودجه متن فنی به‌صورت پویا کم می‌شود تا فراخوان پایانی حذف نشود. آزمون مرورگر زنده یک تشخیص، یک تلاش واقعی Gemini TTS با خطای `429 RESOURCE_EXHAUSTED` و یک گفتار بومی ۶۸ کلمه‌ای شامل راهنمای فنی، هر دو شماره و درخواست Like/نظر پنج‌ستاره را تأیید کرد. حباب نوشتاری نیز با فراخوان و هر دو پیوند تلفن پایان یافت و LISTEN همان متن را بدون درخواست TTS تازه تکرار کرد. این نتیجه پخش بومی را تأیید می‌کند، نه تولید موفق MP3 یا پخش شنیداری روی دستگاه واقعی.
 
+## Permanent Top-3 Ranking Target Matrix
+
+Top 3 / Page 1 is the business target, never a guaranteed outcome. Measure Google Search Console results and do not churn healthy titles/H1s on a schedule. The machine-readable mapping and query classifier live in `tools/money_target_matrix.py`; curated body copy remains in `tools/money_data.py`.
+
+1. `cold room repair london` → `/cold-room-repair-london/`
+2. `commercial fridge repair london` → `/commercial-fridge-repair-london/`
+3. `commercial freezer repair london` → `/commercial-freezer-repair-london/`
+4. `fridge repair london` → `/fridge-repair-london/`
+5. `freezer repair london` → `/freezer-repair-london/`
+6. `cellar repair london` → `/cellar-cooler-repair-london/`
+7. `cellar cooler repair london` → `/cellar-cooler-repair-london/` (same canonical hub as cellar repair)
+8. `air conditioning repair london` → `/air-conditioning-repair-london/`
+9. `catering repair london` → `/catering-repair-london/`
+10. `commercial appliances repair london` → `/commercial-appliances-repair-london/` (also owns commercial catering equipment intent; never use the canonicalised commercial-catering duplicate)
+
+Permanent semantic modifiers: repair/repairs, service/services, maintenance, appropriate installation intent, breakdown/fix/diagnostics/call-out, emergency/24-7/same-day/urgent/fast-response, near-me/local, engineer/engineers/technician/specialist/company/commercial/industrial. Use natural word orders and useful technical copy, never mechanical permutation lists or doorway pages.
+
+The existing 48-hour GSC workflow reports clicks, impressions, and impressions-weighted average position for all ten families and their London/local variants. Specific-first classification prevents commercial fridge/freezer and commercial catering/appliance queries from also inflating generic rows. Full variant data goes to `backup-out/gsc-money-keywords.json`; `tools/report_48h.py` includes bilingual family metrics in the mobile report.
+
 ## Regression checks
 
 Run the applicable checks before committing and after deployment:

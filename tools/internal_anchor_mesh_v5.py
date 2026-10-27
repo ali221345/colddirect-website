@@ -40,7 +40,7 @@ ANCHORS = {
         "24/7 commercial fridge repairs & services London",
     ],
     "fridge-repair-london": [
-        "cheap fridge repair & servicing London",
+        "London fridge repair",
         "same day fridge repairs London",
         "emergency fridge repair service London",
         "24/7 fridge repair near me London",
@@ -55,7 +55,7 @@ ANCHORS = {
         "same day freezer repairs London",
         "emergency freezer repair London",
         "cheap freezer repair London",
-        "24/7 freezer service London",
+        "London freezer service",
     ],
     "cold-room-repair-london": [
         "emergency cold room repair service London",
@@ -73,7 +73,7 @@ ANCHORS = {
         "commercial catering repair services London",
         "24/7 commercial appliances repair London",
         "same day commercial catering repair London",
-        "emergency kitchen refrigeration repair London",
+        "commercial appliance engineers London",
     ],
     "air-conditioning-repair-london": [
         "air conditioning service & emergency repairs London",
@@ -85,7 +85,7 @@ ANCHORS = {
         "cellar cooler repair services London",
         "same day cellar cooler repair London",
         "emergency pub cellar cooling repair London",
-        "24/7 cellar repair London",
+        "beer cellar cooler service London",
     ],
 }
 
@@ -225,6 +225,10 @@ def selftest() -> None:
     assert "/fridge-repair-london/" in b and "London" in b
     assert "</a></li>" in b
     assert all(f'href="/{s}/")' in b.replace("'", '"') or f'href="/{s}/"' in b for s in md.HUB_ORDER)
+    assert "London fridge repair" in ANCHORS["fridge-repair-london"]
+    assert "London freezer service" in ANCHORS["freezer-repair-london"]
+    assert "beer cellar cooler service London" in ANCHORS["cellar-cooler-repair-london"]
+    assert "commercial appliance engineers London" in ANCHORS["commercial-appliances-repair-london"]
     print("internal_anchor_mesh_v5 selftest OK")
 
 

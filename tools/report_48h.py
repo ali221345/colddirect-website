@@ -56,6 +56,32 @@ def watchlist_lines(summary):
     return lines
 
 
+def money_keyword_lines(summary):
+    """Bilingual mobile metrics for the ten London money-keyword families."""
+    if not summary:
+        return [
+            "Money keyword families: no Search Console data in this run.",
+            "خانواده‌های کلیدواژه: در این اجرا داده‌ای از سرچ کنسول دریافت نشد.",
+        ]
+    lines = [f"Money keyword families ({summary.get('window', 'current complete 7-day window')}):"]
+    for family in summary.get("families", []):
+        position = family.get("position")
+        position_text = "-" if position is None else f"{position:.1f}"
+        lines.append(
+            f"{family.get('label', '?')}: {family.get('clicks', 0)} clicks, "
+            f"{family.get('impressions', 0)} impressions, avg position {position_text}"
+        )
+    lines.append("خانواده‌های ۱۰ کلیدواژه پول‌ساز (هفته کامل جاری):")
+    for family in summary.get("families", []):
+        position = family.get("position")
+        position_text = "-" if position is None else f"{position:.1f}"
+        lines.append(
+            f"{family.get('labelFa', family.get('label', '?'))}: {family.get('clicks', 0)} کلیک، "
+            f"{family.get('impressions', 0)} نمایش، میانگین رتبه {position_text}"
+        )
+    return lines
+
+
 def message(status, outcomes, now=None, watchlist=None):
     now = now or dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     lines = [f"ColdDirect 48h | {now}", "English: " + ("All requested checks passed." if status == "success" else "Attention required; inspect failed checks below.")]
@@ -67,6 +93,7 @@ def message(status, outcomes, now=None, watchlist=None):
         value = outcomes.get(key, "اجرا نشد")
         lines.append(f"{LABELS[key][1]}: {value}")
     lines.extend(watchlist_lines(watchlist))
+    lines.extend(money_keyword_lines((watchlist or {}).get("moneyKeywords")))
     lines.append("Rankings are measured, never guaranteed. | رتبه‌ها اندازه‌گیری می‌شوند و تضمین نیستند.")
     return "\n".join(lines)
 
@@ -85,13 +112,19 @@ def selftest():
                       "coverageState": "Submitted and indexed" if i < 9 else "Discovered - currently not indexed",
                       "prioritySix": i < 6} for i in range(13)]
     pending = {"total": 13, "passed": 9, "waiting": 4, "failed": 0, "complete": False,
-               "prioritySix": {"total": 6, "passed": 6}, "pages": pending_pages}
+               "prioritySix": {"total": 6, "passed": 6}, "pages": pending_pages,
+               "moneyKeywords": {"total": 10, "window": "2026-10-11 to 2026-10-17",
+                                 "families": [{"label": "Commercial fridge repair London", "labelFa": "تعمیر یخچال تجاری لندن",
+                                               "clicks": 6, "impressions": 250, "position": 7.0}]}}
     text = message("failure", {"backup": "success", "voice": "failure"}, "2026-10-26 00:00 UTC", pending)
     assert "Attention required" in text and "نیاز به بررسی" in text and "Voice API: failure" in text
     assert "All requested checks passed" not in text and "همه بررسی‌های درخواستی موفق" not in text
     assert "Indexing watchlist: 9/13 PASS" in text and "فهرست ایندکس: 9/13" in text
     assert "Six-page re-check: 6/6 PASS" in text and "بررسی مجدد شش صفحه: 6/6" in text
     assert "until 13/13 PASS" in text and "۱۳/۱۳ PASS" in text and text.count("[6-page/۶ صفحه]") == 6
+    assert "Money keyword families (2026-10-11 to 2026-10-17)" in text
+    assert "Commercial fridge repair London: 6 clicks, 250 impressions, avg position 7.0" in text
+    assert "تعمیر یخچال تجاری لندن: 6 کلیک، 250 نمایش، میانگین رتبه 7.0" in text
     complete = dict(pending, passed=13, waiting=0, complete=True,
                     pages=[dict(page, verdict="PASS", coverageState="Submitted and indexed") for page in pending_pages])
     done = message("success", {key: "success" for key in ORDER}, watchlist=complete)
@@ -121,6 +154,14 @@ if __name__ == "__main__":
         watchlist = json.loads(watchlist_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         watchlist = None
+    money_path = ROOT / "backup-out" / "gsc-money-keywords.json"
+    try:
+        money_keywords = json.loads(money_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        money_keywords = None
+    if money_keywords:
+        watchlist = dict(watchlist or {})
+        watchlist["moneyKeywords"] = money_keywords
     text = message(status, outcomes, watchlist=watchlist)
     out = ROOT / "backup-out" / "48h-report-fa-en.txt"
     out.parent.mkdir(exist_ok=True)

@@ -145,6 +145,22 @@ MONEY = {
     },
 }
 
+# Natural word-order and high-intent coverage. One concise visible paragraph per hub;
+# deliberately not a list of every mechanical permutation (which would read as keyword stuffing).
+SEMANTIC = {
+    "fridge-repair-london": "For customers searching London fridge repair or London fridge service, our commercial technicians provide local diagnostics, breakdown repairs and planned maintenance, with urgent same-day call-outs across London.",
+    "freezer-repair-london": "When you need emergency freezer repair London or a local freezer service, our commercial engineers diagnose and fix temperature failures quickly, with same-day call-outs and planned maintenance available across London.",
+    "commercial-fridge-repair-london": "Our London commercial fridge repair and service team handles urgent breakdown diagnostics for professional kitchens, with local technicians, same-day call-outs and planned maintenance for commercial sites across London.",
+    "commercial-freezer-repair-london": "For London commercial freezer repair, servicing or urgent breakdown diagnostics, our local technicians provide same-day emergency call-outs and planned maintenance for professional kitchens and food businesses.",
+    "catering-repair-london": "Our London catering repair and service engineers cover urgent refrigeration breakdowns, diagnostics and planned maintenance for professional caterers, with same-day emergency call-outs across London.",
+    "commercial-appliances-repair-london": "For commercial catering equipment repair London or commercial appliance engineers London, our technicians diagnose refrigeration and ice-machine faults, with emergency repairs, servicing and maintenance for professional kitchens.",
+    "cold-room-repair-london": "For same day cold room repairs London or a planned cold room service, our local engineers provide emergency breakdown diagnostics, repairs and maintenance for walk-in chillers and freezer rooms.",
+    "air-conditioning-repair-london": "Our London air conditioning repair and service engineers cover commercial breakdown diagnostics, urgent fixes and planned maintenance, with same-day emergency call-outs for offices, shops and server rooms.",
+    "cellar-cooler-repair-london": "For beer cellar cooler service London or urgent cellar repairs, our local engineers diagnose cooling faults and provide same-day emergency call-outs, repairs and planned maintenance for pubs, bars and restaurants.",
+}
+for _slug, _semantic in SEMANTIC.items():
+    MONEY[_slug]["semantic"] = _semantic
+
 HOME_AUDIO = {
     "slug": "",
     "file": "colddirect-home",
@@ -193,7 +209,15 @@ def selftest():
         assert len(d["offers"]) >= 3 and len(d["anchors"]) == 2
         for k in ("intro", "cost", "cover", "faq1", "faq2", "audio"):
             assert d[k].strip(), (slug, k)
+        assert "semantic" in d and d["semantic"].strip(), (slug, "missing semantic word-order copy")
         assert not re.search(r"domestic|household|home appliance", " ".join(str(v) for v in d.values()), re.I), slug
+    assert "London fridge repair" in MONEY["fridge-repair-london"]["semantic"]
+    assert "London fridge service" in MONEY["fridge-repair-london"]["semantic"]
+    assert "emergency freezer repair London" in MONEY["freezer-repair-london"]["semantic"]
+    assert "same day cold room repairs London" in MONEY["cold-room-repair-london"]["semantic"]
+    assert "beer cellar cooler service London" in MONEY["cellar-cooler-repair-london"]["semantic"]
+    assert "commercial catering equipment repair London" in MONEY["commercial-appliances-repair-london"]["semantic"]
+    assert "commercial appliance engineers London" in MONEY["commercial-appliances-repair-london"]["semantic"]
     assert sorted(HUB_ORDER) == sorted(MONEY)
     print("money_data selftest OK:", len(MONEY), "hubs; longest title", max(len(d["title"]) for d in MONEY.values()))
 
