@@ -721,7 +721,23 @@
     if (!splitSpeechText.length) return Promise.resolve();
     stopPlayback();
     var token = playToken;
-    return playSpeechFrom(0, token).catch(function () {
+    setStatus("active", "🔊 Replaying downloaded audio...");
+    var first = speechCache[0] && speechCache[0].data;
+    if (!first) return playSpeechFrom(0, token).catch(function () {
+      if (token === playToken) setStatus("error", "Audio is not available yet. Tap LISTEN to retry.");
+    });
+    // Start the cached first chunk synchronously inside LISTEN's click handler;
+    // later chunks already have their own cached data or prefetch promises.
+    isSpeaking = true;
+    setListenUi(true);
+    return playBytes(first.data, first.mime, token).then(function () {
+      if (token !== playToken) return;
+      if (splitSpeechText.length > 1) return playSpeechFrom(1, token);
+      isSpeaking = false;
+      setListenUi(false);
+      setStatus("", STATUS_IDLE);
+      highlightCta(true);
+    }).catch(function () {
       if (token !== playToken) return;
       isSpeaking = false;
       setListenUi(false);
