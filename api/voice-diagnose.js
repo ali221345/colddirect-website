@@ -72,8 +72,8 @@ async function diagnose(key, text, audio, mime) {
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
   // A single bounded request avoids retry storms while allowing real mobile audio
   // enough time to upload and transcribe within the function's 60-second limit.
-  var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.8-flash").trim();
-  var model = /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.8-flash";
+  var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash").trim();
+  var model = /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.6-flash";
   var out;
   try {
     out = await core.geminiJson(key, model, {

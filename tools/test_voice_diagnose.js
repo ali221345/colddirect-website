@@ -64,7 +64,7 @@ async function run() {
   delete process.env.GEMINI_VOICE_MODEL;
   let seenMime = "";
   core.geminiJson = async (key, model, body, timeout) => {
-    assert.strictEqual(model, "gemini-3.8-flash");
+    assert.strictEqual(model, "gemini-3.6-flash");
     assert.strictEqual(timeout, 45000);
     seenMime = body.contents[0].parts[1].inlineData.mimeType;
     return validModelResponse();
