@@ -26,6 +26,9 @@ After `🎤 SPEAK` the widget records with `MediaRecorder` and, on `STOP & SEND`
 
 ---
 
+### [2026-10-28] — GSC daily report (Search Console unavailable)
+- Cursor automation still has no Search Console MCP or `GSC_CREDENTIALS_JSON`. No 28-day totals invented. Property `https://www.colddirect.co.uk/` last reached for 7-day performance by Weekly Sync `40318782178` (26 Oct 11:56 UTC) and for sitemap/inspect by nightly run `40588680581` (27 Oct 21:49 UTC; 133 submitted / 0 indexed; live sitemap XML 131). Wrote `GSC-DAILY-REPORT.md` and `logs/gsc_daily_2026-10-28.md`. No HTML, title, or indexing changes.
+
 ### [2026-10-26d] — Fast text, then TTS (`?v=20261026d`) — live-checked
 - `/api/voice-diagnose` returns `transcript`, `reply`, and `language` without a WAV. The widget shows both bubbles, then calls `/api/voice-tts`. TTS user content is only the spoken answer (no style paragraph). Every answer ends with the Like and 5-Star Review line and `0203 952 4822 or 07983 759320`.
 - Live 2026-10-26: English text JSON in 2.97s, microphone WAV transcript exact in 3.82s, Persian JSON in 3.95s with the Persian CTA. TTS WAV (1.8MB) returned in 5.45s after the text. No slash and no "Read this exactly". Vercel `dpl_Dwq6LQjok4jWHYDdFT21cPDuaoXD` (`d9b39d5b`). Plesk homepage serves `?v=20261026d`. Title/H1/meta unchanged.
