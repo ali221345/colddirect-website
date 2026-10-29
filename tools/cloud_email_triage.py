@@ -390,6 +390,20 @@ def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> 
     return stats
 
 
+def process_outlook_if_available(account: str, ca: str, api: Composio, drafted: set[str]) -> dict:
+    try:
+        api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName"]}, ca)
+    except RuntimeError as exc:
+        if "No active connection" in str(exc) or "not connected" in str(exc).lower():
+            return {
+                "account": account, "cleanup": 0, "starred": 0, "drafts": 0,
+                "purged": {}, "errors": [], "skipped": True,
+                "note": "Outlook connection is not active; left to the Kimi scheduled task.",
+            }
+        raise
+    return process_outlook(account, ca, api, drafted)
+
+
 def imap_folder(name: str) -> str:
     return '"' + name.replace('\\', '\\\\').replace('"', '\\"') + '"'
 
@@ -549,7 +563,7 @@ def main() -> int:
             reports.append({"account": account, "errors": [str(exc)[:500]]})
     for account, ca in outlook.items():
         try:
-            reports.append(process_outlook(account, ca, api, drafted))
+            reports.append(process_outlook_if_available(account, ca, api, drafted))
             save_state(drafted)
         except Exception as exc:
             reports.append({"account": account, "errors": [str(exc)[:500]]})
@@ -564,9 +578,10 @@ def main() -> int:
         "cleanup": sum(r.get("cleanup", 0) for r in reports),
         "starred": sum(r.get("starred", 0) for r in reports),
         "drafts": sum(r.get("drafts", 0) for r in reports),
+        "skipped": sum(bool(r.get("skipped")) for r in reports),
         "errors": sum(bool(r.get("errors")) for r in reports),
     }
-    summary = f"🔔 گزارش ابری ایمیل ColdDirect\n🗑️ انتقال به Trash: {totals['cleanup']} | ⭐ مهم: {totals['starred']}\n✅ پیش‌نویس ارسال‌نشده: {totals['drafts']} | ⚠️ حساب با خطا: {totals['errors']}\nهیچ پاسخ مشتری بدون تأیید ارسال نشده است."
+    summary = f"🔔 گزارش ابری ایمیل ColdDirect\n🗑️ انتقال به Trash: {totals['cleanup']} | ⭐ مهم: {totals['starred']}\n✅ پیش‌نویس ارسال‌نشده: {totals['drafts']} | ⏭️ رد شده: {totals['skipped']} | ⚠️ حساب با خطا: {totals['errors']}\nهیچ پاسخ مشتری بدون تأیید ارسال نشده است."
     print(json.dumps({"generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(), "totals": totals, "accounts": reports}, ensure_ascii=False, indent=2))
     notify(summary)
     return 1 if totals["errors"] else 0

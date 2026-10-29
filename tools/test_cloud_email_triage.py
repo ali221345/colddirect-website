@@ -86,6 +86,15 @@ class CloudEmailTests(unittest.TestCase):
         self.assertEqual(update_call[1]["body"]["contentType"], "HTML")
         self.assertIn("Call out charge with Diagnose", update_call[1]["body"]["content"])
 
+    def test_unavailable_outlook_connection_is_skipped_without_failing(self):
+        class UnavailableAPI:
+            def execute(self, tool_slug, arguments, account):
+                raise RuntimeError("No active connection found for toolkit outlook")
+
+        stats = triage.process_outlook_if_available("coldcom@hotmail.co.uk", "outlook_test", UnavailableAPI(), set())
+        self.assertTrue(stats["skipped"])
+        self.assertEqual(stats["errors"], [])
+
     def test_config_requires_mcp_url(self):
         with patch.dict(os.environ, {
             "COMPOSIO_GMAIL_ACCOUNTS_JSON": json.dumps({email: email for email in triage.EXPECTED_GMAIL}),
