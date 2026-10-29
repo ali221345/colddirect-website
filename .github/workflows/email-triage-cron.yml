@@ -28,19 +28,22 @@ jobs:
           python-version: "3.12"
 
       - name: Select only 10:00, 12:00 or 15:00 in London
+        id: london-time
         if: github.event_name == 'schedule'
         run: |
           python - <<'PY'
+          import os
           from datetime import datetime
           from zoneinfo import ZoneInfo
           now = datetime.now(ZoneInfo("Europe/London"))
-          print(f"London scheduler time: {now.isoformat()}")
-          if now.hour not in {10, 12, 15}:
-              print("Not a requested London execution hour; skipping this UTC cron entry.")
-              raise SystemExit(0)
+          requested = now.hour in {10, 12, 15}
+          print(f"London scheduler time: {now.isoformat()}; requested={requested}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"requested={str(requested).lower()}\n")
           PY
 
       - name: Restore cloud draft deduplication state
+        if: steps.london-time.outputs.requested != 'false'
         uses: actions/cache/restore@v4
         with:
           path: .cloud-email-state
@@ -49,16 +52,20 @@ jobs:
             colddirect-email-state-
 
       - name: Validate embedded template and classifier
+        if: steps.london-time.outputs.requested != 'false'
         run: |
           mkdir -p .cloud-email-state
           python -m py_compile tools/cloud_email_triage.py
           python tools/cloud_email_triage.py --self-test
+          python -m unittest discover -s tools -p "test_cloud_email_triage.py" -v
 
       - name: Run cloud triage for all eight accounts
+        if: steps.london-time.outputs.requested != 'false'
         id: triage
         env:
           EMAIL_TRIAGE_STRICT: "true"
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
+          COMPOSIO_MCP_URL: ${{ secrets.COMPOSIO_MCP_URL }}
           COMPOSIO_GMAIL_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_GMAIL_ACCOUNTS_JSON }}
           COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
           COLDDIRECT_IMAP_HOST: ${{ secrets.COLDDIRECT_IMAP_HOST }}
@@ -73,14 +80,14 @@ jobs:
         run: python tools/cloud_email_triage.py
 
       - name: Save cloud draft deduplication state
-        if: always()
+        if: always() && steps.london-time.outputs.requested != 'false'
         uses: actions/cache/save@v4
         with:
           path: .cloud-email-state
           key: colddirect-email-state-${{ github.run_id }}
 
       - name: Notify mobile if the cloud run fails
-        if: failure()
+        if: failure() && steps.london-time.outputs.requested != 'false'
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
         run: |

@@ -107,6 +107,8 @@ def validate_config(strict: bool = True) -> tuple[dict[str, str], dict[str, str]
             missing.append("COMPOSIO_OUTLOOK_ACCOUNTS_JSON must contain exactly the two Hotmail accounts")
         if not os.environ.get("COMPOSIO_API_KEY", "").strip():
             missing.append("COMPOSIO_API_KEY")
+        if not os.environ.get("COMPOSIO_MCP_URL", "").strip():
+            missing.append("COMPOSIO_MCP_URL")
         for name in ("COLDDIRECT_IMAP_HOST", "COLDDIRECT_IMAP_USER", "COLDDIRECT_IMAP_PASSWORD"):
             if not os.environ.get(name, "").strip():
                 missing.append(name)
@@ -166,26 +168,80 @@ def reply_subject(subject: str) -> str:
 class Composio:
     def __init__(self) -> None:
         self.key = os.environ.get("COMPOSIO_API_KEY", "").strip()
+        self.url = os.environ.get("COMPOSIO_MCP_URL", "").strip()
+        self.session = None
+        self.next_id = 1
+        self.rpc("initialize", {
+            "protocolVersion": "2025-03-26", "capabilities": {},
+            "clientInfo": {"name": "colddirect-cloud", "version": "1.0"},
+        })
+        self.notify("notifications/initialized", {})
 
-    def proxy(self, account_id: str, endpoint: str, method: str = "GET", body: dict | None = None) -> dict:
-        payload = {"connected_account_id": account_id, "endpoint": endpoint, "method": method}
-        if body is not None:
-            payload["body"] = body
-        req = urllib.request.Request(
-            COMPOSIO_URL, data=json.dumps(payload).encode("utf-8"), method="POST",
-            headers={"Content-Type": "application/json", "x-api-key": self.key},
-        )
+    def headers(self) -> dict:
+        result = {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream",
+            "x-consumer-api-key": self.key,
+        }
+        if self.session:
+            result["Mcp-Session-Id"] = self.session
+        return result
+
+    @staticmethod
+    def parse_body(raw: bytes):
+        text = raw.decode("utf-8", errors="replace").strip()
+        if not text:
+            return None
+        if "data:" in text:
+            events = [json.loads(line[5:].strip()) for line in text.splitlines() if line.startswith("data:") and line[5:].strip() not in {"", "[DONE]"}]
+            return events[-1] if events else None
+        return json.loads(text)
+
+    def rpc(self, method: str, params: dict):
+        request_id = self.next_id
+        self.next_id += 1
+        body = {"jsonrpc": "2.0", "id": request_id, "method": method, "params": params}
+        req = urllib.request.Request(self.url, data=json.dumps(body).encode("utf-8"), headers=self.headers(), method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=45) as response:
-                result = json.loads(response.read().decode("utf-8") or "{}")
+            with urllib.request.urlopen(req, timeout=120) as response:
+                session = response.headers.get("Mcp-Session-Id")
+                if session:
+                    self.session = session
+                result = self.parse_body(response.read())
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")[:500]
-            raise RuntimeError(f"Composio HTTP {exc.code}: {detail}") from exc
-        if isinstance(result, dict) and result.get("error"):
+            raise RuntimeError(f"Composio MCP HTTP {exc.code}: {detail}") from exc
+        if result and result.get("error"):
             raise RuntimeError(str(result["error"])[:500])
-        data = result.get("data", result) if isinstance(result, dict) else result
-        if isinstance(data, dict) and "data" in data and ("status" in data or "headers" in data):
-            data = data["data"]
+        return result.get("result") if result else None
+
+    def notify(self, method: str, params: dict) -> None:
+        body = {"jsonrpc": "2.0", "method": method, "params": params}
+        req = urllib.request.Request(self.url, data=json.dumps(body).encode("utf-8"), headers=self.headers(), method="POST")
+        with urllib.request.urlopen(req, timeout=45) as response:
+            response.read()
+
+    def execute(self, tool_slug: str, arguments: dict, account: str) -> dict:
+        result = self.rpc("tools/call", {
+            "name": "COMPOSIO_MULTI_EXECUTE_TOOL",
+            "arguments": {
+                "tools": [{"tool_slug": tool_slug, "arguments": arguments, "account": account}],
+                "sync_response_to_workbench": False,
+                "current_step": "CLOUD_EMAIL_TRIAGE",
+                "session_id": "cloud",
+            },
+        }) or {}
+        if result.get("isError"):
+            raise RuntimeError(str(result.get("content") or "Composio tool error")[:500])
+        text = next((part.get("text") for part in result.get("content") or [] if part.get("type") == "text"), "")
+        payload = json.loads(text or "{}")
+        if payload.get("error") or not payload.get("successful", False):
+            raise RuntimeError(str(payload.get("error") or payload)[:500])
+        results = (payload.get("data") or {}).get("results") or []
+        response = (results[0] or {}).get("response") or {}
+        if not response.get("successful", False):
+            raise RuntimeError(str(response.get("error") or response)[:500])
+        data = response.get("data")
         return data if isinstance(data, dict) else {}
 
 
@@ -203,70 +259,93 @@ def gmail_text(payload: dict) -> str:
 
 def process_gmail(account: str, ca: str, api: Composio, drafted: set[str]) -> dict:
     stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "purged": {}, "errors": []}
-    query = urllib.parse.urlencode({"q": "is:unread in:inbox newer_than:7d", "maxResults": 100})
-    listing = api.proxy(ca, "/gmail/v1/users/me/messages?" + query)
-    for item in listing.get("messages") or []:
-        mid = item.get("id")
+    messages = []
+    token = ""
+    while True:
+        arguments = {
+            "user_id": "me", "query": "is:unread in:inbox newer_than:7d",
+            "max_results": 100, "include_payload": False, "verbose": False,
+        }
+        if token:
+            arguments["page_token"] = token
+        listing = api.execute("GMAIL_FETCH_EMAILS", arguments, ca)
+        messages.extend(listing.get("messages") or [])
+        token = listing.get("nextPageToken") or ""
+        if not token:
+            break
+    for item in messages:
+        mid = item.get("messageId") or item.get("id")
         if not mid:
             continue
-        message = api.proxy(ca, f"/gmail/v1/users/me/messages/{urllib.parse.quote(mid, safe='')}?format=full")
-        payload = message.get("payload") or {}
-        headers = {str(h.get("name", "")).lower(): str(h.get("value", "")) for h in payload.get("headers") or []}
-        sender = headers.get("reply-to") or headers.get("from") or ""
-        subject = headers.get("subject") or ""
-        decision = classify(sender, subject, gmail_text(payload) or message.get("snippet") or "", "STARRED" in (message.get("labelIds") or []))
+        preview = item.get("preview") or {}
+        sender = item.get("sender") or preview.get("sender") or ""
+        subject = item.get("subject") or preview.get("subject") or ""
+        labels = item.get("labelIds") or []
+        decision = classify(sender, subject, preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels)
         source_id = f"gmail:{account}:{mid}"
         if decision["cleanup"]:
-            api.proxy(ca, f"/gmail/v1/users/me/messages/{urllib.parse.quote(mid, safe='')}/modify", "POST", {"addLabelIds": ["TRASH"], "removeLabelIds": ["INBOX", "UNREAD"]})
+            api.execute("GMAIL_BATCH_MODIFY_MESSAGES", {
+                "userId": "me", "messageIds": [mid],
+                "addLabelIds": ["TRASH"], "removeLabelIds": ["INBOX", "UNREAD"],
+            }, ca)
             stats["cleanup"] += 1
             continue
         if decision["important"]:
-            api.proxy(ca, f"/gmail/v1/users/me/messages/{urllib.parse.quote(mid, safe='')}/modify", "POST", {"addLabelIds": ["STARRED"]})
+            api.execute("GMAIL_BATCH_MODIFY_MESSAGES", {"userId": "me", "messageIds": [mid], "addLabelIds": ["STARRED"]}, ca)
             stats["starred"] += 1
         if decision["needs_reply"] and source_id not in drafted:
-            mime = EmailMessage()
-            mime["To"] = decision["recipient"]
-            mime["Subject"] = reply_subject(subject)
-            mime["X-ColdDirect-Source-ID"] = source_id
-            if headers.get("message-id"):
-                mime["In-Reply-To"] = headers["message-id"]
-                mime["References"] = headers["message-id"]
-            mime.set_content("Please contact the ColdDirect Head Engineer on 07983 759320 or 0203 952 4822.")
-            mime.add_alternative(render_draft(decision["customer_name"], decision["equipment_type"]), subtype="html")
-            raw = base64.urlsafe_b64encode(mime.as_bytes()).decode("ascii").rstrip("=")
-            result = api.proxy(ca, "/gmail/v1/users/me/drafts", "POST", {"message": {"raw": raw, "threadId": message.get("threadId")}})
-            draft_id = (result.get("message") or result).get("id") or result.get("id")
+            message = api.execute("GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID", {"message_id": mid, "user_id": "me", "format": "full"}, ca)
+            headers = {str(h.get("name", "")).lower(): str(h.get("value", "")) for h in (message.get("payload") or {}).get("headers") or []}
+            sender = headers.get("reply-to") or headers.get("from") or message.get("sender") or sender
+            decision = classify(sender, subject, message.get("messageText") or preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels)
+            if not decision["needs_reply"]:
+                continue
+            result = api.execute("GMAIL_CREATE_EMAIL_DRAFT", {
+                "user_id": "me", "recipient_email": decision["recipient"],
+                "subject": reply_subject(subject), "thread_id": message.get("threadId") or item.get("threadId"),
+                "body": render_draft(decision["customer_name"], decision["equipment_type"]),
+                "is_html": True, "include_signature": False,
+            }, ca)
+            draft_id = result.get("id") or (result.get("draft") or {}).get("id")
             if not draft_id:
                 raise RuntimeError(f"Gmail draft returned no ID for {account}")
             drafted.add(source_id)
             stats["drafts"] += 1
-    for label, query_text in (("TRASH", "in:trash"), ("SPAM", "in:spam")):
+    for label in ("TRASH", "SPAM"):
         deleted = 0
         for _ in range(20):
-            q = urllib.parse.urlencode({"q": query_text, "maxResults": 500, "includeSpamTrash": "true"})
-            ids = [m["id"] for m in (api.proxy(ca, "/gmail/v1/users/me/messages?" + q).get("messages") or []) if m.get("id")]
+            listing = api.execute("GMAIL_FETCH_EMAILS", {
+                "user_id": "me", "label_ids": [label], "include_spam_trash": True,
+                "ids_only": True, "verbose": False, "max_results": 500,
+            }, ca)
+            ids = [m.get("messageId") or m.get("id") for m in listing.get("messages") or []]
+            ids = [mid for mid in ids if mid]
             if not ids:
                 break
-            api.proxy(ca, "/gmail/v1/users/me/messages/batchDelete", "POST", {"ids": ids})
+            api.execute("GMAIL_BATCH_DELETE_MESSAGES", {"userId": "me", "messageIds": ids}, ca)
             deleted += len(ids)
         stats["purged"][label] = {"deleted": deleted, "empty_verified": not ids}
     return stats
 
 
-def graph_id(value: str) -> str:
-    return urllib.parse.quote(value, safe="")
-
-
 def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> dict:
     stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "purged": {}, "errors": []}
-    deleted_folder = api.proxy(ca, "/v1.0/me/mailFolders/deleteditems?$select=id")
     since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    params = urllib.parse.urlencode({
-        "$filter": f"isRead eq false and receivedDateTime ge {since}",
-        "$select": "id,subject,from,replyTo,receivedDateTime,bodyPreview,flag,internetMessageId",
-        "$top": 100,
-    })
-    messages = api.proxy(ca, "/v1.0/me/mailFolders/Inbox/messages?" + params).get("value") or []
+    messages = []
+    token = ""
+    while True:
+        arguments = {
+            "user_id": "me", "folder": "inbox", "top": 100,
+            "filter": f"isRead eq false and receivedDateTime ge {since}",
+            "select": ["id", "subject", "from", "replyTo", "receivedDateTime", "bodyPreview", "flag", "internetMessageId"],
+        }
+        if token:
+            arguments["page_token"] = token
+        listing = api.execute("OUTLOOK_LIST_MESSAGES", arguments, ca)
+        messages.extend(listing.get("messages") or listing.get("value") or [])
+        token = listing.get("next_page_token") or listing.get("nextPageToken") or ""
+        if not token:
+            break
     for message in messages:
         mid = message.get("id")
         if not mid:
@@ -280,31 +359,32 @@ def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> 
         decision = classify(sender, message.get("subject") or "", message.get("bodyPreview") or "", (message.get("flag") or {}).get("flagStatus") == "flagged")
         source_id = f"outlook:{account}:{mid}"
         if decision["cleanup"]:
-            api.proxy(ca, f"/v1.0/me/messages/{graph_id(mid)}/move", "POST", {"destinationId": deleted_folder["id"]})
+            api.execute("OUTLOOK_MOVE_MESSAGE", {"user_id": "me", "message_id": mid, "destination_id": "deleteditems"}, ca)
             stats["cleanup"] += 1
             continue
         if decision["important"]:
-            api.proxy(ca, f"/v1.0/me/messages/{graph_id(mid)}", "PATCH", {"flag": {"flagStatus": "flagged"}})
+            api.execute("OUTLOOK_UPDATE_EMAIL", {"user_id": "me", "message_id": mid, "flag": {"flagStatus": "flagged"}}, ca)
             stats["starred"] += 1
         if decision["needs_reply"] and source_id not in drafted:
-            draft = api.proxy(ca, f"/v1.0/me/messages/{graph_id(mid)}/createReply", "POST", {})
+            draft = api.execute("OUTLOOK_CREATE_DRAFT_REPLY", {"user_id": "me", "message_id": mid}, ca)
             draft_id = draft.get("id") or (draft.get("message") or {}).get("id")
             if not draft_id:
                 raise RuntimeError(f"Outlook createReply returned no draft ID for {account}")
-            api.proxy(ca, f"/v1.0/me/messages/{graph_id(draft_id)}", "PATCH", {
-                "body": {"contentType": "html", "content": render_draft(decision["customer_name"], decision["equipment_type"])},
-                "internetMessageHeaders": [{"name": "X-ColdDirect-Source-ID", "value": source_id}],
-            })
+            api.execute("OUTLOOK_UPDATE_EMAIL", {
+                "user_id": "me", "message_id": draft_id,
+                "body": {"contentType": "HTML", "content": render_draft(decision["customer_name"], decision["equipment_type"])},
+            }, ca)
             drafted.add(source_id)
             stats["drafts"] += 1
     for folder in ("deleteditems", "junkemail"):
         deleted = 0
         for _ in range(20):
-            ids = [m["id"] for m in (api.proxy(ca, f"/v1.0/me/mailFolders/{folder}/messages?$select=id&$top=100").get("value") or []) if m.get("id")]
+            listing = api.execute("OUTLOOK_LIST_MESSAGES", {"user_id": "me", "folder": folder, "top": 100, "select": ["id"]}, ca)
+            ids = [m.get("id") for m in listing.get("messages") or listing.get("value") or [] if m.get("id")]
             if not ids:
                 break
             for mid in ids:
-                api.proxy(ca, f"/v1.0/me/messages/{graph_id(mid)}/permanentDelete", "POST", {})
+                api.execute("OUTLOOK_PERMANENT_DELETE_MESSAGE", {"user_id": "me", "message_id": mid, "mail_folder_id": folder}, ca)
                 deleted += 1
         stats["purged"][folder] = {"deleted": deleted, "empty_verified": not ids}
     return stats
