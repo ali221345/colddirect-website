@@ -86,6 +86,80 @@ class CloudEmailTests(unittest.TestCase):
         self.assertEqual(update_call[1]["body"]["contentType"], "HTML")
         self.assertIn("Call out charge with Diagnose", update_call[1]["body"]["content"])
 
+    def test_personal_outlook_draft_uses_plain_text(self):
+        api = FakeAPI([
+            ("OUTLOOK_LIST_MESSAGES", {"messages": [{
+                "id": "p1", "subject": "Family visit", "bodyPreview": "Hi Ali, could you confirm the date?",
+                "from": {"emailAddress": {"name": "Sarah", "address": "sarah@example.com"}},
+                "replyTo": [], "flag": {"flagStatus": "notFlagged"},
+            }]}),
+            ("OUTLOOK_UPDATE_EMAIL", {"id": "p1"}),
+            ("OUTLOOK_CREATE_DRAFT_REPLY", {"id": "personal-draft"}),
+            ("OUTLOOK_UPDATE_EMAIL", {"id": "personal-draft"}),
+            ("OUTLOOK_LIST_MESSAGES", {"messages": []}),
+            ("OUTLOOK_LIST_MESSAGES", {"messages": []}),
+        ])
+        stats = triage.process_outlook("samsamry@hotmail.com", "outlook_test", api, set())
+        self.assertEqual(stats["personal_drafts"], 1)
+        update_call = api.calls[3]
+        self.assertEqual(update_call[1]["body"]["contentType"], "Text")
+        self.assertIn("Ali Khorani", update_call[1]["body"]["content"])
+        self.assertNotIn("ColdDirect", update_call[1]["body"]["content"])
+
+    def test_personal_reply_is_plain_text_without_business_identity(self):
+        decision = triage.classify(
+            "Sarah <sarah@example.com>", "Dinner on Friday",
+            "Hi Ali, could you confirm whether you are available?",
+            account="khoranialihossein@gmail.com",
+        )
+        self.assertTrue(decision["needs_reply"])
+        self.assertEqual(decision["reply_kind"], "personal")
+        body = triage.render_personal_draft(decision["customer_name"], "Dinner on Friday")
+        self.assertIn("Ali Khorani", body)
+        self.assertNotIn("<html", body.lower())
+        for forbidden in ("ColdDirect", "Head Engineer", "Felixstowe", "07983 759320", "0203 952 4822"):
+            self.assertNotIn(forbidden.lower(), body.lower())
+
+    def test_refrigeration_inquiry_on_personal_account_remains_business(self):
+        decision = triage.classify(
+            "Nicole <nicole@example.co.uk>", "Walk-in fridge repair",
+            "Please help in London SW6 5HP.", account="khoranialihossein@gmail.com",
+        )
+        self.assertEqual(decision["reply_kind"], "business")
+
+    def test_non_customer_mail_on_business_account_is_not_personal_reply(self):
+        decision = triage.classify(
+            "Supplier <person@example.com>", "Account documents",
+            "Could you confirm receipt?", account="info@colddirect.co.uk",
+        )
+        self.assertFalse(decision["needs_reply"])
+        self.assertEqual(decision["reply_kind"], "")
+
+    def test_personal_gmail_draft_uses_plain_text(self):
+        api = FakeAPI([
+            ("GMAIL_FETCH_EMAILS", {"messages": [{
+                "messageId": "p1", "threadId": "pt1", "sender": "Sarah <sarah@example.com>",
+                "subject": "Dinner on Friday", "labelIds": [],
+                "preview": {"body": "Hi Ali, could you confirm whether you are available?"},
+            }]}),
+            ("GMAIL_BATCH_MODIFY_MESSAGES", {"success": True}),
+            ("GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID", {
+                "threadId": "pt1", "messageText": "Hi Ali, could you confirm whether you are available?",
+                "payload": {"headers": [{"name": "From", "value": "Sarah <sarah@example.com>"}]},
+            }),
+            ("GMAIL_CREATE_EMAIL_DRAFT", {"id": "personal-draft"}),
+            ("GMAIL_FETCH_EMAILS", {"messages": []}),
+            ("GMAIL_FETCH_EMAILS", {"messages": []}),
+        ])
+        stats = triage.process_gmail("khoranialihossein@gmail.com", "gmail_personal", api, set())
+        self.assertEqual(stats["drafts"], 1)
+        self.assertEqual(stats["personal_drafts"], 1)
+        draft_call = next(call for call in api.calls if call[0] == "GMAIL_CREATE_EMAIL_DRAFT")
+        self.assertFalse(draft_call[1]["is_html"])
+        self.assertIn("Ali Khorani", draft_call[1]["body"])
+        self.assertNotIn("ColdDirect", draft_call[1]["body"])
+        self.assertEqual(stats["draft_notifications"][0]["body"], draft_call[1]["body"])
+
     def test_unavailable_outlook_connection_is_skipped_without_failing(self):
         class UnavailableAPI:
             def execute(self, tool_slug, arguments, account):

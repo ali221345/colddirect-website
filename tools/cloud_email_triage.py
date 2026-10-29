@@ -77,6 +77,8 @@ EXPECTED_GMAIL = {
     "khoranialihossein@gmail.com", "alihosseinkhorani@gmail.com",
 }
 EXPECTED_OUTLOOK = {"coldcom@hotmail.co.uk", "samsamry@hotmail.com"}
+BUSINESS_ACCOUNTS = {"info@colddirect.co.uk", "colddirect22@gmail.com"}
+PERSONAL_ACCOUNTS = (EXPECTED_GMAIL | EXPECTED_OUTLOOK) - BUSINESS_ACCOUNTS
 STATE_PATH = Path(os.environ.get("CLOUD_EMAIL_STATE_FILE", ".cloud-email-state/state.json"))
 COMPOSIO_URL = "https://backend.composio.dev/api/v3.1/tools/execute/proxy"
 NO_REPLY_RE = re.compile(r"no[-_ ]?reply|donotreply|do-not-reply|mailer-daemon|postmaster|businessprofile|updates-mail\.gumtree\.com", re.I)
@@ -86,6 +88,7 @@ PHONE_RE = re.compile(r"(?:\+44\s?\d{4}\s?\d{6}|0\d{3}\s?\d{3}\s?\d{4})")
 MARKETING_RE = re.compile(r"unsubscribe|newsletter|cold\s*seo|backlink|guest\s*post|marketing\s*agency|special\s*offer|promotion|social\s*media|nextdoor|daily\s*digest", re.I)
 IMPORTANT_RE = re.compile(r"invoice|receipt|github|vercel|search\s*console|security|sign[- ]?in|server|domain|tax|payment|supplier", re.I)
 INQUIRY_RE = re.compile(r"repair|fault|broken|not\s*working|issue|help|quote|booking|service|attend|emergency", re.I)
+PERSONAL_REPLY_RE = re.compile(r"dear\s+ali|hi\s+ali|hello\s+ali|could\s+you|can\s+you|please\s+(?:reply|confirm|send|review|let|call|contact)|let\s+me\s+know|\?", re.I)
 
 
 def env_json(name: str) -> dict[str, str]:
@@ -117,7 +120,7 @@ def validate_config(strict: bool = True) -> tuple[dict[str, str], dict[str, str]
     return gmail, outlook
 
 
-def classify(sender: str, subject: str, body: str, protected: bool = False) -> dict:
+def classify(sender: str, subject: str, body: str, protected: bool = False, account: str = "") -> dict:
     text = f"{sender}\n{subject}\n{body[:10000]}"
     recipient = ""
     reply_to = email.utils.parseaddr(sender)[1]
@@ -141,10 +144,14 @@ def classify(sender: str, subject: str, body: str, protected: bool = False) -> d
     postcode_match = POSTCODE_RE.search(text)
     phone_match = PHONE_RE.search(text)
     london = bool(postcode_match or re.search(r"\blondon\b", text, re.I))
-    needs_reply = bool(
-        not protected and recipient and equipment and london and INQUIRY_RE.search(text)
-        and not NO_REPLY_RE.search(sender) and not MARKETING_RE.search(text)
+    safe_human = bool(not protected and recipient and not NO_REPLY_RE.search(sender) and not MARKETING_RE.search(text))
+    business_reply = bool(safe_human and equipment and london and INQUIRY_RE.search(text))
+    business_context = account.lower() in BUSINESS_ACCOUNTS or bool(equipment)
+    personal_reply = bool(
+        safe_human and not business_reply and not business_context
+        and account.lower() in PERSONAL_ACCOUNTS and PERSONAL_REPLY_RE.search(text)
     )
+    needs_reply = business_reply or personal_reply
     important = bool(protected or needs_reply or IMPORTANT_RE.search(text))
     cleanup = bool(not important and MARKETING_RE.search(text))
     name = email.utils.parseaddr(sender)[0].strip() or "Customer"
@@ -152,7 +159,8 @@ def classify(sender: str, subject: str, body: str, protected: bool = False) -> d
         "recipient": recipient, "customer_name": name[:120], "equipment_type": equipment,
         "postcode": postcode_match.group(0) if postcode_match else "",
         "phone": phone_match.group(0) if phone_match else "",
-        "needs_reply": needs_reply, "important": important, "cleanup": cleanup,
+        "needs_reply": needs_reply, "reply_kind": "business" if business_reply else "personal" if personal_reply else "",
+        "important": important, "cleanup": cleanup,
     }
 
 
@@ -160,8 +168,30 @@ def render_draft(customer_name: str, equipment_type: str) -> str:
     return COLDDIRECT_HTML.replace("[Customer Name]", html.escape(customer_name)).replace("[Equipment Type]", html.escape(equipment_type))
 
 
-def reply_subject(subject: str) -> str:
-    subject = subject.strip() or "ColdDirect customer inquiry"
+def render_personal_draft(customer_name: str, subject: str) -> str:
+    del subject  # Personal acknowledgements intentionally do not reuse business wording or subject details.
+    name = re.sub(r"colddirect|head\s+engineer", "", customer_name, flags=re.I).strip() or "there"
+    return (
+        f"Dear {name},\n\n"
+        "Thank you for your email. I have received your message and will review it.\n\n"
+        "If any further information is needed, please let me know.\n\n"
+        "Best regards,\nAli Khorani"
+    )
+
+
+def render_reply(decision: dict, subject: str) -> tuple[str, bool]:
+    if decision["reply_kind"] == "personal":
+        return render_personal_draft(decision["customer_name"], subject), False
+    return render_draft(decision["customer_name"], decision["equipment_type"]), True
+
+
+def reply_subject(subject: str, reply_kind: str = "business") -> str:
+    subject = subject.strip()
+    if reply_kind == "personal":
+        subject = re.sub(r"colddirect|head\s+engineer", "", subject, flags=re.I)
+        subject = re.sub(r"\s{2,}", " ", subject).strip(" -–—:|") or "Your email"
+    elif not subject:
+        subject = "Customer inquiry"
     return subject if re.match(r"^re\s*:", subject, re.I) else "Re: " + subject
 
 
@@ -258,7 +288,7 @@ def gmail_text(payload: dict) -> str:
 
 
 def process_gmail(account: str, ca: str, api: Composio, drafted: set[str]) -> dict:
-    stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "purged": {}, "errors": []}
+    stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "personal_drafts": 0, "draft_notifications": [], "purged": {}, "errors": []}
     messages = []
     token = ""
     while True:
@@ -281,7 +311,7 @@ def process_gmail(account: str, ca: str, api: Composio, drafted: set[str]) -> di
         sender = item.get("sender") or preview.get("sender") or ""
         subject = item.get("subject") or preview.get("subject") or ""
         labels = item.get("labelIds") or []
-        decision = classify(sender, subject, preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels)
+        decision = classify(sender, subject, preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels, account)
         source_id = f"gmail:{account}:{mid}"
         if decision["cleanup"]:
             api.execute("GMAIL_BATCH_MODIFY_MESSAGES", {
@@ -297,20 +327,27 @@ def process_gmail(account: str, ca: str, api: Composio, drafted: set[str]) -> di
             message = api.execute("GMAIL_FETCH_MESSAGE_BY_MESSAGE_ID", {"message_id": mid, "user_id": "me", "format": "full"}, ca)
             headers = {str(h.get("name", "")).lower(): str(h.get("value", "")) for h in (message.get("payload") or {}).get("headers") or []}
             sender = headers.get("reply-to") or headers.get("from") or message.get("sender") or sender
-            decision = classify(sender, subject, message.get("messageText") or preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels)
+            decision = classify(sender, subject, message.get("messageText") or preview.get("body") or "", "STARRED" in labels or "IMPORTANT" in labels, account)
             if not decision["needs_reply"]:
                 continue
+            body, is_html = render_reply(decision, subject)
+            draft_subject = reply_subject(subject, decision["reply_kind"])
             result = api.execute("GMAIL_CREATE_EMAIL_DRAFT", {
                 "user_id": "me", "recipient_email": decision["recipient"],
-                "subject": reply_subject(subject), "thread_id": message.get("threadId") or item.get("threadId"),
-                "body": render_draft(decision["customer_name"], decision["equipment_type"]),
-                "is_html": True, "include_signature": False,
+                "subject": draft_subject, "thread_id": message.get("threadId") or item.get("threadId"),
+                "body": body, "is_html": is_html, "include_signature": False,
             }, ca)
             draft_id = result.get("id") or (result.get("draft") or {}).get("id")
             if not draft_id:
                 raise RuntimeError(f"Gmail draft returned no ID for {account}")
             drafted.add(source_id)
             stats["drafts"] += 1
+            if decision["reply_kind"] == "personal":
+                stats["personal_drafts"] += 1
+            stats["draft_notifications"].append({
+                "kind": decision["reply_kind"], "account": account, "draft_id": draft_id,
+                "recipient": decision["recipient"], "subject": draft_subject, "body": body,
+            })
     for label in ("TRASH", "SPAM"):
         deleted = 0
         for _ in range(20):
@@ -329,7 +366,7 @@ def process_gmail(account: str, ca: str, api: Composio, drafted: set[str]) -> di
 
 
 def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> dict:
-    stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "purged": {}, "errors": []}
+    stats = {"account": account, "cleanup": 0, "starred": 0, "drafts": 0, "personal_drafts": 0, "draft_notifications": [], "purged": {}, "errors": []}
     since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     messages = []
     token = ""
@@ -356,7 +393,8 @@ def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> 
         if reply_to and (reply_to[0].get("emailAddress") or {}).get("address"):
             rt = reply_to[0]["emailAddress"]
             sender = f"{rt.get('name', '')} <{rt.get('address', '')}>"
-        decision = classify(sender, message.get("subject") or "", message.get("bodyPreview") or "", (message.get("flag") or {}).get("flagStatus") == "flagged")
+        subject = message.get("subject") or ""
+        decision = classify(sender, subject, message.get("bodyPreview") or "", (message.get("flag") or {}).get("flagStatus") == "flagged", account)
         source_id = f"outlook:{account}:{mid}"
         if decision["cleanup"]:
             api.execute("OUTLOOK_MOVE_MESSAGE", {"user_id": "me", "message_id": mid, "destination_id": "deleteditems"}, ca)
@@ -370,12 +408,21 @@ def process_outlook(account: str, ca: str, api: Composio, drafted: set[str]) -> 
             draft_id = draft.get("id") or (draft.get("message") or {}).get("id")
             if not draft_id:
                 raise RuntimeError(f"Outlook createReply returned no draft ID for {account}")
+            body, is_html = render_reply(decision, subject)
+            draft_subject = reply_subject(subject, decision["reply_kind"])
             api.execute("OUTLOOK_UPDATE_EMAIL", {
                 "user_id": "me", "message_id": draft_id,
-                "body": {"contentType": "HTML", "content": render_draft(decision["customer_name"], decision["equipment_type"])},
+                "subject": draft_subject,
+                "body": {"contentType": "HTML" if is_html else "Text", "content": body},
             }, ca)
             drafted.add(source_id)
             stats["drafts"] += 1
+            if decision["reply_kind"] == "personal":
+                stats["personal_drafts"] += 1
+            stats["draft_notifications"].append({
+                "kind": decision["reply_kind"], "account": account, "draft_id": draft_id,
+                "recipient": decision["recipient"], "subject": draft_subject, "body": body,
+            })
     for folder in ("deleteditems", "junkemail"):
         deleted = 0
         for _ in range(20):
@@ -447,7 +494,7 @@ def process_corporate(drafted: set[str]) -> dict:
                         body += part.get_payload(decode=True).decode(part.get_content_charset() or "utf-8", errors="replace")[:10000]
             else:
                 body = message.get_payload(decode=True).decode(message.get_content_charset() or "utf-8", errors="replace")[:10000]
-            decision = classify(sender, subject, body, "\\Flagged" in flags)
+            decision = classify(sender, subject, body, "\\Flagged" in flags, account)
             source_id = f"imap:{account}:uid:{num.decode()}"
             if decision["cleanup"]:
                 status, _ = client.uid("copy", num, imap_folder(trash))
@@ -459,15 +506,16 @@ def process_corporate(drafted: set[str]) -> dict:
                 client.uid("store", num, "+FLAGS.SILENT", "(\\Flagged)")
                 stats["starred"] += 1
             if decision["needs_reply"] and source_id not in drafted:
+                body_html, _ = render_reply(decision, subject)
                 mime = EmailMessage()
                 mime["To"] = decision["recipient"]
-                mime["Subject"] = reply_subject(subject)
+                mime["Subject"] = reply_subject(subject, decision["reply_kind"])
                 mime["X-ColdDirect-Source-ID"] = source_id
                 if message.get("Message-ID"):
                     mime["In-Reply-To"] = message["Message-ID"]
                     mime["References"] = message["Message-ID"]
                 mime.set_content("Please contact the ColdDirect Head Engineer on 07983 759320 or 0203 952 4822.")
-                mime.add_alternative(render_draft(decision["customer_name"], decision["equipment_type"]), subtype="html")
+                mime.add_alternative(body_html, subtype="html")
                 status, _ = client.append(imap_folder(drafts_folder), "(\\Draft \\Seen)", None, mime.as_bytes())
                 if status != "OK":
                     raise RuntimeError("IMAP draft append failed")
@@ -538,7 +586,13 @@ def self_test() -> None:
     assert not classify("Vercel <no-reply@vercel.com>", "Deployment", "Build completed")["needs_reply"]
     rendered = render_draft(customer["customer_name"], customer["equipment_type"])
     assert "Dear Nicole," in rendered and "Walk-in Freezer" in rendered and "Call out charge with Diagnose" in rendered
-    print("Self-test passed: embedded template, conservative classification, and draft rendering are valid.")
+    personal = classify("Sarah <sarah@example.com>", "Family visit", "Hi Ali, could you confirm the date?", account="khoranialihossein@gmail.com")
+    personal_rendered, personal_is_html = render_reply(personal, "Family visit")
+    assert personal["reply_kind"] == "personal" and not personal_is_html
+    assert "Ali Khorani" in personal_rendered
+    assert not re.search(r"colddirect|head\s+engineer|felixstowe|07983|0203", personal_rendered, re.I)
+    assert not re.search(r"colddirect|head\s+engineer", reply_subject("ColdDirect personal query", "personal"), re.I)
+    print("Self-test passed: business/personal separation, embedded template, classifier, and draft rendering are valid.")
 
 
 def main() -> int:
@@ -581,12 +635,22 @@ def main() -> int:
         "cleanup": sum(r.get("cleanup", 0) for r in reports),
         "starred": sum(r.get("starred", 0) for r in reports),
         "drafts": sum(r.get("drafts", 0) for r in reports),
+        "personal_drafts": sum(r.get("personal_drafts", 0) for r in reports),
         "skipped": sum(bool(r.get("skipped")) for r in reports),
         "errors": sum(bool(r.get("errors")) for r in reports),
     }
-    summary = f"🔔 گزارش ابری ایمیل ColdDirect\n🗑️ انتقال به Trash: {totals['cleanup']} | ⭐ مهم: {totals['starred']}\n✅ پیش‌نویس ارسال‌نشده: {totals['drafts']} | ⏭️ رد شده: {totals['skipped']} | ⚠️ حساب با خطا: {totals['errors']}\nهیچ پاسخ مشتری بدون تأیید ارسال نشده است."
+    summary = f"🔔 گزارش ابری ایمیل ColdDirect\n🗑️ انتقال به Trash: {totals['cleanup']} | ⭐ مهم: {totals['starred']}\n✅ پیش‌نویس ارسال‌نشده: {totals['drafts']} (شخصی: {totals['personal_drafts']}) | ⏭️ رد شده: {totals['skipped']} | ⚠️ حساب با خطا: {totals['errors']}\nهیچ پاسخی بدون تأیید ارسال نشده است."
     print(json.dumps({"generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(), "totals": totals, "accounts": reports}, ensure_ascii=False, indent=2))
     notify(summary)
+    for report in reports:
+        for draft in report.get("draft_notifications") or []:
+            if draft.get("kind") == "personal":
+                notify(
+                    f"👤 پیش‌نویس شخصی در {draft['account']}\n"
+                    f"گیرنده: {draft['recipient']}\nموضوع: {draft['subject']}\n\n"
+                    f"متن پیش‌نویس:\n{draft['body']}\n\n"
+                    "برای تأیید ارسال بنویسید: «ارسال کن» یا «OK»."
+                )
     return 1 if totals["errors"] else 0
 
 
