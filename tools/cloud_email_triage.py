@@ -409,8 +409,11 @@ def imap_folder(name: str) -> str:
 
 
 def imap_exists(client: imaplib.IMAP4_SSL, folder: str) -> bool:
-    status, _ = client.select(imap_folder(folder), readonly=True)
-    return status == "OK"
+    try:
+        status, _ = client.select(imap_folder(folder), readonly=True)
+        return status == "OK"
+    except imaplib.IMAP4.error:
+        return False
 
 
 def process_corporate(drafted: set[str]) -> dict:

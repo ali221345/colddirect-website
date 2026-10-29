@@ -95,6 +95,13 @@ class CloudEmailTests(unittest.TestCase):
         self.assertTrue(stats["skipped"])
         self.assertEqual(stats["errors"], [])
 
+    def test_missing_imap_folder_returns_false_instead_of_raising(self):
+        class MissingFolderClient:
+            def select(self, folder, readonly=True):
+                raise triage.imaplib.IMAP4.error("BAD unable to open folder index")
+
+        self.assertFalse(triage.imap_exists(MissingFolderClient(), "Trash"))
+
     def test_config_requires_mcp_url(self):
         with patch.dict(os.environ, {
             "COMPOSIO_GMAIL_ACCOUNTS_JSON": json.dumps({email: email for email in triage.EXPECTED_GMAIL}),
