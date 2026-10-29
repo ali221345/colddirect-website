@@ -1,0 +1,102 @@
+name: ColdDirect cloud email triage
+
+on:
+  schedule:
+    # GMT: these are the requested London times.
+    - cron: "0 10,12,15 * * *"
+    # BST: the London-time guard below selects only this set in summer.
+    - cron: "0 9,11,14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: colddirect-cloud-email-triage
+  cancel-in-progress: false
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Select only 10:00, 12:00 or 15:00 in London
+        if: github.event_name == 'schedule'
+        run: |
+          python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          now = datetime.now(ZoneInfo("Europe/London"))
+          print(f"London scheduler time: {now.isoformat()}")
+          if now.hour not in {10, 12, 15}:
+              print("Not a requested London execution hour; skipping this UTC cron entry.")
+              raise SystemExit(0)
+          PY
+
+      - name: Restore cloud draft deduplication state
+        uses: actions/cache/restore@v4
+        with:
+          path: .cloud-email-state
+          key: colddirect-email-state-${{ github.run_id }}
+          restore-keys: |
+            colddirect-email-state-
+
+      - name: Validate embedded template and classifier
+        run: |
+          mkdir -p .cloud-email-state
+          python -m py_compile tools/cloud_email_triage.py
+          python tools/cloud_email_triage.py --self-test
+
+      - name: Run cloud triage for all eight accounts
+        id: triage
+        env:
+          EMAIL_TRIAGE_STRICT: "true"
+          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
+          COMPOSIO_GMAIL_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_GMAIL_ACCOUNTS_JSON }}
+          COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
+          COLDDIRECT_IMAP_HOST: ${{ secrets.COLDDIRECT_IMAP_HOST }}
+          COLDDIRECT_IMAP_PORT: ${{ secrets.COLDDIRECT_IMAP_PORT || '993' }}
+          COLDDIRECT_IMAP_USER: ${{ secrets.COLDDIRECT_IMAP_USER }}
+          COLDDIRECT_IMAP_PASSWORD: ${{ secrets.COLDDIRECT_IMAP_PASSWORD }}
+          COLDDIRECT_DRAFTS_FOLDER: ${{ secrets.COLDDIRECT_DRAFTS_FOLDER || 'Drafts' }}
+          COLDDIRECT_TRASH_FOLDERS: ${{ secrets.COLDDIRECT_TRASH_FOLDERS || 'Deleted Items,Trash' }}
+          COLDDIRECT_JUNK_FOLDERS: ${{ secrets.COLDDIRECT_JUNK_FOLDERS || 'Junk E-mail,Spam' }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
+          WHATSAPP_WEBHOOK_URL: ${{ secrets.WHATSAPP_WEBHOOK_URL }}
+        run: python tools/cloud_email_triage.py
+
+      - name: Save cloud draft deduplication state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cloud-email-state
+          key: colddirect-email-state-${{ github.run_id }}
+
+      - name: Notify mobile if the cloud run fails
+        if: failure()
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'colddirect-seo-khora-8492' }}
+        run: |
+          python - <<'PY'
+          import os, urllib.request
+          topic = os.environ.get("NTFY_TOPIC", "colddirect-seo-khora-8492")
+          text = "⚠️ اجرای ابری ایمیل ColdDirect ناموفق بود. تنظیمات و لاگ GitHub Actions را بررسی کنید."
+          req = urllib.request.Request(
+              "https://ntfy.sh/" + topic,
+              data=text.encode("utf-8"),
+              headers={"Title": "ColdDirect Cloud Email Error", "Priority": "high"},
+              method="POST",
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=20):
+                  pass
+          except Exception as exc:
+              print(f"Failure notification warning: {exc}")
+          PY
