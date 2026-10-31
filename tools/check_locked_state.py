@@ -18,6 +18,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 COOLDOWN_UNTIL = "2026-10-31"
 
+# Live-audited sitemap size on https://www.colddirect.co.uk (all <loc> URLs
+# verified 200 OK, self-canonical, zero redirect hops on 2026-10-31).
+SITEMAP_URL_COUNT = 131
+
 # (url path, repo file, markers that must still be in that file)
 PAGES = [
     ("/", "index.html", ("CD-HERO-KEYWORD-MATRIX", "CD-9-MONEY-KEYWORD-SILO-V47", "CD-HOMEPAGE-6-BLOG-HUB", "#business")),
@@ -53,6 +57,13 @@ PIPELINES = (
 
 def page_gaps(text: str, markers: tuple[str, ...]) -> list[str]:
     return [m for m in markers if m not in text]
+
+
+def sitemap_gaps(text: str) -> list[str]:
+    locs = len(re.findall(r"<loc>", text))
+    if locs != SITEMAP_URL_COUNT:
+        return ["sitemap.xml has %d <loc> URLs, want %d" % (locs, SITEMAP_URL_COUNT)]
+    return []
 
 
 def bare_slugs(web_config: str) -> list[str]:
@@ -106,6 +117,11 @@ def check(root: Path = ROOT) -> list[str]:
             problems.append("%s missing %s" % (url, ", ".join(gaps)))
     ht = root / ".htaccess"
     wc = root / "web.config"
+    sm = root / "sitemap.xml"
+    if not sm.is_file():
+        problems.append("missing sitemap.xml")
+    else:
+        problems.extend(sitemap_gaps(sm.read_text(encoding="utf-8", errors="replace")))
     if not ht.is_file() or not wc.is_file():
         problems.append("missing .htaccess or web.config")
     else:
@@ -122,6 +138,7 @@ def report(problems: list[str]) -> str:
         "LOCKED #1 money pages + homepage: markers present. SKIP title, H1 and meta description edits until %s." % COOLDOWN_UNTIL,
         "LOCKED #2 trailing-slash 301s (87e96a0, 5aad3d0): 102 bare-slug rules plus the legacy single-hop aliases. SKIP .htaccess and web.config redirect edits.",
         "LOCKED #3 pipelines: auto-seo.aspx V4.9, 24h nightly, 48h backup, live_production_audit.py. SKIP rebuilding them.",
+        "LOCKED #4 sitemap.xml: exactly %d <loc> URLs (live-audited 2026-10-31, all 200 OK + self-canonical + zero redirects). SKIP sitemap edits until %s." % (SITEMAP_URL_COUNT, COOLDOWN_UNTIL),
     ]
     if problems:
         lines.append("REGRESSION: %d locked artifact(s) missing. Repair these; do not rebuild the milestone from scratch." % len(problems))
@@ -134,6 +151,8 @@ def report(problems: list[str]) -> str:
 def selftest() -> None:
     assert page_gaps("CD-HERO-KEYWORD-MATRIX #business", ("CD-HERO-KEYWORD-MATRIX", "#business")) == []
     assert page_gaps("x", ("CD-HERO-KEYWORD-MATRIX",)) == ["CD-HERO-KEYWORD-MATRIX"]
+    assert sitemap_gaps("<loc>a</loc>" * SITEMAP_URL_COUNT) == []
+    assert any("want %d" % SITEMAP_URL_COUNT in g for g in sitemap_gaps("<loc>a</loc>" * (SITEMAP_URL_COUNT - 1)))
     good_wc = "\n".join(
         '<rule name="Bare slug to slash: slug-%02d" stopProcessing="true">\n<match url="^slug-%02d$" ignoreCase="true" />' % (i, i)
         for i in range(102)
@@ -147,7 +166,7 @@ def selftest() -> None:
     assert any("chain about" in g for g in redirect_gaps(chained, good_wc))
     short = good_wc.replace('slug-00', "slug-xx", 1)
     assert any("102 unique" in g or "missing" in g for g in redirect_gaps(good_ht, short))
-    print("check_locked_state selftest OK (5 checks)")
+    print("check_locked_state selftest OK (7 checks)")
 
 
 def main() -> int:
