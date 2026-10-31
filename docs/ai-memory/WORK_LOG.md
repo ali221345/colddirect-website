@@ -1509,6 +1509,13 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 - Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41153557248 | commit 57d3371
 - Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
 
+## 2026-10-31 01:19 UTC - Sitemap baseline rebased to 131 URLs (manual)
+- Live read-only audit: sitemap.xml = 131 <loc> URLs; 9 URLs added beyond the 122 baseline, all verified 200 OK + self-canonical + zero redirect hops on https://www.colddirect.co.uk
+- colddirect-public-html/sitemap.xml mirror synced byte-for-byte to 131 URLs
+- tools/check_locked_state.py LOCKED #4 now enforces 131 <loc> URLs on both sitemap.xml and its mirror; selftest extended to 7 checks; npm test + check_locked_state all green
+- New URLs: /air-conditioning-repair-north-london/, /blog/commercial-freezer-ice-buildup-causes/, /carpigiani-ice-cream-machine-repair-london/, /cold-room-installation-london/, /commercial-fridge-repair-brent/, /commercial-refrigeration-repair-harlesden/, /commercial-refrigeration-repair-willesden/, /freezer-repair-north-london/, /taylor-ice-cream-machine-repair-london/
+- Title/H1/meta/canonical/redirects untouched; HTML Updated: 0; commits 57d3371, 0e20c9ed on main
+
 ## 2026-10-31 01:24 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/41154946805 | commit 0e20c9e
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
