@@ -59,10 +59,10 @@ def page_gaps(text: str, markers: tuple[str, ...]) -> list[str]:
     return [m for m in markers if m not in text]
 
 
-def sitemap_gaps(text: str) -> list[str]:
+def sitemap_gaps(text: str, name: str = "sitemap.xml") -> list[str]:
     locs = len(re.findall(r"<loc>", text))
     if locs != SITEMAP_URL_COUNT:
-        return ["sitemap.xml has %d <loc> URLs, want %d" % (locs, SITEMAP_URL_COUNT)]
+        return ["%s has %d <loc> URLs, want %d" % (name, locs, SITEMAP_URL_COUNT)]
     return []
 
 
@@ -117,11 +117,12 @@ def check(root: Path = ROOT) -> list[str]:
             problems.append("%s missing %s" % (url, ", ".join(gaps)))
     ht = root / ".htaccess"
     wc = root / "web.config"
-    sm = root / "sitemap.xml"
-    if not sm.is_file():
-        problems.append("missing sitemap.xml")
-    else:
-        problems.extend(sitemap_gaps(sm.read_text(encoding="utf-8", errors="replace")))
+    for rel in ("sitemap.xml", "colddirect-public-html/sitemap.xml"):
+        sm = root / rel
+        if not sm.is_file():
+            problems.append("missing " + rel)
+        else:
+            problems.extend(sitemap_gaps(sm.read_text(encoding="utf-8", errors="replace"), rel))
     if not ht.is_file() or not wc.is_file():
         problems.append("missing .htaccess or web.config")
     else:
@@ -138,7 +139,7 @@ def report(problems: list[str]) -> str:
         "LOCKED #1 money pages + homepage: markers present. SKIP title, H1 and meta description edits until %s." % COOLDOWN_UNTIL,
         "LOCKED #2 trailing-slash 301s (87e96a0, 5aad3d0): 102 bare-slug rules plus the legacy single-hop aliases. SKIP .htaccess and web.config redirect edits.",
         "LOCKED #3 pipelines: auto-seo.aspx V4.9, 24h nightly, 48h backup, live_production_audit.py. SKIP rebuilding them.",
-        "LOCKED #4 sitemap.xml: exactly %d <loc> URLs (live-audited 2026-10-31, all 200 OK + self-canonical + zero redirects). SKIP sitemap edits until %s." % (SITEMAP_URL_COUNT, COOLDOWN_UNTIL),
+        "LOCKED #4 sitemap.xml and colddirect-public-html/sitemap.xml mirror: each exactly %d <loc> URLs (live-audited 2026-10-31, all 200 OK + self-canonical + zero redirects). SKIP sitemap edits until %s." % (SITEMAP_URL_COUNT, COOLDOWN_UNTIL),
     ]
     if problems:
         lines.append("REGRESSION: %d locked artifact(s) missing. Repair these; do not rebuild the milestone from scratch." % len(problems))
