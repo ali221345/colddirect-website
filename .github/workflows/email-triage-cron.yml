@@ -14,6 +14,10 @@ on:
         description: "Generate one-time Outlook OAuth links; do not modify any email"
         type: boolean
         default: false
+      alias_check:
+        description: "Read-only alias and last-20-recipient check; do not modify any email"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -67,12 +71,13 @@ jobs:
           python -m unittest discover -s tools -p "test_cloud_email_triage.py" -v
 
       - name: Inspect Outlook API connections without modifying email
-        if: inputs.connections_only == true || inputs.generate_outlook_links == true
+        if: inputs.connections_only == true || inputs.generate_outlook_links == true || inputs.alias_check == true
         env:
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
           COMPOSIO_MCP_URL: ${{ secrets.COMPOSIO_MCP_URL }}
           COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
           GENERATE_OUTLOOK_LINKS: ${{ inputs.generate_outlook_links }}
+          ALIAS_CHECK: ${{ inputs.alias_check }}
         run: |
           python - <<'PY'
           import json
@@ -85,6 +90,29 @@ jobs:
               for alias in ("coldcom-hotmail", "samsamry11-hotmail"):
                   result = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "add", "alias": alias}]}})
                   print("OUTLOOK_AUTH_SETUP", alias, json.dumps(result))
+          if os.environ.get("ALIAS_CHECK") == "true":
+              connection = "outlook_toom-model"
+              targets = ("coldcom@hotmail.co.uk", "samsamry11@hotmail.co.uk")
+              profile = api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName", "proxyAddresses"]}, connection)
+              proxy_addresses = {str(value).rsplit(":", 1)[-1].lower() for value in profile.get("proxyAddresses") or []}
+              listing = api.execute("OUTLOOK_LIST_MESSAGES", {"user_id": "me", "folder": "inbox", "top": 20, "select": ["id", "toRecipients", "ccRecipients", "receivedDateTime"]}, connection)
+              messages = listing.get("messages") or listing.get("value") or []
+              recipient_counts = {target: 0 for target in targets}
+              for message in messages:
+                  recipients = set()
+                  for field in ("toRecipients", "ccRecipients"):
+                      for recipient in message.get(field) or []:
+                          address = (recipient.get("emailAddress") or {}).get("address", "").lower()
+                          if address:
+                              recipients.add(address)
+                  for target in targets:
+                      if target in recipients:
+                          recipient_counts[target] += 1
+              print("OUTLOOK_ALIAS_CHECK", json.dumps({
+                  "messages_checked": len(messages),
+                  "primary_mail": profile.get("mail"),
+                  "targets": {target: {"in_proxy_addresses": target in proxy_addresses, "recipient_messages": recipient_counts[target]} for target in targets},
+              }))
           connections = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "list"}]}})
           print("OUTLOOK_CONNECTION_LIST", json.dumps(connections))
           for account, connection in sorted(env_json("COMPOSIO_OUTLOOK_ACCOUNTS_JSON").items()):
@@ -103,7 +131,7 @@ jobs:
           PY
 
       - name: Run cloud triage for all eight accounts
-        if: inputs.connections_only != true && inputs.generate_outlook_links != true && steps.london-time.outputs.requested != 'false'
+        if: inputs.connections_only != true && inputs.generate_outlook_links != true && inputs.alias_check != true && steps.london-time.outputs.requested != 'false'
         id: triage
         env:
           EMAIL_TRIAGE_STRICT: "true"
