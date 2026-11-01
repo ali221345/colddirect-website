@@ -119,10 +119,10 @@ async function diagnose(key, text, audio, mime) {
   if (audio)
     parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
   var configured = String(
-    process.env.GEMINI_VOICE_MODEL || "gemini-3.8-flash",
+    process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash",
   ).trim();
   var models = [
-    /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.8-flash",
+    /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-3.6-flash",
   ];
   var attempts = [];
   for (var i = 0; i < models.length; i++) {
@@ -138,7 +138,7 @@ async function diagnose(key, text, audio, mime) {
           generationConfig: {
             temperature: 0.1,
             maxOutputTokens: 1400,
-            thinkingConfig: { thinkingLevel: "low" },
+            thinkingConfig: { thinkingLevel: "minimal" },
             responseMimeType: "application/json",
           },
         },

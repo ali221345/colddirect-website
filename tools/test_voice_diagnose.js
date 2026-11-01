@@ -168,7 +168,7 @@ async function run() {
   assert.strictEqual(handler.config.api.bodyParser.sizeLimit, "10mb");
   let seenMime = "";
   core.geminiJson = async (key, model, body, timeout) => {
-    assert.strictEqual(model, "gemini-3.8-flash");
+    assert.strictEqual(model, "gemini-3.6-flash");
     assert.strictEqual(timeout, 30000);
     seenMime = body.contents[0].parts[1].inlineData.mimeType;
     return validModelResponse();
@@ -232,8 +232,8 @@ async function run() {
   );
   assert.strictEqual(
     universalRequest.generationConfig.thinkingConfig.thinkingLevel,
-    "low",
-    "Gemini 3.8 requests must use low thinking to avoid voice-request timeouts",
+    "minimal",
+    "Gemini 3.6 voice requests must use minimal thinking to avoid timeouts",
   );
   const transcriptionInstruction =
     universalRequest.systemInstruction.parts[0].text;
@@ -269,7 +269,7 @@ async function run() {
   assert.strictEqual(recovered.json.source, "gemini");
   assert.deepStrictEqual(
     attemptedModels,
-    ["gemini-3.8-flash"],
+    ["gemini-3.6-flash"],
     "Typed text must also use exactly one model call",
   );
 
@@ -440,7 +440,7 @@ async function run() {
   assert.ok(/0203 952 4822/.test(quotaAudio.json.display_text));
   assert.deepStrictEqual(
     quotaModels,
-    ["gemini-3.8-flash"],
+    ["gemini-3.6-flash"],
     "Audio quota failures must not trigger additional model calls",
   );
 
