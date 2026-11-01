@@ -230,9 +230,10 @@ async function run() {
     universalRequest.contents[0].parts[1].inlineData.mimeType,
     "audio/mp4",
   );
-  assert.ok(
-    !("thinkingConfig" in universalRequest.generationConfig),
-    "Gemini 3.8 requests must not use the unsupported minimal thinking level",
+  assert.strictEqual(
+    universalRequest.generationConfig.thinkingConfig.thinkingLevel,
+    "low",
+    "Gemini 3.8 requests must use low thinking to avoid voice-request timeouts",
   );
   const transcriptionInstruction =
     universalRequest.systemInstruction.parts[0].text;
