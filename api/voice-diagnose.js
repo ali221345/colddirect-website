@@ -138,7 +138,6 @@ async function diagnose(key, text, audio, mime) {
           generationConfig: {
             temperature: 0.1,
             maxOutputTokens: 1400,
-            thinkingConfig: { thinkingLevel: "minimal" },
             responseMimeType: "application/json",
           },
         },
