@@ -128,6 +128,16 @@ jobs:
         id: verify
         run: python tools/verify-production-pages.py
 
+      - name: Submit deployed sitemap URLs to IndexNow
+        run: |
+          expected="$(cat 09f0efc65468d3e8598408ac29953023.txt)"
+          actual="$(curl -fsS --retry 4 --retry-delay 5 --retry-all-errors --max-time 30 https://www.colddirect.co.uk/09f0efc65468d3e8598408ac29953023.txt)"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Live IndexNow verification key does not match the repository key"
+            exit 1
+          fi
+          python tools/ping_indexnow.py
+
       # Read-only: the optimized titles/meta/schema/audio/blog links must be live after every deploy.
       # Informational here (the 24h job enforces it and alerts); its result is included in the job report.
       - name: SEO integrity of the live site (read-only)
