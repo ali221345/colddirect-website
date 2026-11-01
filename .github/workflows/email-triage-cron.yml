@@ -86,6 +86,8 @@ jobs:
               name = tool.get("name", "")
               if "CONNECTION" in name or "OAUTH" in name:
                   print("Available connection tool:", name)
+              if name == "COMPOSIO_MANAGE_CONNECTIONS":
+                  print("Manage connection schema:", json.dumps(tool.get("inputSchema") or tool.get("input_schema") or {}))
           PY
 
       - name: Run cloud triage for all eight accounts
