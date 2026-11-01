@@ -85,6 +85,8 @@ jobs:
               for alias in ("coldcom-hotmail", "samsamry11-hotmail"):
                   result = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "add", "alias": alias}]}})
                   print("OUTLOOK_AUTH_SETUP", alias, json.dumps(result))
+          connections = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "list"}]}})
+          print("OUTLOOK_CONNECTION_LIST", json.dumps(connections))
           for account, connection in sorted(env_json("COMPOSIO_OUTLOOK_ACCOUNTS_JSON").items()):
               try:
                   profile = api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName"]}, connection)
