@@ -165,6 +165,50 @@ assert.ok(
   !source.includes(".replace(/Hello\\. I am the Head Engineer"),
   "The greeting must remain in speech",
 );
+const recorderSource = source.slice(
+  source.indexOf("function startRecorder"),
+  source.indexOf("function startLive"),
+);
+assert.ok(
+  recorderSource.includes("MediaRecorder.isTypeSupported(mimeCandidates[mi])"),
+  "Recorder must feature-detect each candidate MIME type",
+);
+for (const mime of ["audio/webm", "audio/mp4", "audio/aac"]) {
+  assert.ok(
+    recorderSource.includes(`"${mime}"`),
+    `Recorder feature detection must include ${mime}`,
+  );
+}
+assert.ok(
+  recorderSource.includes("mediaRec.mimeType"),
+  "The recorder's actual MIME type must be retained",
+);
+assert.ok(
+  source.includes("blob.type || recMime"),
+  "The final Blob type must take precedence for the uploaded MIME type",
+);
+const finishRecordingSource = source.slice(
+  source.indexOf("function finishRecording"),
+  source.indexOf("var SPEECH_PROFILES"),
+);
+assert.ok(
+  !finishRecordingSource.includes("setTimeout(done"),
+  "Recorder finalization must wait for onstop instead of racing a timeout",
+);
+const playSpeechSource = source.slice(
+  source.indexOf("function playSpeech"),
+  source.indexOf("function speakAnswer"),
+);
+assert.ok(
+  playSpeechSource.includes("if (!audio) return nativeFallback(token);"),
+  "Device speech is allowed only when the server has no audio payload",
+);
+assert.ok(
+  !/return playBytes[\s\S]*?\.catch\(function \(\) \{\s*return nativeFallback/.test(
+    playSpeechSource,
+  ),
+  "Server audio playback failures must not trigger robotic device speech",
+);
 console.log(
   "Voice frontend regression tests passed: MediaRecorder-only capture, raw audio submission, dynamic language and LISTEN fallback.",
 );

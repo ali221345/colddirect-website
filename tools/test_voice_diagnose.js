@@ -230,6 +230,25 @@ async function run() {
     universalRequest.contents[0].parts[1].inlineData.mimeType,
     "audio/mp4",
   );
+  const transcriptionInstruction =
+    universalRequest.systemInstruction.parts[0].text;
+  for (const brand of [
+    "Hoshizaki",
+    "Foster",
+    "Williams",
+    "Polar",
+    "Gram",
+    "Manitowoc",
+    "Carpigiani",
+    "Taylor",
+    "Scotsman",
+    "Rational",
+  ]) {
+    assert.ok(
+      transcriptionInstruction.includes(brand),
+      `Transcription prompt must recognize spoken ${brand} brand names`,
+    );
+  }
 
   const attemptedModels = [];
   core.geminiJson = async (key, model) => {

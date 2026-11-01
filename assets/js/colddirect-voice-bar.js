@@ -893,9 +893,7 @@
         done();
         return;
       }
-      var timer = setTimeout(done, 1500);
       rec.onstop = function () {
-        clearTimeout(timer);
         done();
       };
       try {
@@ -904,7 +902,6 @@
       try {
         rec.stop();
       } catch (e3) {
-        clearTimeout(timer);
         done();
       }
     });
@@ -1063,6 +1060,13 @@
     );
   }
 
+  function serverPlaybackFailed(token) {
+    if (token !== playToken) return;
+    isSpeaking = false;
+    setListenUi(false);
+    setStatus("error", "Server audio could not play. Tap LISTEN to retry.");
+  }
+
   function playSpeech(token) {
     if (token !== playToken || !splitSpeechText.length)
       return Promise.resolve();
@@ -1070,15 +1074,19 @@
     setListenUi(true);
     setStatus("active", "🔊 Preparing a short spoken answer...");
     return loadSpeechSummary()
-      .then(function (audio) {
-        if (token !== playToken) return;
-        return playBytes(audio.data, audio.mime, token);
-      })
-      .then(function () {
-        finishSpeech(token);
-      })
       .catch(function () {
-        return nativeFallback(token);
+        return null;
+      })
+      .then(function (audio) {
+        if (!audio) return nativeFallback(token);
+        if (token !== playToken) return;
+        return playBytes(audio.data, audio.mime, token)
+          .then(function () {
+            finishSpeech(token);
+          })
+          .catch(function () {
+            serverPlaybackFailed(token);
+          });
       });
   }
 
@@ -1097,7 +1105,7 @@
         finishSpeech(token);
       })
       .catch(function () {
-        return nativeFallback(token);
+        serverPlaybackFailed(token);
       });
   }
 
@@ -1129,8 +1137,10 @@
       .then(function () {
         if (my !== seq) return "";
         var blob = recChunks.length
-          ? new Blob(recChunks, { type: recMime || "audio/webm" })
+          ? new Blob(recChunks, { type: recMime || "audio/mp4" })
           : null;
+        if (blob)
+          recMime = String(blob.type || recMime || "audio/mp4").split(";")[0];
         recordingTooSmall = !blob || blob.size < 2000;
         return blobToBase64(blob);
       })
@@ -1154,7 +1164,7 @@
           text: "",
           transcript: "",
           audio_base64: b64,
-          mime: (recMime || "audio/webm").split(";")[0],
+          mime: (recMime || "audio/mp4").split(";")[0],
           language: "auto",
           mode: "transcribe",
           translate: false,
@@ -1295,19 +1305,32 @@
           return;
         }
         micStream = s;
-        recMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-          ? "audio/webm;codecs=opus"
-          : "audio/mp4";
+        var mimeCandidates = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/mp4",
+          "audio/aac",
+        ];
+        recMime = "";
+        for (var mi = 0; mi < mimeCandidates.length; mi++) {
+          if (MediaRecorder.isTypeSupported(mimeCandidates[mi])) {
+            recMime = mimeCandidates[mi];
+            break;
+          }
+        }
         try {
-          mediaRec = new MediaRecorder(s, { mimeType: recMime });
+          mediaRec = recMime
+            ? new MediaRecorder(s, { mimeType: recMime })
+            : new MediaRecorder(s);
         } catch (e1) {
           try {
             mediaRec = new MediaRecorder(s);
-            recMime = mediaRec.mimeType || recMime;
           } catch (e2) {
             mediaRec = null;
           }
         }
+        if (mediaRec)
+          recMime = String(mediaRec.mimeType || recMime || "audio/mp4");
         if (!mediaRec) {
           hangup();
           setStatus(
