@@ -8,7 +8,8 @@
     "validate:ldjson": "node tools/validate-ldjson.js",
     "test": "node tools/test_voice_diagnose.js && node tools/test_voice_tts.js && node tools/test_voice_frontend.js && npm run test:assets && npm run validate:assets && node tools/validate-ldjson.js",
     "validate:assets": "python3 tools/validate_asset_paths.py",
-    "test:assets": "python3 -m unittest discover -s tools -p test_validate_asset_paths.py"
+    "test:assets": "python3 -m unittest discover -s tools -p test_validate_asset_paths.py",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,13 @@
   "homepage": "https://github.com/ali221345/colddirect-website#readme",
   "dependencies": {
     "googleapis": "^181.0.0"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10"
+  },
+  "lint-staged": {
+    "*.{html,css,js,json}": "prettier --write"
   }
 }

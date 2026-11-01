@@ -1,3 +1,7 @@
+# Permanent ColdDirect code-formatting rule — 2026-11-01
+
+Whenever generating or updating code for ColdDirect, follow standard Prettier formatting before committing. The Husky pre-commit hook runs lint-staged with `prettier --write` on every staged HTML, CSS, JS, and JSON file; keep generated code compliant so the hook passes smoothly without errors. Do not bulk-format locked or unrelated files.
+
 # Permanent email authentication rule — 2026-11-01
 
 For Microsoft/Hotmail/Outlook, use ONLY the active `samsamry@hotmail.com` account through the single Composio connection `outlook_toom-model`. Never check, configure, or request access for any other Hotmail address. NEVER use browser-session/WebBridge scraping and NEVER ask the owner for Outlook/Hotmail login, verification, or recovery codes. `info@colddirect.co.uk` uses the saved direct Plesk IMAP/SMTP credential. The twice-daily 09:00/18:00 Europe/London triage covers exactly seven accounts (five Gmail, one Outlook, one IMAP), cloud-only through GitHub Actions with no browser fallback. If an API connection fails, report the API error without opening a browser or requesting a login code.
