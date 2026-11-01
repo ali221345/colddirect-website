@@ -119,12 +119,27 @@ assert.ok(
   "Small recordings must show the exact microphone recovery instructions",
 );
 assert.ok(
-  /RECORDER_SILENCE_MS = 2000/.test(source),
-  "MediaRecorder must stop after 2 seconds of detected silence",
+  /RECORDER_SILENCE_MS = 4000/.test(source),
+  "MediaRecorder must allow at least 4 seconds of silence after speech",
 );
 assert.ok(
-  /RECORDER_MAX_MS = 6000/.test(source),
-  "MediaRecorder must retain its 6-second maximum",
+  /RECORDER_MAX_MS = 30000/.test(source),
+  "MediaRecorder must allow up to 30 seconds before automatic submission",
+);
+assert.ok(
+  source.includes("window.__cdVoiceAudioController") &&
+    source.includes("stopAll: function"),
+  "One global audio controller must own playback cancellation",
+);
+assert.ok(
+  source.includes('document.querySelectorAll("audio")') &&
+    source.includes("window.speechSynthesis.cancel()"),
+  "Starting playback must pause HTML audio and cancel browser speech",
+);
+assert.ok(
+  source.includes("serverAudioPlaying()") &&
+    /function nativeFallback[\s\S]*?serverAudioPlaying\(\)/.test(source),
+  "Browser fallback must never start while server audio is playing",
 );
 assert.ok(
   source.includes("rec.requestData();") && source.includes("rec.onstop ="),

@@ -13,8 +13,8 @@
   var STOP_LABEL = "🔴 Listening… Tap to send";
   var LISTEN_LABEL = "🔊 LISTEN";
   var STATUS_IDLE = "Tap SPEAK and describe the fault; it sends automatically.";
-  var RECORDER_SILENCE_MS = 2000;
-  var RECORDER_MAX_MS = 6000;
+  var RECORDER_SILENCE_MS = 4000;
+  var RECORDER_MAX_MS = 30000;
   var SPOKEN_SUMMARY_MAX_WORDS = 72;
   var SPOKEN_TECHNICAL_MAX_WORDS = 39;
   var VERCEL_API = "https://colddirect-website.vercel.app";
@@ -66,6 +66,29 @@
   var audioObjectUrl = "";
   var speechCache = [];
   var speechLang = "en-GB";
+  var audioController = window.__cdVoiceAudioController;
+  if (!audioController) {
+    audioController = {
+      stopAll: function () {
+        try {
+          if (window.speechSynthesis) window.speechSynthesis.cancel();
+        } catch (e1) {}
+        window.__cdNativeSpeechKey = "";
+        var players = document.querySelectorAll("audio");
+        for (var i = 0; i < players.length; i++) {
+          try {
+            players[i].pause();
+            players[i].currentTime = 0;
+          } catch (e2) {}
+        }
+      },
+    };
+    window.__cdVoiceAudioController = audioController;
+  }
+
+  function serverAudioPlaying() {
+    return !!(voiceEl && !voiceEl.paused && !voiceEl.ended);
+  }
 
   function css() {
     return [
@@ -339,6 +362,10 @@
   }
 
   function unlockAudio() {
+    // Prime audible playback once; repeated gestures must never restart audio.
+    if (window.__cdAudioUnlocked) return;
+    window.__cdAudioUnlocked = true;
+    audioController.stopAll();
     // Called synchronously from SPEAK, STOP, SEND and LISTEN user events. Keep
     // this exact element for later MP3 playback so iOS retains media approval.
     try {
@@ -411,6 +438,7 @@
       setListenUi(false);
       return;
     }
+    audioController.stopAll();
     try {
       a.currentTime = 0;
     } catch (e2) {}
@@ -567,6 +595,7 @@
 
   function stopPlayback() {
     playToken += 1;
+    audioController.stopAll();
     isSpeaking = false;
     if (voiceSource) {
       try {
@@ -669,6 +698,7 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new Promise(function (resolve, reject) {
       if (token !== playToken) return resolve();
+      audioController.stopAll();
       if (!voiceEl) {
         voiceEl = window.__cdVoicePlayer || document.createElement("audio");
         voiceEl.playsInline = true;
@@ -709,7 +739,15 @@
     return new Promise(function (resolve, reject) {
       if (!window.speechSynthesis || !text)
         return reject(new Error("native_tts_unavailable"));
-      if (token !== playToken) return resolve();
+      if (token !== playToken || serverAudioPlaying()) return resolve();
+      var speechKey = String(lang || "") + "\n" + String(text || "");
+      if (
+        (window.speechSynthesis.speaking || window.speechSynthesis.pending) &&
+        window.__cdNativeSpeechKey === speechKey
+      )
+        return resolve();
+      audioController.stopAll();
+      window.__cdNativeSpeechKey = speechKey;
       var u = new SpeechSynthesisUtterance(text);
       u.lang = lang;
       u.rate = 1;
@@ -1010,7 +1048,7 @@
   }
 
   function nativeFallback(token) {
-    if (token !== playToken) return Promise.resolve();
+    if (token !== playToken || serverAudioPlaying()) return Promise.resolve();
     if (speechCache[0]) speechCache[0].native = true;
     return speakBrowser(splitSpeechText[0], speechLang, token).catch(
       function () {
