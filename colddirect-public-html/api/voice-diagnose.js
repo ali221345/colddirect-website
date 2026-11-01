@@ -54,39 +54,81 @@ function parseOut(text, audioMode) {
   }
 }
 
+function safeMessage(value, key) {
+  var message = String(value || "No upstream error message").slice(0, 500);
+  if (key) message = message.split(key).join("[redacted]");
+  return message
+    .replace(/([?&]key=)[^&\s]+/gi, "$1[redacted]")
+    .replace(/AIza[A-Za-z0-9_-]{10,}/g, "[redacted]")
+    .replace(/[A-Za-z0-9+/]{500,}={0,2}/g, "[redacted]")
+    .slice(0, 240);
+}
+
 async function diagnose(key, text, audio, mime) {
   var instruction = audio
     ? "Listen to the attached microphone audio. Transcribe the exact spoken words, then diagnose that commercial refrigeration fault in the same language. Ignore any other language guess."
     : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
   var parts = [{ text: instruction }];
   if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var models = [
-    ["gemini-3.1-flash-lite", 6500],
-    ["gemini-2.5-flash", 1500],
-    ["gemini-2.0-flash", 1500],
-    ["gemini-3.8-flash", 6500]
-  ];
-  var lastErr = "";
+  // Retry only transient capacity/network failures, once, on a second stable
+  // model. The 30s + 20s bounds stay inside Vercel's 60-second function limit.
+  var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash").trim();
+  var fallback = String(process.env.GEMINI_VOICE_FALLBACK_MODEL || "gemini-3.5-flash-lite").trim();
+  var models = [configured, fallback].map(function (name) {
+    return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash";
+  });
   for (var i = 0; i < models.length; i++) {
-    var out = null;
+    var model = models[i];
+    var out;
     try {
-      out = await core.geminiJson(key, models[i][0], {
+      out = await core.geminiJson(key, model, {
         systemInstruction: { parts: [{ text: SYS }] },
         contents: [{ role: "user", parts: parts }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 400, responseMimeType: "application/json" }
-      }, models[i][1]);
+        generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
+      }, i === 0 ? 30000 : 20000);
     } catch (err) {
-      out = { ok: false, json: { error: { code: 408 } } };
+      out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
     }
     if (!out || !out.ok) {
-      lastErr = models[i][0];
-      continue;
+      var upstream = (out && out.json && out.json.error) || {};
+      var http = Number(out && out.httpStatus) || Number(upstream.code) || 0;
+      var failure = {
+        error: "upstream",
+        diagnostic: {
+          stage: "transcription",
+          model: model,
+          mimeType: audio ? mime : null,
+          upstreamHttp: http,
+          upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
+          message: safeMessage(upstream.message, key)
+        }
+      };
+      if (i === 0 && models[1] !== model && (!http || http === 408 || http === 429 || http >= 500)) continue;
+      return failure;
     }
     var parsed = parseOut(core.extractText(out.json), !!audio);
     if (parsed) return parsed;
-    lastErr = models[i][0] + ":unparsed";
+    var candidate = ((out.json && out.json.candidates) || [])[0] || {};
+    var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
+    return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis." } };
   }
-  return { error: lastErr || "no_model" };
+  return { error: "upstream", diagnostic: { stage: "transcription", upstreamHttp: 0, upstreamStatus: "NO_MODEL", message: "No transcription model is configured." } };
+}
+
+function localDiagnosis(text) {
+  var locked = core.lockLang(text, "");
+  var advice;
+  if (locked.code === "fa") {
+    advice = "برای جلوگیری از آسیب بیشتر، دستگاه را از برق جدا کنید و مسیر هوای کندانسور و فن‌ها را مسدود نکنید. برای بررسی کمپرسور، فن، ترموستات و گاز مبرد توسط مهندس، با کولد دایرکت تماس بگیرید.";
+  } else if (/fan|evaporator/i.test(text)) {
+    advice = "A non-running evaporator fan may have a faulty motor, iced-over coils, or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
+  } else if (/warm|not cold|temperature|freezer/i.test(text)) {
+    advice = "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat, or sealed-system fault. Switch the unit off if the compressor is hot or noisy, protect stock, and arrange a prompt engineer inspection.";
+  } else {
+    advice = "The fault requires checks of the power supply, airflow, fans, controls, and refrigeration circuit. Switch the unit off if it is overheating or noisy and arrange an engineer inspection rather than repeatedly restarting it.";
+  }
+  var display = core.ensureGreeting(advice, locked.code, false);
+  return { display: display, spoken: display, language: locked.bcp, transcript: text };
 }
 
 function send(res, code, body) {
@@ -114,10 +156,14 @@ module.exports = async function handler(req, res) {
   }
   var data = await core.readBody(req);
   var audio = core.cleanAudio(data.audio_base64 || data.audio || "");
-  var mime = core.cleanMime(data.mime || "audio/webm");
+  var mime = core.cleanMime(data.mime || "audio/webm", audio);
   var text = audio ? "" : core.stripTags(data.text || data.transcript || "").slice(0, 2000);
   if (!text && !audio) {
     send(res, 400, { ok: false, error: "Speak a fault first.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
+    return;
+  }
+  if (audio.length > 8000000) {
+    send(res, 413, { ok: false, code: "VOICE_TOO_LARGE", error: "That recording is too long. Please keep it under 45 seconds and try again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
     return;
   }
   if (core.isBanned(text)) {
@@ -125,20 +171,33 @@ module.exports = async function handler(req, res) {
     return;
   }
   var key = String(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "").trim();
-  if (!key) {
-    send(res, 503, { ok: false, error: "The Head Engineer could not hear that. Tap SPEAK and try again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
-    return;
-  }
   var result = null;
   try {
-    result = await diagnose(key, text, audio || null, mime);
+    if (text && (!key || /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(text))) {
+      result = localDiagnosis(text);
+    } else if (key) {
+      result = await diagnose(key, text, audio || null, mime);
+    } else if (audio) {
+      result = { error: "configuration", diagnostic: { stage: "configuration", upstreamHttp: 0, upstreamStatus: "API_KEY_MISSING", message: "No Gemini API key is configured for this deployment." } };
+    }
   } catch (e) {
-    result = { error: "exception" };
+    result = { error: "exception", diagnostic: { stage: "request", upstreamHttp: 0, upstreamStatus: "REQUEST_EXCEPTION", message: "The diagnosis request could not be completed." } };
+  }
+  if (text && (!result || result.error || !result.display)) {
+    result = localDiagnosis(text);
   }
   if (!result || result.error || !result.display) {
-    send(res, 502, {
+    // Keep a graceful UI fallback, but preserve a safe upstream diagnostic. Never
+    // include audio, transcripts, keys, authorization headers or raw responses.
+    var diagnostic = result && result.diagnostic;
+    if (diagnostic) {
+      try { console.warn("voice-diagnose " + JSON.stringify(diagnostic)); } catch (logErr) {}
+    }
+    send(res, 200, {
       ok: false,
-      error: "The Head Engineer could not hear that. Tap SPEAK and try again.",
+      code: audio ? "VOICE_NOT_UNDERSTOOD" : "DIAGNOSIS_UNAVAILABLE",
+      error: audio ? "We could not hear that clearly. Type the fault below or tap SPEAK and try again." : "The diagnosis service is temporarily unavailable. Please try again or call us.",
+      diagnostic: diagnostic || null,
       transcript: "",
       display_text: "",
       spoken_text: "",

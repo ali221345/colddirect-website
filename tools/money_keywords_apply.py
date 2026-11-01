@@ -117,6 +117,7 @@ def money_block(slug):
         CSS,
         f"<h2>{md.esc(kw)}: Same-Day, 24/7 Emergency Repairs &amp; Service</h2>",
         f"<p>{md.esc(d['intro'])}</p>",
+        f"<p>{md.esc(d['semantic'])}</p>",
         f"<h3>Affordable {md.esc(low)} with a fixed diagnostic call-out</h3>",
         f"<p>{md.esc(d['cost'])}</p>",
         "<h3>London engineers, 24 hours a day, 7 days a week</h3>",
@@ -195,6 +196,8 @@ def selftest():
     assert once.count(START) == 1 and once.count("<title>") == 1
     assert md.MONEY[slug]["title"] in once and 'og:description' in once and 'twitter:title' in once
     assert once.index(START) < once.index('class="cd-faq-accordion"')
+    assert md.MONEY[slug]["semantic"] in once, "semantic word-order copy missing from visible body"
+    assert once.count(md.MONEY[slug]["semantic"]) == 1, "semantic copy must not be duplicated"
     assert md.PHONE_TEL in once and "domestic" not in once.lower()
     line = 'x\r\n    moneyMeta["%s"] = new string[] { "T \\u2013 old", "D", "Name", "Type", "Cold room repair London" };\r\n' % slug
     a1 = apply_aspx(line, slug)

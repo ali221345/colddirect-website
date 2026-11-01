@@ -1276,3 +1276,262 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-10-26 13:59 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40335048586 | commit 12c9d36
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 14:02 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40335326421 | commit d9b39d5
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 16:59 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40363360328 | commit 285c7e2
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 17:17 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40366690391 | commit 9c83f42
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 17:36 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40369714526 | commit d30991d
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 17:49 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40371900027 | commit 698650c
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 18:04 UTC - Autopilot: 48h full site backup - FAILED
+- Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40371951644 | commit 698650c
+- Metrics: archive=colddirect-backup-20261026-174753.zip; SHA-256=a87c8b7595048529263641911b559ce18c7c7c19a5add79522ddb0bd0dfb634e; files=451 (116 html); integrity verified=False; manifest re-check=skipped; artifact (90 days)=colddirect-site-backup-40371951644
+
+## 2026-10-26 18:19 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40376273266 | commit eff07fe
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 18:31 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40377951863 | commit c6a9729
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 18:31 UTC - Autopilot: 48h full site backup - FAILED
+- Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40376346795 | commit eff07fe
+- Metrics: archive=colddirect-backup-20261026-181707.zip; SHA-256=176314a5f392b8af52c28ebbc4e8b1a97cea6d5ddaf87212e736c1f6c396d1eb; files=382 (47 html); integrity verified=False; manifest re-check=skipped; artifact (90 days)=colddirect-site-backup-40376346795
+
+## 2026-10-26 18:39 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40379376001 | commit 0ccb46e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 18:46 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40378611708 | commit 8135cf7
+- Metrics: archive=colddirect-backup-20261026-183233.zip; SHA-256=0e9b2d2d240234428398492e64459daa2845766d2105184a7a4f9a35a8037a2b; files=629 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-40378611708
+
+## 2026-10-26 19:14 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40384598522 | commit 7251483
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 19:45 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40389163735 | commit ee8c775
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 21:49 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40406273711 | commit 0d754e5
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-26 21:57 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40408289203 | commit dcb9105
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 22:01 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40408836529 | commit 54d6276
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 22:04 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40409108308 | commit 3baa319
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 22:13 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40410358183 | commit 1ed0ef0
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 22:16 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40410790924 | commit 3cb546b
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 22:29 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40410829821 | commit 3cb546b
+- Metrics: archive=colddirect-backup-20261026-221419.zip; SHA-256=26728ae46a8a41481e7496c1bf5bf0cf5b9955b6a0d9ed8d7bdfebd1b6e2f8c3; files=629 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-40410829821
+
+## 2026-10-26 22:35 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40413261960 | commit bdf82c2
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 23:40 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40421018225 | commit 994315e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 23:48 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40421985753 | commit eab5ea1
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-26 23:56 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40423086173 | commit 719b376
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-27 00:00 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40423158288 | commit 0eb3a50
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 00:05 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40423893276 | commit 31f8c98
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 00:18 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40425365983 | commit 057087c
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 00:51 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40428297627 | commit 1c97690
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 00:54 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40428877163 | commit 10552f9
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 00:57 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40429202799 | commit 19f7b3e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 01:00 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40429520456 | commit f5ce1aa
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 09:21 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40477978031 | commit fca7c9d
+- Metrics: archive=colddirect-backup-20261027-090417.zip; SHA-256=630f01aab7fd19e0d9487401073272c44f82f252bdb0968a3609535e7c625a85; files=631 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-40477978031
+
+## 2026-10-27 10:35 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40488737655 | commit 5c2e5ec
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 10:38 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40489516959 | commit 269ded9
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 14:06 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40517159206 | commit b1ce153
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 14:22 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40519888201 | commit 68f882a
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 14:41 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40522462940 | commit f61d83d
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 15:27 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40530373086 | commit 4e6fc42
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 17:59 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40554823797 | commit dc845e8
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 18:49 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40562705351 | commit a4e3623
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 20:19 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40576649545 | commit cd15fb7
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 21:52 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40588680581 | commit bc32d9f
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-27 22:03 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40591027124 | commit fb24d58
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-27 23:50 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40604769510 | commit c2d76ec
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-28 00:45 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40610809603 | commit 5955905
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-28 10:54 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40675373028 | commit a33cd98
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-28 21:53 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40773836045 | commit 15eae35
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-29 00:03 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40791482968 | commit b7a5903
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-29 01:15 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40799295863 | commit b3cbcb8
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-29 10:16 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40854429091 | commit 2920447
+- Metrics: archive=colddirect-backup-20261029-100318.zip; SHA-256=769ebc74aca0753c3bad9a7f61c84913091f8447dc6e7651bcabd6c019e2548c; files=633 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-40854429091
+
+## 2026-10-29 21:52 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/40959713069 | commit 66d7fa1
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-29 23:55 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/40976077617 | commit 024978e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-29 23:58 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40976678891 | commit b27395d
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-30 01:21 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/40985353867 | commit 0e5aea7
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-30 21:50 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/41132725477 | commit ece0270
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-30 23:53 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41147056274 | commit 9a578ac
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-31 01:07 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/41153541215 | commit 57d3371
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-31 01:08 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41153557248 | commit 57d3371
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-10-31 01:19 UTC - Sitemap baseline rebased to 131 URLs (manual)
+- Live read-only audit: sitemap.xml = 131 <loc> URLs; 9 URLs added beyond the 122 baseline, all verified 200 OK + self-canonical + zero redirect hops on https://www.colddirect.co.uk
+- colddirect-public-html/sitemap.xml mirror synced byte-for-byte to 131 URLs
+- tools/check_locked_state.py LOCKED #4 now enforces 131 <loc> URLs on both sitemap.xml and its mirror; selftest extended to 7 checks; npm test + check_locked_state all green
+- New URLs: /air-conditioning-repair-north-london/, /blog/commercial-freezer-ice-buildup-causes/, /carpigiani-ice-cream-machine-repair-london/, /cold-room-installation-london/, /commercial-fridge-repair-brent/, /commercial-refrigeration-repair-harlesden/, /commercial-refrigeration-repair-willesden/, /freezer-repair-north-london/, /taylor-ice-cream-machine-repair-london/
+- Title/H1/meta/canonical/redirects untouched; HTML Updated: 0; commits 57d3371, 0e20c9ed on main
+
+## 2026-10-31 01:24 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/41154946805 | commit 0e20c9e
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=success
+
+## 2026-10-31 10:00 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41189770651 | commit 13c71f3
+- Metrics: archive=colddirect-backup-20261031-094233.zip; SHA-256=ab03f16d03131f06e189e9ba7da475ee6c610e589b748e6593f9a57f6c3f1d06; files=633 (292 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-41189770651
+
+## 2026-10-31 21:48 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - SUCCESS
+- Workflow: Nightly auto-seo (live) (workflow_dispatch) | run: https://github.com/ali221345/colddirect-website/actions/runs/41244651807 | commit 35016e4
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=success; live strict preflight=success; SEO integrity (no title/H1 rewrite)=success; GSC ping=success
+
+## 2026-10-31 23:27 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41252567322 | commit eba9bea
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-11-01 00:26 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
+- Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/41256778537 | commit 42ad7cf
+- Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped

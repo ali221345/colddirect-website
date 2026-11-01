@@ -150,7 +150,7 @@ RewriteRule ^mafirol-repairs-london(/|\.html|\.asp)?$ /display-fridge-repair-lon
 RewriteRule ^ice-cream-machine-repair(\.html)?/?$ /ice-cream-machine-repair-london/ [R=301,L]
 RewriteRule ^ice-machine-repair(\.html)?/?$ /ice-machine-repair-london/ [R=301,L]
 RewriteRule ^google[0-9a-z]+\.html$ - [L]
-RewriteRule ^index\.html$ - [L]
+RewriteRule ^index\.html$ / [R=301,L]
 # Keep the Services directory index out of the generic HTML redirect.
 RewriteRule ^services/index\.html$ - [L]
 # Preserve the restored Liebherr directory index.
@@ -423,6 +423,16 @@ RewriteRule ^hoshizaki-repairs-london/?$ /hoshizaki-ice-machine-repair-london/ [
 RewriteRule ^william-fridge-repair-london/?$ /williams-fridge-repair-london/ [R=301,L]
 RewriteRule ^william-repairs-london/?$ /williams-fridge-repair-london/ [R=301,L]
 RewriteRule ^williams-repairs-london/?$ /williams-fridge-repair-london/ [R=301,L]
+
+# New local and specialist landing pages: bare slug to canonical slash URL.
+RewriteRule ^cold\-room\-installation\-london$ /cold-room-installation-london/ [R=301,L]
+RewriteRule ^taylor\-ice\-cream\-machine\-repair\-london$ /taylor-ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^carpigiani\-ice\-cream\-machine\-repair\-london$ /carpigiani-ice-cream-machine-repair-london/ [R=301,L]
+RewriteRule ^commercial\-refrigeration\-repair\-willesden$ /commercial-refrigeration-repair-willesden/ [R=301,L]
+RewriteRule ^commercial\-refrigeration\-repair\-harlesden$ /commercial-refrigeration-repair-harlesden/ [R=301,L]
+RewriteRule ^commercial\-fridge\-repair\-brent$ /commercial-fridge-repair-brent/ [R=301,L]
+RewriteRule ^freezer\-repair\-north\-london$ /freezer-repair-north-london/ [R=301,L]
+RewriteRule ^air\-conditioning\-repair\-north\-london$ /air-conditioning-repair-north-london/ [R=301,L]
 
 # Generic .html -> slash canonical. Keep BELOW every specific .html rule above so a specific target wins (one hop).
 # The pass-through exclusions (google*.html, index.html, services/, liebherr, brands, repair-cost article) sit near the top.

@@ -54,7 +54,7 @@ MONEY = {
     },
     "commercial-fridge-repair-london": {
         "kw": "Commercial fridge repair London",
-        "title": "Commercial Fridge Repair London | 24/7 Emergency Same-Day Engineers",
+        "title": "Commercial Fridge Repair London | 24/7 Same-Day Service",
         "desc": "Commercial fridge repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, F-Gas certified London engineers. Call 07983 759320.",
         "offers": ['Same day commercial fridge repair London', '24 hour emergency commercial fridge repair London', 'Affordable commercial fridge repair London with fixed diagnostic call-out', 'Commercial fridge repair London', 'Commercial fridge repairs London', 'Commercial fridge service London', 'Commercial fridge services London', 'Emergency commercial fridge repair London', 'Same day commercial fridge repairs London', '24/7 commercial fridge repair London', 'Cheap commercial fridge repair London', 'Affordable commercial fridge repair London', 'Commercial fridge repair near me', 'Annual commercial fridge maintenance and servicing London', 'Low-cost commercial fridge diagnostics London'],
         "audio": "Cold Direct commercial fridge repair London. For restaurants, hotels, pubs, supermarkets and food producers, we offer twenty four seven emergency and same day commercial fridge repairs with F-Gas certified London engineers. A fixed diagnostic call-out keeps the cost transparent and affordable. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -67,7 +67,7 @@ MONEY = {
     },
     "commercial-freezer-repair-london": {
         "kw": "Commercial freezer repair London",
-        "title": "Commercial Freezer Repair London | 24/7 Emergency Same-Day Engineers",
+        "title": "Commercial Freezer Repair London | 24/7 Same-Day Service",
         "desc": "Commercial freezer repair London: 24/7 emergency and same-day repairs, fixed diagnostic call-out, walk-in and kitchen freezers. Call 07983 759320.",
         "offers": ['Same day commercial freezer repair London', '24 hour emergency commercial freezer repair London', 'Affordable commercial freezer repair London with fixed diagnostic call-out', 'Commercial freezer repair London', 'Commercial freezer repairs London', 'Commercial freezer service London', 'Commercial freezer services London', 'Emergency commercial freezer repair London', 'Same day commercial freezer repairs London', '24/7 commercial freezer repair London', 'Cheap commercial freezer repair London', 'Affordable commercial freezer repair London', 'Commercial freezer repair near me', 'Annual commercial freezer maintenance and servicing London', 'Low-cost commercial freezer diagnostics London'],
         "audio": "Cold Direct commercial freezer repair London. When a walk-in or kitchen freezer fails, every hour counts. Our London engineers provide twenty four hour emergency and same day commercial freezer repairs, with a fixed diagnostic call-out and transparent, affordable pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -80,7 +80,7 @@ MONEY = {
     },
     "catering-repair-london": {
         "kw": "Catering repair London",
-        "title": "Catering Repair London | Same-Day 24/7 Emergency Kitchen Engineers",
+        "title": "Catering Repair London | 24/7 Same-Day Service",
         "desc": "Catering repair London for restaurant and takeaway kitchens: same-day 24/7 emergency repairs and service, fixed diagnostic call-out. Call 07983 759320.",
         "offers": ['Same day catering repair London', '24 hour emergency catering repair London', 'Affordable catering repair London with fixed diagnostic call-out', 'Catering repair London', 'Catering repairs London', 'Catering service London', 'Catering services London', 'Emergency catering repair London', 'Same day catering repairs London', '24/7 catering repair London', 'Cheap catering repair London', 'Affordable catering repair London', 'Catering repair near me', 'Annual catering maintenance and servicing London', 'Low-cost catering diagnostics London'],
         "audio": "Cold Direct catering repair London. Restaurants, takeaways, cafes and catering kitchens rely on refrigeration that works. Our London engineers provide same day, twenty four seven emergency catering repair for kitchen fridges, freezers and chillers, with a fixed diagnostic call-out and affordable transparent pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -132,7 +132,7 @@ MONEY = {
     },
     "cellar-cooler-repair-london": {
         "kw": "Cellar repair London",
-        "title": "Cellar Repair London | Same-Day 24/7 Pub and Bar Cooler Engineers",
+        "title": "Cellar Repair London | 24/7 Pub and Bar Engineers",
         "desc": "Cellar repair London for pubs and bars: same-day 24/7 emergency cellar cooler repairs and service, fixed diagnostic call-out. Call 07983 759320.",
         "offers": ['Same day cellar repair London', '24 hour emergency cellar cooler repair London', 'Affordable cellar repair London with fixed diagnostic call-out', 'Cellar cooler repair London', 'Cellar cooler repairs London', 'Cellar cooler service London', 'Cellar cooler services London', 'Emergency cellar cooler repair London', 'Same day cellar cooler repairs London', '24/7 cellar cooler repair London', 'Cheap cellar cooler repair London', 'Affordable cellar cooler repair London', 'Cellar cooler repair near me', 'Annual cellar cooler maintenance and servicing London', 'Low-cost cellar cooler diagnostics London'],
         "audio": "Cold Direct cellar repair London. Warm beer means lost sales. Our London engineers repair pub and bar cellar coolers with same day emergency visits, twenty four hours a day, seven days a week, for a fixed diagnostic call-out and affordable transparent pricing. Call Cold Direct on zero seven nine eight three, seven five nine, three two zero.",
@@ -144,6 +144,22 @@ MONEY = {
         "anchors": ["cellar repair London for pubs and bars", "same day cellar cooler repair London"],
     },
 }
+
+# Natural word-order and high-intent coverage. One concise visible paragraph per hub;
+# deliberately not a list of every mechanical permutation (which would read as keyword stuffing).
+SEMANTIC = {
+    "fridge-repair-london": "For customers searching London fridge repair or London fridge service, our commercial technicians provide local diagnostics, breakdown repairs and planned maintenance, with urgent same-day call-outs across London.",
+    "freezer-repair-london": "When you need emergency freezer repair London or a local freezer service, our commercial engineers diagnose and fix temperature failures quickly, with same-day call-outs and planned maintenance available across London.",
+    "commercial-fridge-repair-london": "Our London commercial fridge repair and service team handles urgent breakdown diagnostics for professional kitchens, with local technicians, same-day call-outs and planned maintenance for commercial sites across London.",
+    "commercial-freezer-repair-london": "For London commercial freezer repair, servicing or urgent breakdown diagnostics, our local technicians provide same-day emergency call-outs and planned maintenance for professional kitchens and food businesses.",
+    "catering-repair-london": "Our London catering repair and service engineers cover urgent refrigeration breakdowns, diagnostics and planned maintenance for professional caterers, with same-day emergency call-outs across London.",
+    "commercial-appliances-repair-london": "For commercial catering equipment repair London or commercial appliance engineers London, our technicians diagnose refrigeration and ice-machine faults, with emergency repairs, servicing and maintenance for professional kitchens.",
+    "cold-room-repair-london": "For same day cold room repairs London or a planned cold room service, our local engineers provide emergency breakdown diagnostics, repairs and maintenance for walk-in chillers and freezer rooms.",
+    "air-conditioning-repair-london": "Our London air conditioning repair and service engineers cover commercial breakdown diagnostics, urgent fixes and planned maintenance, with same-day emergency call-outs for offices, shops and server rooms.",
+    "cellar-cooler-repair-london": "For beer cellar cooler service London or urgent cellar repairs, our local engineers diagnose cooling faults and provide same-day emergency call-outs, repairs and planned maintenance for pubs, bars and restaurants.",
+}
+for _slug, _semantic in SEMANTIC.items():
+    MONEY[_slug]["semantic"] = _semantic
 
 HOME_AUDIO = {
     "slug": "",
@@ -193,7 +209,15 @@ def selftest():
         assert len(d["offers"]) >= 3 and len(d["anchors"]) == 2
         for k in ("intro", "cost", "cover", "faq1", "faq2", "audio"):
             assert d[k].strip(), (slug, k)
+        assert "semantic" in d and d["semantic"].strip(), (slug, "missing semantic word-order copy")
         assert not re.search(r"domestic|household|home appliance", " ".join(str(v) for v in d.values()), re.I), slug
+    assert "London fridge repair" in MONEY["fridge-repair-london"]["semantic"]
+    assert "London fridge service" in MONEY["fridge-repair-london"]["semantic"]
+    assert "emergency freezer repair London" in MONEY["freezer-repair-london"]["semantic"]
+    assert "same day cold room repairs London" in MONEY["cold-room-repair-london"]["semantic"]
+    assert "beer cellar cooler service London" in MONEY["cellar-cooler-repair-london"]["semantic"]
+    assert "commercial catering equipment repair London" in MONEY["commercial-appliances-repair-london"]["semantic"]
+    assert "commercial appliance engineers London" in MONEY["commercial-appliances-repair-london"]["semantic"]
     assert sorted(HUB_ORDER) == sorted(MONEY)
     print("money_data selftest OK:", len(MONEY), "hubs; longest title", max(len(d["title"]) for d in MONEY.values()))
 

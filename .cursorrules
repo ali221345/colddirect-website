@@ -1,6 +1,6 @@
 # ⛔ HARD ZERO-PROMPT & ZERO-REPEAT MANDATE (owner, 2026-10-21 — permanent, every session)
 
-Before any SEO, redirect, or content edit, run `python tools/check_locked_state.py` and read the `DO NOT REPEAT` section at the top of `colddirect-memory.md`. A milestone that prints LOCKED is finished. Do not redo it.
+Before any SEO, redirect, or content edit, run `python tools/check_locked_state.py` and read the `DO NOT REPEAT` section at the top of `colddirect-memory.md`. Also read `AGENT_MEMORY_AND_LESSONS.md` and `docs/ai-memory/agent-state.json` before every task or deployment. A milestone that prints LOCKED is finished. Do not redo it.
 
 1. Never pause to ask the user for confirmation, permission, or branch/merge approval. Do not ask in chat. The owner has already approved the whole pipeline.
 2. Run every task in one continuous pass: edit, test (`npm test`, `python tools/config_parity.py`, `python tools/html_preflight.py --strict`, `python agent/scripts/protect_fixed_pages.py check`), commit, push to `main`, let Deploy to WHUK Plesk publish `/httpdocs`, run `python tools/pull_live_plesk_v4.py`, then log `docs/ai-memory/WORK_LOG.md` and the user-store `colddirect-memory.md`.
