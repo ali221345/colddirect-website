@@ -18,9 +18,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 COOLDOWN_UNTIL = "2026-10-31"
 
-# Live-audited sitemap size on https://www.colddirect.co.uk (all <loc> URLs
-# verified 200 OK, self-canonical, zero redirect hops on 2026-10-31).
-SITEMAP_URL_COUNT = 131
+# Live-audited sitemap size on https://www.colddirect.co.uk (131 <loc> URLs
+# verified 200 OK, self-canonical, zero redirect hops on 2026-10-31; bumped to
+# 136 on 2026-11-01 after Phase 3 added 5 commercial district landing pages:
+# Soho, Shoreditch, Canary Wharf, Park Royal, Mayfair).
+SITEMAP_URL_COUNT = 136
 
 # (url path, repo file, markers that must still be in that file)
 PAGES = [
@@ -139,7 +141,7 @@ def report(problems: list[str]) -> str:
         "LOCKED #1 money pages + homepage: markers present. SKIP title, H1 and meta description edits until %s." % COOLDOWN_UNTIL,
         "LOCKED #2 trailing-slash 301s (87e96a0, 5aad3d0): 102 bare-slug rules plus the legacy single-hop aliases. SKIP .htaccess and web.config redirect edits.",
         "LOCKED #3 pipelines: auto-seo.aspx V4.9, 24h nightly, 48h backup, live_production_audit.py. SKIP rebuilding them.",
-        "LOCKED #4 sitemap.xml and colddirect-public-html/sitemap.xml mirror: each exactly %d <loc> URLs (live-audited 2026-10-31, all 200 OK + self-canonical + zero redirects). SKIP sitemap edits until %s." % (SITEMAP_URL_COUNT, COOLDOWN_UNTIL),
+        "LOCKED #4 sitemap.xml and colddirect-public-html/sitemap.xml mirror: each exactly %d <loc> URLs (131 live-audited 2026-10-31 all 200 OK + self-canonical; 136 since 2026-11-01 Phase-3 district pages: Soho, Shoreditch, Canary Wharf, Park Royal, Mayfair). SKIP sitemap edits unless the count is deliberately changed here." % SITEMAP_URL_COUNT,
     ]
     if problems:
         lines.append("REGRESSION: %d locked artifact(s) missing. Repair these; do not rebuild the milestone from scratch." % len(problems))
