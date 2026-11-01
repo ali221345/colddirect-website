@@ -118,22 +118,11 @@ async function diagnose(key, text, audio, mime) {
   if (audio)
     parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
   var configured = String(
-    process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash",
+    process.env.GEMINI_VOICE_MODEL || "gemini-2.5-flash",
   ).trim();
   var models = [
-    configured,
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-  ]
-    .map(function (name) {
-      return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash";
-    })
-    .filter(function (name, index, all) {
-      return all.indexOf(name) === index;
-    });
-  if (audio) models = models.slice(0, 1);
+    /^[a-z0-9.-]+$/i.test(configured) ? configured : "gemini-2.5-flash",
+  ];
   var attempts = [];
   for (var i = 0; i < models.length; i++) {
     var model = models[i];
@@ -332,8 +321,10 @@ module.exports = async function handler(req, res) {
     return;
   }
   var data = await core.readBody(req);
-  var audio = core.cleanAudio(data.audio_base64 || data.audio || "");
-  var mime = core.cleanMime(data.mime || "audio/webm", audio);
+  var audio = core.cleanAudio(
+    data.audio_base64 || data.audioBase64 || data.audio || "",
+  );
+  var mime = core.cleanMime(data.mime || data.mimeType || "audio/webm", audio);
   var text = audio
     ? ""
     : core.stripTags(data.text || data.transcript || "").slice(0, 2000);
@@ -377,16 +368,10 @@ module.exports = async function handler(req, res) {
   ).trim();
   var result = null;
   try {
-    if (
-      text &&
-      (!key ||
-        /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(
-          text,
-        ))
-    ) {
-      result = localDiagnosis(text);
-    } else if (key) {
+    if (key) {
       result = await diagnose(key, text, audio || null, mime);
+    } else if (text) {
+      result = localDiagnosis(text);
     } else if (audio) {
       result = {
         error: "configuration",
@@ -419,6 +404,9 @@ module.exports = async function handler(req, res) {
     result = localDiagnosis(text, failureDiagnostic || null, !!audio);
   }
   var locked = core.lockLang("", result.language);
+  var direction = /^(ar|fa|he|ur|ps|sd|ug|dv|ckb|yi)$/.test(locked.code)
+    ? "rtl"
+    : "ltr";
   var reply = core.ensureClose(result.display, locked.code);
   var spoken = core.ttsScript(result.spoken || reply, locked.code);
   send(res, 200, {
@@ -427,6 +415,7 @@ module.exports = async function handler(req, res) {
     source: result.source || "gemini",
     languageCode: locked.bcp,
     language: locked.bcp,
+    direction: direction,
     transcript: result.transcript || text,
     transcript_status: result.transcript_status || "ok",
     diagnostic: result.diagnostic || null,
@@ -434,4 +423,12 @@ module.exports = async function handler(req, res) {
     display_text: reply,
     spoken_text: spoken,
   });
+};
+
+module.exports.config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
 };

@@ -165,19 +165,24 @@ async function run() {
 
   process.env.GEMINI_API_KEY = KEY;
   delete process.env.GEMINI_VOICE_MODEL;
+  assert.strictEqual(handler.config.api.bodyParser.sizeLimit, "10mb");
   let seenMime = "";
   core.geminiJson = async (key, model, body, timeout) => {
-    assert.strictEqual(model, "gemini-3.6-flash");
+    assert.strictEqual(model, "gemini-2.5-flash");
     assert.strictEqual(timeout, 30000);
     seenMime = body.contents[0].parts[1].inlineData.mimeType;
     return validModelResponse();
   };
   const mp4 = audioWith([0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70], "audio/webm");
-  const ok = await post(mp4);
+  const ok = await post({
+    audioBase64: mp4.audio_base64,
+    mimeType: mp4.mime,
+  });
   assert.strictEqual(ok.status, 200);
   assert.strictEqual(ok.json.ok, true);
   assert.ok(ok.json.transcript.includes("commercial fridge"));
   assert.ok(ok.json.spoken_text.length > 40);
+  assert.strictEqual(ok.json.direction, "ltr");
   assert.strictEqual(seenMime, "audio/mp4");
 
   let universalCalls = 0;
@@ -227,15 +232,8 @@ async function run() {
   );
 
   const attemptedModels = [];
-  core.geminiJson = async (key, model, body, timeout) => {
+  core.geminiJson = async (key, model) => {
     attemptedModels.push(model);
-    if (attemptedModels.length === 1)
-      return {
-        ok: false,
-        httpStatus: 503,
-        json: { error: { code: 503, status: "UNAVAILABLE" } },
-      };
-    assert.strictEqual(timeout, 20000);
     return validModelResponse();
   };
   const recovered = await post({
@@ -244,10 +242,12 @@ async function run() {
     mode: "text",
   });
   assert.strictEqual(recovered.json.ok, true);
-  assert.deepStrictEqual(attemptedModels, [
-    "gemini-3.6-flash",
-    "gemini-2.5-flash",
-  ]);
+  assert.strictEqual(recovered.json.source, "gemini");
+  assert.deepStrictEqual(
+    attemptedModels,
+    ["gemini-2.5-flash"],
+    "Typed text must also use exactly one model call",
+  );
 
   const nativeCases = [
     {
@@ -416,7 +416,7 @@ async function run() {
   assert.ok(/0203 952 4822/.test(quotaAudio.json.display_text));
   assert.deepStrictEqual(
     quotaModels,
-    ["gemini-3.6-flash"],
+    ["gemini-2.5-flash"],
     "Audio quota failures must not trigger additional model calls",
   );
 
