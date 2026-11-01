@@ -1077,6 +1077,7 @@
   function sendFault() {
     if (!live && !starting) return;
     var my = seq;
+    var recordingTooSmall = false;
     live = false;
     starting = false;
     isSpeaking = true;
@@ -1092,10 +1093,19 @@
         var blob = recChunks.length
           ? new Blob(recChunks, { type: recMime || "audio/webm" })
           : null;
+        recordingTooSmall = !blob || blob.size < 2000;
         return blobToBase64(blob);
       })
       .then(function (b64) {
         if (my !== seq) return null;
+        if (recordingTooSmall) {
+          var guidance =
+            "Microphone is blocked or too quiet. On your computer: Settings > Microphone Privacy > Turn ON. In browser: Click lock icon > Allow microphone > Refresh. Then try again.";
+          showVoiceError(guidance);
+          setStatus("error", guidance);
+          isSpeaking = false;
+          return { handled: true };
+        }
         if (!b64) {
           showVoiceError("I did not catch that. Tap SPEAK and try again.");
           setStatus("error", "I did not catch that. Tap SPEAK and try again.");

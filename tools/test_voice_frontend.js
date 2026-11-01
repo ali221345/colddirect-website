@@ -109,6 +109,16 @@ assert.ok(
   "The raw recording must be sent to the diagnosis endpoint",
 );
 assert.ok(
+  source.includes("blob.size < 2000"),
+  "Recordings under 2000 bytes must use the microphone guidance",
+);
+assert.ok(
+  source.includes(
+    "Microphone is blocked or too quiet. On your computer: Settings > Microphone Privacy > Turn ON. In browser: Click lock icon > Allow microphone > Refresh. Then try again.",
+  ),
+  "Small recordings must show the exact microphone recovery instructions",
+);
+assert.ok(
   /RECORDER_SILENCE_MS = 2000/.test(source),
   "MediaRecorder must stop after 2 seconds of detected silence",
 );
