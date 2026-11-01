@@ -23,9 +23,24 @@
   var TTS_URLS = [VERCEL_API + "/api/voice-tts"];
 
   var host = String(location.hostname || "").toLowerCase();
-  if (host && host !== "www.colddirect.co.uk" && host !== "colddirect.co.uk" && host !== "localhost" && host !== "127.0.0.1") return;
+  if (
+    host &&
+    host !== "www.colddirect.co.uk" &&
+    host !== "colddirect.co.uk" &&
+    host !== "localhost" &&
+    host !== "127.0.0.1"
+  )
+    return;
 
-  var root, speakBtn, listenBtn, closeBtn, statusEl, logEl, ctaEl, meterEl, textInput;
+  var root,
+    speakBtn,
+    listenBtn,
+    closeBtn,
+    statusEl,
+    logEl,
+    ctaEl,
+    meterEl,
+    textInput;
   var userCollapsed = false;
   var liveUser = null;
   var liveBot = null;
@@ -111,36 +126,48 @@
         "#cd-voice-root .cd-voice-langwrap{flex:1 1 0;min-width:0;height:28px;padding:0 4px;font-size:9px;justify-content:center;overflow:hidden;text-overflow:ellipsis;}" +
         "#cd-voice-root button.cd-voice-btn{flex:1 1 0;min-width:0;height:28px;min-height:28px;padding:0 4px;font-size:9px;justify-content:center;}" +
         "#cd-voice-mobile-strip #cd-voice-panel{position:absolute;left:8px;right:8px;width:auto;max-width:none;top:100%;margin-top:6px;max-height:min(70vh,520px);overflow:auto;z-index:200;box-sizing:border-box;}" +
-      "}"
+        "}",
     ].join("");
   }
 
   function html() {
     return (
       '<div id="cd-voice-bar">' +
-        '<div id="cd-voice-left">' +
-          '<span id="cd-voice-dot" aria-hidden="true"></span>' +
-          '<span id="cd-voice-title">' + TITLE + "</span>" +
-        "</div>" +
-        '<div id="cd-voice-controls">' +
-          '<span class="cd-voice-langwrap" aria-label="Language">' + LANG_BADGE + "</span>" +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false">' + SPEAK_LABEL + "</button>" +
-          '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false">' + LISTEN_LABEL + "</button>" +
-        "</div>" +
+      '<div id="cd-voice-left">' +
+      '<span id="cd-voice-dot" aria-hidden="true"></span>' +
+      '<span id="cd-voice-title">' +
+      TITLE +
+      "</span>" +
+      "</div>" +
+      '<div id="cd-voice-controls">' +
+      '<span class="cd-voice-langwrap" aria-label="Language">' +
+      LANG_BADGE +
+      "</span>" +
+      '<button type="button" class="cd-voice-btn" id="cd-voice-speak" aria-pressed="false">' +
+      SPEAK_LABEL +
+      "</button>" +
+      '<button type="button" class="cd-voice-btn" id="cd-voice-listen" aria-pressed="false">' +
+      LISTEN_LABEL +
+      "</button>" +
+      "</div>" +
       "</div>" +
       '<div id="cd-voice-panel">' +
-        '<div id="cd-voice-panel-head">' +
-          '<div id="cd-voice-status" role="status">' + STATUS_IDLE + "</div>" +
-          '<button type="button" id="cd-voice-close" aria-label="Close transcript">✕</button>' +
-        "</div>" +
-        '<div id="cd-voice-meter" hidden><i></i></div>' +
-        '<div id="cd-voice-log" aria-live="polite"></div>' +
-        '<form id="cd-voice-text-form" style="display:flex;gap:6px;margin-top:10px">' +
-          '<label for="cd-voice-text-input" style="position:absolute;left:-10000px">Type your equipment fault</label>' +
-          '<input id="cd-voice-text-input" type="text" maxlength="2000" required autocomplete="off" placeholder="Or type the fault here…" style="flex:1;min-width:0;padding:10px;border:1px solid #475569;border-radius:8px;background:#fff;color:#0f172a;font:14px system-ui">' +
-          '<button type="submit" class="cd-voice-btn" style="height:auto!important;min-height:40px!important;padding:8px 12px!important">SEND</button>' +
-        '</form>' +
-        '<a id="cd-voice-cta" href="' + REVIEW_HREF + '">👍 Like &amp; Leave a 5-Star Review</a>' +
+      '<div id="cd-voice-panel-head">' +
+      '<div id="cd-voice-status" role="status">' +
+      STATUS_IDLE +
+      "</div>" +
+      '<button type="button" id="cd-voice-close" aria-label="Close transcript">✕</button>' +
+      "</div>" +
+      '<div id="cd-voice-meter" hidden><i></i></div>' +
+      '<div id="cd-voice-log" aria-live="polite"></div>' +
+      '<form id="cd-voice-text-form" style="display:flex;gap:6px;margin-top:10px">' +
+      '<label for="cd-voice-text-input" style="position:absolute;left:-10000px">Type your equipment fault</label>' +
+      '<input id="cd-voice-text-input" type="text" maxlength="2000" required autocomplete="off" placeholder="Or type the fault here…" style="flex:1;min-width:0;padding:10px;border:1px solid #475569;border-radius:8px;background:#fff;color:#0f172a;font:14px system-ui">' +
+      '<button type="submit" class="cd-voice-btn" style="height:auto!important;min-height:40px!important;padding:8px 12px!important">SEND</button>' +
+      "</form>" +
+      '<a id="cd-voice-cta" href="' +
+      REVIEW_HREF +
+      '">👍 Like &amp; Leave a 5-Star Review</a>' +
       "</div>"
     );
   }
@@ -180,7 +207,8 @@
     var m;
     var shown = false;
     while ((m = re.exec(text))) {
-      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      if (m.index > last)
+        el.appendChild(document.createTextNode(text.slice(last, m.index)));
       var a = document.createElement("a");
       a.href = telHref(m[0]);
       a.textContent = m[0];
@@ -188,14 +216,18 @@
       last = m.index + m[0].length;
       shown = true;
     }
-    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+    if (last < text.length)
+      el.appendChild(document.createTextNode(text.slice(last)));
     if (!shown && !el.childNodes.length) el.textContent = text;
   }
 
   function addRow(role, text, partial) {
     if (!logEl) return null;
     var row = document.createElement("div");
-    row.className = "cd-voice-row " + (role === "user" ? "is-user" : "is-bot") + (partial ? " is-partial" : "");
+    row.className =
+      "cd-voice-row " +
+      (role === "user" ? "is-user" : "is-bot") +
+      (partial ? " is-partial" : "");
     var who = document.createElement("span");
     who.className = "cd-voice-who";
     who.textContent = role === "user" ? "You" : "Head Engineer";
@@ -238,7 +270,14 @@
     }
     recordingRow = null;
     liveUser = null;
-    upsertLive("bot", String(text || "I could not hear that clearly. Type the fault below or try again."), true);
+    upsertLive(
+      "bot",
+      String(
+        text ||
+          "I could not hear that clearly. Type the fault below or try again.",
+      ),
+      true,
+    );
   }
 
   function upsertLive(role, text, final) {
@@ -300,7 +339,9 @@
     ctaEl.classList.remove("is-hot");
     void ctaEl.offsetWidth;
     ctaEl.classList.add("is-hot");
-    try { ctaEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e1) {}
+    try {
+      ctaEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } catch (e1) {}
   }
 
   function unlockAudio() {
@@ -331,7 +372,8 @@
         window.__cdVoicePlayer = player;
       }
       voiceEl = window.__cdVoicePlayer;
-      voiceEl.src = "data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAwF0AAIC7AAACABAAZGF0YTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      voiceEl.src =
+        "data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAwF0AAIC7AAACABAAZGF0YTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
       var primed = voiceEl.play();
       if (primed && primed.catch) primed.catch(function () {});
     } catch (e2) {}
@@ -348,7 +390,9 @@
   }
 
   function welcomeAudio() {
-    return document.querySelector("#cd-audio-dock audio, #cd-hero-audio, audio.cd-welcome-audio");
+    return document.querySelector(
+      "#cd-audio-dock audio, #cd-hero-audio, audio.cd-welcome-audio",
+    );
   }
 
   function setListenUi(on) {
@@ -367,17 +411,27 @@
       return;
     }
     if (!a.paused && !a.ended) {
-      try { a.pause(); } catch (e1) {}
+      try {
+        a.pause();
+      } catch (e1) {}
       setListenUi(false);
       return;
     }
-    try { a.currentTime = 0; } catch (e2) {}
+    try {
+      a.currentTime = 0;
+    } catch (e2) {}
     var p = a.play();
     setListenUi(true);
-    a.onended = function () { setListenUi(false); };
-    a.onpause = function () { if (a.paused) setListenUi(false); };
+    a.onended = function () {
+      setListenUi(false);
+    };
+    a.onpause = function () {
+      if (a.paused) setListenUi(false);
+    };
     if (p && typeof p.catch === "function") {
-      p.catch(function () { setListenUi(false); });
+      p.catch(function () {
+        setListenUi(false);
+      });
     }
   }
 
@@ -393,7 +447,7 @@
       style.textContent = [
         "#cd-audio-dock{display:block !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}",
         "@media (min-width:769px){#cd-audio-dock{position:absolute !important;top:12px !important;right:10px !important;left:auto !important;bottom:auto !important;z-index:401 !important;width:240px !important;max-width:min(240px,calc(100vw - 24px)) !important;}}",
-        "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 40%;min-width:0;margin:0 !important;z-index:1 !important;overflow:hidden !important;box-sizing:border-box;}}"
+        "@media (max-width:768px){#cd-audio-dock{position:relative !important;top:auto !important;right:auto !important;left:auto !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:1 1 40%;min-width:0;margin:0 !important;z-index:1 !important;overflow:hidden !important;box-sizing:border-box;}}",
       ].join("");
       (document.body || document.documentElement).appendChild(style);
     } catch (e1) {}
@@ -402,7 +456,9 @@
   function placeRoot(node) {
     if (!node) return;
     var dock = document.getElementById("cd-audio-dock");
-    var header = document.querySelector(".cd-main-header, header.site, .site-header, header");
+    var header = document.querySelector(
+      ".cd-main-header, header.site, .site-header, header",
+    );
     var strip = document.getElementById("cd-voice-mobile-strip");
     if (isMobileVoice() && header) {
       if (!strip) {
@@ -410,16 +466,19 @@
         strip.id = "cd-voice-mobile-strip";
       }
       if (strip.parentNode !== header) header.appendChild(strip);
-      if (dock && dock.parentNode !== strip) strip.insertBefore(dock, strip.firstChild);
+      if (dock && dock.parentNode !== strip)
+        strip.insertBefore(dock, strip.firstChild);
       if (node.parentNode !== strip) strip.appendChild(node);
-      if (dock && node && dock.nextSibling !== node) strip.insertBefore(dock, node);
+      if (dock && node && dock.nextSibling !== node)
+        strip.insertBefore(dock, node);
       return;
     }
     if (strip && strip.parentNode) {
       if (dock && header) header.appendChild(dock);
       strip.parentNode.removeChild(strip);
     }
-    if (document.body && node.parentNode !== document.body) document.body.appendChild(node);
+    if (document.body && node.parentNode !== document.body)
+      document.body.appendChild(node);
     if (dock && header && dock.parentNode !== header) header.appendChild(dock);
   }
 
@@ -429,32 +488,74 @@
   }
 
   function stripTags(text) {
-    return String(text || "").replace(/\[\w+\]\s*/g, "").replace(/\s+/g, " ").trim();
+    return String(text || "")
+      .replace(/\[\w+\]\s*/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function baseLang(lang) {
+    return String(lang || "")
+      .split("-")[0]
+      .toLowerCase();
   }
 
   function spokenClean(text, lang) {
-    var fa = lang === "fa-IR";
+    var profile = SPEECH_PROFILES[baseLang(lang)];
     return stripTags(text)
       .replace(/read this exactly[^.]*\./gi, " ")
       .replace(/do not add words\.?/gi, " ")
       .replace(/never say the word slash\.?/gi, " ")
       .replace(/calm male head engineer voice\.?/gi, " ")
       .replace(/\bslash\b/gi, " ")
-      .replace(/[／/]/g, fa ? " یا " : " or ")
+      .replace(/[／/]/g, " " + (profile ? profile.or : "or") + " ")
       .replace(/0203\s*952\s*4822/g, "0203 952 4822")
       .replace(/07983\s*759320/g, "07983 759320")
-      .replace(/\s+/g, " ").trim();
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function lockLang(text) {
-    if (/[\u0600-\u06FF]/.test(String(text || ""))) return "fa-IR";
+    var raw = String(text || "");
+    if (
+      /[\u067E\u0686\u0698\u06AF]/.test(raw) ||
+      /(?:یخچال|سرد|سرمهندس|خوشحالم|نیاز|دارد|می‌|نمی|اواپراتور|برای|شرکت)/.test(
+        raw,
+      )
+    )
+      return "fa-IR";
+    if (/[\u0600-\u06FF]/.test(raw)) return "ar-SA";
+    if (
+      /[ışğİŞĞ]/.test(raw) ||
+      /\b(?:merhaba|buzdolabı|soğutmuyor|çalışmıyor|arıza)\b/i.test(raw)
+    )
+      return "tr-TR";
+    if (
+      /[¿¡ñÑ]/.test(raw) ||
+      /\b(?:hola|nevera|enfría|funciona|avería)\b/i.test(raw)
+    )
+      return "es-ES";
+    if (
+      /[àâçéèêëîïôûùÿœ]/i.test(raw) ||
+      /\b(?:bonjour|réfrigérateur|refroidit|fonctionne|panne)\b/i.test(raw)
+    )
+      return "fr-FR";
     return "en-GB";
   }
 
   function clearRecordingTimers() {
-    if (recordingLimitTimer) { clearTimeout(recordingLimitTimer); recordingLimitTimer = null; }
-    if (recordingUiTimer) { clearInterval(recordingUiTimer); recordingUiTimer = null; }
-    if (nativeSilenceTimer) { clearTimeout(nativeSilenceTimer); nativeSilenceTimer = null; }
+    if (recordingLimitTimer) {
+      clearTimeout(recordingLimitTimer);
+      recordingLimitTimer = null;
+    }
+    if (recordingUiTimer) {
+      clearInterval(recordingUiTimer);
+      recordingUiTimer = null;
+    }
+    if (nativeSilenceTimer) {
+      clearTimeout(nativeSilenceTimer);
+      nativeSilenceTimer = null;
+    }
   }
 
   function resolveNativeStop() {
@@ -470,7 +571,9 @@
     return new Promise(function (resolve) {
       nativeStopResolve = resolve;
       var timer = setTimeout(function () {
-        try { recognition.abort(); } catch (e1) {}
+        try {
+          recognition.abort();
+        } catch (e1) {}
         resolveNativeStop();
       }, 800);
       var originalResolve = nativeStopResolve;
@@ -478,8 +581,12 @@
         clearTimeout(timer);
         originalResolve();
       };
-      try { recognition.stop(); } catch (e2) {
-        try { recognition.abort(); } catch (e3) {}
+      try {
+        recognition.stop();
+      } catch (e2) {
+        try {
+          recognition.abort();
+        } catch (e3) {}
         resolveNativeStop();
       }
     });
@@ -487,15 +594,23 @@
 
   function stopMicHard() {
     if (nativeRecognition) {
-      try { nativeRecognition.abort(); } catch (e0) {}
+      try {
+        nativeRecognition.abort();
+      } catch (e0) {}
       resolveNativeStop();
     }
     if (mediaRec) {
-      try { if (mediaRec.state !== "inactive") mediaRec.stop(); } catch (e1) {}
+      try {
+        if (mediaRec.state !== "inactive") mediaRec.stop();
+      } catch (e1) {}
       mediaRec = null;
     }
     if (micStream) {
-      try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e2) {}
+      try {
+        micStream.getTracks().forEach(function (t) {
+          t.stop();
+        });
+      } catch (e2) {}
       micStream = null;
     }
   }
@@ -504,18 +619,26 @@
     playToken += 1;
     isSpeaking = false;
     if (voiceSource) {
-      try { voiceSource.stop(0); } catch (e1) {}
+      try {
+        voiceSource.stop(0);
+      } catch (e1) {}
       voiceSource = null;
     }
     if (voiceEl) {
-      try { voiceEl.pause(); } catch (e2) {}
+      try {
+        voiceEl.pause();
+      } catch (e2) {}
     }
     var welcome = welcomeAudio();
     if (welcome && !welcome.paused) {
-      try { welcome.pause(); } catch (e3) {}
+      try {
+        welcome.pause();
+      } catch (e3) {}
       setListenUi(false);
     }
-    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e4) {}
+    try {
+      window.speechSynthesis && window.speechSynthesis.cancel();
+    } catch (e4) {}
   }
 
   function startMeter(stream) {
@@ -525,7 +648,9 @@
     if (!AC || !stream) return;
     try {
       if (window.__cdMeterCtx) {
-        try { window.__cdMeterCtx.close(); } catch (e0) {}
+        try {
+          window.__cdMeterCtx.close();
+        } catch (e0) {}
       }
       var ctx = new AC();
       window.__cdMeterCtx = ctx;
@@ -541,21 +666,33 @@
         var n = 0;
         for (var i = 0; i < data.length; i++) n += data[i];
         var average = n / data.length;
-        if (bar) bar.style.width = Math.min(100, Math.round((average / 255) * 100)) + "%";
+        if (bar)
+          bar.style.width =
+            Math.min(100, Math.round((average / 255) * 100)) + "%";
         var now = Date.now();
         if (average >= 10) {
           if (!recorderHeardAt) recorderHeardAt = now;
           recorderLastSoundAt = now;
         }
-        if (recorderHeardAt && now - recorderLastSoundAt >= RECORDER_SILENCE_MS && mediaRec) sendFault();
+        if (
+          recorderHeardAt &&
+          now - recorderLastSoundAt >= RECORDER_SILENCE_MS &&
+          mediaRec
+        )
+          sendFault();
       }, 120);
     } catch (e1) {}
   }
 
   function stopMeter() {
-    if (meterTimer) { clearInterval(meterTimer); meterTimer = null; }
+    if (meterTimer) {
+      clearInterval(meterTimer);
+      meterTimer = null;
+    }
     if (window.__cdMeterCtx) {
-      try { window.__cdMeterCtx.close(); } catch (e0) {}
+      try {
+        window.__cdMeterCtx.close();
+      } catch (e0) {}
       window.__cdMeterCtx = null;
     }
     if (meterEl) {
@@ -595,12 +732,22 @@
         window.__cdVoicePlayer = voiceEl;
       }
       if (audioObjectUrl) {
-        try { URL.revokeObjectURL(audioObjectUrl); } catch (e1) {}
+        try {
+          URL.revokeObjectURL(audioObjectUrl);
+        } catch (e1) {}
       }
-      audioObjectUrl = URL.createObjectURL(new Blob([bytes], { type: mime || "audio/mpeg" }));
-      voiceEl.onended = function () { resolve(); };
-      voiceEl.onerror = function () { reject(new Error("audio_playback")); };
-      voiceEl.onpause = function () { if (token !== playToken) resolve(); };
+      audioObjectUrl = URL.createObjectURL(
+        new Blob([bytes], { type: mime || "audio/mpeg" }),
+      );
+      voiceEl.onended = function () {
+        resolve();
+      };
+      voiceEl.onerror = function () {
+        reject(new Error("audio_playback"));
+      };
+      voiceEl.onpause = function () {
+        if (token !== playToken) resolve();
+      };
       voiceEl.src = audioObjectUrl;
       voiceEl.load();
       var p = voiceEl.play();
@@ -610,19 +757,31 @@
 
   function speakBrowser(text, lang, token) {
     return new Promise(function (resolve, reject) {
-      if (!window.speechSynthesis || !text) return reject(new Error("native_tts_unavailable"));
+      if (!window.speechSynthesis || !text)
+        return reject(new Error("native_tts_unavailable"));
       if (token !== playToken) return resolve();
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === "fa-IR" ? "fa-IR" : "en-GB";
+      u.lang = lang;
       u.rate = 1;
+      var base = baseLang(lang);
       var voices = window.speechSynthesis.getVoices() || [];
       var preferred = voices.filter(function (v) {
         var loc = String(v.lang || "").toLowerCase();
-        if (lang === "fa-IR") return loc.indexOf("fa") === 0;
-        return loc.indexOf("en-gb") === 0 && /natural|daniel|ryan|ravi|george|aaron|serena|male/i.test(v.name);
+        if (loc.indexOf(base) !== 0) return false;
+        return (
+          base !== "en" ||
+          (loc.indexOf("en-gb") === 0 &&
+            /natural|daniel|ryan|ravi|george|aaron|serena|male/i.test(v.name))
+        );
       })[0];
-      var anyUk = voices.filter(function (v) { return String(v.lang || "").toLowerCase().indexOf("en-gb") === 0; })[0];
-      var pick = preferred || (lang === "fa-IR" ? null : anyUk);
+      var anyLocale = voices.filter(function (v) {
+        return (
+          String(v.lang || "")
+            .toLowerCase()
+            .indexOf(base) === 0
+        );
+      })[0];
+      var pick = preferred || anyLocale;
       if (pick) u.voice = pick;
       window.__cdNativeUtterance = u;
       isSpeaking = true;
@@ -637,7 +796,9 @@
         }
         resolve();
       };
-      u.onerror = function () { reject(new Error("native_tts_playback")); };
+      u.onerror = function () {
+        reject(new Error("native_tts_playback"));
+      };
       window.speechSynthesis.resume();
       window.speechSynthesis.speak(u);
     });
@@ -648,12 +809,18 @@
       method: "POST",
       headers: { "Content-Type": "application/json", "X-CD-IP": MARK },
       cache: "no-store",
-      body: JSON.stringify(body)
-    }).then(function (r) { return r.json().catch(function () { return {}; }); });
+      body: JSON.stringify(body),
+    }).then(function (r) {
+      return r.json().catch(function () {
+        return {};
+      });
+    });
   }
 
   function diagnose(payload) {
-    return postJson(DIAGNOSE_URL, payload).catch(function () { return null; });
+    return postJson(DIAGNOSE_URL, payload).catch(function () {
+      return null;
+    });
   }
 
   function blobToBase64(blob) {
@@ -664,16 +831,21 @@
         var s = String(fr.result || "");
         resolve(s.indexOf(",") >= 0 ? s.split(",")[1] : s);
       };
-      fr.onerror = function () { resolve(""); };
+      fr.onerror = function () {
+        resolve("");
+      };
       fr.readAsDataURL(blob);
     });
   }
 
   function tracksAreLive(stream) {
     var tracks = stream && stream.getAudioTracks ? stream.getAudioTracks() : [];
-    return tracks.length > 0 && tracks.every(function (t) {
-      return t.readyState === "live" && t.enabled !== false;
-    });
+    return (
+      tracks.length > 0 &&
+      tracks.every(function (t) {
+        return t.readyState === "live" && t.enabled !== false;
+      })
+    );
   }
 
   function waitForLiveTracks(stream) {
@@ -687,13 +859,19 @@
         if (timer) clearInterval(timer);
         if (ok) resolve(stream);
         else {
-          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e1) {}
+          try {
+            stream.getTracks().forEach(function (t) {
+              t.stop();
+            });
+          } catch (e1) {}
           reject(new Error("mic"));
         }
       }
       var tracks = stream.getAudioTracks();
       tracks.forEach(function (t) {
-        t.onunmute = function () { if (tracksAreLive(stream)) finish(true); };
+        t.onunmute = function () {
+          if (tracksAreLive(stream)) finish(true);
+        };
       });
       var n = 0;
       timer = setInterval(function () {
@@ -713,7 +891,11 @@
         settled = true;
         mediaRec = null;
         if (micStream) {
-          try { micStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e1) {}
+          try {
+            micStream.getTracks().forEach(function (t) {
+              t.stop();
+            });
+          } catch (e1) {}
           micStream = null;
         }
         stopMeter();
@@ -728,44 +910,93 @@
         clearTimeout(timer);
         done();
       };
-      try { rec.requestData(); } catch (e2) {}
-      try { rec.stop(); } catch (e3) { clearTimeout(timer); done(); }
+      try {
+        rec.requestData();
+      } catch (e2) {}
+      try {
+        rec.stop();
+      } catch (e3) {
+        clearTimeout(timer);
+        done();
+      }
     });
   }
 
+  var SPEECH_PROFILES = {
+    en: {
+      or: "or",
+      spoken:
+        "For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320, or email info@colddirect.co.uk. If this advice helped, please tap the green Like and 5-Star Review button below!",
+      legacy: [
+        "Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.",
+        "For an immediate engineer visit across London, call ColdDirect on 0203 952 4822 or 07983 759320. 👍 Found this helpful? Please tap the green Like & Leave a 5-Star Review button below!",
+        "For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!",
+      ],
+    },
+    fa: {
+      or: "یا",
+      spoken:
+        "برای اعزام فوری مهندس در سراسر لندن، با کُلد دایرِکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید یا از طریق info@colddirect.co.uk ایمیل بفرستید. اگر این راهنما مفید بود، لطفاً دکمه سبز لایک و نظر پنج‌ستاره در پایین را بزنید!",
+      legacy: [
+        "لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید.",
+        "برای اعزام فوری مهندس در سراسر لندن، با کولد دایرکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. 👍 اگر این راهنما مفید بود، لطفاً دکمه سبز «Like & Leave a 5-Star Review» در پایین را بزنید!",
+      ],
+    },
+    tr: {
+      or: "veya",
+      spoken:
+        "Londra genelinde acil mühendis ziyareti için Cold Direct'i 0203 952 4822 veya 07983 759320 numarasından arayın ya da info@colddirect.co.uk adresine e-posta gönderin. Bu bilgi yardımcı olduysa lütfen aşağıdaki yeşil Beğen ve 5 Yıldızlı Yorum düğmesine dokunun!",
+      legacy: [],
+    },
+    ar: {
+      or: "أو",
+      spoken:
+        "لزيارة عاجلة من مهندس في جميع أنحاء لندن، اتصل بكولد دايركت على 0203 952 4822 أو 07983 759320، أو أرسل بريداً إلكترونياً إلى info@colddirect.co.uk. إذا كانت هذه المعلومات مفيدة، فاضغط على زر الإعجاب الأخضر واترك تقييماً من خمس نجوم أدناه!",
+      legacy: [],
+    },
+    es: {
+      or: "o",
+      spoken:
+        "Para una visita urgente de un ingeniero en todo Londres, llame a Cold Direct al 0203 952 4822 o al 07983 759320, o escriba a info@colddirect.co.uk. Si esta información le ayudó, pulse el botón verde de Me gusta y deje una reseña de 5 estrellas abajo!",
+      legacy: [],
+    },
+    fr: {
+      or: "ou",
+      spoken:
+        "Pour une visite urgente d’un ingénieur partout à Londres, appelez Cold Direct au 0203 952 4822 ou au 07983 759320, ou écrivez à info@colddirect.co.uk. Si ces conseils vous ont aidé, touchez le bouton vert J’aime et laissez un avis 5 étoiles ci-dessous !",
+      legacy: [],
+    },
+  };
+
   function spokenCta(lang) {
-    return lang === "fa-IR"
-      ? "برای اعزام فوری مهندس در سراسر لندن، با کُلد دایرِکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. اگر این راهنما مفید بود، لطفاً دکمه سبز لایک و نظر پنج‌ستاره در پایین را بزنید!"
-      : "For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!";
+    var profile = SPEECH_PROFILES[baseLang(lang)];
+    return profile ? profile.spoken : "";
   }
 
   function stripSpokenClose(text, lang) {
     var s = String(text || "");
-    var closes = lang === "fa-IR" ? [
-      "لطفاً با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید و دکمه سبز لایک و ۵ ستاره در پایین را بزنید.",
-      "برای اعزام فوری مهندس در سراسر لندن، با کولد دایرکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. 👍 اگر این راهنما مفید بود، لطفاً دکمه سبز «Like & Leave a 5-Star Review» در پایین را بزنید!",
-      spokenCta(lang)
-    ] : [
-      "Please call us on 0203 952 4822 or 07983 759320, and kindly click the green Like and 5-Star Review button below.",
-      "For an immediate engineer visit across London, call ColdDirect on 0203 952 4822 or 07983 759320. 👍 Found this helpful? Please tap the green Like & Leave a 5-Star Review button below!",
-      spokenCta(lang)
-    ];
-    closes.forEach(function (close) { s = s.split(close).join(" "); });
+    var profile = SPEECH_PROFILES[baseLang(lang)];
+    var closes = profile ? profile.legacy.concat(profile.spoken) : [];
+    closes.forEach(function (close) {
+      if (close) s = s.split(close).join(" ");
+    });
     return s.replace(/\s+/g, " ").trim();
   }
 
   function conciseSpeech(text, lang) {
     var cta = spokenCta(lang);
     var ctaWords = cta.split(/\s+/).filter(Boolean).length;
-    var technicalLimit = Math.min(SPOKEN_TECHNICAL_MAX_WORDS, Math.max(20, SPOKEN_SUMMARY_MAX_WORDS - ctaWords));
+    var technicalLimit = Math.min(
+      SPOKEN_TECHNICAL_MAX_WORDS,
+      Math.max(20, SPOKEN_SUMMARY_MAX_WORDS - ctaWords),
+    );
     var s = stripSpokenClose(spokenClean(text, lang), lang)
-      .replace(/Hello\. I am the Head Engineer at ColdDirect\. I'm glad you chose our company\./gi, " ")
-      .replace(/سلام\.\s*من سرمهندس شرکت .*?خوشحالم که شرکت ما را انتخاب کردید\./g, " ")
-      .replace(/\s+/g, " ").trim();
+      .replace(/\s+/g, " ")
+      .trim();
     var sentences = s.match(/[^.!?؟]+[.!?؟]+|[^.!?؟]+$/g) || [s];
     var selected = [];
     var words = 0;
-    for (var i = 0; i < sentences.length && selected.length < 3; i++) {
+    for (var i = 0; i < sentences.length && selected.length < 5; i++) {
       var sentence = sentences[i].trim();
       if (!sentence) continue;
       var count = sentence.split(/\s+/).filter(Boolean).length;
@@ -785,16 +1016,36 @@
     var entry = speechCache[0];
     if (entry && entry.data) return Promise.resolve(entry.data);
     if (entry && entry.loading) return entry.loading;
-    entry = { text: splitSpeechText[0], data: null, loading: null, native: false };
+    entry = {
+      text: splitSpeechText[0],
+      data: null,
+      loading: null,
+      native: false,
+    };
     speechCache[0] = entry;
-    entry.loading = postJson(TTS_URLS[0], { text: splitSpeechText[0], language: speechLang, summary: true }).then(function (j) {
-      if (!j || !j.audio_base64) throw new Error("tts_unavailable");
-      entry.data = { data: j.audio_base64, mime: j.audio_mime || "audio/mpeg" };
-      return entry.data;
-    }).catch(function (error) {
-      if (speechCache[0] === entry) speechCache[0] = { text: entry.text, data: null, loading: null, native: false };
-      throw error;
-    });
+    entry.loading = postJson(TTS_URLS[0], {
+      text: splitSpeechText[0],
+      language: speechLang,
+      summary: true,
+    })
+      .then(function (j) {
+        if (!j || !j.audio_base64) throw new Error("tts_unavailable");
+        entry.data = {
+          data: j.audio_base64,
+          mime: j.audio_mime || "audio/mpeg",
+        };
+        return entry.data;
+      })
+      .catch(function (error) {
+        if (speechCache[0] === entry)
+          speechCache[0] = {
+            text: entry.text,
+            data: null,
+            loading: null,
+            native: false,
+          };
+        throw error;
+      });
     return entry.loading;
   }
 
@@ -811,25 +1062,36 @@
   function nativeFallback(token) {
     if (token !== playToken) return Promise.resolve();
     if (speechCache[0]) speechCache[0].native = true;
-    return speakBrowser(splitSpeechText[0], speechLang, token).catch(function () {
-      if (token !== playToken) return;
-      isSpeaking = false;
-      setListenUi(false);
-      setStatus("error", "Tap LISTEN to retry, and check your mute switch and volume.");
-    });
+    return speakBrowser(splitSpeechText[0], speechLang, token).catch(
+      function () {
+        if (token !== playToken) return;
+        isSpeaking = false;
+        setListenUi(false);
+        setStatus(
+          "error",
+          "Tap LISTEN to retry, and check your mute switch and volume.",
+        );
+      },
+    );
   }
 
   function playSpeech(token) {
-    if (token !== playToken || !splitSpeechText.length) return Promise.resolve();
+    if (token !== playToken || !splitSpeechText.length)
+      return Promise.resolve();
     isSpeaking = true;
     setListenUi(true);
     setStatus("active", "🔊 Preparing a short spoken answer...");
-    return loadSpeechSummary().then(function (audio) {
-      if (token !== playToken) return;
-      return playBytes(audio.data, audio.mime, token);
-    }).then(function () { finishSpeech(token); }).catch(function () {
-      return nativeFallback(token);
-    });
+    return loadSpeechSummary()
+      .then(function (audio) {
+        if (token !== playToken) return;
+        return playBytes(audio.data, audio.mime, token);
+      })
+      .then(function () {
+        finishSpeech(token);
+      })
+      .catch(function () {
+        return nativeFallback(token);
+      });
   }
 
   function playCachedSpeech() {
@@ -842,18 +1104,22 @@
     setStatus("active", "🔊 Replaying downloaded audio...");
     isSpeaking = true;
     setListenUi(true);
-    return playBytes(first.data.data, first.data.mime, token).then(function () {
-      finishSpeech(token);
-    }).catch(function () {
-      return nativeFallback(token);
-    });
+    return playBytes(first.data.data, first.data.mime, token)
+      .then(function () {
+        finishSpeech(token);
+      })
+      .catch(function () {
+        return nativeFallback(token);
+      });
   }
 
   function speakAnswer(text, lang) {
     stopPlayback();
-    speechLang = lang || "en-GB";
+    speechLang = lang || lockLang(text);
     splitSpeechText = [conciseSpeech(text, speechLang)];
-    speechCache = [{ text: splitSpeechText[0], data: null, loading: null, native: false }];
+    speechCache = [
+      { text: splitSpeechText[0], data: null, loading: null, native: false },
+    ];
     var token = playToken;
     return playSpeech(token);
   }
@@ -870,57 +1136,86 @@
     if (root) root.classList.add("is-busy");
     setStatus("connecting", "Transcribing your voice...");
     showRecording();
-    finishRecording().then(function () {
-      if (my !== seq) return "";
-      var blob = recChunks.length ? new Blob(recChunks, { type: recMime || "audio/webm" }) : null;
-      return blobToBase64(blob);
-    }).then(function (b64) {
-      if (my !== seq) return null;
-      if (!b64) {
-        showVoiceError("I did not catch that. Tap SPEAK and try again.");
-        setStatus("error", "I did not catch that. Tap SPEAK and try again.");
+    finishRecording()
+      .then(function () {
+        if (my !== seq) return "";
+        var blob = recChunks.length
+          ? new Blob(recChunks, { type: recMime || "audio/webm" })
+          : null;
+        return blobToBase64(blob);
+      })
+      .then(function (b64) {
+        if (my !== seq) return null;
+        if (!b64) {
+          showVoiceError("I did not catch that. Tap SPEAK and try again.");
+          setStatus("error", "I did not catch that. Tap SPEAK and try again.");
+          isSpeaking = false;
+          return { handled: true };
+        }
+        return diagnose({
+          text: "",
+          transcript: "",
+          audio_base64: b64,
+          mime: (recMime || "audio/webm").split(";")[0],
+          language: "auto",
+          mode: "transcribe",
+          translate: false,
+        });
+      })
+      .then(function (j) {
+        if (my !== seq || (j && j.handled)) return;
+        if (!j) {
+          showVoiceError("I did not catch that. Tap SPEAK and try again.");
+          setStatus(
+            "error",
+            "The Head Engineer could not hear that. Tap SPEAK again.",
+          );
+          isSpeaking = false;
+          return;
+        }
+        var transcript = stripTags((j && j.transcript) || "");
+        var display = stripTags((j && (j.reply || j.display_text)) || "");
+        var spoken = stripTags((j && (j.spoken_text || display)) || "");
+        if (
+          !j ||
+          j.ok === false ||
+          !display ||
+          !transcript ||
+          /give the brand, error code and whether the cabinet is still cold/i.test(
+            display + " " + spoken,
+          )
+        ) {
+          showVoiceError(
+            "I could not hear that clearly. Type the fault below or try again.",
+          );
+          setStatus(
+            "error",
+            (j && j.error) ||
+              "Type the fault below or tap SPEAK and try again.",
+          );
+          isSpeaking = false;
+          return;
+        }
+        var lang = (j && j.language) || lockLang(transcript + " " + display);
+        sessionLang = lang;
+        fillRecording(transcript);
+        upsertLive("bot", display, true);
+        return speakAnswer(spoken || display, lang);
+      })
+      .catch(function () {
+        if (my !== seq) return;
         isSpeaking = false;
-        return { handled: true };
-      }
-      return diagnose({
-        text: "",
-        transcript: "",
-        audio_base64: b64,
-        mime: (recMime || "audio/webm").split(";")[0],
-        language: "auto",
-        mode: "transcribe",
-        translate: false
+        showVoiceError(
+          "The diagnosis could not start. Type the fault below or call 0203 952 4822.",
+        );
+        setStatus(
+          "error",
+          "The diagnosis could not start. Type the fault below or call 0203 952 4822.",
+        );
+      })
+      .then(function () {
+        if (root) root.classList.remove("is-busy");
       });
-    }).then(function (j) {
-      if (my !== seq || (j && j.handled)) return;
-      if (!j) {
-        showVoiceError("I did not catch that. Tap SPEAK and try again.");
-        setStatus("error", "The Head Engineer could not hear that. Tap SPEAK again.");
-        isSpeaking = false;
-        return;
-      }
-      var transcript = stripTags((j && j.transcript) || "");
-      var display = stripTags((j && (j.reply || j.display_text)) || "");
-      var spoken = stripTags((j && (j.spoken_text || display)) || "");
-      if (!j || j.ok === false || !display || !transcript || /give the brand, error code and whether the cabinet is still cold/i.test(display + " " + spoken)) {
-        showVoiceError("I could not hear that clearly. Type the fault below or try again.");
-        setStatus("error", (j && j.error) || "Type the fault below or tap SPEAK and try again.");
-        isSpeaking = false;
-        return;
-      }
-      var lang = (j && j.language) || lockLang(transcript + " " + display);
-      sessionLang = lang;
-      fillRecording(transcript);
-      upsertLive("bot", display, true);
-      return speakAnswer(spoken || display, lang);
-    }).catch(function () {
-      if (my !== seq) return;
-      isSpeaking = false;
-      showVoiceError("The diagnosis could not start. Type the fault below or call 0203 952 4822.");
-      setStatus("error", "The diagnosis could not start. Type the fault below or call 0203 952 4822.");
-    }).then(function () {
-      if (root) root.classList.remove("is-busy");
-    });
   }
 
   function sendTextFault(text) {
@@ -933,30 +1228,42 @@
     if (root) root.classList.add("is-busy");
     upsertLive("user", text, true);
     setStatus("connecting", "Diagnosing your typed fault...");
-    diagnose({ text: text, language: "auto", mode: "text" }).then(function (j) {
-      if (my !== seq) return;
-      var display = stripTags((j && (j.reply || j.display_text)) || "");
-      var spoken = stripTags((j && (j.spoken_text || display)) || "");
-      if (!j || j.ok === false || !display) {
+    diagnose({ text: text, language: "auto", mode: "text" })
+      .then(function (j) {
+        if (my !== seq) return;
+        var display = stripTags((j && (j.reply || j.display_text)) || "");
+        var spoken = stripTags((j && (j.spoken_text || display)) || "");
+        if (!j || j.ok === false || !display) {
+          isSpeaking = false;
+          setStatus(
+            "error",
+            (j && j.error) ||
+              "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.",
+          );
+          return;
+        }
+        var lang = (j && j.language) || lockLang(text + " " + display);
+        upsertLive("bot", display, true);
+        return speakAnswer(spoken, lang);
+      })
+      .catch(function () {
+        if (my !== seq) return;
         isSpeaking = false;
-        setStatus("error", (j && j.error) || "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.");
-        return;
-      }
-      var lang = (j && j.language) || lockLang(text + " " + display);
-      upsertLive("bot", display, true);
-      return speakAnswer(spoken, lang);
-    }).catch(function () {
-      if (my !== seq) return;
-      isSpeaking = false;
-      setStatus("error", "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.");
-    }).then(function () {
-      if (root) root.classList.remove("is-busy");
-    });
+        setStatus(
+          "error",
+          "Diagnosis is unavailable. Please call 0203 952 4822 or 07983 759320.",
+        );
+      })
+      .then(function () {
+        if (root) root.classList.remove("is-busy");
+      });
   }
 
   function sendRecognizedFault() {
     if (!live && !starting) return;
-    var text = String(nativeText || (textInput && textInput.value) || "").trim();
+    var text = String(
+      nativeText || (textInput && textInput.value) || "",
+    ).trim();
     live = false;
     starting = false;
     clearRecordingTimers();
@@ -965,7 +1272,9 @@
     stopNativeRecognition().then(function () {
       if (!text) {
         hangup();
-        showVoiceError("I did not detect any speech. Tap SPEAK and try again, or type the fault below.");
+        showVoiceError(
+          "I did not detect any speech. Tap SPEAK and try again, or type the fault below.",
+        );
         return;
       }
       if (textInput) textInput.value = "";
@@ -985,65 +1294,112 @@
     starting = true;
     live = false;
     setStatus("connecting", "Starting the microphone recorder...");
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia ||
+      !window.MediaRecorder
+    ) {
       hangup();
-      setStatus("error", "This browser cannot capture speech. Type the fault below or try another browser.");
+      setStatus(
+        "error",
+        "This browser cannot capture speech. Type the fault below or try another browser.",
+      );
       return;
     }
-    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } }).then(function (s) {
-      return waitForLiveTracks(s);
-    }).then(function (s) {
-      if (my !== seq) {
-        s.getTracks().forEach(function (t) { t.stop(); });
-        return;
-      }
-      micStream = s;
-      recMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/mp4";
-      try {
-        mediaRec = new MediaRecorder(s, { mimeType: recMime });
-      } catch (e1) {
-        try { mediaRec = new MediaRecorder(s); recMime = mediaRec.mimeType || recMime; } catch (e2) { mediaRec = null; }
-      }
-      if (!mediaRec) {
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          channelCount: 1,
+        },
+      })
+      .then(function (s) {
+        return waitForLiveTracks(s);
+      })
+      .then(function (s) {
+        if (my !== seq) {
+          s.getTracks().forEach(function (t) {
+            t.stop();
+          });
+          return;
+        }
+        micStream = s;
+        recMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : "audio/mp4";
+        try {
+          mediaRec = new MediaRecorder(s, { mimeType: recMime });
+        } catch (e1) {
+          try {
+            mediaRec = new MediaRecorder(s);
+            recMime = mediaRec.mimeType || recMime;
+          } catch (e2) {
+            mediaRec = null;
+          }
+        }
+        if (!mediaRec) {
+          hangup();
+          setStatus(
+            "error",
+            "This browser cannot record audio. Type the fault below.",
+          );
+          return;
+        }
+        mediaRec.ondataavailable = function (ev) {
+          if (ev.data && ev.data.size) recChunks.push(ev.data);
+        };
+        try {
+          mediaRec.start(250);
+        } catch (e3) {
+          hangup();
+          setStatus(
+            "error",
+            "This browser cannot record audio. Type the fault below.",
+          );
+          return;
+        }
+        live = true;
+        starting = false;
+        recordingStartedAt = Date.now();
+        recorderHeardAt = 0;
+        recorderLastSoundAt = 0;
+        recordingLimitTimer = setTimeout(function () {
+          recordingLimitTimer = null;
+          if (my === seq && live) sendFault();
+        }, RECORDER_MAX_MS);
+        recordingUiTimer = setInterval(function () {
+          if (!live || !speakBtn) return;
+          var remaining = Math.max(
+            0,
+            Math.ceil(
+              (RECORDER_MAX_MS - (Date.now() - recordingStartedAt)) / 1000,
+            ),
+          );
+          speakBtn.textContent = "🔴 " + remaining + "s • Tap to send";
+        }, 250);
+        setStatus(
+          "active",
+          "🔴 Listening… speak now; recording sends automatically.",
+        );
+        startMeter(s);
+        showRecording();
+      })
+      .catch(function () {
+        if (my !== seq) return;
         hangup();
-        setStatus("error", "This browser cannot record audio. Type the fault below.");
-        return;
-      }
-      mediaRec.ondataavailable = function (ev) {
-        if (ev.data && ev.data.size) recChunks.push(ev.data);
-      };
-      try { mediaRec.start(250); } catch (e3) {
-        hangup();
-        setStatus("error", "This browser cannot record audio. Type the fault below.");
-        return;
-      }
-      live = true;
-      starting = false;
-      recordingStartedAt = Date.now();
-      recorderHeardAt = 0;
-      recorderLastSoundAt = 0;
-      recordingLimitTimer = setTimeout(function () {
-        recordingLimitTimer = null;
-        if (my === seq && live) sendFault();
-      }, RECORDER_MAX_MS);
-      recordingUiTimer = setInterval(function () {
-        if (!live || !speakBtn) return;
-        var remaining = Math.max(0, Math.ceil((RECORDER_MAX_MS - (Date.now() - recordingStartedAt)) / 1000));
-        speakBtn.textContent = "🔴 " + remaining + "s • Tap to send";
-      }, 250);
-      setStatus("active", "🔴 Listening… speak now; recording sends automatically.");
-      startMeter(s);
-      showRecording();
-    }).catch(function () {
-      if (my !== seq) return;
-      hangup();
-      setStatus("error", "Allow the microphone and tap SPEAK again, or type the fault below.");
-    });
+        setStatus(
+          "error",
+          "Allow the microphone and tap SPEAK again, or type the fault below.",
+        );
+      });
   }
 
   function startNativeRecognition(my, Recognition) {
     var recognition;
-    try { recognition = new Recognition(); } catch (e0) {
+    try {
+      recognition = new Recognition();
+    } catch (e0) {
       startRecorder(my);
       return;
     }
@@ -1052,7 +1408,7 @@
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
-    recognition.lang = sessionLang || (/^fa/i.test(navigator.language || "") ? "fa-IR" : "en-GB");
+    recognition.lang = sessionLang || "en-GB";
     recognition.onstart = function () {
       if (my !== seq) return;
       live = true;
@@ -1064,7 +1420,8 @@
     recognition.onresult = function (event) {
       if (my !== seq) return;
       var combined = "";
-      for (var i = 0; i < event.results.length; i++) combined += event.results[i][0].transcript + " ";
+      for (var i = 0; i < event.results.length; i++)
+        combined += event.results[i][0].transcript + " ";
       nativeText = combined.replace(/\s+/g, " ").trim();
       if (textInput) textInput.value = nativeText;
       if (nativeText) {
@@ -1073,7 +1430,7 @@
       }
     };
     recognition.onerror = function () {
-      if (my !== seq || !live && !starting) return;
+      if (my !== seq || (!live && !starting)) return;
       if (nativeText) {
         sendRecognizedFault();
         return;
@@ -1115,7 +1472,8 @@
     openPanel(true);
     setSpeakUi(true);
     setStatus("connecting", "Starting speech recognition...");
-    var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var Recognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     if (Recognition) startNativeRecognition(my, Recognition);
     else startRecorder(my);
   }
@@ -1139,7 +1497,10 @@
     }
     if (live) {
       if (Date.now() - recordingStartedAt < 900) {
-        setStatus("active", "Keep speaking for at least one second, then tap to send.");
+        setStatus(
+          "active",
+          "Keep speaking for at least one second, then tap to send.",
+        );
         return;
       }
       seq += 1;
@@ -1154,7 +1515,9 @@
     speakBtn.addEventListener("pointerdown", onSpeakPointer);
     speakBtn.addEventListener("click", onSpeakClick);
     if (listenBtn) {
-      listenBtn.addEventListener("pointerdown", function () { unlockAudio(); });
+      listenBtn.addEventListener("pointerdown", function () {
+        unlockAudio();
+      });
       listenBtn.addEventListener("click", function (ev) {
         if (ev) ev.preventDefault();
         if (live || starting) {
@@ -1164,33 +1527,46 @@
         playWelcome();
       });
     }
-    if (closeBtn) closeBtn.addEventListener("click", function (ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (live || starting || isSpeaking) {
-        seq += 1;
-        stopPlayback();
-        hangup();
-      }
-      closePanel();
-    });
+    if (closeBtn)
+      closeBtn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (live || starting || isSpeaking) {
+          seq += 1;
+          stopPlayback();
+          hangup();
+        }
+        closePanel();
+      });
     var textForm = document.getElementById("cd-voice-text-form");
     textInput = document.getElementById("cd-voice-text-input");
-    if (textForm && textInput) textForm.addEventListener("submit", function (ev) {
-      ev.preventDefault();
-      unlockAudio();
-      var value = textInput.value;
-      if (!value.trim()) return;
-      textInput.value = "";
-      sendTextFault(value);
-    });
-    document.addEventListener("pointerdown", function () { unlockAudio(); }, { capture: true, once: true });
+    if (textForm && textInput)
+      textForm.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        unlockAudio();
+        var value = textInput.value;
+        if (!value.trim()) return;
+        textInput.value = "";
+        sendTextFault(value);
+      });
+    document.addEventListener(
+      "pointerdown",
+      function () {
+        unlockAudio();
+      },
+      { capture: true, once: true },
+    );
   }
 
   function mount() {
     restoreAudioDock();
     var existing = document.getElementById("cd-voice-root");
-    if (existing && existing.getAttribute("data-cd-ptt") === "1" && document.getElementById("cd-voice-speak") && document.getElementById("cd-voice-listen")) {
+    if (
+      existing &&
+      existing.getAttribute("data-cd-ptt") === "1" &&
+      document.getElementById("cd-voice-speak") &&
+      document.getElementById("cd-voice-listen")
+    ) {
       root = existing;
       syncVoicePlacement();
       return;
@@ -1233,7 +1609,9 @@
     setStatus("", STATUS_IDLE);
   }
 
-  function boot() { mount(); }
+  function boot() {
+    mount();
+  }
   if (document.body) boot();
   document.addEventListener("DOMContentLoaded", boot);
   window.addEventListener("load", boot);

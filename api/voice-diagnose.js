@@ -10,47 +10,80 @@ try {
 
 var SYS = [
   "You are the Head Engineer at ColdDirect Ltd, London. Commercial refrigeration only.",
-  "The user may attach raw microphone audio. Transcribe the exact spoken words in the language that was spoken.",
-  "Persian must stay in Persian script. Never translate Persian into English. Never invent words the speaker did not say.",
-  "English stays English. Do not answer a different question from the transcript.",
-  "Then write a real diagnostic answer for that exact fault, in 2 to 4 short sentences, in the SAME language.",
-  "Start display_text and spoken_text with the greeting. English: Hello. I am the Head Engineer at ColdDirect. I'm glad you chose our company.",
-  "Persian display greeting: سلام. من سرمهندس شرکت کولد دایرکت هستم. خوشحالم که شرکت ما را انتخاب کردید.",
+  "The user may attach raw microphone audio. Transcribe the exact spoken words in the language that was spoken. Never invent words the speaker did not say.",
+  "Detect the customer's language independently from any browser or interface locale. Answer 100% natively in that exact language; never translate it into English or Persian. Arabic is ar-SA and Persian is fa-IR.",
+  "Do not answer a different question from the transcript. Write a real diagnostic answer for that exact fault in 2 to 4 short sentences, in the SAME language.",
+  "Start display_text and spoken_text with a polite natural greeting identifying yourself as the Head Engineer at ColdDirect in the customer's language.",
   "Persian spoken_text must pronounce the brand as کُلد دایرِکت.",
-  "Always finish with the telephone numbers and green review-button request, and do not use a slash.",
-  "English display close: For an immediate engineer visit across London, call ColdDirect on 0203 952 4822 or 07983 759320. 👍 Found this helpful? Please tap the green Like & Leave a 5-Star Review button below!",
-  "English spoken close: For an immediate engineer visit across London, call Cold Direct on 0203 952 4822 or 07983 759320. If this advice helped, please tap the green Like and 5-Star Review button below!",
-  "Persian display close: برای اعزام فوری مهندس در سراسر لندن، با کولد دایرکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. 👍 اگر این راهنما مفید بود، لطفاً دکمه سبز «Like & Leave a 5-Star Review» در پایین را بزنید!",
-  "Persian spoken close: برای اعزام فوری مهندس در سراسر لندن، با کُلد دایرِکت با شماره 0203 952 4822 یا 07983 759320 تماس بگیرید. اگر این راهنما مفید بود، لطفاً دکمه سبز لایک و نظر پنج‌ستاره در پایین را بزنید!",
+  "Always finish in the customer's language with 0203 952 4822, 07983 759320, info@colddirect.co.uk, and a polite request to tap the green Like and 5-Star Review button. Do not use a slash.",
+  "Keep the greeting, technical diagnosis, contact details, and review request in both display_text and spoken_text.",
   "No slang. No stage directions. No bracket tags. Never include instructions about how to speak.",
-  "JSON only: {\"language\":\"fa-IR or en-GB\",\"transcript\":\"exact spoken words\",\"display_text\":\"on-screen answer\",\"spoken_text\":\"same answer for speech\"}"
+  'JSON only: {"language":"validated BCP-47 code","transcript":"exact spoken words","display_text":"native on-screen answer","spoken_text":"same native answer for speech"}',
 ].join(" ");
 
 function hasPhone(text) {
   return /0203|07983|952\s*4822|759320/.test(String(text || ""));
 }
 
-function parseOut(text, audioMode) {
+function hasContact(text) {
+  return hasPhone(text) && /info@colddirect\.co\.uk/i.test(String(text || ""));
+}
+
+function parseOut(text, audioMode, inputText) {
   var m = String(text || "").match(/\{[\s\S]*\}/);
   if (!m) return null;
   try {
     var json = JSON.parse(m[0]);
     var transcript = core.stripTags(json.transcript || "");
-    var display = core.stripTags(json.display_text || json.spoken_text || json.technical_answer || "");
+    var display = core.stripTags(
+      json.display_text || json.spoken_text || json.technical_answer || "",
+    );
     var spoken = core.stripTags(json.spoken_text || display);
     if (!display || display.length < 12) return null;
     if (audioMode && transcript.length < 2) return null;
-    if (core.isBanned(display) || core.isBanned(spoken) || core.isBanned(transcript)) return null;
-    var locked = core.lockLang(transcript + " " + display, json.language);
-    if (locked.code === "fa") {
-      if (!/[\u0600-\u06FF]/.test(display)) return null;
-      if (audioMode && !/[\u0600-\u06FF]/.test(transcript)) return null;
-    }
-    display = core.ensureClose(core.ensureGreeting(display, locked.code, false), locked.code);
-    spoken = core.ttsScript(core.ensureGreeting(spoken, locked.code, true), locked.code);
-    if (!hasPhone(display) || !hasPhone(spoken)) return null;
-    if (core.isBanned(display) || core.isBanned(spoken) || /[／/]|\bslash\b/i.test(spoken)) return null;
-    return { display: display, spoken: spoken, language: locked.bcp, transcript: transcript };
+    if (
+      core.isBanned(display) ||
+      core.isBanned(spoken) ||
+      core.isBanned(transcript)
+    )
+      return null;
+    var expected = core.lockLang(inputText || transcript, json.language);
+    var locked = core.lockLang(display, expected.bcp);
+    var spokenLocked = core.lockLang(spoken, expected.bcp);
+    if (locked.code !== expected.code || spokenLocked.code !== expected.code)
+      return null;
+    if (
+      (locked.code === "fa" || locked.code === "ar") &&
+      !/[\u0600-\u06FF]/.test(display)
+    )
+      return null;
+    if (
+      audioMode &&
+      (expected.code === "fa" || expected.code === "ar") &&
+      !/[\u0600-\u06FF]/.test(transcript)
+    )
+      return null;
+    display = core.ensureClose(
+      core.ensureGreeting(display, locked.code, false),
+      locked.code,
+    );
+    spoken = core.ttsScript(
+      core.ensureGreeting(spoken, locked.code, true),
+      locked.code,
+    );
+    if (!hasContact(display) || !hasContact(spoken)) return null;
+    if (
+      core.isBanned(display) ||
+      core.isBanned(spoken) ||
+      /[／/]|\bslash\b/i.test(spoken)
+    )
+      return null;
+    return {
+      display: display,
+      spoken: spoken,
+      language: locked.bcp,
+      transcript: transcript,
+    };
   } catch (e) {
     return null;
   }
@@ -69,25 +102,60 @@ function safeMessage(value, key) {
 async function diagnose(key, text, audio, mime) {
   var instruction = audio
     ? "Listen to the attached microphone audio. Transcribe the exact spoken words, then diagnose that commercial refrigeration fault in the same language. Ignore any other language guess."
-    : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " + text;
+    : "Diagnose this commercial refrigeration fault in the same language as the question. Question: " +
+      text;
   var parts = [{ text: instruction }];
-  if (audio) parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
-  var configured = String(process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash").trim();
-  var models = [configured, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"]
-    .map(function (name) { return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash"; })
-    .filter(function (name, index, all) { return all.indexOf(name) === index; });
+  if (audio)
+    parts.push({ inlineData: { mimeType: mime || "audio/webm", data: audio } });
+  var configured = String(
+    process.env.GEMINI_VOICE_MODEL || "gemini-3.6-flash",
+  ).trim();
+  var models = [
+    configured,
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+  ]
+    .map(function (name) {
+      return /^[a-z0-9.-]+$/i.test(name) ? name : "gemini-3.6-flash";
+    })
+    .filter(function (name, index, all) {
+      return all.indexOf(name) === index;
+    });
   var attempts = [];
   for (var i = 0; i < models.length; i++) {
     var model = models[i];
     var out;
     try {
-      out = await core.geminiJson(key, model, {
-        systemInstruction: { parts: [{ text: SYS }] },
-        contents: [{ role: "user", parts: parts }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 1400, thinkingConfig: { thinkingLevel: "minimal" }, responseMimeType: "application/json" }
-      }, i === 0 ? 30000 : (i === 1 ? 20000 : 3000));
+      out = await core.geminiJson(
+        key,
+        model,
+        {
+          systemInstruction: { parts: [{ text: SYS }] },
+          contents: [{ role: "user", parts: parts }],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 1400,
+            thinkingConfig: { thinkingLevel: "minimal" },
+            responseMimeType: "application/json",
+          },
+        },
+        i === 0 ? 30000 : i === 1 ? 20000 : 3000,
+      );
     } catch (err) {
-      out = { ok: false, httpStatus: 0, networkError: "REQUEST_EXCEPTION", json: { error: { code: 503, status: "REQUEST_EXCEPTION", message: err && err.name } } };
+      out = {
+        ok: false,
+        httpStatus: 0,
+        networkError: "REQUEST_EXCEPTION",
+        json: {
+          error: {
+            code: 503,
+            status: "REQUEST_EXCEPTION",
+            message: err && err.name,
+          },
+        },
+      };
     }
     if (!out || !out.ok) {
       var upstream = (out && out.json && out.json.error) || {};
@@ -97,67 +165,133 @@ async function diagnose(key, text, audio, mime) {
         model: model,
         mimeType: audio ? mime : null,
         upstreamHttp: http,
-        upstreamStatus: String(upstream.status || (out && out.networkError) || "UPSTREAM_ERROR").slice(0, 60),
-        message: safeMessage(upstream.message, key)
+        upstreamStatus: String(
+          upstream.status || (out && out.networkError) || "UPSTREAM_ERROR",
+        ).slice(0, 60),
+        message: safeMessage(upstream.message, key),
       };
       attempts.push(attempt);
-      var failure = { error: "upstream", diagnostic: Object.assign({}, attempt, { attempts: attempts }) };
-      if (i + 1 < models.length && (!http || http === 408 || http === 429 || http >= 500)) continue;
+      var failure = {
+        error: "upstream",
+        diagnostic: Object.assign({}, attempt, { attempts: attempts }),
+      };
+      if (
+        i + 1 < models.length &&
+        (!http || http === 408 || http === 429 || http >= 500)
+      )
+        continue;
       return failure;
     }
-    var parsed = parseOut(core.extractText(out.json), !!audio);
+    var parsed = parseOut(core.extractText(out.json), !!audio, text);
     if (parsed) {
       parsed.source = "gemini";
       return parsed;
     }
     var candidate = ((out.json && out.json.candidates) || [])[0] || {};
-    var finishReason = String(candidate.finishReason || "NO_USABLE_OUTPUT").slice(0, 60);
-    return { error: "unparsed", diagnostic: { stage: "response_parsing", model: model, mimeType: audio ? mime : null, upstreamHttp: Number(out.httpStatus) || 200, upstreamStatus: finishReason, message: "The model response did not contain a usable transcript and diagnosis.", attempts: attempts } };
+    var finishReason = String(
+      candidate.finishReason || "NO_USABLE_OUTPUT",
+    ).slice(0, 60);
+    return {
+      error: "unparsed",
+      diagnostic: {
+        stage: "response_parsing",
+        model: model,
+        mimeType: audio ? mime : null,
+        upstreamHttp: Number(out.httpStatus) || 200,
+        upstreamStatus: finishReason,
+        message:
+          "The model response did not contain a usable transcript and diagnosis.",
+        attempts: attempts,
+      },
+    };
   }
-  return { error: "upstream", diagnostic: { stage: "transcription", upstreamHttp: 0, upstreamStatus: "NO_MODEL", message: "No transcription model is configured.", attempts: attempts } };
+  return {
+    error: "upstream",
+    diagnostic: {
+      stage: "transcription",
+      upstreamHttp: 0,
+      upstreamStatus: "NO_MODEL",
+      message: "No transcription model is configured.",
+      attempts: attempts,
+    },
+  };
 }
 
 function localDiagnosis(text, diagnostic, audioUnavailable) {
   var locked = core.lockLang(text, "");
   var advice;
   if (audioUnavailable) {
-    advice = "Automatic transcription is temporarily unavailable, so I could not transcribe this recording. Type the equipment make, model and fault code below for a specific diagnosis; switch the unit off if it is hot, noisy, leaking or warming stock, and arrange a 24/7 engineer call-out.";
+    advice =
+      "Automatic transcription is temporarily unavailable, so I could not transcribe this recording. Type the equipment make, model and fault code below for a specific diagnosis; switch the unit off if it is hot, noisy, leaking or warming stock, and arrange a 24/7 engineer call-out.";
   } else if (locked.code === "fa") {
-    advice = "برای جلوگیری از آسیب بیشتر، دستگاه را از برق جدا کنید و مسیر هوای کندانسور و فن‌ها را مسدود نکنید. برای بررسی کمپرسور، فن، ترموستات و گاز مبرد توسط مهندس، با کولد دایرکت تماس بگیرید.";
-  } else if (/gas leak|refrigerant leak|refrigerant.*(?:leak|low)|leak.*refrigerant/i.test(text)) {
-    advice = "A refrigerant leak requires pressure testing and repair by a qualified refrigeration engineer; do not keep restarting the cabinet or attempt a top-up. Switch the unit off, keep the area ventilated and protect temperature-sensitive stock.";
+    advice =
+      "برای جلوگیری از آسیب بیشتر، دستگاه را از برق جدا کنید و مسیر هوای کندانسور و فن‌ها را مسدود نکنید. برای بررسی کمپرسور، فن، ترموستات و گاز مبرد توسط مهندس، با کولد دایرکت تماس بگیرید.";
+  } else if (locked.code === "tr") {
+    advice =
+      "Daha fazla hasarı önlemek için cihazı kapatın ve kondanser ile fanların hava akışını engellemeyin. Kompresör, fan, termostat ve soğutucu gaz devresinin bir mühendis tarafından kontrol edilmesi için ColdDirect ile iletişime geçin.";
+  } else if (locked.code === "ar") {
+    advice =
+      "لمنع المزيد من الأضرار، أوقف تشغيل الجهاز ولا تسد تدفق الهواء حول المكثف والمراوح. اتصل بكولد دايركت ليفحص المهندس الضاغط والمروحة والثرموستات ودائرة التبريد.";
+  } else if (locked.code === "es") {
+    advice =
+      "Para evitar más daños, apague el equipo y no obstruya el flujo de aire del condensador ni de los ventiladores. Contacte con ColdDirect para que un ingeniero revise el compresor, el ventilador, el termostato y el circuito frigorífico.";
+  } else if (locked.code === "fr") {
+    advice =
+      "Pour éviter d’aggraver la panne, éteignez l’appareil et ne bloquez pas la circulation d’air du condenseur et des ventilateurs. Contactez ColdDirect pour qu’un ingénieur vérifie le compresseur, le ventilateur, le thermostat et le circuit frigorifique.";
+  } else if (
+    /gas leak|refrigerant leak|refrigerant.*(?:leak|low)|leak.*refrigerant/i.test(
+      text,
+    )
+  ) {
+    advice =
+      "A refrigerant leak requires pressure testing and repair by a qualified refrigeration engineer; do not keep restarting the cabinet or attempt a top-up. Switch the unit off, keep the area ventilated and protect temperature-sensitive stock.";
   } else if (/\bE[12]\b/i.test(text)) {
     var code = (text.match(/\bE[12]\b/i) || ["E1"])[0].toUpperCase();
-    advice = code + " commonly indicates a temperature-sensor or controller fault, although the exact meaning depends on the equipment make and model. Switch the unit off if temperature is rising, note the code for the engineer, and avoid repeated resets or bypassing the control.";
+    advice =
+      code +
+      " commonly indicates a temperature-sensor or controller fault, although the exact meaning depends on the equipment make and model. Switch the unit off if temperature is rising, note the code for the engineer, and avoid repeated resets or bypassing the control.";
   } else if (/taylor|carpigiani|ice cream|soft serve|gelato/i.test(text)) {
-    advice = "On a Taylor or Carpigiani machine, poor freezing or a beater fault can involve mix level, airflow, scraper blades, the drive system, controls or the refrigeration circuit. Stop the machine if it is noisy or overheating, follow food-safety procedures for the mix, and book an engineer inspection.";
+    advice =
+      "On a Taylor or Carpigiani machine, poor freezing or a beater fault can involve mix level, airflow, scraper blades, the drive system, controls or the refrigeration circuit. Stop the machine if it is noisy or overheating, follow food-safety procedures for the mix, and book an engineer inspection.";
   } else if (/ice machine|ice maker|not making ice|no ice/i.test(text)) {
-    advice = "An ice machine that is not producing can have a water-supply, inlet-valve, scale, condenser-airflow, sensor or refrigeration fault. Switch it off if the compressor is hot or unusual noises occur, and arrange cleaning and engineer testing rather than repeatedly resetting it.";
+    advice =
+      "An ice machine that is not producing can have a water-supply, inlet-valve, scale, condenser-airflow, sensor or refrigeration fault. Switch it off if the compressor is hot or unusual noises occur, and arrange cleaning and engineer testing rather than repeatedly resetting it.";
   } else if (/cold room|coldroom|walk.?in/i.test(text)) {
-    advice = "A cold-room temperature fault can involve the door seal, evaporator airflow, defrost system, controller or refrigeration circuit. Keep the door closed, move at-risk stock to a safe temperature-controlled area, and arrange urgent engineer testing.";
+    advice =
+      "A cold-room temperature fault can involve the door seal, evaporator airflow, defrost system, controller or refrigeration circuit. Keep the door closed, move at-risk stock to a safe temperature-controlled area, and arrange urgent engineer testing.";
   } else if (/compressor|buzzing|humming/i.test(text)) {
-    advice = "A hot, buzzing or non-starting compressor can have an electrical supply, relay, capacitor, overload, airflow or sealed-system fault. Switch the equipment off to prevent compressor damage and arrange an engineer inspection rather than repeatedly restarting it.";
+    advice =
+      "A hot, buzzing or non-starting compressor can have an electrical supply, relay, capacitor, overload, airflow or sealed-system fault. Switch the equipment off to prevent compressor damage and arrange an engineer inspection rather than repeatedly restarting it.";
   } else if (/fan|evaporator/i.test(text)) {
-    advice = "A non-running evaporator fan may have a faulty motor, iced-over coils or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
+    advice =
+      "A non-running evaporator fan may have a faulty motor, iced-over coils or a control fault. Switch the unit off to prevent overheating and arrange an engineer inspection; do not chip away ice or bypass the electrical controls.";
   } else if (/defrost|iced|ice.?up|frost/i.test(text)) {
-    advice = "Excess ice can be caused by a defrost heater, timer, sensor, blocked drain, fan or door-seal fault. Switch the unit off if airflow is blocked or the compressor is hot; do not chip the ice, and arrange an engineer inspection.";
+    advice =
+      "Excess ice can be caused by a defrost heater, timer, sensor, blocked drain, fan or door-seal fault. Switch the unit off if airflow is blocked or the compressor is hot; do not chip the ice, and arrange an engineer inspection.";
   } else if (/thermostat|controller|control board|sensor/i.test(text)) {
-    advice = "A thermostat, sensor or controller fault can cause incorrect temperatures, short cycling or a non-running cabinet. Switch the unit off if stock is warming or the compressor is hot, record any displayed code, and arrange electrical and refrigeration testing.";
-  } else if (/high.?temp|freezer|warm|not cold|not cooling|temperature/i.test(text)) {
-    advice = "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat or sealed-system fault. Move at-risk stock to safe storage, switch the unit off if the compressor is hot or noisy, and arrange a prompt engineer inspection.";
+    advice =
+      "A thermostat, sensor or controller fault can cause incorrect temperatures, short cycling or a non-running cabinet. Switch the unit off if stock is warming or the compressor is hot, record any displayed code, and arrange electrical and refrigeration testing.";
+  } else if (
+    /high.?temp|freezer|warm|not cold|not cooling|temperature/i.test(text)
+  ) {
+    advice =
+      "Loss of cooling may be caused by blocked airflow, iced coils, a faulty fan, thermostat or sealed-system fault. Move at-risk stock to safe storage, switch the unit off if the compressor is hot or noisy, and arrange a prompt engineer inspection.";
   } else {
-    advice = "The fault requires checks of the power supply, airflow, fans, controls and refrigeration circuit. Switch the unit off if it is overheating, noisy or warming stock, and arrange an engineer inspection rather than repeatedly restarting it.";
+    advice =
+      "The fault requires checks of the power supply, airflow, fans, controls and refrigeration circuit. Switch the unit off if it is overheating, noisy or warming stock, and arrange an engineer inspection rather than repeatedly restarting it.";
   }
   var display = core.ensureGreeting(advice, locked.code, false);
   return {
     display: display,
     spoken: display,
     language: locked.bcp,
-    transcript: audioUnavailable ? "Voice note received; automatic transcription is temporarily unavailable." : text,
+    transcript: audioUnavailable
+      ? "Voice note received; automatic transcription is temporarily unavailable."
+      : text,
     transcript_status: audioUnavailable ? "unavailable" : "ok",
     code: "EXPERT_FALLBACK",
     source: "expert_rules",
-    diagnostic: diagnostic || null
+    diagnostic: diagnostic || null,
   };
 }
 
@@ -172,7 +306,9 @@ module.exports = async function handler(req, res) {
   if (!core) {
     res.statusCode = 500;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ ok: false, error: "core_missing", detail: coreErr }));
+    res.end(
+      JSON.stringify({ ok: false, error: "core_missing", detail: coreErr }),
+    );
     return;
   }
   if (!core.cors(req, res)) return;
@@ -187,40 +323,94 @@ module.exports = async function handler(req, res) {
   var data = await core.readBody(req);
   var audio = core.cleanAudio(data.audio_base64 || data.audio || "");
   var mime = core.cleanMime(data.mime || "audio/webm", audio);
-  var text = audio ? "" : core.stripTags(data.text || data.transcript || "").slice(0, 2000);
+  var text = audio
+    ? ""
+    : core.stripTags(data.text || data.transcript || "").slice(0, 2000);
   if (!text && !audio) {
-    send(res, 400, { ok: false, error: "Speak a fault first.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
+    send(res, 400, {
+      ok: false,
+      error: "Speak a fault first.",
+      transcript: "",
+      display_text: "",
+      spoken_text: "",
+      audio_base64: "",
+    });
     return;
   }
   if (audio.length > 8000000) {
-    send(res, 413, { ok: false, code: "VOICE_TOO_LARGE", error: "That recording is too long. Please keep it under 45 seconds and try again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
+    send(res, 413, {
+      ok: false,
+      code: "VOICE_TOO_LARGE",
+      error:
+        "That recording is too long. Please keep it under 45 seconds and try again.",
+      transcript: "",
+      display_text: "",
+      spoken_text: "",
+      audio_base64: "",
+    });
     return;
   }
   if (core.isBanned(text)) {
-    send(res, 400, { ok: false, error: "Speak the fault again.", transcript: "", display_text: "", spoken_text: "", audio_base64: "" });
+    send(res, 400, {
+      ok: false,
+      error: "Speak the fault again.",
+      transcript: "",
+      display_text: "",
+      spoken_text: "",
+      audio_base64: "",
+    });
     return;
   }
-  var key = String(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "").trim();
+  var key = String(
+    process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "",
+  ).trim();
   var result = null;
   try {
-    if (text && (!key || /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(text))) {
+    if (
+      text &&
+      (!key ||
+        /fan|evaporator|warm|not cold|temperature|freezer|noise|leak|ice|compressor/i.test(
+          text,
+        ))
+    ) {
       result = localDiagnosis(text);
     } else if (key) {
       result = await diagnose(key, text, audio || null, mime);
     } else if (audio) {
-      result = { error: "configuration", diagnostic: { stage: "configuration", upstreamHttp: 0, upstreamStatus: "API_KEY_MISSING", message: "No Gemini API key is configured for this deployment." } };
+      result = {
+        error: "configuration",
+        diagnostic: {
+          stage: "configuration",
+          upstreamHttp: 0,
+          upstreamStatus: "API_KEY_MISSING",
+          message: "No Gemini API key is configured for this deployment.",
+        },
+      };
     }
   } catch (e) {
-    result = { error: "exception", diagnostic: { stage: "request", upstreamHttp: 0, upstreamStatus: "REQUEST_EXCEPTION", message: "The diagnosis request could not be completed." } };
+    result = {
+      error: "exception",
+      diagnostic: {
+        stage: "request",
+        upstreamHttp: 0,
+        upstreamStatus: "REQUEST_EXCEPTION",
+        message: "The diagnosis request could not be completed.",
+      },
+    };
   }
   if (!result || result.error || !result.display) {
     var failureDiagnostic = result && result.diagnostic;
     if (failureDiagnostic) {
-      try { console.warn("voice-diagnose " + JSON.stringify(failureDiagnostic)); } catch (logErr) {}
+      try {
+        console.warn("voice-diagnose " + JSON.stringify(failureDiagnostic));
+      } catch (logErr) {}
     }
     result = localDiagnosis(text, failureDiagnostic || null, !!audio);
   }
-  var locked = core.lockLang(result.transcript + " " + result.display, result.language);
+  var locked = core.lockLang(
+    result.transcript + " " + result.display,
+    result.language,
+  );
   var reply = core.ensureClose(result.display, locked.code);
   var spoken = core.ttsScript(result.spoken || reply, locked.code);
   send(res, 200, {
@@ -233,6 +423,6 @@ module.exports = async function handler(req, res) {
     diagnostic: result.diagnostic || null,
     reply: reply,
     display_text: reply,
-    spoken_text: spoken
+    spoken_text: spoken,
   });
 };
