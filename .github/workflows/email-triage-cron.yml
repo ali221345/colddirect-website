@@ -2,11 +2,14 @@ name: ColdDirect cloud email triage
 
 on:
   schedule:
-    # GMT: these are the requested London times.
-    - cron: "0 10,12,15 * * *"
-    # BST: the London-time guard below selects only this set in summer.
-    - cron: "0 9,11,14 * * *"
+    # UTC candidates cover both GMT and BST; the London guard keeps exactly 09:00 and 18:00.
+    - cron: "0 8,9,17,18 * * *"
   workflow_dispatch:
+    inputs:
+      connections_only:
+        description: "Only inspect Outlook API connections; do not modify any email"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,7 +30,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Select only 10:00, 12:00 or 15:00 in London
+      - name: Select only 09:00 or 18:00 in London
         id: london-time
         if: github.event_name == 'schedule'
         run: |
@@ -36,7 +39,7 @@ jobs:
           from datetime import datetime
           from zoneinfo import ZoneInfo
           now = datetime.now(ZoneInfo("Europe/London"))
-          requested = now.hour in {10, 12, 15}
+          requested = now.hour in {9, 18}
           print(f"London scheduler time: {now.isoformat()}; requested={requested}")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
               output.write(f"requested={str(requested).lower()}\n")
@@ -59,8 +62,34 @@ jobs:
           python tools/cloud_email_triage.py --self-test
           python -m unittest discover -s tools -p "test_cloud_email_triage.py" -v
 
+      - name: Inspect Outlook API connections without modifying email
+        if: inputs.connections_only == true
+        env:
+          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
+          COMPOSIO_MCP_URL: ${{ secrets.COMPOSIO_MCP_URL }}
+          COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+          sys.path.insert(0, "tools")
+          from cloud_email_triage import Composio, env_json
+          api = Composio()
+          for account, connection in sorted(env_json("COMPOSIO_OUTLOOK_ACCOUNTS_JSON").items()):
+              try:
+                  profile = api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName"]}, connection)
+                  print(json.dumps({"account": account, "active": True, "mail": profile.get("mail"), "userPrincipalName": profile.get("userPrincipalName")}))
+              except Exception as exc:
+                  print(json.dumps({"account": account, "active": False, "error": str(exc)[:200]}))
+          tools = api.rpc("tools/list", {}) or {}
+          for tool in tools.get("tools", []):
+              name = tool.get("name", "")
+              if "CONNECTION" in name or "OAUTH" in name:
+                  print("Available connection tool:", name)
+          PY
+
       - name: Run cloud triage for all eight accounts
-        if: steps.london-time.outputs.requested != 'false'
+        if: inputs.connections_only != true && steps.london-time.outputs.requested != 'false'
         id: triage
         env:
           EMAIL_TRIAGE_STRICT: "true"

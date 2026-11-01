@@ -1,3 +1,7 @@
+# Permanent email authentication rule — 2026-11-01
+
+Owner rule for `coldcom@hotmail.co.uk`, `samsamry11@hotmail.co.uk`, and `info@colddirect.co.uk`: NEVER use browser-session/WebBridge scraping and NEVER ask the owner for Outlook/Hotmail login, verification, or recovery codes. Hotmail access must use persistent Composio Microsoft/Outlook OAuth connections with refresh tokens; `info@colddirect.co.uk` must use the saved direct Plesk IMAP/SMTP credential. The twice-daily 09:00/18:00 Europe/London triage is cloud-only through GitHub Actions, with no browser fallback. If an API connection fails, report the API error without opening a browser or requesting a login code.
+
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
 Owner 2026-10-26d: Diagnose returns text first (`transcript`, `reply`, `language`) and the widget then calls `/api/voice-tts`. TTS user text is only the spoken answer. Gemini TTS models reject `systemInstruction`, so the voice is chosen with `speechConfig` (`Puck` / `Charon`) and no style sentence is sent. Every answer ends with the green Like and 5-Star Review line and `0203 952 4822 or 07983 759320` (Persian `یا`). Live check: text JSON about 3s, WAV about 5.5s after that. Script `?v=20261026d`.

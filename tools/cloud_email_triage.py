@@ -76,7 +76,7 @@ EXPECTED_GMAIL = {
     "colddirect22@gmail.com", "alikhorani6@gmail.com", "colddirect.api.uk@gmail.com",
     "khoranialihossein@gmail.com", "alihosseinkhorani@gmail.com",
 }
-EXPECTED_OUTLOOK = {"coldcom@hotmail.co.uk", "samsamry@hotmail.com"}
+EXPECTED_OUTLOOK = {"coldcom@hotmail.co.uk", "samsamry11@hotmail.co.uk"}
 BUSINESS_ACCOUNTS = {"info@colddirect.co.uk", "colddirect22@gmail.com"}
 PERSONAL_ACCOUNTS = (EXPECTED_GMAIL | EXPECTED_OUTLOOK) - BUSINESS_ACCOUNTS
 STATE_PATH = Path(os.environ.get("CLOUD_EMAIL_STATE_FILE", ".cloud-email-state/state.json"))
@@ -442,11 +442,9 @@ def process_outlook_if_available(account: str, ca: str, api: Composio, drafted: 
         api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName"]}, ca)
     except RuntimeError as exc:
         if "No active connection" in str(exc) or "not connected" in str(exc).lower():
-            return {
-                "account": account, "cleanup": 0, "starred": 0, "drafts": 0,
-                "purged": {}, "errors": [], "skipped": True,
-                "note": "Outlook connection is not active; left to the Kimi scheduled task.",
-            }
+            raise RuntimeError(
+                f"Outlook API connection is not active for {account}; browser fallback is disabled"
+            ) from exc
         raise
     return process_outlook(account, ca, api, drafted)
 

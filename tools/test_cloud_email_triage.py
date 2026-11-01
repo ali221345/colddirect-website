@@ -99,7 +99,7 @@ class CloudEmailTests(unittest.TestCase):
             ("OUTLOOK_LIST_MESSAGES", {"messages": []}),
             ("OUTLOOK_LIST_MESSAGES", {"messages": []}),
         ])
-        stats = triage.process_outlook("samsamry@hotmail.com", "outlook_test", api, set())
+        stats = triage.process_outlook("samsamry11@hotmail.co.uk", "outlook_test", api, set())
         self.assertEqual(stats["personal_drafts"], 1)
         update_call = api.calls[3]
         self.assertEqual(update_call[1]["body"]["contentType"], "Text")
@@ -160,14 +160,19 @@ class CloudEmailTests(unittest.TestCase):
         self.assertNotIn("ColdDirect", draft_call[1]["body"])
         self.assertEqual(stats["draft_notifications"][0]["body"], draft_call[1]["body"])
 
-    def test_unavailable_outlook_connection_is_skipped_without_failing(self):
+    def test_expected_outlook_accounts_are_the_two_locked_mailboxes(self):
+        self.assertEqual(triage.EXPECTED_OUTLOOK, {
+            "coldcom@hotmail.co.uk",
+            "samsamry11@hotmail.co.uk",
+        })
+
+    def test_unavailable_outlook_connection_never_falls_back_to_browser(self):
         class UnavailableAPI:
             def execute(self, tool_slug, arguments, account):
                 raise RuntimeError("No active connection found for toolkit outlook")
 
-        stats = triage.process_outlook_if_available("coldcom@hotmail.co.uk", "outlook_test", UnavailableAPI(), set())
-        self.assertTrue(stats["skipped"])
-        self.assertEqual(stats["errors"], [])
+        with self.assertRaisesRegex(RuntimeError, "browser fallback is disabled"):
+            triage.process_outlook_if_available("coldcom@hotmail.co.uk", "outlook_test", UnavailableAPI(), set())
 
     def test_missing_imap_folder_returns_false_instead_of_raising(self):
         class MissingFolderClient:
