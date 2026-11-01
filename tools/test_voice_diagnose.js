@@ -180,6 +180,52 @@ async function run() {
   assert.ok(ok.json.spoken_text.length > 40);
   assert.strictEqual(seenMime, "audio/mp4");
 
+  let universalCalls = 0;
+  let universalRequest = null;
+  core.geminiJson = async (key, model, body) => {
+    universalCalls += 1;
+    universalRequest = body;
+    return {
+      ok: true,
+      httpStatus: 200,
+      json: {
+        candidates: [
+          {
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    language: "fil-PH",
+                    transcript: "Hindi lumalamig ang komersyal na ref.",
+                    display_text:
+                      "Magandang araw, ako ang Punong Inhinyero ng ColdDirect. Pakisuri ang compressor at thermostat bago i-restart. Tumawag sa 0203 952 4822 o 07983 759320, o mag-email sa info@colddirect.co.uk. Mangyaring mag-iwan ng 5-star na review.",
+                    spoken_text:
+                      "Magandang araw, ako ang Punong Inhinyero ng ColdDirect. Pakisuri ang compressor at thermostat bago i-restart. Tumawag sa 0203 952 4822 o 07983 759320, o mag-email sa info@colddirect.co.uk. Mangyaring mag-iwan ng 5-star na review.",
+                  }),
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+  };
+  const universal = await post(mp4);
+  assert.strictEqual(
+    universalCalls,
+    1,
+    "Audio must use exactly one model call",
+  );
+  assert.strictEqual(universal.json.languageCode, "fil-PH");
+  assert.strictEqual(universal.json.language, "fil-PH");
+  assert.ok(universal.json.transcript.includes("Hindi lumalamig"));
+  assert.ok(universal.json.reply.includes("07983 759320"));
+  assert.ok(universal.json.reply.includes("info@colddirect.co.uk"));
+  assert.strictEqual(
+    universalRequest.contents[0].parts[1].inlineData.mimeType,
+    "audio/mp4",
+  );
+
   const attemptedModels = [];
   core.geminiJson = async (key, model, body, timeout) => {
     attemptedModels.push(model);
@@ -192,7 +238,11 @@ async function run() {
     assert.strictEqual(timeout, 20000);
     return validModelResponse();
   };
-  const recovered = await post(mp4);
+  const recovered = await post({
+    text: "My display cabinet has an unusual controller fault",
+    language: "auto",
+    mode: "text",
+  });
   assert.strictEqual(recovered.json.ok, true);
   assert.deepStrictEqual(attemptedModels, [
     "gemini-3.6-flash",
@@ -364,13 +414,11 @@ async function run() {
     "Audio fallback must honestly disclose unavailable transcription",
   );
   assert.ok(/0203 952 4822/.test(quotaAudio.json.display_text));
-  assert.deepStrictEqual(quotaModels, [
-    "gemini-3.6-flash",
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-  ]);
+  assert.deepStrictEqual(
+    quotaModels,
+    ["gemini-3.6-flash"],
+    "Audio quota failures must not trigger additional model calls",
+  );
 
   const quotaText = await post({
     text: "My display cabinet shows E1 and is too warm",

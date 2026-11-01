@@ -13,7 +13,6 @@
   var STOP_LABEL = "🔴 Listening… Tap to send";
   var LISTEN_LABEL = "🔊 LISTEN";
   var STATUS_IDLE = "Tap SPEAK and describe the fault; it sends automatically.";
-  var SPEECH_SILENCE_MS = 1500;
   var RECORDER_SILENCE_MS = 2000;
   var RECORDER_MAX_MS = 6000;
   var SPOKEN_SUMMARY_MAX_WORDS = 72;
@@ -51,13 +50,8 @@
   var agentSpoke = false;
   var meterTimer = null;
   var seq = 0;
-  var sessionLang = "";
   var micStream = null;
   var mediaRec = null;
-  var nativeRecognition = null;
-  var nativeText = "";
-  var nativeSilenceTimer = null;
-  var nativeStopResolve = null;
   var recChunks = [];
   var recMime = "audio/webm";
   var recordingStartedAt = 0;
@@ -552,53 +546,9 @@
       clearInterval(recordingUiTimer);
       recordingUiTimer = null;
     }
-    if (nativeSilenceTimer) {
-      clearTimeout(nativeSilenceTimer);
-      nativeSilenceTimer = null;
-    }
-  }
-
-  function resolveNativeStop() {
-    var resolve = nativeStopResolve;
-    nativeStopResolve = null;
-    nativeRecognition = null;
-    if (resolve) resolve();
-  }
-
-  function stopNativeRecognition() {
-    var recognition = nativeRecognition;
-    if (!recognition) return Promise.resolve();
-    return new Promise(function (resolve) {
-      nativeStopResolve = resolve;
-      var timer = setTimeout(function () {
-        try {
-          recognition.abort();
-        } catch (e1) {}
-        resolveNativeStop();
-      }, 800);
-      var originalResolve = nativeStopResolve;
-      nativeStopResolve = function () {
-        clearTimeout(timer);
-        originalResolve();
-      };
-      try {
-        recognition.stop();
-      } catch (e2) {
-        try {
-          recognition.abort();
-        } catch (e3) {}
-        resolveNativeStop();
-      }
-    });
   }
 
   function stopMicHard() {
-    if (nativeRecognition) {
-      try {
-        nativeRecognition.abort();
-      } catch (e0) {}
-      resolveNativeStop();
-    }
     if (mediaRec) {
       try {
         if (mediaRec.state !== "inactive") mediaRec.stop();
@@ -1196,8 +1146,9 @@
           isSpeaking = false;
           return;
         }
-        var lang = (j && j.language) || lockLang(transcript + " " + display);
-        sessionLang = lang;
+        var lang =
+          (j && (j.languageCode || j.language)) ||
+          lockLang(transcript + " " + display);
         fillRecording(transcript);
         upsertLive("bot", display, true);
         return speakAnswer(spoken || display, lang);
@@ -1242,7 +1193,9 @@
           );
           return;
         }
-        var lang = (j && j.language) || lockLang(text + " " + display);
+        var lang =
+          (j && (j.languageCode || j.language)) ||
+          lockLang(text + " " + display);
         upsertLive("bot", display, true);
         return speakAnswer(spoken, lang);
       })
@@ -1257,37 +1210,6 @@
       .then(function () {
         if (root) root.classList.remove("is-busy");
       });
-  }
-
-  function sendRecognizedFault() {
-    if (!live && !starting) return;
-    var text = String(
-      nativeText || (textInput && textInput.value) || "",
-    ).trim();
-    live = false;
-    starting = false;
-    clearRecordingTimers();
-    setSpeakUi(false);
-    setStatus("connecting", "Diagnosing your recognized speech...");
-    stopNativeRecognition().then(function () {
-      if (!text) {
-        hangup();
-        showVoiceError(
-          "I did not detect any speech. Tap SPEAK and try again, or type the fault below.",
-        );
-        return;
-      }
-      if (textInput) textInput.value = "";
-      sendTextFault(text);
-    });
-  }
-
-  function queueRecognizedSend(my) {
-    if (nativeSilenceTimer) clearTimeout(nativeSilenceTimer);
-    nativeSilenceTimer = setTimeout(function () {
-      nativeSilenceTimer = null;
-      if (my === seq && live && nativeText) sendRecognizedFault();
-    }, SPEECH_SILENCE_MS);
   }
 
   function startRecorder(my) {
@@ -1395,65 +1317,6 @@
       });
   }
 
-  function startNativeRecognition(my, Recognition) {
-    var recognition;
-    try {
-      recognition = new Recognition();
-    } catch (e0) {
-      startRecorder(my);
-      return;
-    }
-    nativeRecognition = recognition;
-    nativeText = "";
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    recognition.lang = sessionLang || "en-GB";
-    recognition.onstart = function () {
-      if (my !== seq) return;
-      live = true;
-      starting = false;
-      recordingStartedAt = Date.now();
-      setStatus("active", "🔴 Listening… your words will appear below.");
-      showRecording();
-    };
-    recognition.onresult = function (event) {
-      if (my !== seq) return;
-      var combined = "";
-      for (var i = 0; i < event.results.length; i++)
-        combined += event.results[i][0].transcript + " ";
-      nativeText = combined.replace(/\s+/g, " ").trim();
-      if (textInput) textInput.value = nativeText;
-      if (nativeText) {
-        upsertLive("user", nativeText, false);
-        queueRecognizedSend(my);
-      }
-    };
-    recognition.onerror = function () {
-      if (my !== seq || (!live && !starting)) return;
-      if (nativeText) {
-        sendRecognizedFault();
-        return;
-      }
-      nativeRecognition = null;
-      live = false;
-      starting = true;
-      startRecorder(my);
-    };
-    recognition.onend = function () {
-      if (nativeRecognition !== recognition) return;
-      resolveNativeStop();
-      if (my === seq && live) sendRecognizedFault();
-    };
-    try {
-      recognition.start();
-      setStatus("connecting", "Starting live speech recognition...");
-    } catch (e1) {
-      nativeRecognition = null;
-      startRecorder(my);
-    }
-  }
-
   function startLive() {
     if (live || starting || isSpeaking) return;
     var my = ++seq;
@@ -1464,18 +1327,14 @@
     liveBot = null;
     recordingRow = null;
     userText = "";
-    nativeText = "";
     recChunks = [];
     clearRecordingTimers();
     stopPlayback();
     unlockAudio();
     openPanel(true);
     setSpeakUi(true);
-    setStatus("connecting", "Starting speech recognition...");
-    var Recognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (Recognition) startNativeRecognition(my, Recognition);
-    else startRecorder(my);
+    setStatus("connecting", "Starting the microphone recorder...");
+    startRecorder(my);
   }
 
   function onSpeakPointer(ev) {
@@ -1504,8 +1363,7 @@
         return;
       }
       seq += 1;
-      if (nativeRecognition) sendRecognizedFault();
-      else sendFault();
+      sendFault();
       return;
     }
     startLive();

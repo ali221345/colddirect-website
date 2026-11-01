@@ -92,20 +92,21 @@ assert.ok(
   "Fallback errors must remain in the assistant bubble",
 );
 assert.ok(
-  /window\.SpeechRecognition \|\| window\.webkitSpeechRecognition/.test(source),
-  "SpeechRecognition must be the first capture path",
+  !source.includes("SpeechRecognition") &&
+    !source.includes("webkitSpeechRecognition"),
+  "Browser speech recognition must be completely removed",
+);
+const startLive = source.slice(
+  source.indexOf("function startLive"),
+  source.indexOf("function onSpeakPointer"),
 );
 assert.ok(
-  /recognition\.continuous = false/.test(source),
-  "Native recognition must use a single utterance",
+  startLive.includes("startRecorder(my);"),
+  "SPEAK must always start MediaRecorder directly",
 );
 assert.ok(
-  /recognition\.interimResults = true/.test(source),
-  "Native recognition must provide live interim words",
-);
-assert.ok(
-  /SPEECH_SILENCE_MS = 1500/.test(source),
-  "Recognized speech must auto-submit after 1.5 seconds of silence",
+  source.includes("audio_base64: b64"),
+  "The raw recording must be sent to the diagnosis endpoint",
 );
 assert.ok(
   /RECORDER_SILENCE_MS = 2000/.test(source),
@@ -113,15 +114,7 @@ assert.ok(
 );
 assert.ok(
   /RECORDER_MAX_MS = 6000/.test(source),
-  "MediaRecorder fallback must have a 6-second maximum",
-);
-assert.ok(
-  source.includes("textInput.value ="),
-  "Live recognized words must appear in the input",
-);
-assert.ok(
-  source.includes("sendRecognizedFault"),
-  "Recognized text must bypass audio transcription",
+  "MediaRecorder must retain its 6-second maximum",
 );
 assert.ok(
   source.includes("rec.requestData();") && source.includes("rec.onstop ="),
@@ -147,10 +140,6 @@ assert.ok(
   !source.includes(".replace(/Hello\\. I am the Head Engineer"),
   "The greeting must remain in speech",
 );
-assert.ok(
-  source.includes('sessionLang || "en-GB"'),
-  "Recognition must use the established session language, not browser locale",
-);
 console.log(
-  "Voice frontend regression tests passed: speech-first capture, live transcript, dynamic language, native greeting/contact speech and LISTEN fallback.",
+  "Voice frontend regression tests passed: MediaRecorder-only capture, raw audio submission, dynamic language and LISTEN fallback.",
 );

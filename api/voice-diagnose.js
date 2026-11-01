@@ -11,14 +11,14 @@ try {
 var SYS = [
   "You are the Head Engineer at ColdDirect Ltd, London. Commercial refrigeration only.",
   "The user may attach raw microphone audio. Transcribe the exact spoken words in the language that was spoken. Never invent words the speaker did not say.",
-  "Detect the customer's language independently from any browser or interface locale. Answer 100% natively in that exact language; never translate it into English or Persian. Arabic is ar-SA and Persian is fa-IR.",
+  "Automatically detect any spoken world language from the audio itself, without a predefined language list and independently from browser or interface locales. Answer 100% natively in that exact language; never translate it into another language.",
   "Do not answer a different question from the transcript. Write a real diagnostic answer for that exact fault in 2 to 4 short sentences, in the SAME language.",
-  "Start display_text and spoken_text with a polite natural greeting identifying yourself as the Head Engineer at ColdDirect in the customer's language.",
+  "Start reply and spoken_text with a polite natural greeting identifying yourself as the Head Engineer at ColdDirect in the customer's language.",
   "Persian spoken_text must pronounce the brand as کُلد دایرِکت.",
   "Always finish in the customer's language with 0203 952 4822, 07983 759320, info@colddirect.co.uk, and a polite request to tap the green Like and 5-Star Review button. Do not use a slash.",
-  "Keep the greeting, technical diagnosis, contact details, and review request in both display_text and spoken_text.",
+  "Keep the greeting, technical diagnosis, contact details, and review request in both reply and spoken_text.",
   "No slang. No stage directions. No bracket tags. Never include instructions about how to speak.",
-  'JSON only: {"language":"validated BCP-47 code","transcript":"exact spoken words","display_text":"native on-screen answer","spoken_text":"same native answer for speech"}',
+  'JSON only: {"languageCode":"valid BCP-47 code","transcript":"exact spoken words","reply":"native on-screen answer","spoken_text":"same native answer for speech"}',
 ].join(" ");
 
 function hasPhone(text) {
@@ -36,7 +36,11 @@ function parseOut(text, audioMode, inputText) {
     var json = JSON.parse(m[0]);
     var transcript = core.stripTags(json.transcript || "");
     var display = core.stripTags(
-      json.display_text || json.spoken_text || json.technical_answer || "",
+      json.display_text ||
+        json.reply ||
+        json.spoken_text ||
+        json.technical_answer ||
+        "",
     );
     var spoken = core.stripTags(json.spoken_text || display);
     if (!display || display.length < 12) return null;
@@ -47,9 +51,15 @@ function parseOut(text, audioMode, inputText) {
       core.isBanned(transcript)
     )
       return null;
-    var expected = core.lockLang(inputText || transcript, json.language);
-    var locked = core.lockLang(display, expected.bcp);
-    var spokenLocked = core.lockLang(spoken, expected.bcp);
+    var modelLanguage = json.languageCode || json.language;
+    var expected = audioMode
+      ? core.lockLang("", modelLanguage)
+      : core.lockLang(inputText || transcript, modelLanguage);
+    if (audioMode && !expected.bcp) return null;
+    var locked = audioMode ? expected : core.lockLang(display, expected.bcp);
+    var spokenLocked = audioMode
+      ? expected
+      : core.lockLang(spoken, expected.bcp);
     if (locked.code !== expected.code || spokenLocked.code !== expected.code)
       return null;
     if (
@@ -123,6 +133,7 @@ async function diagnose(key, text, audio, mime) {
     .filter(function (name, index, all) {
       return all.indexOf(name) === index;
     });
+  if (audio) models = models.slice(0, 1);
   var attempts = [];
   for (var i = 0; i < models.length; i++) {
     var model = models[i];
@@ -407,16 +418,14 @@ module.exports = async function handler(req, res) {
     }
     result = localDiagnosis(text, failureDiagnostic || null, !!audio);
   }
-  var locked = core.lockLang(
-    result.transcript + " " + result.display,
-    result.language,
-  );
+  var locked = core.lockLang("", result.language);
   var reply = core.ensureClose(result.display, locked.code);
   var spoken = core.ttsScript(result.spoken || reply, locked.code);
   send(res, 200, {
     ok: true,
     code: result.code || "OK",
     source: result.source || "gemini",
+    languageCode: locked.bcp,
     language: locked.bcp,
     transcript: result.transcript || text,
     transcript_status: result.transcript_status || "ok",
