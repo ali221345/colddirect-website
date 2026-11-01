@@ -76,7 +76,7 @@ EXPECTED_GMAIL = {
     "colddirect22@gmail.com", "alikhorani6@gmail.com", "colddirect.api.uk@gmail.com",
     "khoranialihossein@gmail.com", "alihosseinkhorani@gmail.com",
 }
-EXPECTED_OUTLOOK = {"coldcom@hotmail.co.uk", "samsamry11@hotmail.co.uk"}
+EXPECTED_OUTLOOK = {"samsamry@hotmail.com"}
 BUSINESS_ACCOUNTS = {"info@colddirect.co.uk", "colddirect22@gmail.com"}
 PERSONAL_ACCOUNTS = (EXPECTED_GMAIL | EXPECTED_OUTLOOK) - BUSINESS_ACCOUNTS
 STATE_PATH = Path(os.environ.get("CLOUD_EMAIL_STATE_FILE", ".cloud-email-state/state.json"))
@@ -107,7 +107,7 @@ def validate_config(strict: bool = True) -> tuple[dict[str, str], dict[str, str]
         if set(gmail) != EXPECTED_GMAIL:
             missing.append("COMPOSIO_GMAIL_ACCOUNTS_JSON must contain exactly the five Gmail accounts")
         if set(outlook) != EXPECTED_OUTLOOK:
-            missing.append("COMPOSIO_OUTLOOK_ACCOUNTS_JSON must contain exactly the two Hotmail accounts")
+            missing.append("COMPOSIO_OUTLOOK_ACCOUNTS_JSON must contain exactly the one active Outlook account")
         if not os.environ.get("COMPOSIO_API_KEY", "").strip():
             missing.append("COMPOSIO_API_KEY")
         if not os.environ.get("COMPOSIO_MCP_URL", "").strip():

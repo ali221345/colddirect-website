@@ -1,6 +1,6 @@
 # Permanent email authentication rule — 2026-11-01
 
-Owner rule for `coldcom@hotmail.co.uk`, `samsamry11@hotmail.co.uk`, and `info@colddirect.co.uk`: NEVER use browser-session/WebBridge scraping and NEVER ask the owner for Outlook/Hotmail login, verification, or recovery codes. Hotmail access must use persistent Composio Microsoft/Outlook OAuth connections with refresh tokens; `info@colddirect.co.uk` must use the saved direct Plesk IMAP/SMTP credential. The twice-daily 09:00/18:00 Europe/London triage is cloud-only through GitHub Actions, with no browser fallback. If an API connection fails, report the API error without opening a browser or requesting a login code.
+For Microsoft/Hotmail/Outlook, use ONLY the active `samsamry@hotmail.com` account through the single Composio connection `outlook_toom-model`. Never check, configure, or request access for any other Hotmail address. NEVER use browser-session/WebBridge scraping and NEVER ask the owner for Outlook/Hotmail login, verification, or recovery codes. `info@colddirect.co.uk` uses the saved direct Plesk IMAP/SMTP credential. The twice-daily 09:00/18:00 Europe/London triage covers exactly seven accounts (five Gmail, one Outlook, one IMAP), cloud-only through GitHub Actions with no browser fallback. If an API connection fails, report the API error without opening a browser or requesting a login code.
 
 # ColdDirect Voice AI — RULE 0 (permanent, never regress)
 
