@@ -10,6 +10,10 @@ on:
         description: "Only inspect the active Outlook API connection; do not modify any email"
         type: boolean
         default: false
+      prune_outlook_duplicates:
+        description: "One-time removal of duplicate Outlook connections"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -63,18 +67,28 @@ jobs:
           python -m unittest discover -s tools -p "test_cloud_email_triage.py" -v
 
       - name: Inspect the active Outlook API connection without modifying email
-        if: inputs.connections_only == true
+        if: inputs.connections_only == true || inputs.prune_outlook_duplicates == true
         env:
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
           COMPOSIO_MCP_URL: ${{ secrets.COMPOSIO_MCP_URL }}
           COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
+          PRUNE_OUTLOOK_DUPLICATES: ${{ inputs.prune_outlook_duplicates }}
         run: |
           python - <<'PY'
           import json
+          import os
           import sys
           sys.path.insert(0, "tools")
           from cloud_email_triage import Composio, env_json
           api = Composio()
+          if os.environ.get("PRUNE_OUTLOOK_DUPLICATES") == "true":
+              duplicates = (
+                  "outlook_colors-incuse", "outlook_esker-abbey", "outlook_paunch-pino",
+                  "outlook_examen-gaffe", "outlook_flaky-hummer",
+              )
+              for connection in duplicates:
+                  result = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "remove", "account_id": connection}]}})
+                  print("OUTLOOK_DUPLICATE_REMOVED", connection, json.dumps(result))
           connections = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "list"}]}})
           print("OUTLOOK_CONNECTION_LIST", json.dumps(connections))
           for account, connection in sorted(env_json("COMPOSIO_OUTLOOK_ACCOUNTS_JSON").items()):
@@ -83,7 +97,7 @@ jobs:
           PY
 
       - name: Run cloud triage for all seven accounts
-        if: inputs.connections_only != true && steps.london-time.outputs.requested != 'false'
+        if: inputs.connections_only != true && inputs.prune_outlook_duplicates != true && steps.london-time.outputs.requested != 'false'
         id: triage
         env:
           EMAIL_TRIAGE_STRICT: "true"
