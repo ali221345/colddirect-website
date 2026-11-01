@@ -10,6 +10,10 @@ on:
         description: "Only inspect Outlook API connections; do not modify any email"
         type: boolean
         default: false
+      generate_outlook_links:
+        description: "Generate one-time Outlook OAuth links; do not modify any email"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -63,18 +67,24 @@ jobs:
           python -m unittest discover -s tools -p "test_cloud_email_triage.py" -v
 
       - name: Inspect Outlook API connections without modifying email
-        if: inputs.connections_only == true
+        if: inputs.connections_only == true || inputs.generate_outlook_links == true
         env:
           COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
           COMPOSIO_MCP_URL: ${{ secrets.COMPOSIO_MCP_URL }}
           COMPOSIO_OUTLOOK_ACCOUNTS_JSON: ${{ secrets.COMPOSIO_OUTLOOK_ACCOUNTS_JSON }}
+          GENERATE_OUTLOOK_LINKS: ${{ inputs.generate_outlook_links }}
         run: |
           python - <<'PY'
           import json
+          import os
           import sys
           sys.path.insert(0, "tools")
           from cloud_email_triage import Composio, env_json
           api = Composio()
+          if os.environ.get("GENERATE_OUTLOOK_LINKS") == "true":
+              for alias in ("coldcom-hotmail", "samsamry11-hotmail"):
+                  result = api.rpc("tools/call", {"name": "COMPOSIO_MANAGE_CONNECTIONS", "arguments": {"toolkits": [{"name": "outlook", "action": "add", "alias": alias}]}})
+                  print("OUTLOOK_AUTH_SETUP", alias, json.dumps(result))
           for account, connection in sorted(env_json("COMPOSIO_OUTLOOK_ACCOUNTS_JSON").items()):
               try:
                   profile = api.execute("OUTLOOK_GET_PROFILE", {"user_id": "me", "select": ["mail", "userPrincipalName"]}, connection)
@@ -91,7 +101,7 @@ jobs:
           PY
 
       - name: Run cloud triage for all eight accounts
-        if: inputs.connections_only != true && steps.london-time.outputs.requested != 'false'
+        if: inputs.connections_only != true && inputs.generate_outlook_links != true && steps.london-time.outputs.requested != 'false'
         id: triage
         env:
           EMAIL_TRIAGE_STRICT: "true"
