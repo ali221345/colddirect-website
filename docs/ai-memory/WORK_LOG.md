@@ -1769,3 +1769,6 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-11-07 01:15 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
 - Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/42323080068 | commit fb7c153
 - Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-11-07 09:03 UTC - GSC daily reporter (Search Console unavailable)
+- Property `https://www.colddirect.co.uk/` confirmed by nightly auto-seo `42298614735` (6 Nov 21:50 UTC sitemap/inspect; 138 submitted / 0 indexed; homepage + 9 money hubs PASS) and earlier GSC Weekly Sync `41460495342` (2 Nov 14:17 UTC; 7-day window 25–31 Oct only, not copied). Files: `GSC-DAILY-REPORT.md`, `logs/gsc_daily_2026-11-07.md`. No HTML, title, or indexing changes.
