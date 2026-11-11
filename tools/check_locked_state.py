@@ -22,7 +22,7 @@ COOLDOWN_UNTIL = "2026-10-31"
 # verified 200 OK, self-canonical, zero redirect hops on 2026-10-31; bumped to
 # 136 on 2026-11-01 after Phase 3 added 5 commercial district landing pages:
 # Soho, Shoreditch, Canary Wharf, Park Royal, Mayfair).
-SITEMAP_URL_COUNT = 136
+SITEMAP_URL_COUNT = 137
 
 # (url path, repo file, markers that must still be in that file)
 PAGES = [
