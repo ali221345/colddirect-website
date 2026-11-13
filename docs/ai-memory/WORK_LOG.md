@@ -1866,3 +1866,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-11-13 02:09 UTC - Autopilot: 24h SEO sync & site update (auto-seo) - FAILED
 - Workflow: Nightly auto-seo (live) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/43350098812 | commit 0bc238c
 - Metrics: auto-seo + smoke test (sitemap/robots/latency/assets)=skipped; live strict preflight=skipped; SEO integrity (no title/H1 rewrite)=skipped; GSC ping=skipped
+
+## 2026-11-13 11:21 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/43414076384 | commit 2fe9558
+- Metrics: archive=colddirect-backup-20261113-110444.zip; SHA-256=fc0e28c29b4091681e3a4b8898217d7990917240d3f3a1af5d474a7aaef42462; files=650 (303 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-43414076384
