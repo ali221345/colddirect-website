@@ -52,7 +52,9 @@ def verify(slug):
                     raise ValueError("unexpected HTTP status or redirect")
                 body = response.read(2_000_000).decode("utf-8")
             actual = Page(body)
-            if len(actual.headings) != 1 or actual.headings != expected.headings:
+            actual_headings = [" ".join(h.split()) for h in actual.headings]
+            expected_headings = [" ".join(h.split()) for h in expected.headings]
+            if len(actual_headings) != 1 or actual_headings != expected_headings:
                 raise ValueError("page identity/H1 mismatch")
             if actual.canonicals != expected.canonicals or actual.canonicals != [url]:
                 raise ValueError("canonical mismatch")
