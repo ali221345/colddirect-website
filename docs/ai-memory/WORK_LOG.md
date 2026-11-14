@@ -1886,3 +1886,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-11-14 23:09 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/43651614883 | commit 6929bec
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=failure
+
+## 2026-11-14 23:15 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
+- Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/43652052328 | commit c762ad2
+- Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=failure
