@@ -636,8 +636,8 @@
           z-index: 20 !important;
           font-size: 10px !important;
           line-height: 1.2 !important;
-          max-height: 48px !important;
-          overflow: hidden !important;
+          max-height: none !important;
+          overflow: visible !important;
         }
         #cd-audio-dock .cd-audio-label {
           font-size: 10px !important;
@@ -653,11 +653,11 @@
           border-radius: 5px !important;
         }
         #cd-audio-dock details {
-          display: none !important;
-          visibility: hidden !important;
-          height: 0 !important;
-          margin: 0 !important;
-          overflow: hidden !important;
+          display: block !important;
+          visibility: visible !important;
+          height: auto !important;
+          margin: 4px 0 0 !important;
+          overflow: visible !important;
         }
       }
     </style>
@@ -668,7 +668,7 @@
         Your browser does not support audio playback.
       </audio>
       <details>
-        <summary>Transcript</summary>
+        <summary>Read transcript</summary>
         <p class="cd-transcript-text">
           Welcome to Cold Direct. We are a North London-based company with over
           30 years of experience in commercial refrigeration, walk-in cold
