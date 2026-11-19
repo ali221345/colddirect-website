@@ -32,7 +32,7 @@ DEFAULT_URLS = [
     "https://www.colddirect.co.uk/appliances-repair-london/",
     "https://www.colddirect.co.uk/blog/different-types-of-ice/",
     "https://www.colddirect.co.uk/blog/types-of-cold-storage/",
-    "https://www.colddirect.co.uk/blog/why-commercial-freezer-icing-up/",
+    "https://www.colddirect.co.uk/blog/commercial-freezer-ice-buildup-causes/",
     "https://www.colddirect.co.uk/blog/cold-room-temperature-fluctuation/",
     "https://www.colddirect.co.uk/blog/commercial-fridge-not-cooling/",
 ]

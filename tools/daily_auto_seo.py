@@ -91,7 +91,7 @@ PRIORITY_PAGES = [
 ]
 
 BLOG_DONORS = [
-    "blog/why-commercial-freezer-icing-up.html",
+    "blog/commercial-freezer-ice-buildup-causes.html",
     "blog/cold-room-temperature-fluctuation.html",
     "blog/commercial-fridge-not-cooling.html",
     "blog/commercial-freezer-temperature-guide.html",
@@ -177,7 +177,7 @@ def sync_page_twins(protected: set[str]) -> int:
         "appliances-repair-london.html",
         "blog/different-types-of-ice.html",
         "blog/types-of-cold-storage.html",
-        "blog/why-commercial-freezer-icing-up.html",
+        "blog/commercial-freezer-ice-buildup-causes.html",
         "blog/cold-room-temperature-fluctuation.html",
         "blog/commercial-fridge-not-cooling.html",
         "blog/commercial-freezer-temperature-guide.html",

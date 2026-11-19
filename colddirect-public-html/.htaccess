@@ -169,6 +169,7 @@ RewriteRule ^blog/samsung-fridge-freezer-not-freezing(\.html|/index\.html)$ /com
 RewriteRule ^blog/best-ice-cream-makers(\.html|/index\.html)$ /ice-cream-machine-repair-london/ [R=301,L]
 RewriteRule ^blog/cold-room-troubleshooting(\.html|/index\.html)$ /blog/cold-room-temperature-fluctuation/ [R=301,L]
 RewriteRule ^blog/chiller-not-cooling(\.html|/index\.html)$ /chiller-repair-london/ [R=301,L]
+RewriteRule ^blog/why-commercial-freezer-icing-up(\.html|/index\.html)$ https://www.colddirect.co.uk/blog/commercial-freezer-ice-buildup-causes/ [R=301,L]
 # Live blog posts: .html and /index.html variants go ONE hop to the slash canonical (never /blog/index/, a 404).
 RewriteRule ^blog/index\.html$ /blog/ [R=301,L]
 RewriteRule ^blog/([^/]+)\.html$ /blog/$1/ [R=301,L]
@@ -334,7 +335,7 @@ RewriteRule ^blog/different-types-of-ice/?$ /blog/different-types-of-ice.html [L
 RewriteRule ^blog/types-of-cold-storage/?$ /blog/types-of-cold-storage.html [L]
 RewriteRule ^blog/why-commercial-freezer-not-freezing/?$ /blog/why-commercial-freezer-not-freezing.html [L]
 RewriteRule ^blog/why-commercial-fridge-not-cold-enough/?$ /blog/why-commercial-fridge-not-cold-enough.html [L]
-RewriteRule ^blog/why-commercial-freezer-icing-up/?$ /blog/why-commercial-freezer-icing-up.html [L]
+RewriteRule ^blog/why-commercial-freezer-icing-up/?$ https://www.colddirect.co.uk/blog/commercial-freezer-ice-buildup-causes/ [R=301,L]
 RewriteRule ^blog/commercial-freezer-temperature-guide/?$ /blog/commercial-freezer-temperature-guide.html [L]
 RewriteRule ^blog/commercial-fridge-not-cooling/?$ /blog/commercial-fridge-not-cooling.html [L]
 RewriteRule ^blog/f-gas-regulations-commercial/?$ /blog/f-gas-regulations-commercial.html [L]
