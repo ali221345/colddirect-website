@@ -1911,3 +1911,7 @@ eport_only skips the slow sitemap/inspection pass). Writes only to $GITHUB_STEP_
 ## 2026-11-19 15:34 UTC - Autopilot: Deploy to WHUK Plesk - SUCCESS
 - Workflow: Deploy to WHUK Plesk (push) | run: https://github.com/ali221345/colddirect-website/actions/runs/44555490054 | commit 9f2992e
 - Metrics: auto-seo + live smoke test=success; critical live pages=success; SEO integrity (live)=failure
+
+## 2026-11-21 11:27 UTC - Autopilot: 48h full site backup - SUCCESS
+- Workflow: Site backup (48h) (schedule) | run: https://github.com/ali221345/colddirect-website/actions/runs/44897883868 | commit e787963
+- Metrics: archive=colddirect-backup-20261121-111122.zip; SHA-256=f961f4473996a33b41254d7bde68847fe15b76bc4ac0b58fc5b1738c18bb1dd3; files=648 (301 html); integrity verified=True; manifest re-check=success; artifact (90 days)=colddirect-site-backup-44897883868
